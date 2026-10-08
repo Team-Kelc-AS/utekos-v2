@@ -1,0 +1,39 @@
+.cartHost { grid-column: 3; grid-row: 1; justify-self: end; }
+.iconButton { position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 0; border-radius: .35rem; background: transparent; color: inherit; cursor: pointer; }
+.count { position: absolute; right: -2px; top: -2px; min-width: 1.25rem; border-radius: 1rem; padding: 0 .2rem; background: #b44701; color: #f0eee9; font-size: .75rem; }
+.primary, .secondary { display: inline-flex; width: 100%; min-height: 48px; justify-content: center; align-items: center; gap: .65rem; padding: .75rem 1rem; border-radius: .5rem; border: 1px solid transparent; background: #b44701; color: #f0eee9; text-decoration: none; font: inherit; font-weight: 800; cursor: pointer; text-align: center; }
+.primary:hover { filter: brightness(1.12); }
+.primary:disabled, .dialog button:disabled { cursor: not-allowed; opacity: .55; }
+.secondary { background: transparent; border-color: #f0eee950; margin-top: .75rem; font-weight: 500; }
+.primary:focus-visible, .secondary:focus-visible, .iconButton:focus-visible, .dialog :is(button, a, input, select):focus-visible { outline: 2px solid #f0eee9; outline-offset: 3px; }
+.dialog { position: fixed; inset: 0; margin: auto; width: min(32rem, calc(100% - 2rem)); max-height: calc(100dvh - 2rem); overflow-y: auto; border: 1px solid #f0eee940; border-radius: .8rem; padding: 1.5rem; background: #001a18; color: #f0eee9; font-family: var(--font-google-sans-flex), sans-serif; font-variation-settings: 'opsz' 120; font-weight: 500; line-height: 1.6; box-shadow: 0 12px 60px #010b0a66; }
+.dialog::backdrop { background: #010b0ab3; }
+.drawer { inset: 0 0 0 auto; margin: 0; width: min(28rem, 100%); height: 100dvh; max-height: 100dvh; border-radius: 0; }
+.dialogHeading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.dialogHeading h2 { margin: 0; font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
+.dialog button { font: inherit; }
+.dialog a { text-underline-offset: .2em; }
+.message { padding: .75rem; background: #012622; border-left: 3px solid #b44701; }
+.message button { text-decoration: underline; min-height: 44px; }
+.empty { padding-block: 2rem; }
+.cartLines { list-style: none; margin: 0; padding: 0; }
+.cartLine { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 1rem; border-bottom: 1px solid #f0eee930; padding-block: 1.25rem; }
+.cartLine > div:only-child { grid-column: 1 / -1; }
+.lineImage { width: 80px; height: auto; border-radius: .25rem; }
+.cartLine a { font-weight: 800; }
+.muted { font-size: .875rem; color: #f0eee9bf; margin-block: .35rem 1rem; }
+.lineActions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem; margin-top: .5rem; }
+.lineActions button { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; color: inherit; background: #012622; border: 1px solid #f0eee940; border-radius: .35rem; cursor: pointer; }
+.lineActions button:hover:not(:disabled) { background: #f0eee912; }
+.quantityControl { display: inline-flex; align-items: center; gap: .25rem; }
+.quantityValue { min-width: 1.5rem; text-align: center; font-size: .875rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.lineActions .removeLine { border-color: transparent; background: transparent; }
+.cartTotal { display: flex; justify-content: space-between; margin-block: 1.5rem .75rem; }
+.form { display: grid; gap: 1rem; }
+.form label { display: grid; gap: .35rem; }
+.form input:not([type='checkbox']) { width: 100%; min-height: 48px; border: 1px solid #f0eee970; border-radius: .35rem; padding: .6rem .8rem; color: #f0eee9; background: #012622; font: inherit; }
+.form .check { display: flex; align-items: start; gap: .65rem; }
+.check input { width: 20px; height: 20px; flex: 0 0 auto; margin-top: .2rem; accent-color: #b44701; }
+.honeypot { position: absolute; left: -10000px; }
+.form small { font-size: .85rem; }
+.error { color: #f0eee9; border-left: 3px solid #b44701; padding-left: .65rem; }

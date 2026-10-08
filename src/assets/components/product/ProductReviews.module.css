@@ -1,0 +1,19 @@
+.panel { --primary: #b44701; margin-top: .25rem; border-top: 1px solid #f0eee933; padding-block: 1.25rem; }
+.panel[data-journey-section='reviews'] { border-top: 0; }
+.overview { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.panel .rating { margin: .25rem 0 0; font-size: .9375rem; }
+.logo { width: 7rem; height: auto; }
+.stars { position: relative; display: inline-block; width: max-content; font-size: 1.2rem; line-height: 1; letter-spacing: .1em; white-space: nowrap; color: #f0eee945; }
+.filledStars { position: absolute; top: 0; left: 0; overflow: hidden; color: transparent; background-clip: text; }
+.reviewPanel { display: flex; flex-direction: column; min-height: 0; max-height: 36rem; margin: 0; padding: 0; }
+.reviewPanel .heading { flex-shrink: 0; margin: 0; padding-block: 1rem; font-size: 1.15rem; line-height: 1.2; }
+.list { min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-width: thin; margin: 0; padding: 0 .75rem 0 0; list-style: none; }
+.list:focus-visible { outline: 2px solid #f0eee9; outline-offset: -2px; }
+.review { padding: 1.25rem 0; border-top: 1px solid #f0eee926; overflow-wrap: anywhere; }
+.review:first-child { border-top: 0; padding-top: 0; }
+.reviewHeader { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem 1rem; }
+.reviewRating { flex-shrink: 0; }
+.meta { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin-top: .5rem; color: #f0eee9b3; font-size: .8125rem; }
+.panel .title { margin: .75rem 0 0; font-size: 1rem; }
+.panel .body { margin: .75rem 0 0; font-size: .9375rem; line-height: 1.65; white-space: pre-line; }
+.panel .partial { margin: .5rem 0; font-size: .875rem; }

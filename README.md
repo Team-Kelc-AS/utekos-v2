@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Utekos v2
 
-## Getting Started
+Server-first omskriving av Utekos-nettbutikken med Next.js, React og Shopify.
+Arbeidet lagres foreløpig i det private repoet `Team-Kelc-AS/utekos-v2`.
+`utekos-headless` er referanseprosjektet og skal ikke motta endringer fra denne
+arbeidskopien før en senere, uttrykkelig avtalt overføring.
 
-First, run the development server:
+Sporingsbackend ligger separat i `Team-Kelc-AS/utekos-tracking-backend`.
+Se [sporingsoversikten](docs/tracking/README.md) og
+[forhandlerflyten](docs/tracking/dealer-inquiries.md) for kontrakter og
+produksjonsgrenser.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
+## Lokal utvikling
+
+Bruk pnpm-versjonen angitt i `package.json`. Miljøvariabler legges i
+`.env.local` via prosjektets sikre miljøoppsett; hemmeligheter følger ikke repoet.
+
+```sh
+pnpm install --frozen-lockfile
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Kontroller
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+pnpm build
+pnpm lint
+pnpm tracking:contracts
+node --test --test-concurrency=1 tests/*.test.cjs
+NODE_OPTIONS='--conditions=react-server' pnpm exec tsx --test tests/tracking-gateway.test.ts
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Git
 
-## Learn More
+Arbeid på `main`. Kontroller endringene og `git remote -v` før innsending.
+Den avtalte innsendingen er:
 
-To learn more about Next.js, take a look at the following resources:
+```sh
+pnpm run sync "Beskriv endringen"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Kommandoen legger til lokale endringer, oppretter en commit og pusher til
+oppsatt upstream. Denne innsendingen setter ikke opp Vercel-publisering.
+Produksjonssetting og senere overføring til `utekos-headless` avtales separat.

@@ -1,0 +1,28 @@
+{
+  "backend": {
+    "projectId": "prj_EHFI28tMUlIQsNguxjcKHPlLAlFE",
+    "name": "utekos-backend",
+    "gitRepository": {
+      "org": "Team-Kelc-AS",
+      "repo": "utekos-tracking-backend",
+      "productionBranch": "main"
+    },
+    "productionDeploymentId": "dpl_B3fJEEJfJPiVHut4gxGC2SeAm39A",
+    "productionSHA": "b9723ac08e7c65c26ae20df7c52e21df0932d597",
+    "cronCount": 0,
+    "cronDeploymentId": "dpl_B3fJEEJfJPiVHut4gxGC2SeAm39A"
+  },
+  "storefront": {
+    "projectId": "prj_MpZN3Z0PDp8rfwpdzAeplGe4Di0s",
+    "name": "utekos-headless",
+    "gitRepository": {
+      "org": "Team-Kelc-AS",
+      "repo": "utekos-headless",
+      "productionBranch": "main"
+    },
+    "productionDeploymentId": "dpl_5z8Nxyta5H6Bz6yhd3K1WNShvReN",
+    "productionSHA": "e74e6cd8310c88f2777cbfdf5ad6b431647d7f77",
+    "cronCount": 9,
+    "cronDeploymentId": "dpl_5z8Nxyta5H6Bz6yhd3K1WNShvReN"
+  }
+}

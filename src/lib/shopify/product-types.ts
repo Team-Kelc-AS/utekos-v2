@@ -1,0 +1,32 @@
+export type Money = { amount: string; currencyCode: string };
+export type ProductImage = { id?: string; url: string; altText: string | null; width: number; height: number };
+export type ProductOption = { name: string; values: string[] };
+export type ProductCollection = { id: string; title: string };
+export type ProductVariant = {
+  id: string;
+  title: string;
+  availableForSale: boolean;
+  currentlyNotInStock: boolean;
+  quantityAvailable: number | null;
+  taxable: boolean;
+  sku: string | null;
+  barcode: string | null;
+  price: Money;
+  compareAtPrice: Money | null;
+  image: ProductImage | null;
+  selectedOptions: { name: string; value: string }[];
+};
+export type ShopifyProduct = {
+  id: string;
+  handle: string;
+  title: string;
+  description: string;
+  vendor: string;
+  productType: string;
+  collections: { nodes: ProductCollection[] };
+  descriptionHtml: string;
+  seo: { title: string | null; description: string | null };
+  options: ProductOption[];
+  images: { nodes: ProductImage[] };
+  variants: { nodes: ProductVariant[] };
+};

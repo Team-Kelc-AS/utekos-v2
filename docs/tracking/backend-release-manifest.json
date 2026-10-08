@@ -1,0 +1,74 @@
+{
+  "sourceCommit": "e74e6cd8310c88f2777cbfdf5ad6b431647d7f77",
+  "files": {
+    "src/app/api/integrations/storefront-tracking/v1/route.ts": {
+      "sha256": "c50708a849558a319f15430cdd222f234f3ebd5ce6b67911a37feb578d41ad8d",
+      "kind": "added"
+    },
+    "src/app/api/klarna/orders/route.ts": {
+      "sha256": "df4a4bcc614347379b977870d9f5c3507bd81d132ef1ae1980b386deb57641cb",
+      "kind": "modified"
+    },
+    "src/components/klarna/schemas/klarnaExpressOrderSchema.ts": {
+      "sha256": "6d14ea5cfd3397ef39e9ee48a4ccf2649cee9b129e2f7ca58ea6d7e76a62f21b",
+      "kind": "modified"
+    },
+    "src/lib/analytics/server/acceptCanonicalGenerateLead.ts": {
+      "sha256": "47b4c2a2c33a008c5c8a4d28f130efc86b8cfd57a202d52e5b08a87978f7e5df",
+      "kind": "modified"
+    },
+    "src/lib/analytics/server/recordAcceptedGenerateLead.ts": {
+      "sha256": "744eee109c446605f7bce7c194fef999f060c7567f48543f107bfed1499c85da",
+      "kind": "modified"
+    },
+    "src/lib/integrations/storefrontTracking/README.md": {
+      "sha256": "f0e58cc918381f4ad5a35f2c39c5fdacf1f0679a17c79b3cca3a173e006acada",
+      "kind": "added"
+    },
+    "src/lib/integrations/storefrontTracking/contract.ts": {
+      "sha256": "12e1ffce2dff3d94eb56d95307fc43913405037c44f29638d8ed0c9358b18e3d",
+      "kind": "added"
+    },
+    "src/lib/integrations/storefrontTracking/handleAcceptedDunWaitlist.ts": {
+      "sha256": "c6a567c92e154af83b5a1dfbee83ada50d96d17f96bfc9cda375bc7fd8ff46bb",
+      "kind": "added"
+    },
+    "src/lib/integrations/storefrontTracking/handleRequest.ts": {
+      "sha256": "5db6db5cd19ee9c4b0ba05bce4dd5f71d13ae588b7894a0034120ed37f23f5d9",
+      "kind": "added"
+    },
+    "src/lib/integrations/storefrontTracking/operations.ts": {
+      "sha256": "5598251a4fa59d8ff781a80f6936e8a4bc3098118d60b65ff97312ae2fc8b174",
+      "kind": "added"
+    },
+    "src/lib/integrations/storefrontTracking/verifyCaller.ts": {
+      "sha256": "3066c5f6b222882315eb2f372702e8ba63d55703b819c988b33e2f371df6cb1a",
+      "kind": "added"
+    },
+    "src/lib/leads/recordLeadSubmission.ts": {
+      "sha256": "26b1de967ddd83f9c01fcbbf83ecd4b5c8d55e4ea3481e2f40b264e0621a7327",
+      "kind": "modified"
+    },
+    "src/lib/shopify/buildKlarnaExpressOrderAttributes.ts": {
+      "sha256": "6f55873c469e5c5606875b61495422ba76330ef7bf0fe86444ebc2cadc7df01e",
+      "kind": "modified"
+    },
+    "src/lib/shopify/createOrderFromKlarnaExpress.ts": {
+      "sha256": "5fcb687f5c21a15571067c1c0a9aa7845db25943586fe47c42f0834aa7bd094f",
+      "kind": "modified"
+    },
+    "tests/unit/lib/integrations/storefrontTracking/acceptedWaitlist.test.ts": {
+      "sha256": "a0d060fa6bb4149dc8080e693b8ab768a2894591a26046204696035e4a0a3a9d",
+      "kind": "added"
+    },
+    "tests/unit/lib/integrations/storefrontTracking/bridge.test.ts": {
+      "sha256": "eda33bc5894a3436280abf16d6e25485e0d5a532ca8d8df48bd13cc0b18448c9",
+      "kind": "added"
+    },
+    "tests/unit/lib/integrations/storefrontTracking/klarnaAttribution.test.ts": {
+      "sha256": "cd30fac75301eb42e8c08ef3122553b34ef1d04fd3da4000e598d8ec0e766a3d",
+      "kind": "added"
+    }
+  },
+  "scope": "Pinned production archive plus explicit tracking overlays; excludes all unrelated dirty headless changes. Not a deployment."
+}

@@ -1,0 +1,37 @@
+/* Preserve the headless tone API, with fallbacks to v2's existing palette. */
+@layer components {
+.promo {
+  background-color: var(--promo, var(--primary));
+  color: var(--promo-foreground, var(--primary-foreground));
+}
+
+.commercePrimary {
+  background-color: var(--commerce-primary, var(--primary));
+  color: var(--commerce-primary-foreground, var(--primary-foreground));
+}
+
+.commercePrimary:hover {
+  background-color: var(--commerce-primary-hover, var(--primary));
+  color: var(--commerce-primary-hover-foreground, var(--primary-foreground));
+}
+
+.commerceSecondary {
+  background-color: var(--commerce-secondary, var(--card));
+  color: var(--commerce-secondary-foreground, var(--card-foreground));
+}
+
+.commerceSecondary:hover {
+  background-color: var(--commerce-secondary-hover, var(--card));
+  color: var(--commerce-secondary-hover-foreground, var(--card-foreground));
+}
+
+.featured {
+  background-color: var(--featured, var(--card));
+  color: var(--featured-foreground, var(--card-foreground));
+}
+
+.custom {
+  background-color: var(--brand-badge-bg);
+  color: var(--brand-badge-text);
+}
+}

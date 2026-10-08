@@ -1,0 +1,132 @@
+{
+  "date": "2026-10-07",
+  "status": "v2_locally_verified_backend_deployed_ingress_not_activated",
+  "sourceCommit": "e74e6cd8310c88f2777cbfdf5ad6b431647d7f77",
+  "checks": [
+    {
+      "command": "python3 scripts/tracking/vendor-contracts.py",
+      "result": "pass",
+      "exactFiles": 117
+    },
+    {
+      "command": "python3 scripts/tracking/vendor-contracts.py --manifest",
+      "result": "pass",
+      "mode": "checked-in SHA256 manifest; no sibling checkout required"
+    },
+    {
+      "command": "pnpm test:tracking",
+      "result": "pass",
+      "tests": 121,
+      "breakdown": {
+        "cjs": 110,
+        "chromiumIncludedInCjs": 10,
+        "gateway": 11
+      },
+      "externalProviderRequests": 0
+    },
+    {
+      "command": "pnpm exec tsc --noEmit",
+      "result": "pass"
+    },
+    {
+      "command": "pnpm lint",
+      "result": "pass",
+      "errors": 0,
+      "warnings": 5,
+      "warningScope": "Unchanged vendored sources: Pixel script, pageViewEvent, resolveTrackingAuthorization"
+    },
+    {
+      "command": "NEXT_PUBLIC_TRACKING_ENABLED=true NEXT_PUBLIC_VERCEL_ENV=production VERCEL_ENV=production pnpm build",
+      "result": "pass",
+      "staticPages": 49
+    },
+    {
+      "scope": "Pinned backend archive plus backend-release-manifest.json overlays",
+      "command": "NODE_OPTIONS='--conditions=react-server' node --import tsx --test tests/unit/lib/integrations/storefrontTracking/*.test.ts",
+      "result": "pass",
+      "tests": 20
+    },
+    {
+      "scope": "Same backend artifact, using existing installed dependencies",
+      "command": "node node_modules/next/dist/bin/next typegen && node node_modules/typescript/bin/tsc --noEmit",
+      "result": "pass"
+    },
+    {
+      "scope": "Same backend artifact; existing source-owned behavior only",
+      "result": "pass",
+      "tests": 42,
+      "files": [
+        "handleShopifyOrdersPaidWebhook.test.ts",
+        "handleShopifyRefundsCreateWebhook.test.ts",
+        "processProviderOutboxAttempt.test.ts",
+        "canonicalRefundOwnershipContract.test.ts",
+        "mapCanonicalPurchaseToMeta.test.ts",
+        "mapCanonicalPurchaseToGoogleDataManager.test.ts",
+        "mapCanonicalRefundToGoogleDataManager.test.ts"
+      ],
+      "testAdaptations": {
+        "handleShopifyOrdersPaidWebhook.test.ts": "Stale relative handler require changed to @/lib/analytics/server/handler in temporary test copy only",
+        "handleShopifyRefundsCreateWebhook.test.ts": "Stale relative handler/mapper requires and readFile URL point to actual src paths in temporary test copy only"
+      },
+      "scopeLimit": "No application/provider logic changed; deleted working-tree tests left deleted"
+    },
+    {
+      "scope": "Independent tracking backend release 9183f9e9464a0108d161403ec843240ae94560f6",
+      "result": "pass",
+      "checks": [
+        "frozen dependency install",
+        "production build",
+        "TypeScript",
+        "targeted ESLint",
+        "24 bridge and deployment isolation tests"
+      ]
+    },
+    {
+      "scope": "Vercel production backend deployment",
+      "deployment": "dpl_B3fJEEJfJPiVHut4gxGC2SeAm39A",
+      "sha": "b9723ac08e7c65c26ae20df7c52e21df0932d597",
+      "result": "READY",
+      "source": "Git push through pnpm run sync"
+    },
+    {
+      "scope": "HTTPS runtime boundary",
+      "result": "pass",
+      "checks": 6,
+      "releaseIdentity": "pass",
+      "ingressEnabled": false,
+      "queuePublishEnabled": false,
+      "evidence": "backend-runtime-verification.json"
+    },
+    {
+      "scope": "Project and worker ownership",
+      "result": "pass",
+      "backendCronCount": 0,
+      "existingStorefrontCronCount": 9,
+      "existingStorefrontSHA": "e74e6cd8310c88f2777cbfdf5ad6b431647d7f77",
+      "evidence": "backend-project-readback.json"
+    }
+  ],
+  "unverified": [
+    "Backend environment parity, custom-audience OIDC exchange from storefront production, and live authenticated bridge acceptance",
+    "Queue ownership and in-flight deliveries after project takeover",
+    "Live full Next/Shopify/Klarna journey and callbacks",
+    "Safari Cookie Keeper restoration and actual BFCache",
+    "Full server-GTM trigger readback and Stape Store/feed/Power Ups consumption",
+    "Meta/Google/other active provider receipt and deduplication",
+    "Before/after JS, TTFB, LCP and INP",
+    "Cross-tab simultaneous Shopify mutations beyond filtered/capped observed deltas",
+    "24-hour monitoring and first natural purchase",
+    "Workflow SDK automatically builds three existing workflows; SDK-managed trigger ownership and in-flight work must be audited before activation/cutover. No workflow was started by this verification."
+  ],
+  "releaseActionsPerformed": [
+    "Created separate Vercel project utekos-backend after explicit user instruction",
+    "Registered backend.utekos.no on that project",
+    "Configured Node24, arn1 and team OIDC; left Git unconnected",
+    "Created private Team-Kelc-AS/utekos-tracking-backend repository; existing catalog repository untouched",
+    "Configured 84 production-only environment variables in backend project; unresolved Secret parity recorded",
+    "Published private backend main 9183f9e9464a0108d161403ec843240ae94560f6 via pnpm run sync; independently verified GitHub SHA; Vercel deployment awaits GitHub App repository access",
+    "Verified GitHub App access and linked independent backend main to Vercel",
+    "Deployed b9723ac through pnpm run sync using authenticated GitHub account",
+    "Verified READY, custom domain, TLS, health/release identity and disabled ingress/queue publication; existing storefront release unchanged"
+  ]
+}

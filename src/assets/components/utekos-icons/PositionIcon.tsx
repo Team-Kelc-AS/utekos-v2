@@ -1,0 +1,20 @@
+import { ICON_COLORS, type IconProps } from './icon-types'
+
+export function PositionIcon({ tone = 'light', size = 24, title, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 300 299.999988"
+      preserveAspectRatio="xMidYMid meet"
+      width={size}
+      height={size}
+      color={ICON_COLORS[tone]}
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+      {...props}
+    >
+      {title ? <title>{title}</title> : null}
+      <path fill="currentColor" d="M 253.535156 46.464844 C 254.996094 47.925781 255.40625 50.132812 254.574219 52.019531 L 159.574219 267.019531 C 158.765625 268.851562 156.9375 270.023438 154.9375 270 C 152.933594 269.972656 151.140625 268.757812 150.378906 266.902344 L 116.171875 183.828125 L 33.097656 149.625 C 31.246094 148.859375 30.027344 147.066406 30 145.0625 C 29.976562 143.0625 31.148438 141.234375 32.980469 140.425781 L 247.980469 45.425781 C 249.867188 44.59375 252.074219 45.003906 253.535156 46.464844 Z M 47.738281 144.839844 L 121.902344 175.378906 C 123.136719 175.882812 124.117188 176.863281 124.621094 178.097656 L 155.160156 252.261719 L 240.207031 59.792969 Z M 47.738281 144.839844 " fillOpacity="1" fillRule="evenodd"/>
+    </svg>
+  )
+}

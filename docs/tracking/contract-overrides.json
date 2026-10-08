@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "sourceCommit": "e74e6cd8310c88f2777cbfdf5ad6b431647d7f77",
+  "files": {
+    "src/lib/analytics/eventCatalog.ts": {
+      "baseSha256": "f0e8e901414abb6d08012c8400e690ce23892fb2b6cf182c2d099815e7487d48",
+      "sha256": "23a3ba65ae7c8680e73dfe90d39a6ce45c59ac51e43378b18233847acf3fa932",
+      "reason": "Dealer-only provider routes and CTA observation; adapters and workers implemented in isolated tracking backend. Not a production activation claim.",
+      "implementationRepository": "utekos-tracking-backend",
+      "implementationPath": "src/lib/analytics/eventCatalog.ts"
+    },
+    "src/lib/analytics/generateLeadEvent.ts": {
+      "baseSha256": "3519427256b64d64d098c76117593dbdd0c82e419da37a925c35e42796e5ac73",
+      "sha256": "44c886a81f3073ed5d7c94026bb9c1d008762d0b63df7aa17e9d79016b8e49af",
+      "reason": "Explicit unvalued dealer-inquiry branch. Other leads retain mandatory documented positive monetary value.",
+      "implementationRepository": "utekos-tracking-backend",
+      "implementationPath": "src/lib/analytics/generateLeadEvent.ts"
+    }
+  }
+}

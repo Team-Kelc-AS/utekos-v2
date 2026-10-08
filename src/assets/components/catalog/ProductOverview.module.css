@@ -1,0 +1,111 @@
+.page {
+  --background: #001a18;
+  --foreground: #f0eee9;
+  --card: #012622;
+  --card-foreground: #f0eee9;
+  --primary: #b44701;
+  --primary-foreground: #f0eee9;
+  --border: #f0eee92b;
+  --muted-foreground: #f0eee9;
+  flex: 1;
+  min-width: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.hero { padding: 3rem 1rem 4rem; text-align: center; }
+.hero h1 { font-size: clamp(2rem, 5.4vw, 4.5rem); line-height: 1.05; font-weight: 800; }
+.hero h1 span { color: var(--primary); }
+.rows { display: flex; flex-direction: column; gap: 3rem; padding: 0 1rem; }
+.row { width: 100%; max-width: 80rem; margin-inline: auto; }
+.track { margin-left: -.75rem; align-items: flex-start; }
+.slide { flex-basis: 66.666667%; padding-left: .75rem; }
+
+.card {
+  position: relative;
+  display: block;
+  container-type: inline-size;
+  isolation: isolate;
+  border: 1px solid #f0eee90d;
+  border-radius: 1.5rem;
+  padding: 0;
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 20px 30px -24px #010b0a;
+}
+.card[data-color='Vargnatt'] { background: #010b0a; }
+.card[data-color='Fjellblå'] { background: #001a18; }
+.imageLink { display: block; }
+.image { display: block; width: 100%; height: auto; }
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, #010b0af5, #010b0a80 28%, transparent 65%);
+}
+.imageLink:focus-visible { outline: 3px solid var(--foreground); outline-offset: -5px; }
+.gender { position: absolute; top: .75rem; left: .75rem; border: 1px solid #f0eee92b; border-radius: 999px; background: #001a18; padding: .25rem .625rem; font-size: .75rem; }
+.wishlist { position: absolute; top: .75rem; right: .75rem; z-index: 2; }
+.wishlistButton { width: 44px; height: 44px; border-radius: .75rem; background: #001a18; }
+.content { position: absolute; inset-inline: 0; bottom: 0; z-index: 1; padding: .75rem; pointer-events: none; }
+.content a, .actions { pointer-events: auto; }
+.cardHeader { padding: 0; margin-bottom: .75rem; gap: .25rem; }
+.title { font-size: 1rem; line-height: 1.15; font-weight: 800; }
+.price { font-size: .875rem; color: var(--foreground); font-weight: 500; }
+.actions, .guideActions { display: grid; grid-template-columns: minmax(0, 1fr); gap: .5rem; }
+.buy, .guideLink, .detailLink {
+  display: flex;
+  min-width: 0;
+  width: 100%;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary);
+  padding: 0 .5rem;
+  color: var(--foreground);
+  font-size: .75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.buy:hover, .guideLink:hover { background: var(--primary); opacity: .9; }
+.buy:disabled { opacity: .65; }
+.bag { flex-shrink: 0; }
+.detailLink { background: #f0eee9; color: #010b0a; }
+.klarna { min-width: 0; --klarna-button-height: 44px; }
+.previous, .next { top: 42%; bottom: auto; width: 36px; height: 36px; margin: 0; border: 1px solid var(--border); background: #001a18; color: var(--foreground); }
+.previous { left: .25rem; }
+.next { right: .25rem; }
+.previous:hover, .next:hover { background: #012622; color: var(--foreground); }
+.previous:disabled, .next:disabled { opacity: .4; }
+.guidance { display: grid; gap: 3rem; max-width: 80rem; margin: 4rem auto 0; padding: 3rem 1.5rem; border-top: 1px solid var(--border); }
+.guidance h2 { font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; }
+.guidance nav ul { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; }
+.guidance a, .more { display: inline-flex; min-height: 44px; align-items: center; text-decoration: underline; text-underline-offset: 4px; }
+
+/* Keep Klarna's 150px minimum width; stack only when the card cannot fit both controls. */
+@container (min-width: 300px) {
+  .actions { grid-template-columns: minmax(0, 1fr) minmax(150px, 1fr); }
+  .actions .bag { display: none; }
+  .guideActions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 768px) {
+  .rows { padding-inline: 1.5rem; }
+  .track { margin-left: -1rem; }
+  .slide { flex-basis: 33.333333%; padding-left: 1rem; }
+  .content { padding: 1rem; }
+  .title { font-size: 1.25rem; }
+  .price { font-size: 1rem; }
+  .previous { left: .5rem; }
+  .next { right: .5rem; }
+  .guidance { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 1280px) {
+  .track { margin-left: -1.5rem; }
+  .slide { flex-basis: 25%; padding-left: 1.5rem; }
+  .previous, .next { display: none; }
+}

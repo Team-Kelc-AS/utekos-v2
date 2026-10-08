@@ -1,0 +1,35 @@
+.terrace {
+  /* Google Sans Flex's STAT table names opsz 120 as 120pt. */
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 120;
+}
+
+.terrace [aria-current='page'] {
+  white-space: normal;
+}
+
+.terrace article h1 {
+  max-width: 100%;
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  line-height: 1.08;
+}
+
+.terrace nav[aria-label='Brødsmuler'] {
+  font-weight: 500;
+}
+
+.terrace nav[aria-labelledby] a,
+.terrace summary {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}
+
+.terrace summary:focus-visible {
+  outline: 3px solid #b44701;
+  outline-offset: 4px;
+}
+
+.terrace [id^='kilde-'] {
+  scroll-margin-top: 7rem;
+}

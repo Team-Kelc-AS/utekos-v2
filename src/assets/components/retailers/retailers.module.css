@@ -1,0 +1,85 @@
+.page {
+  background: #001a18;
+  color: #f0eee9;
+  font-family: var(--font-google-sans-flex), sans-serif;
+  font-weight: 500;
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 120;
+  line-height: 1.65;
+  padding-bottom: clamp(3rem, 7vw, 6rem);
+}
+.page :is(h1, h2, h3) { font-weight: 800; line-height: 1.16; text-wrap: balance; }
+.page h1 { max-width: 18ch; font-size: clamp(2.3rem, 5.3vw, 4.5rem); letter-spacing: -.035em; }
+.page h2 { font-size: clamp(1.5rem, 2.5vw, 2.1rem); letter-spacing: -.02em; }
+.page a { text-underline-offset: .25em; }
+.page a:hover { text-decoration: underline; }
+.page :is(a, button, input, textarea, [tabindex]):focus-visible { outline: 3px solid #f0eee9; outline-offset: 4px; }
+.container { width: min(100% - 3rem, 78rem); margin-inline: auto; }
+.breadcrumbs { padding-block: 1.5rem; }
+.header { padding-block: 2rem 3.5rem; }
+.intro { max-width: 64ch; margin-top: 1.5rem; font-size: clamp(1.05rem, 2vw, 1.2rem); }
+.grid { display: grid; gap: 1.5rem; }
+.card { min-width: 0; background: #012622; border-radius: .75rem; overflow: hidden; display: flex; flex-direction: column; }
+.entranceImage { display: block; width: 100%; height: auto; }
+.logoStage { min-height: 5.5rem; display: flex; align-items: center; justify-content: center; padding: 1rem 1.5rem; background: #010b0a; }
+.lightLogoStage { background: #f0eee9; }
+.logo { width: min(100%, 13rem); height: auto; max-height: 4rem; object-fit: contain; }
+.cardBody { display: flex; flex-direction: column; flex: 1; padding: clamp(1.25rem, 2vw, 1.75rem); }
+.place { font-size: .9rem; margin-bottom: .5rem; }
+.card h2 { font-size: 1.6rem; }
+.assortment { margin-top: 1rem; }
+.contactList { display: grid; gap: 1rem; margin-block: 1.5rem; }
+.contactList dt { font-size: .8rem; margin-bottom: .2rem; }
+.contactList a, .hoursLink, .detailsLink { text-decoration: underline; }
+.contactList a { display: inline-flex; min-height: 2.75rem; align-items: center; }
+.hoursLink { padding-block: .5rem; }
+.availability { margin-block: 1.25rem 1.5rem; font-size: .9rem; }
+.cardActions { margin-top: auto; }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.card .actions { display: grid; }
+.primaryLink, .secondaryLink { display: inline-flex; min-height: 3rem; align-items: center; justify-content: center; gap: .6rem; padding: .75rem 1.1rem; border-radius: .4rem; font-weight: 800; line-height: 1.4; text-align: center; }
+.primaryLink { background: #b44701; color: #f0eee9; }
+.secondaryLink { border: 1px solid #f0eee9; }
+.actions svg { flex-shrink: 0; }
+.detailsLink { display: flex; min-height: 3rem; align-items: center; justify-content: space-between; gap: 1rem; margin-top: .6rem; }
+.dealerCallout { display: grid; align-items: center; gap: 1.5rem; margin-top: clamp(3rem, 6vw, 5rem); padding-top: clamp(2rem, 4vw, 3rem); border-top: 1px solid #f0eee9; }
+.dealerCallout p { max-width: 63ch; margin-top: 1rem; }
+.dealerCallout > a { justify-self: start; }
+.detailLayout { display: grid; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+.detailImage { width: 100%; max-width: 30rem; overflow: hidden; border-radius: .75rem; }
+.detailBody { min-width: 0; }
+.detailBody .contactList { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.section { margin-top: 2.5rem; }
+.section h2 { margin-bottom: 1rem; }
+.section p + p { margin-top: 1rem; }
+.section a { text-decoration: underline; }
+.googleHours { padding: 1.25rem; border: 1px solid #f0eee9; border-radius: .4rem; margin-bottom: 1rem; }
+.hours { list-style: none; display: grid; gap: .3rem; }
+.googleAttribution { display: inline-block; margin-top: 1rem; font-family: sans-serif; font-size: 14px; font-weight: 400; color: white; white-space: nowrap; }
+.subtleLink { border-top: 1px solid #f0eee9; margin-top: 3rem; padding-top: 1.5rem; font-size: .95rem; }
+.subtleLink a { display: inline-block; padding-block: .5rem; text-decoration: underline; }
+.recruitLayout { display: grid; gap: 3rem; align-items: start; }
+.recruitIntro { display: grid; gap: 2rem; min-width: 0; }
+.recruitIntro p { margin-top: 1rem; }
+.recruitIntro a { text-decoration: underline; }
+.directContact { overflow-wrap: anywhere; }
+.directContact a { display: table; padding-block: .5rem; }
+.formPanel { min-width: 0; background: #012622; border-radius: .75rem; padding: clamp(1.25rem, 3vw, 2.5rem); scroll-margin-top: 7rem; }
+.formIntro { margin-block: 1rem 1.5rem; }
+.pdfAttachment { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #f0eee9; }
+.pdfAttachment h3 { font-size: 1.3rem; }
+.pdfAttachment p { margin-top: 1rem; }
+.pdfAttachment p a { text-decoration: underline; }
+.pdfAttachment .actions { margin-top: 1.25rem; }
+.pdfDetails { font-size: .875rem; }
+.headerAction { margin-top: 1.75rem; }
+@media (min-width: 64rem) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .detailLayout { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+  .dealerCallout { grid-template-columns: minmax(0, 1fr) auto; }
+  .recruitLayout { grid-template-columns: minmax(0, 1fr) minmax(0, 1.65fr); }
+}
+@media (max-width: 26rem) {
+  .container { width: calc(100% - 2rem); }
+  .detailBody .contactList { grid-template-columns: 1fr; }
+}

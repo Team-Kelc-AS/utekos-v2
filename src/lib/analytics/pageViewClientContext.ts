@@ -1,0 +1,78 @@
+import type { ConsentSnapshot } from './pageViewEvent'
+import { resolveClickIds } from './clickIdSessionStore'
+import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAuthorization'
+
+function parseCookies(
+  cookieHeader: string
+): Map<string, string> {
+  const cookies = new Map<string, string>()
+
+  for (const part of cookieHeader.split(';')) {
+    const separator = part.indexOf('=')
+    if (separator < 1) continue
+
+    const name = part.slice(0, separator).trim()
+    const value = part.slice(separator + 1).trim()
+    if (name && value) {
+      try {
+        cookies.set(name, decodeURIComponent(value))
+      } catch {
+        // Ignore this malformed cookie without discarding other identifiers.
+      }
+    }
+  }
+
+  return cookies
+}
+
+export function getConsentSnapshot(): ConsentSnapshot {
+  return resolveTrackingAuthorization()
+}
+
+export function extractClickIds(
+  pageUrl: string,
+  cookieHeader: string = '',
+  marketingConsentGranted: boolean = false
+) {
+  if (!marketingConsentGranted) return undefined
+  const epik = parseCookies(cookieHeader).get('_epik')
+
+  return resolveClickIds(
+    pageUrl,
+    undefined,
+    undefined,
+    undefined,
+    epik ? { epik } : {},
+    marketingConsentGranted
+  )
+}
+
+export function extractBrowserIds(
+  cookieHeader: string,
+  consent: ConsentSnapshot
+) {
+  const cookies = parseCookies(cookieHeader)
+  const identifiers: Record<string, string> = {}
+
+  if (consent.marketing === 'granted') {
+    const fbp = cookies.get('_fbp')
+    const fbc = cookies.get('_fbc')
+    const uetSession = cookies.get('_uetsid')
+    const uetVisitor = cookies.get('_uetvid')
+    const snapchatCookie = cookies.get('_scid')
+    if (fbp) identifiers.fbp = fbp
+    if (fbc) identifiers.fbc = fbc
+    if (uetSession) identifiers.uet_session = uetSession
+    if (uetVisitor) identifiers.uet_visitor = uetVisitor
+    if (snapchatCookie) identifiers.sc_cookie1 = snapchatCookie
+  }
+
+  if (consent.analytics === 'granted') {
+    const gaClient = cookies.get('_ga')
+    if (gaClient) identifiers.ga_client = gaClient
+  }
+
+  return Object.keys(identifiers).length > 0 ?
+      identifiers
+    : undefined
+}

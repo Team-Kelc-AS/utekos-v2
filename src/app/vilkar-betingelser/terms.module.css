@@ -1,0 +1,35 @@
+.page {
+  --knowledge-ink: #f0eee9;
+  --knowledge-ink-muted: #f0eee9;
+  --knowledge-link: #f0eee9;
+  --knowledge-surface: #012622;
+  --knowledge-border: #f0eee933;
+  background: #001a18;
+  color: #f0eee9;
+  font-family: var(--font-google-sans-flex), sans-serif;
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 120;
+  font-weight: 500;
+  line-height: 1.75;
+}
+
+.container { width: min(100% - 3rem, 76rem); margin-inline: auto; }
+.breadcrumbs { padding-block: 1.5rem; }
+.header { padding-block: 1.5rem 3rem; }
+.page .header h1 { margin: 0; font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3rem; padding-bottom: 5rem; }
+.sidebar, .policy { min-width: 0; }
+.page .sidebar nav { margin: 0; }
+.policy > section + section { margin-top: 3.5rem; }
+.page .policy h2 { margin: 0 0 1rem; font-size: clamp(1.6rem, 3vw, 2.15rem); font-weight: 800; line-height: 1.25; }
+.page .policy h3 { font-weight: 800; }
+.page :is(section, h2, h3) { scroll-margin-block-start: 2rem; }
+.page :is(a, [tabindex]):focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+
+@media (min-width: 1024px) {
+  .layout { grid-template-columns: minmax(15rem, .8fr) minmax(0, 2fr); gap: 4rem; }
+}
+
+@media (max-width: 374px) {
+  .container { width: calc(100% - 2rem); }
+}

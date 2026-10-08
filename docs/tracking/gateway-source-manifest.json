@@ -1,0 +1,131 @@
+{
+  "sourceCommit": "e74e6cd8310c88f2777cbfdf5ad6b431647d7f77",
+  "files": [
+    {
+      "source": "src/lib/analytics/serverGtmGateway/buildServerGtmRequestHeaders.ts",
+      "target": "src/lib/analytics/serverGtmGateway/buildServerGtmRequestHeaders.ts",
+      "sourceSha256": "f6539d7ed98fd7171d4d8eec9c9bcedb83269af4a782b0269e1e783d1204623e",
+      "adapted": true
+    },
+    {
+      "source": "src/lib/analytics/serverGtmGateway/buildServerGtmResponseHeaders.ts",
+      "target": "src/lib/analytics/serverGtmGateway/buildServerGtmResponseHeaders.ts",
+      "sourceSha256": "bf1b46dcab0b05553084c59ada852d598d2c6b5d4be56d4f39b55c67087806f5",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/serverGtmGateway/buildServerGtmUpstreamUrl.ts",
+      "target": "src/lib/analytics/serverGtmGateway/buildServerGtmUpstreamUrl.ts",
+      "sourceSha256": "8d8e88c5593b9259ae9aabc56a78f2ef52cfe9894bfc4cae64d2c88a14a3b667",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/serverGtmGateway/proxyServerGtmRequest.ts",
+      "target": "src/lib/analytics/serverGtmGateway/proxyServerGtmRequest.ts",
+      "sourceSha256": "61268aa3f2c973debdb77da3648bf47e6d693731ca4caa54490ba578466efb41",
+      "adapted": true
+    },
+    {
+      "source": "src/lib/analytics/server/stapeCookieKeeperUserId.ts",
+      "target": "src/lib/analytics/server/stapeCookieKeeperUserId.ts",
+      "sourceSha256": "f0954b701030051c22933bf24290a6933bb2eac8070ba39acafe933ee2099716",
+      "adapted": false
+    },
+    {
+      "source": "src/components/analytics/googleTagManagerBootstrap.ts",
+      "target": "src/lib/tracking/googleTagManagerBootstrap.ts",
+      "sourceSha256": "42a55c4f9bd03217e08abc8c1066f090512289aa0229fd4cc9e9ff45d5ebd010",
+      "adapted": false
+    },
+    {
+      "source": "src/components/analytics/stapeCustomLoader.ts",
+      "target": "src/lib/tracking/stapeCustomLoader.ts",
+      "sourceSha256": "1bd4e64f948a47fa5ce70fdfab633566e719f00d27c970920ed419b391c3f02f",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/withoutTrackingQuery.ts",
+      "target": "src/lib/analytics/withoutTrackingQuery.ts",
+      "sourceSha256": "903855092a2ae60b8793ef0823bf00814d2db18e3363860197cfe3f3740f97d1",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/server/processMetaParameterContext.ts",
+      "target": "src/lib/analytics/server/processMetaParameterContext.ts",
+      "sourceSha256": "e6164825a89e023c3009c7c2631fa82da89ae7dcedf259faaa72792ce84fd7f5",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/metaParameterContextContract.ts",
+      "target": "src/lib/analytics/metaParameterContextContract.ts",
+      "sourceSha256": "222ada5a4fdae654731e655d1b456dff3db0902c70cf32367d6ba394235a49a7",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/canonicalEventEnvelope.ts",
+      "target": "src/lib/analytics/canonicalEventEnvelope.ts",
+      "sourceSha256": "39b735b0f1a7e7f84c437ab9094bd28e82d3f79651e6acfa70b3e02dadfe347b",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/canonicalSignalContract.ts",
+      "target": "src/lib/analytics/canonicalSignalContract.ts",
+      "sourceSha256": "41d9a157c44343c3865e897cea92fa2487087a4436cae350a87507027b1c5e18",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/validation/zodMini.ts",
+      "target": "src/lib/validation/zodMini.ts",
+      "sourceSha256": "774051399ea19671c3e0d069df6bb8f4b5df39ad4a20b29199825934683b7a38",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/experimentAssignment.ts",
+      "target": "src/lib/analytics/experimentAssignment.ts",
+      "sourceSha256": "66eea11466d156ad27a3003bd5accd85c3671ba3d277e5328193dbe6c2a14d58",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/metaParameterBuilderUserData.ts",
+      "target": "src/lib/analytics/metaParameterBuilderUserData.ts",
+      "sourceSha256": "c948f32e75accc3478f3c28ae87d9a3836a12124f13860a1f071971efdc942f3",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/metaAudience.ts",
+      "target": "src/lib/analytics/metaAudience.ts",
+      "sourceSha256": "a48e573e9816dcfd63563169be5ddaf10c54d2b9d77e7693973499b818dbe51e",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/server/ensureCanonicalMetaBrowserIds.ts",
+      "target": "src/lib/analytics/server/ensureCanonicalMetaBrowserIds.ts",
+      "sourceSha256": "d61644c3bc781d050b8d35ddff19b5cf216cc94e3d5663146201f5f311fb5aff",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/extractFbclidFromFbc.ts",
+      "target": "src/lib/analytics/extractFbclidFromFbc.ts",
+      "sourceSha256": "892e8dff7d6a195e33d96a288d9837243d279972eedd7c71197def9b9a467496",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/server/applyProxyMetaCookies.ts",
+      "target": "src/lib/analytics/server/applyProxyMetaCookies.ts",
+      "sourceSha256": "9901304c357e5cb3aee2b0f86ba66aeeacc37e1873bf546b7cbc0e4a2c053b8f",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/analytics/server/captureProxyMetaCookies.ts",
+      "target": "src/lib/analytics/server/captureProxyMetaCookies.ts",
+      "sourceSha256": "6c2936329d6226614a3e59dfcffa4f3155043e23e46926d8bf4f3f51b3524279",
+      "adapted": false
+    },
+    {
+      "source": "src/lib/consent/resolveTrackingAuthorization.ts",
+      "target": "src/lib/consent/resolveTrackingAuthorization.ts",
+      "sourceSha256": "cadab7cce1bc3f949922fc04ddd5da17ad589bc2f66248557c74ecd38056a067",
+      "adapted": false
+    }
+  ]
+}

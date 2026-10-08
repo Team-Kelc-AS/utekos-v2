@@ -1,0 +1,65 @@
+.section {
+  --background: #001a18;
+  --foreground: #f0eee9;
+  --card: #012622;
+  --primary: #b44701;
+  --night: #001a18;
+  --jungle: #012622;
+  --font-sans: var(--font-google-sans-flex);
+  font-family: var(--font-google-sans-flex), sans-serif;
+  font-optical-sizing: none;
+  font-variation-settings: 'opsz' 120;
+  font-weight: 500;
+}
+
+.section h2,
+.section h3 {
+  font-weight: 800;
+}
+
+.region {
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+
+.track {
+  animation: social-proof-marquee 90s linear infinite;
+  will-change: transform;
+}
+
+.region:hover .track,
+.region:focus-within .track {
+  animation-play-state: paused;
+}
+
+.region:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 0.375rem;
+}
+
+@keyframes social-proof-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .region {
+    overflow-x: auto;
+    scroll-snap-type: inline proximity;
+  }
+
+  .track {
+    animation: none;
+    will-change: auto;
+    scroll-behavior: auto;
+  }
+
+  .track > * {
+    scroll-snap-align: center;
+  }
+}

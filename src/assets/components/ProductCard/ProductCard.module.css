@@ -1,0 +1,25 @@
+.card {
+  --background: #001a18;
+  --foreground: #f0eee9;
+  --card: #012622;
+  --card-foreground: #f0eee9;
+  --night: #001a18;
+  --primary: #b44701;
+  --border: #f0eee91f;
+  background: #001a18;
+  color: #f0eee9;
+}
+
+.svaleImage {
+  background: var(--moonstruck);
+}
+
+.card a:focus-visible { outline: 2px solid var(--card-foreground); outline-offset: -3px; }
+
+@media (min-width: 1280px) {
+  /* Keep the full video visible without adding height to the card. */
+  .card:has(video:not([hidden])) [data-slot='card-header'] {
+    margin-top: 0;
+    padding-top: 0;
+  }
+}

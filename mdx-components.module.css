@@ -1,0 +1,566 @@
+/* Utekos MDX foundation. Existing page/knowledge tokens take precedence.
+   No page background, font download, logo recreation or independent theme. */
+.content {
+  --mdx-ink: var(--knowledge-ink, var(--foreground, #f0eee9));
+  --mdx-muted: var(--knowledge-ink-muted, var(--foreground, #f0eee9));
+  --mdx-surface: var(--knowledge-surface, var(--card, #012622));
+  --mdx-border: var(--knowledge-border, var(--border, #012622));
+  --mdx-link: var(--knowledge-link, var(--foreground, #f0eee9));
+  --mdx-accent: var(--primary, #b44701);
+  min-width: 0;
+  color: var(--mdx-ink);
+  font-family: var(--font-google-sans-flex), sans-serif;
+  /* Google Sans Flex v4.005: the 120pt variant maps to opsz 120. */
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 120;
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  font-weight: 500;
+  line-height: 1.75;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.content > :is(.paragraph, .unorderedList, .orderedList, .blockquote) {
+  max-inline-size: 70ch;
+}
+.content .heading {
+  margin: 2.5em 0 0.65em;
+  padding: 0;
+  max-width: 100%;
+  color: inherit;
+  font-family: inherit;
+  font-weight: 800;
+  letter-spacing: normal;
+  text-transform: none;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  scroll-margin-block-start: 7rem;
+}
+.content .heading:first-child {
+  margin-block-start: 0;
+}
+.content .h1 {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1.12;
+}
+.content .h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.2;
+}
+.content .h3 {
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  line-height: 1.3;
+}
+.content .h4 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+.content .h5 {
+  font-size: 1.125rem;
+  line-height: 1.45;
+}
+.content .h6 {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+/* Existing rehype-autolink-headings emits an aria-hidden decorative anchor. */
+.content .heading > a[aria-hidden='true'] {
+  display: none;
+}
+.content .paragraph {
+  margin: 1.25em 0 0;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+}
+.content .heading + .paragraph {
+  margin-block-start: 0;
+}
+.content .link {
+  color: var(--knowledge-link, var(--mdx-link));
+  font-weight: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 0.08em;
+}
+.content .link:hover {
+  text-decoration-thickness: 0.14em;
+}
+.content :where(a, summary, [tabindex='0']):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+.content .strong {
+  color: inherit;
+  font-weight: 800;
+}
+.content .workTitle {
+  font-style: italic;
+}
+.content .unorderedList,
+.content .orderedList {
+  margin: 1.25em 0;
+  padding-inline-start: 1.5em;
+}
+.content .unorderedList {
+  list-style: disc;
+}
+.content .orderedList {
+  list-style: decimal;
+}
+.content .listItem {
+  margin: 0.5em 0;
+  padding-inline-start: 0.25em;
+}
+.content .listItem::marker {
+  color: inherit;
+  font-weight: 700;
+}
+.content :is(.unorderedList, .orderedList) :is(.unorderedList, .orderedList) {
+  margin-block: 0.5em;
+}
+.content .listItem > .paragraph:first-child {
+  margin-block-start: 0;
+}
+.content :global(.contains-task-list) {
+  list-style: none;
+  padding-inline-start: 0;
+}
+.content :global(.task-list-item) {
+  list-style: none;
+}
+.content :global(.task-list-item) > input[type='checkbox'] {
+  margin-inline-end: 0.6em;
+  accent-color: var(--mdx-accent);
+}
+.content .blockquote {
+  margin: 2em 0;
+  padding: 0.5em 0 0.5em 1.25em;
+  border-inline-start: 3px solid var(--mdx-accent);
+  color: inherit;
+}
+.content .blockquote > :first-child {
+  margin-block-start: 0;
+}
+.content .callout {
+  margin: 2em 0;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--mdx-border);
+  border-inline-start: 4px solid var(--mdx-accent);
+  border-radius: 12px;
+  background: var(--mdx-surface);
+  color: var(--mdx-ink);
+}
+.content .calloutTitle,
+.content .callout > [data-callout-title] {
+  margin: 0 0 0.5em;
+  font-size: 1em;
+  font-weight: 800;
+  line-height: 1.5;
+}
+.content .callout > [data-callout-title] + *,
+.content .calloutBody > :first-child {
+  margin-block-start: 0;
+}
+.content .calloutBody > :last-child {
+  margin-block-end: 0;
+}
+/* Status is conveyed by the visible label, never colour alone. */
+.content .callout[data-callout='warning'],
+.content .callout[data-callout='caution'] {
+  border-inline-start-width: 6px;
+}
+/* Size recommendations keep Markdown headings and their generated anchors. */
+.content .sizeFitCallout {
+  display: grid;
+  margin-block: 1.5rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--mdx-ink) 20%, transparent);
+  border-radius: 16px;
+  background: var(--mdx-surface);
+  color: var(--mdx-ink);
+  break-inside: avoid;
+}
+.content .sizeFitCallout > .heading {
+  margin: 0;
+  padding: 1rem 1.5rem;
+  background: var(--mdx-accent);
+  font-size: clamp(1.5rem, 2vw, 1.8rem);
+  line-height: 1.25;
+}
+.content .sizeFitCallout > .paragraph {
+  margin: 0;
+  padding: 1.5rem;
+  line-height: 1.7;
+}
+@media (min-width: 40rem) {
+  .content .sizeFitCallout {
+    grid-template-columns: 11rem minmax(0, 1fr);
+  }
+  .content .sizeFitCallout > .heading {
+    align-content: center;
+    padding-block: 2rem;
+  }
+  .content .sizeFitCallout > .paragraph {
+    padding: 1.75rem 2rem;
+  }
+}
+.content .rule {
+  margin: 3em 0;
+  height: 0;
+  border: 0;
+  border-block-start: 1px solid var(--mdx-border);
+  background: none;
+}
+/* Adapt shadcn cards to the surrounding MDX palette and type scale. */
+.content .card {
+  --card: var(--mdx-surface);
+  --card-foreground: var(--mdx-ink);
+  --foreground: var(--mdx-ink);
+  --border: color-mix(in srgb, var(--mdx-ink) 20%, transparent);
+  --ring: var(--mdx-ink);
+  --card-spacing: clamp(1rem, 3vw, 2rem);
+  margin-block: 2rem;
+  font-size: inherit;
+}
+.content .card [data-slot='card-title'] > .heading {
+  margin: 0;
+}
+.content .card [data-slot='accordion-body'] > :first-child {
+  margin-block-start: 0;
+}
+.content .pre {
+  max-width: 100%;
+  margin: 1.75em 0;
+  padding: 1.25em;
+  overflow-x: auto;
+  border: 1px solid var(--mdx-border);
+  border-radius: 12px;
+  background: var(--mdx-surface);
+  color: inherit;
+  font-size: 0.875em;
+  line-height: 1.65;
+  white-space: pre;
+  overflow-wrap: normal;
+  tab-size: 2;
+}
+.content .code {
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  background: var(--mdx-surface);
+  color: inherit;
+  font-size: 0.9em;
+}
+.content .pre .code {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+}
+.content .kbd {
+  padding: 0.1em 0.4em;
+  border: 1px solid var(--mdx-border);
+  border-block-end-width: 2px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+.content .image {
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: 12px;
+}
+.content .figure {
+  margin: 2em 0;
+}
+.content .figcaption {
+  margin-block-start: 0.65em;
+  color: var(--mdx-muted);
+  font-size: 0.875em;
+  line-height: 1.6;
+}
+.content .tableScroll {
+  max-width: 100%;
+  margin: 2em 0;
+  overflow-x: auto;
+  border: 1px solid var(--mdx-border);
+  border-radius: 12px;
+}
+/* Override old article CSS's display:block without changing native semantics. */
+.content .table {
+  display: table;
+  width: 100%;
+  margin: 0;
+  overflow: visible;
+  border-collapse: collapse;
+  font-size: 0.9375em;
+  line-height: 1.6;
+}
+.content .table th,
+.content .table td {
+  min-width: 8rem;
+  padding: 0.85em 1em;
+  border-block-end: 1px solid var(--mdx-border);
+  text-align: start;
+  vertical-align: top;
+}
+/* Preserve GFM's align attribute; don't override authored inline text-align. */
+.content .table [align='left'] {
+  text-align: left;
+}
+.content .table [align='center'] {
+  text-align: center;
+}
+.content .table [align='right'] {
+  text-align: right;
+}
+.content .table th {
+  font-weight: 800;
+  background: var(--mdx-surface);
+}
+.content .table tbody tr:last-child td {
+  border-block-end: 0;
+}
+.content .caption {
+  caption-side: top;
+  padding: 1em;
+  color: inherit;
+  text-align: start;
+  font-weight: 700;
+}
+.content .measurementTable {
+  --border: color-mix(in srgb, var(--mdx-ink) 16%, transparent);
+  --foreground: var(--mdx-ink);
+  margin-block: 2rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--mdx-surface);
+  color: var(--mdx-ink);
+}
+.content .measurementTable table {
+  table-layout: fixed;
+  font-size: clamp(0.9375rem, 1.4vw, 1.125rem);
+  line-height: 1.5;
+}
+.content .measurementTable th,
+.content .measurementTable td {
+  padding: 1.125rem clamp(0.625rem, 2vw, 1.5rem);
+  color: inherit;
+  vertical-align: middle;
+}
+.content .measurementTable th:first-child {
+  width: 44%;
+  white-space: normal;
+  overflow-wrap: normal;
+  text-align: start;
+}
+.content .measurementTable thead {
+  background: var(--mdx-accent);
+}
+.content .measurementTable thead th {
+  padding-block: 1.375rem;
+  font-size: clamp(1rem, 2vw, 1.375rem);
+  font-weight: 800;
+  text-align: end;
+}
+.content .measurementTable thead th:first-child {
+  text-align: start;
+}
+.content .measurementTable tbody th {
+  font-weight: 500;
+}
+.content .measurementTable td {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+.content .measurementTable tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--mdx-surface) 60%, #001a18);
+}
+.content .measurementTable tr:hover {
+  background: color-mix(in srgb, var(--mdx-ink) 5%, transparent);
+}
+.content .measurementTableScrollable table {
+  min-width: 32rem;
+}
+.content .measurementTableScrollable th:first-child {
+  width: 34%;
+}
+.content .measurementTableScrollable table:focus-visible {
+  outline-offset: -3px;
+}
+.content .measurementScrollHint {
+  margin-block: 1.5rem -1rem;
+  font-size: 0.875rem;
+}
+@media (min-width: 36rem) {
+  .content .measurementScrollHint {
+    display: none;
+  }
+}
+.content .details {
+  margin: 1.5em 0;
+  padding: 1em 1.25em;
+  border: 1px solid var(--mdx-border);
+  border-radius: 12px;
+}
+.content .summary {
+  min-height: 44px;
+  align-content: center;
+  cursor: pointer;
+  font-weight: 800;
+}
+.content .definitionList {
+  margin: 1.5em 0;
+}
+.content .definitionList dt {
+  margin-block-start: 1em;
+  font-weight: 800;
+}
+.content .definitionList dd {
+  margin: 0.4em 0 0;
+}
+.content .toc {
+  margin: 2em 0;
+  padding: clamp(1rem, 3vw, 1.75rem);
+  border: 1px solid var(--mdx-border);
+  border-radius: 12px;
+  background: var(--mdx-surface);
+}
+.content .toc[data-bordered='false'] {
+  border: 0;
+}
+.content .toc .heading,
+.content .tocTitle {
+  margin: 0 0 0.75em;
+  font-size: 1.125em;
+  line-height: 1.4;
+  font-weight: 800;
+}
+.content .toc ol,
+.content .toc ul {
+  margin: 0.5em 0 0;
+  padding-inline-start: 1.25em;
+  list-style: decimal;
+}
+.content .toc li {
+  margin: 0;
+}
+.content .toc a {
+  display: inline-block;
+  min-height: 44px;
+  padding-block: 0.4em;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.content .toc summary {
+  min-height: 44px;
+  cursor: pointer;
+  font-weight: 800;
+}
+.content .citation {
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 0;
+  white-space: nowrap;
+}
+.content .citation a {
+  color: var(--knowledge-link, var(--mdx-link));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.content .references {
+  margin: 3em 0 0;
+  padding-block-start: 1.5em;
+  border-block-start: 1px solid var(--mdx-border);
+}
+.content .referencesTitle {
+  margin: 0 0 1em;
+  font-weight: 800;
+}
+.content .references ol {
+  padding-inline-start: 1.5em;
+  list-style: decimal;
+}
+.content .references li {
+  margin-block: 1em;
+  scroll-margin-block-start: 7rem;
+}
+.content .references cite {
+  font-style: normal;
+  font-weight: 700;
+}
+.content .meta {
+  margin: 1.5em 0 2em;
+  padding-block: 1em;
+  border-block: 1px solid var(--mdx-border);
+  color: var(--mdx-muted);
+  font-size: 0.875em;
+}
+.content .meta p {
+  margin: 0;
+}
+.content .meta p + p {
+  margin-block-start: 0.35em;
+}
+.content [data-footnotes] {
+  margin-block-start: 3em;
+  padding-block-start: 1.5em;
+  border-block-start: 1px solid var(--mdx-border);
+  font-size: 0.9375em;
+}
+.content [data-footnotes] li {
+  scroll-margin-block-start: 7rem;
+}
+.content [data-footnote-ref],
+.content [data-footnote-backref] {
+  color: var(--knowledge-link, var(--mdx-link));
+}
+/* GFM supplies sr-only on its generated footnotes heading. */
+.content [data-footnotes] > :global(.sr-only) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media print {
+  .content .tableScroll,
+  .content .pre {
+    overflow: visible;
+  }
+  .content .pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .content .callout,
+  .content .figure {
+    break-inside: avoid;
+  }
+  .content .heading {
+    break-after: avoid;
+  }
+}
+
+/* Adapters for the existing article APIs registered in mdx-components.tsx. */
+.content .toc small { display: block; font-size: .875em; }
+.content ol.references { padding-inline-start: 1.5em; list-style: decimal; }
+.content .section { margin-block: 2em; }
+.content .section[data-tone='contrast'] {
+  --knowledge-ink: #f0eee9;
+  --knowledge-link: #f0eee9;
+  --mdx-ink: #f0eee9;
+  --mdx-muted: #f0eee9;
+  --mdx-surface: #012622;
+  --mdx-border: #f0eee9;
+  background: #012622;
+  color: #f0eee9;
+  padding: 1.25rem;
+  border-radius: 12px;
+}

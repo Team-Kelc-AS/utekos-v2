@@ -1,0 +1,75 @@
+.page {
+  background: #001a18;
+  color: #f0eee9;
+  font-family: var(--font-google-sans-flex), sans-serif;
+  font-weight: 500;
+  /* Verified in Google Sans Flex v4.005 STAT: name 336 "120pt" = opsz 120. */
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 120;
+  line-height: 1.65;
+}
+.page :is(h1, h2, h3):not([data-product-card] *) { font-weight: 800; line-height: 1.15; text-wrap: balance; }
+.page h1 { font-size: clamp(2.5rem, 5.5vw, 4.8rem); max-width: 14ch; }
+.page h2 { font-size: clamp(1.8rem, 3vw, 2.7rem); }
+.page h3:not([data-product-card] *) { font-size: 1.3rem; }
+.page p { max-width: 70ch; }
+.page a { text-underline-offset: .25em; }
+.page :is(a, button, summary, [tabindex]):focus-visible { outline: 3px solid #f0eee9; outline-offset: 5px; }
+.page section { scroll-margin-top: 2rem; }
+.container { width: min(100% - 3rem, 76rem); margin-inline: auto; }
+.products > section { padding-inline: 0; }
+.breadcrumbs { padding-block: 1.5rem; }
+.section { padding-block: clamp(3rem, 6vw, 5rem); }
+.hero { display: grid; gap: 2.5rem; padding-block: 2rem 4rem; align-items: center; }
+.heroCopy { display: grid; gap: 1.7rem; }
+.partner { display: flex; align-items: center; gap: 1.5rem; }
+.partner img { width: 5rem; height: auto; }
+.heroImage { display: block; width: 100%; height: auto; border-radius: .75rem; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+.primary, .secondary { display: inline-flex; min-height: 3rem; align-items: center; padding: .65rem 1.25rem; border-radius: .6rem; text-decoration: none; }
+.primary { background: #b44701; color: #f0eee9; }
+.secondary { border: 1px solid currentColor; }
+.primary:hover, .secondary:hover { text-decoration: underline; }
+.sectionIntro { display: grid; gap: 1rem; max-width: 48rem; margin-bottom: 2rem; }
+.productIntro { display: grid; gap: 1rem; margin-top: 1rem; }
+.surface { background: #012622; }
+.grid { display: grid; gap: 1.5rem; }
+.card { min-width: 0; border-radius: .75rem; background: #012622; }
+.cardBody { display: grid; gap: 1.1rem; padding: 1.5rem; }
+.cardBody > a { justify-self: start; }
+.useCase { display: grid; gap: .8rem; border-top: 1px solid #f0eee9; padding-top: 1.5rem; }
+.gallery { overflow-x: auto; scroll-snap-type: x mandatory; border-radius: .75rem .75rem 0 0; }
+.gallery ul { display: flex; align-items: start; }
+.gallery li { min-width: 100%; scroll-snap-align: start; }
+.gallery img { display: block; width: 100%; height: auto; }
+.caption { font-size: .85rem; }
+.variantList { display: grid; gap: .5rem; }
+.variantList li { display: flex; justify-content: space-between; align-items: baseline; gap: .8rem; flex-wrap: wrap; }
+.unavailable { text-decoration: line-through; }
+.steps { display: grid; gap: 2rem; counter-reset: step; }
+.steps li { display: grid; grid-template-columns: 2.5rem 1fr; gap: 1rem; }
+.steps li::before { counter-increment: step; content: counter(step); font-size: 1.5rem; font-weight: 800; }
+.steps h3 { margin-bottom: .6rem; }
+.details { border-block-end: 1px solid #f0eee9; padding-block: 1rem; }
+.details [data-slot='accordion-header'] { margin: 0; }
+.details [data-slot='accordion-trigger'] { cursor: pointer; padding-block: .5rem; }
+.details [data-slot='accordion-body'] { padding-top: 1rem; }
+.details [data-slot='accordion-body'] > :not(:last-child) { margin-bottom: 1rem; }
+.tableWrap { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+.table caption { text-align: left; font-weight: 800; padding-bottom: 1rem; }
+.table :is(th, td) { text-align: left; padding: .8rem; border-bottom: 1px solid #f0eee9; }
+.table thead th { background: #012622; }
+.table th { font-weight: 800; }
+.related { display: flex; flex-wrap: wrap; gap: .5rem 2rem; }
+.related a { display: inline-flex; align-items: center; min-height: 2.75rem; text-decoration: underline; }
+@media (min-width: 48rem) {
+  .hero { grid-template-columns: 1.05fr 1fr; }
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1280px) {
+  .products [data-slot='carousel'] { --card-basis: calc((100% - 2 * var(--gap)) / 3); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gallery { scroll-behavior: smooth; }
+}

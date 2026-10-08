@@ -1,0 +1,111 @@
+{
+  "verifiedAt": "2026-10-07T17:26:55.732536+00:00",
+  "tlsValidation": "enabled; standard Python certificate and hostname validation",
+  "deployment": "dpl_B3fJEEJfJPiVHut4gxGC2SeAm39A",
+  "expectedCommit": "b9723ac08e7c65c26ae20df7c52e21df0932d597",
+  "checks": [
+    {
+      "path": "/healthz",
+      "method": "GET",
+      "expected": 200,
+      "status": 200,
+      "pass": true,
+      "headers": {
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+        "X-Vercel-Cache": "MISS",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "service": "utekos-tracking-backend",
+        "status": "ok",
+        "source_commit": "e74e6cd8310c88f2777cbfdf5ad6b431647d7f77",
+        "deploy_sha": "b9723ac08e7c65c26ae20df7c52e21df0932d597",
+        "tracking_ingress_enabled": false,
+        "queue_publish_enabled": false
+      }
+    },
+    {
+      "path": "/",
+      "method": "GET",
+      "expected": 404,
+      "status": 404,
+      "pass": true,
+      "headers": {
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+        "X-Vercel-Cache": null,
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "error": "not_found"
+      }
+    },
+    {
+      "path": "/api/events/page-view",
+      "method": "POST",
+      "expected": 404,
+      "status": 404,
+      "pass": true,
+      "headers": {
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+        "X-Vercel-Cache": null,
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "error": "not_found"
+      }
+    },
+    {
+      "path": "/api/klarna/orders",
+      "method": "POST",
+      "expected": 404,
+      "status": 404,
+      "pass": true,
+      "headers": {
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+        "X-Vercel-Cache": null,
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "error": "not_found"
+      }
+    },
+    {
+      "path": "/api/cron/provider-outbox-dispatch",
+      "method": "GET",
+      "expected": 404,
+      "status": 404,
+      "pass": true,
+      "headers": {
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+        "X-Vercel-Cache": null,
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "error": "not_found"
+      }
+    },
+    {
+      "path": "/api/integrations/storefront-tracking/v1",
+      "method": "POST",
+      "expected": 503,
+      "status": 503,
+      "pass": true,
+      "headers": {
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+        "X-Vercel-Cache": "MISS",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "error": "storefront_tracking_not_activated"
+      }
+    }
+  ],
+  "releaseIdentityPass": true,
+  "activationGatesPass": true
+}

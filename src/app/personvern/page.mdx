@@ -1,0 +1,312 @@
+import styles from './privacy.module.css'
+
+{/* Migrated from utekos-headless/src/db/config/privacy.config.tsx.
+    Policy wording and version date are retained; see docs/personvern.md. */}
+
+<header className={styles.header}>
+
+# Personvern
+
+<p>Sist oppdatert: <time dateTime="2026-10-08">8. oktober 2026</time></p>
+
+</header>
+
+<div className={styles.layout}>
+<aside className={styles.sidebar}>
+<TableOfContents title="Innhold i erklæringen" collapsible entries={[
+  { id: 'ansvarlig', label: 'Hvem som er ansvarlig' },
+  { id: 'opplysninger', label: 'Opplysninger vi behandler' },
+  { id: 'formal-grunnlag', label: 'Formål, behandlingsgrunnlag og nødvendighet' },
+  { id: 'leverandorer', label: 'Leverandører og mottakere' },
+  { id: 'cookies', label: 'Informasjonskapsler og sporing' },
+  { id: 'lagring', label: 'Hvor lenge opplysningene lagres' },
+  { id: 'overforinger', label: 'Behandling utenfor EØS' },
+  { id: 'rettigheter', label: 'Dine rettigheter og valg' },
+  { id: 'facebook-innlogging', label: 'Facebook-innlogging og sletting' },
+  { id: 'profilering-barn', label: 'Profilering, automatiserte avgjørelser og barn' },
+  { id: 'sikkerhet', label: 'Sikkerhet og dataminimering' },
+  { id: 'endringer', label: 'Endringer i erklæringen' },
+  { id: 'kontakt', label: 'Kontakt oss' }
+]} />
+</aside>
+<div className={styles.policy}>
+
+<section id="ansvarlig" aria-labelledby="ansvarlig-heading">
+
+<h2 id="ansvarlig-heading">Hvem som er ansvarlig</h2>
+
+KELC AS, organisasjonsnummer 925 820 393, er behandlingsansvarlig for personopplysninger som Utekos behandler om besøkende og kunder, med unntak av behandling der en leverandør er selvstendig behandlingsansvarlig. Utekos er merkenavnet vi bruker utad.
+
+- **Adresse:** Lille Damsgårdsveien 25, 5162 Laksevåg, Norge
+- **E-post:** [kundeservice@utekos.no](mailto:kundeservice@utekos.no)
+
+Erklæringen gjelder utekos.no, nettbutikken, utsjekk på kasse.utekos.no, kundekonto, kundeservice, venteliste, nyhetsbrev og tilknyttet analyse og annonseringsmåling.
+
+</section>
+
+<section id="opplysninger" aria-labelledby="opplysninger-heading">
+
+<h2 id="opplysninger-heading">Opplysninger vi behandler</h2>
+
+Avhengig av hvordan du bruker Utekos, kan vi behandle:
+
+- **Kontakt- og kundeopplysninger:** Navn, e-post, telefonnummer, faktura- og leveringsadresse, land og opplysninger du selv skriver i en henvendelse.
+- **Kjøp og betaling:** Ordre, varer, beløp, leveringsvalg, retur, refusjon, transaksjonsstatus og nødvendige regnskapsopplysninger. KELC AS mottar normalt ikke fullstendige kortopplysninger; de behandles av Shopify, Klarna eller annen valgt betalingsleverandør.
+- **Konto, venteliste og nyhetsbrev:** Kontoinformasjon, ønsket produkt, kontaktkanal, markedsføringsstatus og dokumentasjon på påmelding eller avmelding.
+- **Enhet, bruk og attribusjon:** IP-adresse, nettleser og enhet, side og tidspunkt, samtykkestatus, handlekurv- og checkout-identifikatorer og annonseklikk-ID-er når samtykket tillater det.
+- **Pseudonymiserte identifikatorer:** E-post eller telefon kan normaliseres og hashes før godkjent annonseringsmåling. Hashing gjør opplysningen pseudonymisert, ikke anonym; den behandles fortsatt som en personopplysning.
+- **Historiske kunde- og målgruppeopplysninger:** Eldre kundedatasett kan inneholde navn, kontaktdata, fødselsdato eller fødselsår, alder, kjønn, postnummer, sted og samlet kundeverdi. Slike opplysninger skal ikke eksporteres til en annonsemålgruppe uten dokumentert behandlingsgrunnlag og gyldig markedsføringsstatus.
+- **Teknisk sikkerhet:** Begrensede hendelseskoder, statuskoder, tidspunkt og redigert rutekontekst. Applogger skal ikke inneholde navn, kontaktdata, ordrenummer, fritekst, full URL, query-parametere eller rå svar fra leverandører.
+
+Vi mottar opplysningene fra deg, nettleseren eller enheten din, Shopify og betalings-/leveringsaktører, og fra analyse- og annonseleverandører når du har gitt nødvendig samtykke.
+
+</section>
+
+<section id="formal-grunnlag" aria-labelledby="formal-grunnlag-heading">
+
+<h2 id="formal-grunnlag-heading">Formål, behandlingsgrunnlag og nødvendighet</h2>
+
+<div className={styles.tableScroll} role="region" aria-label="Formål, behandlingsgrunnlag og nødvendighet" tabIndex={0}>
+<table>
+<thead>
+<tr>
+<th scope="col">Formål</th>
+<th scope="col">Grunnlag</th>
+<th scope="col">Er opplysningene nødvendige?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kjøp, betaling, levering, retur og konto</td>
+<td>GDPR art. 6 nr. 1 bokstav b (avtale)</td>
+<td>Ja, for å levere det du bestiller.</td>
+</tr>
+<tr>
+<td>Regnskap, avgift og lovpålagt dokumentasjon</td>
+<td>Art. 6 nr. 1 bokstav c (rettslig plikt)</td>
+<td>Ja, når loven krever oppbevaring.</td>
+</tr>
+<tr>
+<td>Kundeservice, garanti og tvister</td>
+<td>Art. 6 nr. 1 bokstav b og f</td>
+<td>Frivillig å kontakte oss, men vi trenger relevante opplysninger for å svare.</td>
+</tr>
+<tr>
+<td>Produktventeliste</td>
+<td>Art. 6 nr. 1 bokstav b og f</td>
+<td>Frivillig. Kontaktdata er nødvendig for varslingen og brukes ikke som generelt markedsføringssamtykke.</td>
+</tr>
+<tr>
+<td>Nyhetsbrev og direkte markedsføring</td>
+<td>Art. 6 nr. 1 bokstav a (samtykke) og markedsføringsloven</td>
+<td>Frivillig og kan trekkes tilbake når som helst.</td>
+</tr>
+<tr>
+<td>Sikkerhet, feilretting og misbruksforebygging</td>
+<td>Art. 6 nr. 1 bokstav f (berettiget interesse)</td>
+<td>Nødvendig for en sikker og stabil tjeneste; datamengden begrenses.</td>
+</tr>
+<tr>
+<td>Analyse, attribusjon, konverteringsmåling og annonsering</td>
+<td>Art. 6 nr. 1 bokstav a (samtykke)</td>
+<td>Frivillig. Avslag påvirker ikke muligheten til å handle.</td>
+</tr>
+<tr>
+<td>Dokumentere samtykke og personvernvalg</td>
+<td>Art. 6 nr. 1 bokstav c og f</td>
+<td>Nødvendig for å kunne etterleve og dokumentere valget.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</section>
+
+<section id="leverandorer" aria-labelledby="leverandorer-heading">
+
+<h2 id="leverandorer-heading">Leverandører og mottakere</h2>
+
+Vi deler bare opplysninger når det er nødvendig for formålet, når du har samtykket, eller når loven krever det. Viktige mottakere er:
+
+- **Vercel:** Hosting, nettverksbeskyttelse og tekniske logger. Web Analytics og Speed Insights er cookieløse og aggregerte tjenester, men Utekos aktiverer dem likevel først etter statistikksamtykke.
+- **Shopify:** Nettbutikk, produkter, handlekurv, checkout, kundekonto og ordre. Shopify er normalt databehandler for butikkdriften, men kan være selvstendig behandlingsansvarlig for egne forbrukertjenester, som Shop og enkelte personaliserte funksjoner.
+- **Klarna og andre betalingsaktører:** Betalingsbehandling, kredittvurdering der det er relevant, transaksjonsstatus og svindelforebygging. Betalingsaktøren har egen personvernerklæring og kan være selvstendig behandlingsansvarlig.
+- **Supabase:** Database for nødvendige leads, samtykkebevis, attribusjon, behandlingsaudit og ordre-/analysegrunnlag. Den aktive databasen er plassert i EU-regionen Stockholm.
+- **Resend:** Utsending av kundeservice, ventelistevarsler og påminnelser om påbegynt checkout fra regionen eu-west-1 (Irland). Åpnings- og klikksporing er deaktivert. Signaturverifiserte webhooks brukes for leveringsstatus, retur og klage; vi lagrer bare leverandør-ID, hendelsestype og tidspunkt fra disse hendelsene, ikke rå payload, adresse, emne eller checkout-lenke. Resend opplyser at kontodata, e-postmetadata og logger kan lagres i USA.
+- **Google, Meta og Microsoft:** Tagstyring, analyse, annonsemåling, attribusjon, målgrupper og annonsering. Nettleser- og serverhendelser kan inneholde annonseidentifikatorer og attribusjonsdata.
+- **Google Maps Platform:** Åpningstider på forhandlersidene hentes fra Google Places på serveren. Disse oppslagene inneholder butikkens sted-ID, ikke kontaktopplysninger fra skjemaet eller besøkendes nettleseridentifikatorer. Når du følger en kartlenke, åpner du Google Maps. Se [Googles personvernregler](https://policies.google.com/privacy).
+- **YouTube:** Videoavspilling. Innebygde videoer kan laste ressurser og lagring fra YouTube når videoflaten vises.
+
+En tidligere planlagt kundeserviceflyt til et separat Atlas-prosjekt er deaktivert. Kontaktskjemaet sender ikke opplysninger dit før region, tilgang, datamodell og sletting er særskilt revidert.
+
+Tilgang til et eldre Meta-målgruppeuttrekk er tilsvarende satt fail-closed inntil koblingen til dokumentert markedsføringsgrunnlag er verifisert. Det påvirker ikke ordrebehandling eller kundeservice.
+
+Les mer hos [Vercel](https://vercel.com/legal/privacy-policy), [Shopify](https://privacy.shopify.com/en), [Klarna](https://www.klarna.com/no/personvern/), [Supabase](https://supabase.com/privacy), og [Resend](https://resend.com/legal/privacy-policy).
+
+</section>
+
+<section id="cookies" aria-labelledby="cookies-heading">
+
+<h2 id="cookies-heading">Informasjonskapsler og sporing</h2>
+
+Informasjonskapsler er små tekstfiler som lagres på enheten din. Vi bruker nødvendige informasjonskapsler for butikkfunksjoner og sporings­teknologier for analyse, attribusjon og annonsering.
+
+Nødvendige teknologier støtter blant annet sikkerhet, handlekurv, checkout. Analyse måler bruk og ytelse. Annonseringsmåling kan knytte besøk og handlinger til annonseplattformer og deres identifikatorer.
+
+Nettstedet sender den aktive sporingspolicyen til Shopify Customer Privacy API. Nettstedet svarer ikke særskilt på den eldre nettleserinnstillingen «Do Not Track», fordi den ikke har en entydig standard. Der leverandøren støtter Global Privacy Control, kan dette signalet bli håndtert av leverandørens personvernmekanisme.
+
+Du kan slette eller blokkere informasjonskapsler i nettleseren. Nødvendige funksjoner som handlekurv og checkout kan da slutte å virke.
+
+</section>
+
+<section id="lagring" aria-labelledby="lagring-heading">
+
+<h2 id="lagring-heading">Hvor lenge opplysningene lagres</h2>
+
+Fristene nedenfor er maksimumsfrister. Vi sletter tidligere når formålet er oppfylt, med mindre lovlig dokumentert unntak gjelder.
+
+<div className={styles.tableScroll} role="region" aria-label="Hvor lenge opplysningene lagres" tabIndex={0}>
+<table>
+<thead>
+<tr>
+<th scope="col">Datakategori</th>
+<th scope="col">Maksimal lagring</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rå nettleser-, attribusjons-, checkout- og providerdata</td>
+<td>14 måneder. Anonyme dagstall aggregeres før sletting.</td>
+</tr>
+<tr>
+<td>Uløste providerpayloads</td>
+<td>Payload redigeres senest etter 90 dager; minimal statusaudit beholdes inntil 14 måneder.</td>
+</tr>
+<tr>
+<td>Samtykkebevis</td>
+<td>3 år etter siste valg eller tilbaketrekking.</td>
+</tr>
+<tr>
+<td>Kundeservice</td>
+<td>24 måneder etter avsluttet sak. Ordre-, garanti- og tvistesaker følger relevant rettslig frist.</td>
+</tr>
+<tr>
+<td>Venteliste</td>
+<td>Maksimalt 12 måneder, eller sletting innen 30 dager etter varsling eller tilbaketrekking.</td>
+</tr>
+<tr>
+<td>Nyhetsbrev</td>
+<td>Aktiv adresse til avmelding. Direkte identifikator i Supabase-speil maksimalt 14 måneder; minimalt samtykke-/avmeldingsbevis 3 år.</td>
+</tr>
+<tr>
+<td>Påbegynt checkout og leveringsaudit</td>
+<td>Kryptert e-postadresse og kryptert checkout-gjenopprettingslenke maksimalt 90 dager. Resend-ID og dataminimerte leveringshendelser kan beholdes som teknisk statusaudit inntil 14 måneder.</td>
+</tr>
+<tr>
+<td>Ordre og regnskap</td>
+<td>Primærdokumentasjon 5 år etter regnskapsårets slutt; sekundærdokumentasjon 3,5 år.</td>
+</tr>
+<tr>
+<td>Rå Shopify GraphQL-svar og overflødige payloadkopier</td>
+<td>30 dager etter at normaliserte ordredata er verifisert.</td>
+</tr>
+<tr>
+<td>Tekniske applogger</td>
+<td>Maksimalt 30 dager og uten kundedata; ingen Redis-kopi.</td>
+</tr>
+<tr>
+<td>Fullt anonymiserte aggregater</td>
+<td>Kan beholdes uten tidsgrense fordi de ikke lenger kan knyttes til en person.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+Juridiske unntak, for eksempel en pågående tvist eller lovpålagt oppbevaring, skal ha dokumentert årsak og utløpsdato.
+
+</section>
+
+<section id="overforinger" aria-labelledby="overforinger-heading">
+
+<h2 id="overforinger-heading">Behandling utenfor EØS</h2>
+
+Vi påstår ikke at all behandling skjer i EØS. Enkelte leverandører eller deres underleverandører behandler opplysninger i USA eller andre land. Når opplysninger overføres ut av EØS, skal overføringen bygge på en gyldig mekanisme, som en tilstrekkelighetsbeslutning, EU–US Data Privacy Framework for sertifiserte mottakere eller EU-kommisjonens standard personvernbestemmelser med nødvendige tilleggstiltak.
+
+Du kan kontakte oss for informasjon om mekanismen som gjelder for en bestemt leverandør eller overføring.
+
+</section>
+
+<section id="rettigheter" aria-labelledby="rettigheter-heading">
+
+<h2 id="rettigheter-heading">Dine rettigheter og valg</h2>
+
+Du kan be om innsyn, retting, sletting, begrensning og dataportabilitet, og protestere mot behandling som bygger på berettiget interesse. Når behandlingen bygger på samtykke, kan du trekke det tilbake uten at det påvirker lovligheten av behandlingen før tilbaketrekkingen.
+
+- **Cookies og annonsering:** Bruk «Endre cookie-innstillinger» i cookie-delen eller lenken i bunnteksten.
+- **Markedsføring på e-post:** Bruk avmeldingslenken i e-posten eller kontakt oss.
+- **Andre forespørsler:** Skriv til kundeservice@utekos.no. Vi kan be om rimelig identitetsbekreftelse og svarer innen lovpålagt frist.
+
+Du kan klage direkte til [Datatilsynet](https://www.datatilsynet.no/om-datatilsynet/kontakt-oss/klage-til-datatilsynet/). Vi ønsker gjerne muligheten til å rette opp først, men du trenger ikke kontakte oss før du klager.
+
+</section>
+
+<section id="facebook-innlogging" aria-labelledby="facebook-innlogging-heading">
+
+<h2 id="facebook-innlogging-heading">Facebook-innlogging og sletting</h2>
+
+Besøkende som kommer fra en Meta-annonse kan frivillig velge «Fortsett med Facebook». Det er ingen innloggingsmur, og du kan bruke og handle i nettbutikken uten å koble til Facebook. Vi ber bare om offentlig profil og e-postadresse. Facebook kan unnlate å dele e-postadressen; da kan du frivillig oppgi e-post eller mobilnummer i ett reservefelt.
+
+Når du velger Facebook-innlogging, behandler vi en app-avgrenset Facebook-ID, eventuell kontaktopplysning, en pseudonym besøksidentifikator og tilgjengelig annonseattribusjon. Vi lagrer ikke Facebook-passordet eller Facebook-tilgangstokenet, og vi oppretter ikke automatisk en Shopify-kunde eller kundekonto. Direkte kontaktopplysninger lagres kryptert, med en separat hash til godkjent annonsemåling når markedsføringssamtykket tillater det.
+
+Opplysningene i denne valgfrie identitetskoblingen slettes automatisk senest 180 dager etter siste innlogging, med mindre en dokumentert rettslig plikt krever begrenset videre oppbevaring.
+
+### Slik ber du om sletting
+
+1. Fjern «Utekos Customer Login» under Apper og nettsteder i Facebook-innstillingene dine dersom du også vil trekke tilbake Facebook-tilkoblingen.
+2. Send en e-post til [kundeservice@utekos.no](mailto:kundeservice@utekos.no?subject=Slett%20Facebook%20Login-data) med emnet «Slett Facebook Login-data». Oppgi e-postadressen eller mobilnummeret du brukte, slik at vi kan finne riktig kobling. Ikke send passord eller tilgangstoken.
+3. Vi kan be om rimelig identitetsbekreftelse. Den aktuelle Facebook-innloggingskoblingen og tilhørende direkte identifikatorer slettes innen 30 dager, og du får bekreftelse når forespørselen er ferdig behandlet.
+
+Fjerning i Facebook stopper fremtidig tilgang fra appen, men erstatter ikke en slettingsforespørsel til Utekos for opplysninger som allerede er mottatt. Kjøps-, regnskaps- eller kundeserviceopplysninger som behandles på et annet lovlig grunnlag følger sine egne lagringsfrister.
+
+</section>
+
+<section id="profilering-barn" aria-labelledby="profilering-barn-heading">
+
+<h2 id="profilering-barn-heading">Profilering, automatiserte avgjørelser og barn</h2>
+
+Med markedsføringssamtykke kan analyse- og annonseleverandører bruke hendelser og pseudonymiserte identifikatorer til attribusjon, målgrupper og personalisering av annonser. Utekos bruker ikke automatiserte avgjørelser som har rettsvirkning eller tilsvarende vesentlig virkning for deg.
+
+Nettbutikken er laget for voksne kjøpere og er ikke rettet mot barn. Vi samler ikke bevisst inn personopplysninger direkte fra barn. En foresatt som mener at et barn har gitt oss opplysninger, kan kontakte oss for vurdering og sletting.
+
+</section>
+
+<section id="sikkerhet" aria-labelledby="sikkerhet-heading">
+
+<h2 id="sikkerhet-heading">Sikkerhet og dataminimering</h2>
+
+Vi bruker tilgangsstyring, kryptert transport, validering av eksterne data, dataminimering, leverandøravtaler og slettingsrutiner. Offentlige endepunkter skal ikke gi innsyn i interne logger. Ingen løsning er helt risikofri, så du bør ikke sende betalingskort, passord eller andre særlige kategorier personopplysninger i fritekst til kundeservice.
+
+</section>
+
+<section id="endringer" aria-labelledby="endringer-heading">
+
+<h2 id="endringer-heading">Endringer i erklæringen</h2>
+
+Vi oppdaterer erklæringen når behandlingen eller rettsgrunnlaget endres. Datoen øverst viser siste versjon. Vesentlige endringer varsles på en tydelig måte når regelverket krever det.
+
+</section>
+
+<section id="kontakt" aria-labelledby="kontakt-heading">
+
+<h2 id="kontakt-heading">Kontakt oss</h2>
+
+Spørsmål om personvern eller en forespørsel om rettigheter kan sendes til [kundeservice@utekos.no](mailto:kundeservice@utekos.no). Oppgi bare informasjonen vi trenger for å finne og behandle forespørselen.
+
+KELC AS, org.nr. 925 820 393<br />
+Lille Damsgårdsveien 25<br />
+5162 Laksevåg, Norge
+
+</section>
+
+</div>
+</div>

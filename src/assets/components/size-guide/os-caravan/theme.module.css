@@ -1,0 +1,19 @@
+/* Theme tokens used by the original /os-caravan modal in utekos-headless.
+   Keep them scoped: portals otherwise inherit v2's default light theme. */
+.theme {
+  --background: oklch(0.1645 0.0284 190.51);
+  --foreground: oklch(0.985 0 0);
+  --jungle: oklch(0.2383 0.042 184.99);
+  --popover: oklch(0.205 0.028 194.77);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.5376 0.156 43.96);
+  --primary-foreground: #f0eee9;
+  --muted-foreground: oklch(0.8974 0.0084 91.49);
+  --accent: oklch(0.3393 0.0496 187);
+  --accent-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --ring: oklch(0.556 0 0);
+}
+
+.theme :global(.no-scrollbar) { scrollbar-width: none; }
+.theme :global(.no-scrollbar)::-webkit-scrollbar { display: none; }

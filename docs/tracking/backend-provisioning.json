@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-07",
+  "projectName": "utekos-backend",
+  "projectId": "prj_EHFI28tMUlIQsNguxjcKHPlLAlFE",
+  "teamId": "team_0B8gWWIxT2hGVIJnK8CwanAi",
+  "domain": "backend.utekos.no",
+  "nodeVersion": "24.x",
+  "functionDefaultRegions": [
+    "arn1"
+  ],
+  "oidcTokenConfig": {
+    "enabled": true,
+    "issuerMode": "team"
+  },
+  "gitLink": {
+    "provider": "github",
+    "repo": "Team-Kelc-AS/utekos-tracking-backend",
+    "productionBranch": "main"
+  },
+  "latestDeployment": {
+    "id": "dpl_B3fJEEJfJPiVHut4gxGC2SeAm39A",
+    "status": "READY",
+    "target": "production",
+    "inspectorUrl": "https://vercel.com/utekos-marketing-group/utekos-backend/B3fJEEJfJPiVHut4gxGC2SeAm39A"
+  },
+  "domainOwnershipVerified": true,
+  "dnsMisconfigured": false,
+  "recommendedCNAME": "a7213bc5cd626e31.vercel-dns-016.com.",
+  "nameservers": [
+    "ns01.one.com",
+    "ns02.one.com"
+  ],
+  "readback": [
+    "Vercel get project",
+    "Vercel list project domains",
+    "GET /v6/domains/backend.utekos.no/config?projectIdOrName=prj_EHFI28tMUlIQsNguxjcKHPlLAlFE",
+    "GET /v9/projects/prj_EHFI28tMUlIQsNguxjcKHPlLAlFE",
+    "GET /v13/deployments/dpl_B3fJEEJfJPiVHut4gxGC2SeAm39A READY",
+    "HTTPS /healthz and five closed-route checks",
+    "Existing storefront production SHA and nine cron schedules unchanged"
+  ],
+  "remaining": [
+    "Environment parity and authenticated storefront acceptance before ingress activation",
+    "Single worker ownership cutover, including SDK-managed Workflow triggers and in-flight work, before v2 takeover"
+  ],
+  "dnsVerifiedDate": "2026-10-07",
+  "dnsEvidence": {
+    "authoritativeServer": "ns01.one.com",
+    "recursiveServer": "1.1.1.1",
+    "observedCNAME": "a7213bc5cd626e31.vercel-dns-016.com.",
+    "vercelMisconfigured": false
+  },
+  "httpsStatus": "verified: valid TLS, GET /healthz 200 and exact deployment SHA",
+  "sourceRepository": "https://github.com/Team-Kelc-AS/utekos-tracking-backend",
+  "sourceCheckout": "/Users/kristofferohnstadhjelmeland/utekos-tracking-backend",
+  "releaseCommit": "b9723ac08e7c65c26ae20df7c52e21df0932d597",
+  "sourcePush": "verified on GitHub main",
+  "githubInstallationId": 148728852,
+  "productionEnvironmentKeysConfigured": 84,
+  "trackingIngressEnabled": false,
+  "queuePublishEnabled": false,
+  "scheduledWorkerOwner": "prj_MpZN3Z0PDp8rfwpdzAeplGe4Di0s",
+  "localReleaseValidation": {
+    "frozenInstall": "pass",
+    "productionBuild": "pass",
+    "typeScript": "pass",
+    "targetedLint": "pass",
+    "tests": 24
+  },
+  "runtimeVerification": "backend-runtime-verification.json",
+  "projectReadback": "backend-project-readback.json",
+  "cronCount": 0
+}

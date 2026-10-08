@@ -1,0 +1,12 @@
+.description { min-width: 0; max-width: 65ch; margin-top: .5rem; padding-block: 1.25rem; border-top: 1px solid #f0eee933; }
+.description .heading { margin: 0 0 1rem; font-size: 1.25rem; }
+.description p { font-size: 1rem; line-height: 1.65; }
+.description .preview { margin: 0; }
+.description:has(.disclosure[open]) > .preview { display: none; }
+.disclosure summary { width: fit-content; min-height: 2.75rem; padding-block: .625rem; font-weight: 800; cursor: pointer; }
+.disclosure summary:hover { text-decoration: underline; text-underline-offset: .25em; }
+.less, .disclosure[open] .more { display: none; }
+.disclosure[open] .less { display: inline; }
+.full { overflow-wrap: anywhere; }
+.full ul { padding-left: 1.25rem; list-style: disc; }
+.full > :last-child, .full > div:last-child > :last-child { margin-bottom: 0; }

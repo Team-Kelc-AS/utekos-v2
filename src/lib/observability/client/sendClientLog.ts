@@ -1,0 +1,50 @@
+import type { LogPayload } from 'types/observability/log/LogPayload'
+import { clientLogPayloadSchema } from '../logging/clientLogPayloadSchema'
+import { sanitizeClientErrorMessage } from './sanitizeClientErrorBeacon'
+
+export const CLIENT_LOG_PATH = '/api/log'
+
+export type SendClientLogTransport = {
+  fetch: typeof fetch
+  sendBeacon?: (url: string, data: Blob) => boolean
+}
+
+export async function sendClientLog(
+  payload: LogPayload,
+  transport: SendClientLogTransport
+): Promise<void> {
+  const minimized =
+    payload.event === 'consent_diagnostic' ?
+      payload
+    : {
+        ...payload,
+        data: {
+          ...payload.data,
+          ...(payload.data.message ?
+            {
+              message: sanitizeClientErrorMessage(
+                payload.data.message
+              )
+            }
+          : {})
+        }
+      }
+  const parsed = clientLogPayloadSchema.safeParse(minimized)
+  if (!parsed.success) return
+  const body = JSON.stringify(parsed.data)
+  const sendFetch = transport.fetch
+
+  try {
+    await sendFetch(CLIENT_LOG_PATH, {
+      body,
+      headers: { 'content-type': 'application/json' },
+      keepalive: true,
+      method: 'POST'
+    })
+  } catch {
+    transport.sendBeacon?.(
+      CLIENT_LOG_PATH,
+      new Blob([body], { type: 'text/plain;charset=UTF-8' })
+    )
+  }
+}

@@ -1,0 +1,41 @@
+.section {
+  --font-sans: var(--font-google-sans-flex);
+  padding: 3rem 1rem;
+  background: #001a18;
+  color: #f0eee9;
+  font-family: var(--font-google-sans-flex), sans-serif;
+  font-optical-sizing: none;
+  font-variation-settings: 'opsz' 120;
+  font-weight: 500;
+}
+
+.section h2 { margin: 0; font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 800; line-height: 1.15; }
+.navigation { display: flex; justify-content: flex-end; gap: .5rem; margin-block: 1rem; }
+.navigation button { display: inline-flex; justify-content: center; align-items: center; width: 44px; height: 44px; border: 1px solid #f0eee950; border-radius: 50%; background: #012622; color: #f0eee9; cursor: pointer; }
+.navigation button:hover { background: #b44701; }
+.navigation svg { width: 1.25rem; height: 1.25rem; }
+.carousel {
+  --gap: 1rem;
+  /* One gap plus 1.5 cards fills the viewport exactly. */
+  --card-basis: calc((100% - var(--gap)) / 1.5);
+}
+.rail {
+  align-items: flex-start;
+  gap: var(--gap);
+  padding: 0 0 1rem;
+  touch-action: pan-y pinch-zoom;
+}
+.section :is(button, a, [data-slot='carousel']):focus-visible { outline: 2px solid #f0eee9; outline-offset: 3px; }
+.message { padding-block: 2rem; }
+.message a { text-decoration: underline; text-underline-offset: .2em; }
+.loading { min-height: 28rem; }
+
+@media (min-width: 768px) {
+  .section { padding: 4rem 2rem; }
+  .carousel { --gap: 1.5rem; --card-basis: calc((100% - 2 * var(--gap)) / 2.5); }
+}
+
+@media (min-width: 1280px) {
+  .section { padding-inline: 3rem; }
+  .carousel { --card-basis: calc((100% - 3 * var(--gap)) / 4); }
+}

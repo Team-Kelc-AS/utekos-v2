@@ -1,0 +1,179 @@
+import Image from 'next/image'
+import Link from 'next/link'
+import { HeartOutlineIcon } from '@/components/utekos-icons/HeartOutlineIcon'
+import { ShieldCheckmarkOutlineIcon } from '@/components/utekos-icons/ShieldCheckmarkOutlineIcon'
+import { SealOutlineIcon } from '@/components/utekos-icons/SealOutlineIcon'
+import { LeafIcon } from '@/components/utekos-icons/LeafIcon'
+import { GroupOutlineIcon } from '@/components/utekos-icons/GroupOutlineIcon'
+import { LocationIcon } from '@/components/utekos-icons/LocationIcon'
+import { badgeVariants } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { AboutGallery } from './AboutGallery'
+import { AboutHero } from './AboutHero'
+import { AboutCta } from './AboutCta'
+import styles from './about.module.css'
+
+{/* Copy follows the active utekos-headless about-page components; see docs/om-oss.md.
+    JSON-LD is deferred. */}
+
+<AboutHero />
+
+<div className={styles.container}>
+
+<section id="historien" aria-labelledby="historien-heading" className={styles.story}>
+<div className={styles.storyCopy}>
+
+<h2 id="historien-heading">Fra idé til virkelighet</h2>
+
+<figure className={styles.founderQuote}>
+  <blockquote><p>«Jeg var lei av stive pledd og gode øyeblikk som ble kuttet kort av kulden. Det måtte finnes en bedre måte å holde varmen på.»</p></blockquote>
+  <figcaption>Erling Holthe, grunnlegger av Utekos</figcaption>
+</figure>
+
+Jeg har alltid elsket de små, verdifulle øyeblikkene: den stille kaffekoppen på en kjølig morgen, den gode samtalen rundt bålpannen, eller roen i båten rett etter at solen har gått ned. Men frustrasjonen var alltid den samme: lag på lag med klær som gjorde meg mer til en Michelin-mann enn en avslappet livsnyter.
+
+Jeg lette etter ett enkelt, kompromissløst plagg. Et verktøy for komfort som var så behagelig at jeg glemte jeg hadde det på, men så funksjonelt at det lot meg eie øyeblikket. Svaret fantes ikke. Så jeg bestemte meg for å lage det selv.
+
+Det ble en reise som tok måneder med design, utallige prototyper, jakt på de rette materialene, og testing i pøsende bergensregn og på kalde fjelltopper. Resultatet ble Utekos. Ikke bare et produkt, men en hyllest til de små, verdifulle øyeblikkene i en travel hverdag.
+
+</div>
+<div>
+<Image
+  src="/UtekosGrunder.webp"
+  alt="Erling Holthe i et blått varmeplagg ved vannet i solnedgangen"
+  width={1000}
+  height={1250}
+  sizes="(max-width: 767px) min(26rem, calc(100vw - 3rem)), (max-width: 1264px) 38vw, 433px"
+  className={`${styles.imageSlot} ${styles.founderImage}`}
+/>
+<p className={styles.founderName}>Erling Holthe<span>Grunnlegger av Utekos</span></p>
+</div>
+</section>
+
+<section aria-labelledby="prinsipper-heading" className={styles.principles}>
+<span className={badgeVariants({ className: styles.pill })}>Vårt DNA</span>
+<h2 id="prinsipper-heading">Kjernen i alt vi gjør</h2>
+
+<p className={styles.sectionLead}>Fire ufravikelige prinsipper som sikrer at du alltid får den opplevelsen du fortjener.</p>
+
+<div className={styles.principleCards}>
+<Card className={styles.principleCard}>
+  <CardHeader className={styles.principleHeader}>
+    <span className={styles.principleIcon}><HeartOutlineIcon tone="light" /></span>
+    <CardTitle><h3>Designet for hygge</h3></CardTitle>
+  </CardHeader>
+  <CardContent className={styles.principleContent}>
+    <p>Vi vet at en sommerkveld kan bli kjølig og en høstdag krever ekstra varme. Derfor er produktene våre designet med en dyp forståelse for den norske livsstilen og behovet for å forlenge de sosiale, gode øyeblikkene utendørs.</p>
+  </CardContent>
+</Card>
+<Card className={styles.principleCard}>
+  <CardHeader className={styles.principleHeader}>
+    <span className={styles.principleIcon}><SealOutlineIcon tone="light" /></span>
+    <CardTitle><h3>Kompromissløs komfort</h3></CardTitle>
+  </CardHeader>
+  <CardContent className={styles.principleContent}>
+    <p>Kvalitet er en følelse. Vi velger materialer som er myke, funksjonelle og behagelige, slik at du kan slappe helt av og nyte stunden.</p>
+  </CardContent>
+</Card>
+<Card className={styles.principleCard}>
+  <CardHeader className={styles.principleHeader}>
+    <span className={styles.principleIcon}><LeafIcon tone="light" /></span>
+    <CardTitle><h3>Et bevisst valg</h3></CardTitle>
+  </CardHeader>
+  <CardContent className={styles.principleContent}>
+    <p>I en verden av rask mote, fokuserer vi på tidløs design og solid håndverk som tåler å bli brukt igjen og igjen. Et Utekos-plagg er et bevisst valg for deg, og et mer ansvarlig valg for naturen vi alle setter pris på.</p>
+  </CardContent>
+</Card>
+<Card className={styles.principleCard}>
+  <CardHeader className={styles.principleHeader}>
+    <span className={styles.principleIcon}><GroupOutlineIcon tone="light" /></span>
+    <CardTitle><h3>Mer utekos</h3></CardTitle>
+  </CardHeader>
+  <CardContent className={styles.principleContent}>
+    <p>Utekos handler for oss om å verdsette de rolige øyeblikkene: en kaffekopp på en kjølig morgen, en god samtale rundt bålpannen, eller en solnedgang fra terrassen.</p>
+  </CardContent>
+</Card>
+</div>
+</section>
+
+<section id="loftet" aria-labelledby="loftet-heading" className={styles.promise}>
+<span className={badgeVariants({ className: styles.pill })}>Vårt løfte</span>
+<h2 id="loftet-heading">Vårt løfte til deg</h2>
+
+<p className={styles.promiseIntro}>Komforten skal merkes med en gang, og kvaliteten skal fortsette å bære øyeblikkene ute.</p>
+
+<div className={styles.promiseGrid}>
+<Card className={styles.promiseCard}>
+  <CardHeader className={styles.promiseHeader}>
+    <span className={styles.promiseIcon}><HeartOutlineIcon tone="light" /></span>
+    <CardTitle><h3>Mer enn et plagg</h3></CardTitle>
+  </CardHeader>
+  <CardContent className={styles.promiseContent}>
+    <p>Vi lover deg følelsen av umiddelbar varme og velvære. En garanti for at du kan nyte øyeblikket lenger, uten å fryse.</p>
+  </CardContent>
+</Card>
+<Card className={styles.promiseCard}>
+  <CardHeader className={styles.promiseHeader}>
+    <span className={styles.promiseIcon}><ShieldCheckmarkOutlineIcon tone="light" /></span>
+    <CardTitle><h3>En varig verdi</h3></CardTitle>
+  </CardHeader>
+  <CardContent className={styles.promiseContent}>
+    <p>Se på det som en investering i din egen livskvalitet. Kompromissløs komfort og overlegen allsidighet, designet for å gi deg flere timer utendørs, år etter år.</p>
+  </CardContent>
+</Card>
+</div>
+</section>
+
+<section aria-labelledby="opplevelsen-heading" className={styles.moments}>
+<span className={badgeVariants({ className: styles.pill })}>Livet med Utekos</span>
+<h2 id="opplevelsen-heading">Et glimt av opplevelsen</h2>
+
+<p className={styles.sectionLead}>Se hvordan kompromissløs komfort gir liv til dine favorittøyeblikk utendørs.</p>
+
+<AboutGallery />
+</section>
+
+<section id="moteplasser" aria-labelledby="moteplasser-heading" className={styles.events}>
+<div>
+<span className={badgeVariants({ className: styles.pill })}>Møteplasser</span>
+<h2 id="moteplasser-heading">Der du har møtt oss</h2>
+
+<p className={styles.eventIntro}>Vi elsker å prate med folk. Derfor er vi jevnlig på messer og stands, og her har vi fått verdifulle innspill fra kunder som faktisk har kjent komforten.</p>
+
+<ul className={styles.eventList}>
+  <li><span className={styles.eventIcon}><LocationIcon tone="orange" /></span><div><h3>Eventyrdager Os Caravan</h3><p>24.–26. september 2026</p></div></li>
+  <li><span className={styles.eventIcon}><LocationIcon tone="orange" /></span><div><h3>Boligmesse Sotra</h3><p>Sotra · 21.–23. mars 2025</p></div></li>
+  <li><span className={styles.eventIcon}><LocationIcon tone="orange" /></span><div><h3>Smien, Laksevåg</h3><p>Bergen · 3.–4. desember 2022</p></div></li>
+  <li><span className={styles.eventIcon}><LocationIcon tone="orange" /></span><div><h3>Båt- og caravan messe</h3><p>Ålesund · 3.–5. mars 2023</p></div></li>
+</ul>
+</div>
+<div className={styles.eventImages}>
+  <Image src="/messe-1.webp" alt="Utekos-stand med varmeplagg og informasjonsplakat blant bobiler" width={1080} height={1080} sizes="(max-width: 1023px) calc((100vw - 4rem) / 2), (max-width: 1264px) 26vw, 313px" />
+  <Image src="/messe-2.webp" alt="Besøkende prøver et svart Utekos-plagg med oransje detaljer ved en campingvogn" width={1080} height={1080} sizes="(max-width: 1023px) calc((100vw - 4rem) / 2), (max-width: 1264px) 26vw, 313px" />
+  <Image src="/messe-3.webp" alt="Blått Utekos-plagg på en utstillingsdukke med et Os Caravan-skilt" width={1080} height={1080} sizes="(max-width: 1023px) calc((100vw - 4rem) / 2), (max-width: 1264px) 26vw, 313px" />
+  <Image src="/messe-4.webp" alt="Mann i et blått Utekos-plagg ved standen på en bobilmesse" width={1080} height={1080} sizes="(max-width: 1023px) calc((100vw - 4rem) / 2), (max-width: 1264px) 26vw, 313px" />
+</div>
+</section>
+
+<section id="forhandler" aria-labelledby="forhandler-heading" className={styles.retailer}>
+<div className={styles.retailerCard}>
+<div className={styles.retailerLogo}>
+  <Image src="/Intersport_logo.svg" alt="Intersport" width={1024} height={112} className={styles.intersportImage} />
+</div>
+<div>
+<span className={badgeVariants({ className: styles.pill })}>Fysisk butikk i Bergen</span>
+<h2 id="forhandler-heading">Opplev Utekos hos Intersport Laksevåg</h2>
+
+<p className={styles.retailerIntro}>Lyst til å kjenne på kvaliteten og finne den perfekte passformen? Som eneste fysiske forhandler i Bergen finner du et utvalg av våre produkter hos våre venner på Laksevåg Senter.</p>
+
+<a className={styles.directionsLink} href="https://www.google.com/maps/place/INTERSPORT/@60.389279,5.2774875,16z/data=!4m6!3m5!1s0x463cfc74b2fdcbe3:0x610e4e94951a1998!8m2!3d60.389279!4d5.2864997!16s%2Fg%2F1ttdlkr4?entry=ttu&g_ep=EgoyMDI1MTAyNi4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer">Få veibeskrivelse <LocationIcon tone="orange" /></a>
+
+<p><Link href="/forhandlere" prefetch={false}>Forhandlere</Link> · <Link href="/bli-forhandler" prefetch={false}>Bli forhandler</Link></p>
+
+</div>
+</div>
+</section>
+
+<AboutCta />
+
+</div>

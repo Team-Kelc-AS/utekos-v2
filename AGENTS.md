@@ -1,3 +1,7 @@
+## Prosjektets formål
+
+Utekos v2 er en omskriving av `../utekos-headless` for en ryddigere, raskere og mer vedlikeholdbar nettbutikk. Migrer nødvendig innhold og funksjonalitet, og vurder gammel kode kritisk. Prioriter server først, minimal klientlogikk, Utekos-identitet, SEO, brukervennlighet og konvertering. Unngå unødvendige URL-endringer som kan svekke eksisterende SEO.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

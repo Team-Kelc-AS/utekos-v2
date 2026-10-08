@@ -1,0 +1,81 @@
+.page {
+  background: #001a18;
+  color: #f0eee9;
+  font-family: var(--font-google-sans-flex), sans-serif;
+  font-weight: 500;
+  /* Google Sans Flex v4.005 STAT: the 120pt variant maps to opsz 120. */
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 120;
+  line-height: 1.65;
+}
+.page :is(h1, h2, h3) { font-weight: 800; line-height: 1.2; text-wrap: balance; }
+.page h1 { font-size: clamp(2.5rem, 5vw, 4.4rem); }
+.page h2 { font-size: clamp(1.4rem, 2.5vw, 1.9rem); }
+.page h3 { font-size: 1.05rem; }
+.page a { text-decoration: underline; text-underline-offset: .25em; }
+.page a:hover { text-decoration-thickness: 2px; }
+.page :is(a, button, input, textarea, summary, [tabindex]):focus-visible { outline: 3px solid #f0eee9; outline-offset: 4px; }
+.container { width: min(100% - 3rem, 72rem); margin-inline: auto; }
+.breadcrumbs { padding-block: 1.5rem; }
+.header { padding-block: 1.5rem 3rem; }
+.eyebrow { margin-bottom: .7rem; }
+.intro { max-width: 60ch; margin-top: 1.25rem; font-size: 1.15rem; }
+.layout { display: grid; align-items: start; gap: 3rem; }
+.formPanel { min-width: 0; padding: clamp(1.25rem, 3vw, 2.25rem); background: #012622; border-radius: .75rem; }
+.formIntro { margin-block: .75rem 1.75rem; }
+.form, .fields { display: grid; gap: 1.5rem; min-width: 0; }
+.fields { border: 0; padding: 0; margin: 0; }
+.field { display: grid; align-content: start; gap: .5rem; min-width: 0; }
+.row { display: grid; gap: 1.25rem; }
+.field label { line-height: 1.4; }
+.field label span { font-size: .85em; white-space: nowrap; }
+.field :is(input, textarea) { width: 100%; min-width: 0; border: 1px solid #f0eee9; border-radius: .4rem; background: #001a18; color: #f0eee9; padding: .75rem; font: inherit; }
+.field input { min-height: 3rem; }
+.field textarea { min-height: 11rem; resize: vertical; }
+.field [aria-invalid="true"] { border-style: dashed; border-width: 2px; }
+.hint, .error, .checkbox { font-size: .9rem; }
+.error { font-weight: 800; }
+.attachments {
+  --card: #001a18;
+  --card-foreground: #f0eee9;
+  --foreground: #f0eee9;
+  --muted: #012622;
+  --muted-foreground: #f0eee9;
+  --accent: #012622;
+  --accent-foreground: #f0eee9;
+  --input: #f0eee9;
+  --border: #f0eee9;
+  --ring: #f0eee9;
+  --destructive: #f0eee9;
+  min-width: 0;
+}
+.attachments :is([data-slot="field-description"], [data-slot="field-error"]) { font-weight: 500; }
+.attachments [data-slot="field-error"] { font-weight: 800; }
+.attachments [aria-invalid="true"] { border-style: dashed; border-width: 2px; }
+.checkbox { display: flex; gap: .8rem; align-items: start; cursor: pointer; }
+.checkbox input { flex: 0 0 auto; width: 1.25rem; height: 1.25rem; margin-top: .2rem; accent-color: #b44701; }
+.submit { justify-self: start; min-height: 3rem; padding: .75rem 1.75rem; border-radius: .4rem; background: #b44701; color: #f0eee9; font: inherit; font-weight: 800; cursor: pointer; }
+.submit:hover:not(:disabled) { text-decoration: underline; text-underline-offset: .25em; }
+.submit:disabled { cursor: wait; opacity: .7; }
+.status { margin-block: 1rem 1.5rem; padding: 1rem; border-inline-start: 3px solid #f0eee9; background: #001a18; overflow-wrap: anywhere; }
+.status p { margin-top: .75rem; }
+.sidebar { display: grid; gap: 2.25rem; min-width: 0; }
+.contactDetails { display: grid; gap: 1.25rem; margin-block: 1.5rem; }
+.contactDetails dt { font-size: .85rem; }
+.contactDetails dd { font-size: 1.15rem; overflow-wrap: anywhere; }
+.contactDetails a { display: inline-flex; min-height: 2.75rem; align-items: center; }
+.company { font-size: .9rem; }
+.help { border-top: 1px solid #f0eee9; padding-top: 2rem; }
+.help h3 { margin-top: 1.5rem; }
+.help p { margin-top: .6rem; }
+.help a { display: block; padding-block: .65rem; }
+.help p + a { margin-top: 1rem; }
+.faq { max-width: 52rem; padding-block: 4.5rem; }
+.faq h2 { margin-bottom: 1.5rem; }
+.faq [data-slot='accordion-item'] { border-bottom: 1px solid #f0eee9; }
+.faq [data-slot='accordion-header'] { margin: 0; }
+.faq [data-slot='accordion-trigger'] { padding-block: 1.1rem; cursor: pointer; }
+.faq [data-slot='accordion-body'] { padding-bottom: 1.5rem; }
+.honeypot, .visuallyHidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media (min-width: 40rem) { .row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 62rem) { .layout { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 4rem; } }
