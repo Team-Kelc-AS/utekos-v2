@@ -11,6 +11,7 @@ export type ProductVariant = {
   taxable: boolean;
   sku: string | null;
   barcode: string | null;
+  color: "Vargnatt" | "Fjellblå" | "Havdyp" | "Fjellnatt"
   price: Money;
   compareAtPrice: Money | null;
   image: ProductImage | null;

@@ -96,7 +96,7 @@ export default function DealerPdfForm() {
         </select></label>
         <a href={filename} data-tracking-cta="dealer_pdf_download" download="Utekos-forhandler.pdf">Last ned PDF-mal</a>
       </div>
-      <p className={styles.help}>Alle felt er påkrevd. Du kan zoome eller bla i dokumentet uten å miste det du har skrevet. <a href="/bli-forhandler#forhandlerskjema">Bruk vanlig skjema</a>.</p>
+      <p className={styles.help}>Alle felt er påkrevd. <a href="/bli-forhandler#forhandlerskjema">Bruk vanlig skjema</a>.</p>
       {loadError ? <p role="alert">PDF-visningen kunne ikke lastes. <a href="/bli-forhandler#forhandlerskjema">Bruk det vanlige skjemaet</a> for automatisk innsending.</p> : <form ref={form} action={action} noValidate data-tracking-form="dealer_inquiry" data-tracking-form-name="Forhandlersamarbeid PDF" aria-busy={pending}>
         <div className={styles.honeypot} aria-hidden="true"><label htmlFor="pdf-website">La dette feltet stå tomt</label><input id="pdf-website" name="website" tabIndex={-1} autoComplete="off" /></div>
         {!ready && <p role="status">Laster PDF …</p>}
