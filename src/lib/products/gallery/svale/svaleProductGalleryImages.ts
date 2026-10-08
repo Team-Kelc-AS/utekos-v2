@@ -8,7 +8,7 @@ export const SVALE_PRODUCT_GALLERY_IMAGES: Image[] = [
     id: 'utekos-svale-full-length-front-transparent',
     url: '/Svale_Vertical_Transparent.webp',
     altText:
-      'Utekos Svale i mørkeblått, vist forfra i full lengde.',
+      'Mørkeblått (havdyp) Utekos Svale 3-i-1 komfortplagg i fulldekket modus, fotografert skrått forfra på en gjennomsiktig bakgrunn. Det vatterte, soveposelignende fullkropps-plagget strekker seg helt ned til gulvet. Bildet viser den opptrukkede, isolerte hetten, YKK Dual V-Zip-glidelåssystemet med lyse Moonstruck-detaljer på brystet, den lune muffen på magen og svarte elastiske mansjetter.',
     width: 1440,
     height: 1800
   },
@@ -16,28 +16,28 @@ export const SVALE_PRODUCT_GALLERY_IMAGES: Image[] = [
     id: 'utekos-svale-full-length-left-transparent',
     url: '/Svale_Vertical_Left_Transparent.webp',
     altText:
-      'Utekos Svale i mørkeblått, vist skrått forfra fra venstre side.',
+      'Mørkeblått (havdyp) Utekos Svale 3-i-1 komfortplagg i fulldekket modus, fotografert skrått fra siden på en hvit bakgrunn. Det vatterte fullkropps-plagget strekker seg helt ned til gulvet. Bildet viser den isolerte hetten, YKK Dual V-Zip-glidelåssystemet på brystet, den romslige muffen på magen, svarte elastiske mansjetter og en rund Utekos-logo med lyse Moonstruck-detaljer på venstre overarm.',
     width: 1440,
     height: 1800
   },
   {
     id: 'utekos-svale-interior-and-hood-detail',
     url: '/Svale_Hoodie_1440x1800.webp',
-    altText: 'Nærbilde av innsiden og hetten på Utekos Svale.',
+    altText: 'Detaljert nærbilde av den isolerte hetten og den innvendige kragen på det mørkeblå Utekos Svale, fotografert mot en hvit bakgrunn. Den delvis åpne glidelåsen avdekker et lyst Moonstruck-farget kantbånd langs innsiden av glidelåssporet. I nakken sitter en svart merkelapp med Utekos-logoen, og ved kanten av hetten ses en svart, elastisk strammesnor med plaststopper.',
     width: 1440,
     height: 1800
   },
   {
     id: 'utekos-svale-zipper-detail',
-    url: '/Svale_Details_Zipper_1440x1800.webp',
-    altText: 'Nærbilde av glidelås og snor på Utekos Svale.',
-    width: 1051,
-    height: 1314
+    url: '/images/0V0A6413.jpg',
+    altText: 'Detaljert nærbilde av den mørkeblå Utekos Svale. Bildet fokuserer på den kraftige, svarte YKK-glidelåsen som er delvis åpen og avdekker et lyst Moonstruck-farget kantbånd langs innsiden av sporet. Glidelåsdrageren er utstyrt med en lys snor og et mørkeblått anheng med en stjernelogo i samme lyse Moonstruck-farge.',
+    width: 1442,
+    height: 1803
   },
   {
     id: 'utekos-svale-logo-detail',
     url: '/Svale_Details_Logo.webp',
-    altText: 'Nærbilde av Utekos-merket på Utekos Svale.',
+    altText: 'Detaljert nærbilde av venstre overarm på den mørkeblå Utekos Svale. Bildet fokuserer på en rund, mørk logopatch med en stjerne og teksten "Utekos" uthevet i den lyse Moonstruck-fargen. Til venstre i bildet skimtes deler av det lyse kantbåndet langs den åpne glidelåsen.',
     width: 1440,
     height: 1851
   }
@@ -69,9 +69,9 @@ export const SVALE_MOBILE_GALLERY_IMAGES: Image[] = [
     height: SVALE_MOBILE_IMAGE_HEIGHT
   },
   {
-    id: 'utekos-svale-interior-hood-detail',
-    url: '/Svale_4.webp',
-    altText: 'Nærbilde av innsiden og hetten på Utekos Svale.',
+    id: 'utekos-svale-mobile-zipper-detail',
+    url: '/images/0V0A6413_1000x1500.webp',
+    altText: 'Detaljert nærbilde av den mørkeblå Utekos Svale. Bildet fokuserer på den kraftige, svarte YKK-glidelåsen som er delvis åpen og avdekker et lyst Moonstruck-farget kantbånd langs innsiden av sporet. Glidelåsdrageren er utstyrt med en lys snor og et mørkeblått anheng med en stjernelogo i samme lyse Moonstruck-farge.',
     width: SVALE_MOBILE_IMAGE_WIDTH,
     height: SVALE_MOBILE_IMAGE_HEIGHT
   },
