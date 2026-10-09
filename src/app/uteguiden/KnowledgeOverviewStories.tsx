@@ -3,42 +3,28 @@ import 'server-only'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Route } from 'next'
+import { cn } from 'cn'
 import {
   knowledgeArticleList,
   knowledgeArticles,
   type KnowledgeArticle
 } from '@/lib/knowledge/knowledgeArticles'
 import styles from './knowledgeOverview.module.css'
-import { ArrowUpRightIcon } from '@/components/utekos-icons/ArrowUpRightIcon'
 import { KnowledgeArticlePagination } from './KnowledgeArticlePagination'
+import { Badge } from '@/components/ui/badge'
+import { buttonVariants } from '@/components/ui/button'
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
-function ArticleMeta({
-  article
+export function ArticleImage({
+  article,
+  cover = false,
+  thumbnail = false,
+  featured = false
 }: {
   article: KnowledgeArticle
-}) {
-  const publishedDate = new Intl.DateTimeFormat('nb-NO', {
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'Europe/Oslo'
-  }).format(new Date(article.publishedAt))
-  return (
-    <div className={styles.meta}>
-      <span className={styles.categoryTag}>
-        {article.articleSection}
-      </span>
-      <time dateTime={article.publishedAt}>
-        {publishedDate.charAt(0).toLocaleUpperCase('nb-NO') +
-          publishedDate.slice(1)}
-      </time>
-    </div>
-  )
-}
-
-function ArticleImage({
-  article
-}: {
-  article: KnowledgeArticle
+  cover?: boolean
+  thumbnail?: boolean
+  featured?: boolean
 }) {
   const image =
     article.slug === 'ykk' ?
@@ -55,7 +41,14 @@ function ArticleImage({
         height: 941,
         alt: 'Illustrasjon av tre brettede innerlag i lyse, grå og grønne tekstiler på en hyttebenk'
       }
-    : article.slug === 'cloudweave' || article.slug === 'hvordan-forlenge-terassesesongen' ?
+    : article.slug === 'hvordan-forlenge-terassesesongen' ?
+      {
+        src: '/images/kunnskap/Cozy Scandinavian Balcony at Dusk.webp',
+        width: 1672,
+        height: 941,
+        alt: 'Moderne innglasset balkong med lukkede glassvegger, innredet med værbestandige utemøbler og varm belysning i kveldsmørket.'
+      }
+    : article.slug === 'cloudweave' ?
       {
         src: '/og-image-skreddersy-varmen.jpg',
         width: 1200,
@@ -64,10 +57,10 @@ function ArticleImage({
       }
     : article.slug === 'hvordan-holde-varmen-ute' ?
       {
-        src: '/og-emphathy-bonfire.webp',
-        width: 1200,
-        height: 630,
-        alt: 'To personer holder varmen ved et bål på terrassen'
+        src: '/images/kunnskap/Fjellvandrer i vinterstorm.webp',
+        width: 1672,
+        height: 941,
+        alt: 'En turgåer i rød jakke med ryggsekk og staver i et snødekt fjellandskap'
       }
     : {
         src: '/images/kunnskap/hvorfor-blir-man-kald-16x9.jpg',
@@ -79,8 +72,14 @@ function ArticleImage({
     <Image
       {...image}
       alt={image.alt}
-      className={styles.cardImage}
-      sizes='(max-width: 639px) calc(100vw - 72px), (max-width: 1023px) calc(50vw - 64px), 350px'
+      className={thumbnail ? styles.recommendedImage : cover ? 'block h-auto w-full' : styles.cardImage}
+      loading={featured ? 'eager' : undefined}
+      fetchPriority={featured ? 'high' : undefined}
+      sizes={thumbnail ? '(max-width: 639px) 72px, 96px'
+        : featured ? '(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(100vw - 3rem), (max-width: 1264px) calc(50vw - 2.375rem), 594px'
+        : cover
+        ? '(max-width: 767px) calc(100vw - 2rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1264px) calc(33.33vw - 2rem), 389px'
+        : '(max-width: 639px) calc(100vw - 72px), (max-width: 1023px) calc(50vw - 64px), 350px'}
     />
   )
 }
@@ -94,57 +93,83 @@ export function KnowledgeFeaturedStories() {
   ]
   return (
     <div className={styles.featuredGrid}>
-      <article className={styles.leadStory}>
-        <Link prefetch={false} href={main.path} className={styles.leadLink}>
-          <Image
-            src='/images/kunnskap/hvorfor-blir-man-kald-16x9.jpg'
-            width={1672}
-            height={941}
-            alt='To personer venter ved et snødekt busstopp en kald vinterdag'
-            sizes='(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(100vw - 3rem), (max-width: 1264px) 58vw, 726px'
-            loading='eager'
-            fetchPriority='high'
-            className={styles.leadImage}
-          />
-          <div className={styles.leadCopy}>
-            <ArticleMeta article={main} />
-            <h3>{main.title}</h3>
-            <p className={styles.description}>
-              {main.description}
-            </p>
-            <span className={styles.readMore}>
-              Les artikkelen{' '}
-              <ArrowUpRightIcon tone="orange" aria-hidden='true' size={20} />
-            </span>
-          </div>
-        </Link>
-      </article>
+      <KnowledgeArticleCard article={main} featured />
       <aside
         className={styles.recommended}
         aria-labelledby='anbefalt-lesning'
       >
         <h3 id='anbefalt-lesning'>Anbefalt lesning</h3>
         {recommended.map(article => (
-          <article
-            key={article.slug}
-            className={styles.recommendedStory}
-          >
-            <Link prefetch={false} href={article.path}>
-              <ArticleImage article={article} />
-              <div className={styles.storyText}>
-                <ArticleMeta article={article} />
-                <h4>{article.title.replace(' – ', ': ')}</h4>
-                <ArrowUpRightIcon tone="orange"
-                  className={styles.storyArrow}
-                  aria-hidden='true'
-                  size={22}
-                />
-              </div>
-            </Link>
-          </article>
+          <RecommendedArticleCard key={article.slug} article={article} />
         ))}
       </aside>
     </div>
+  )
+}
+
+function RecommendedArticleCard({ article }: { article: KnowledgeArticle }) {
+  return (
+    <article className={styles.recommendedStory}>
+      <Link prefetch={false} href={article.path} className={styles.recommendedCard}>
+        <ArticleImage article={article} thumbnail />
+        <div className={styles.recommendedCopy}>
+          <span className={styles.recommendedCategory}>{article.articleSection}</span>
+          <h4>{article.title.replace(' – ', ': ')}</h4>
+        </div>
+      </Link>
+    </article>
+  )
+}
+
+function KnowledgeArticleCard({
+  article,
+  headingLevel = 3,
+  className,
+  featured = false
+}: {
+  article: KnowledgeArticle
+  headingLevel?: 3 | 4
+  className?: string
+  featured?: boolean
+}) {
+  const publishedDate = new Intl.DateTimeFormat('nb-NO', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Europe/Oslo'
+  }).format(new Date(article.publishedAt))
+  const formattedDate = publishedDate.charAt(0).toLocaleUpperCase('nb-NO') + publishedDate.slice(1)
+
+  return (
+    <article className={cn(styles.articleCard, featured && styles.featuredCard, className)}>
+      <Link
+        prefetch={false}
+        href={article.path as Route}
+        className="group flex h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-4"
+      >
+        <Card className="relative flex w-full flex-col overflow-hidden border border-[#f0eee930] bg-[#012622] pt-0 text-[#f0eee9] transition-colors duration-200 group-hover:border-[#b44701] motion-reduce:transition-none">
+          <ArticleImage article={article} cover featured={featured} />
+          <CardHeader className="flex-1 pt-6 pb-4">
+            <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
+              <CardTitle role="heading" aria-level={headingLevel} className="min-w-0 flex-[1_1_12rem] text-xl leading-tight font-extrabold tracking-tight decoration-2 underline-offset-4 group-hover:underline">
+                {article.title.replace(' – ', ': ')}
+              </CardTitle>
+              <Badge variant="secondary" className="shrink-0 border-[#f0eee920] bg-[#001a18] text-[#f0eee9] hover:bg-[#b44701]">
+                {article.articleSection}
+              </Badge>
+            </div>
+            {featured && <p className={styles.featuredDescription}>{article.description}</p>}
+            <CardDescription className="font-medium text-[#f0eee9b3]">
+              <time dateTime={article.publishedAt}>{formattedDate}</time>
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="border-[#f0eee920] bg-[#001a18]">
+            <span className={cn(buttonVariants(), 'w-full rounded-full bg-[#b44701] font-bold text-[#f0eee9] transition-colors group-hover:bg-[#8a3600] motion-reduce:transition-none')}>
+              Les artikkelen
+            </span>
+          </CardFooter>
+        </Card>
+      </Link>
+    </article>
   )
 }
 
@@ -152,17 +177,7 @@ export function KnowledgeArticleGrid() {
   return (
     <KnowledgeArticlePagination>
       {knowledgeArticleList.map(article => (
-        <article className={styles.articleCard} key={article.slug}>
-          <Link prefetch={false} href={article.path as Route}>
-            <ArticleImage article={article} />
-            <ArticleMeta article={article} />
-            <h3>{article.title.replace(' – ', ': ')}</h3>
-            <span className={styles.readMore}>
-              Les artikkelen
-              <ArrowUpRightIcon tone="orange" size={20} aria-hidden='true' />
-            </span>
-          </Link>
-        </article>
+        <KnowledgeArticleCard key={article.slug} article={article} />
       ))}
     </KnowledgeArticlePagination>
   )

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import { canonicalCommerceValueSchema } from './canonicalCommerceItem'
 import {
   canonicalEventEnvelopeSchema,
@@ -10,7 +10,7 @@ import { mapEventDeviceInfo } from './mapEventDeviceInfo'
 export const canonicalAddToWishlistCustomDataSchema =
   z.strictObject({
     ...canonicalCommerceValueSchema.shape,
-    wishlist_mutation_id: z.string().min(1)
+    wishlist_mutation_id: z.string().check(z.minLength(1))
   })
 
 export type CanonicalAddToWishlistCustomData = z.infer<
@@ -21,10 +21,10 @@ export const canonicalAddToWishlistSchema = z.strictObject({
   ...canonicalEventEnvelopeSchema.shape,
   event_name: z.literal('add_to_wishlist'),
   source: z.literal('web'),
-  page_url: z.string().url(),
-  referrer_url: z.string().url().optional(),
-  page_title: z.string().min(1),
-  page_view_id: z.string().uuid().optional(),
+  page_url: z.string().check(z.url()),
+  referrer_url: z.optional(z.string().check(z.url())),
+  page_title: z.string().check(z.minLength(1)),
+  page_view_id: z.optional(z.string().check(z.uuid())),
   custom_data: canonicalAddToWishlistCustomDataSchema
 })
 

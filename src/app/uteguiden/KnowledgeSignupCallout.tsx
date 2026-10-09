@@ -8,7 +8,7 @@ export function KnowledgeSignupCallout() {
         src='/IconWhite.svg'
         alt='Utekos'
         width={1280}
-        height={1109.33}
+        height={1109}
         className={styles.signupLogo}
       />
       <p className={styles.signupCopy}>

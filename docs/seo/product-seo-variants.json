@@ -1,0 +1,157 @@
+{
+  "environment": "local dev; GET only; no cart or checkout mutation",
+  "results": [
+    {
+      "handle": "utekos-techdown",
+      "variant": "gid://shopify/ProductVariant/46944403849464",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/46944403849464",
+      "price": "1990.0",
+      "stock": "Denne varianten er utsolgt"
+    },
+    {
+      "handle": "utekos-techdown",
+      "variant": "gid://shopify/ProductVariant/46944403882232",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/46944403882232",
+      "price": "1990.0",
+      "stock": "På lager"
+    },
+    {
+      "handle": "utekos-techdown",
+      "variant": "gid://shopify/ProductVariant/46944403915000",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/46944403915000",
+      "price": "1990.0",
+      "stock": "På lager"
+    },
+    {
+      "handle": "utekos-techdown",
+      "variant": "gid://shopify/ProductVariant/48249962135800",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/48249962135800",
+      "price": "1990.0",
+      "stock": "På lager"
+    },
+    {
+      "handle": "utekos-svale",
+      "variant": "gid://shopify/ProductVariant/67548601123064",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/67548601123064",
+      "price": "1990.0",
+      "stock": "På lager"
+    },
+    {
+      "handle": "utekos-svale",
+      "variant": "gid://shopify/ProductVariant/67548601155832",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/67548601155832",
+      "price": "1990.0",
+      "stock": "På lager"
+    },
+    {
+      "handle": "utekos-svale",
+      "variant": "gid://shopify/ProductVariant/67548601188600",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/67548601188600",
+      "price": "1990.0",
+      "stock": "På lager"
+    },
+    {
+      "handle": "utekos-mikrofiber",
+      "variant": "gid://shopify/ProductVariant/42903231004920",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/42903231004920",
+      "price": "1790.0",
+      "stock": "Denne varianten er utsolgt"
+    },
+    {
+      "handle": "utekos-mikrofiber",
+      "variant": "gid://shopify/ProductVariant/42903231070456",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/42903231070456",
+      "price": "1790.0",
+      "stock": "Denne varianten er utsolgt"
+    },
+    {
+      "handle": "utekos-mikrofiber",
+      "variant": "gid://shopify/ProductVariant/42903231037688",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/42903231037688",
+      "price": "1790.0",
+      "stock": "På lager"
+    },
+    {
+      "handle": "utekos-mikrofiber",
+      "variant": "gid://shopify/ProductVariant/42903231103224",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/42903231103224",
+      "price": "1790.0",
+      "stock": "På lager"
+    },
+    {
+      "handle": "utekos-dun",
+      "variant": "gid://shopify/ProductVariant/42903234609400",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/42903234609400",
+      "price": "2490.0",
+      "stock": "Denne varianten er utsolgt"
+    },
+    {
+      "handle": "utekos-dun",
+      "variant": "gid://shopify/ProductVariant/42903234674936",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/42903234674936",
+      "price": "2490.0",
+      "stock": "Denne varianten er utsolgt"
+    },
+    {
+      "handle": "utekos-dun",
+      "variant": "gid://shopify/ProductVariant/42903234642168",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/42903234642168",
+      "price": "2490.0",
+      "stock": "Denne varianten er utsolgt"
+    },
+    {
+      "handle": "utekos-dun",
+      "variant": "gid://shopify/ProductVariant/42903234707704",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/42903234707704",
+      "price": "2490.0",
+      "stock": "Denne varianten er utsolgt"
+    },
+    {
+      "handle": "comfyrobe",
+      "variant": "gid://shopify/ProductVariant/43959919051000",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/43959919051000",
+      "price": "845.0",
+      "stock": "På lager"
+    },
+    {
+      "handle": "comfyrobe",
+      "variant": "gid://shopify/ProductVariant/43959919083768",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/43959919083768",
+      "price": "845.0",
+      "stock": "Denne varianten er utsolgt"
+    },
+    {
+      "handle": "comfyrobe",
+      "variant": "gid://shopify/ProductVariant/43959919116536",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/43959919116536",
+      "price": "845.0",
+      "stock": "På lager"
+    },
+    {
+      "handle": "utekos-stapper",
+      "variant": "gid://shopify/ProductVariant/42903954292984",
+      "status": 200,
+      "selected": "gid://shopify/ProductVariant/42903954292984",
+      "price": "199.0",
+      "stock": "På lager"
+    }
+  ]
+}

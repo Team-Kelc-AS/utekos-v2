@@ -5,10 +5,11 @@
   "scripts": {
     "sync": "f() { git add . && git commit -m \"$1\" && git push; }; f",
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/performance/check-motion-budget.mjs && next build",
     "start": "next start",
     "pdf:worker": "node scripts/sync-pdf-worker.mjs",
     "lint": "eslint",
+    "perf:motion": "node scripts/performance/check-motion-budget.mjs",
     "test:tracking": "node --test tests/*.test.cjs && NODE_OPTIONS='--conditions=react-server' tsx --test tests/tracking-gateway.test.ts",
     "tracking:contracts": "python3 scripts/tracking/vendor-contracts.py --manifest"
   },

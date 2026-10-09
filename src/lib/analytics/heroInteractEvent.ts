@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   canonicalEventEnvelopeSchema,
   type CanonicalEventEnvelope,
@@ -8,9 +8,9 @@ import { mapEventDeviceInfo } from './mapEventDeviceInfo'
 
 export const canonicalHeroInteractCustomDataSchema =
   z.strictObject({
-    cta_id: z.string().min(1),
-    destination_path: z.string().min(1),
-    click_sequence: z.number().int().positive()
+    cta_id: z.string().check(z.minLength(1)),
+    destination_path: z.string().check(z.minLength(1)),
+    click_sequence: z.number().check(z.int(), z.gt(0))
   })
 
 export type CanonicalHeroInteractCustomData = z.infer<
@@ -21,10 +21,10 @@ export const canonicalHeroInteractSchema = z.strictObject({
   ...canonicalEventEnvelopeSchema.shape,
   event_name: z.literal('hero_interact'),
   source: z.literal('web'),
-  page_url: z.string().url(),
-  referrer_url: z.string().url().optional(),
-  page_title: z.string().min(1),
-  page_view_id: z.string().uuid(),
+  page_url: z.string().check(z.url()),
+  referrer_url: z.optional(z.string().check(z.url())),
+  page_title: z.string().check(z.minLength(1)),
+  page_view_id: z.string().check(z.uuid()),
   custom_data: canonicalHeroInteractCustomDataSchema
 })
 

@@ -1,0 +1,92 @@
+{
+  "observedAt": "2026-10-08T23:06:40.847Z",
+  "environment": "local dev localhost:3000; simulated Facebook user-agent, not a Meta scrape",
+  "results": [
+    {
+      "handle": "utekos-techdown",
+      "status": 200,
+      "canonical": "https://utekos.no/produkter/utekos-techdown",
+      "image": "https://utekos.no/images/UtekosTechDown_1440x1800_2.webp",
+      "locale": "nb_NO",
+      "breadcrumb": true,
+      "variants": 4,
+      "h1": 1,
+      "imageStatus": 200,
+      "imageType": "image/webp"
+    },
+    {
+      "handle": "utekos-svale",
+      "status": 200,
+      "canonical": "https://utekos.no/produkter/utekos-svale",
+      "image": "https://utekos.no/Svale_Vertical_Transparent.webp",
+      "locale": "nb_NO",
+      "breadcrumb": true,
+      "variants": 3,
+      "h1": 1,
+      "imageStatus": 200,
+      "imageType": "image/webp"
+    },
+    {
+      "handle": "utekos-mikrofiber",
+      "status": 200,
+      "canonical": "https://utekos.no/produkter/utekos-mikrofiber",
+      "image": "https://utekos.no/_next/static/media/1.36u34pkbzp0vq.webp",
+      "locale": "nb_NO",
+      "breadcrumb": true,
+      "variants": 4,
+      "h1": 1,
+      "imageStatus": 200,
+      "imageType": "image/webp"
+    },
+    {
+      "handle": "utekos-dun",
+      "status": 200,
+      "canonical": "https://utekos.no/produkter/utekos-dun",
+      "image": "https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Dun-Vargnatt-Full-Front-1200x1200.webp?v=1786208128",
+      "locale": "nb_NO",
+      "breadcrumb": true,
+      "variants": 4,
+      "h1": 1,
+      "imageStatus": 200,
+      "imageType": "image/jpeg"
+    },
+    {
+      "handle": "comfyrobe",
+      "status": 200,
+      "canonical": "https://utekos.no/produkter/comfyrobe",
+      "image": "https://utekos.no/_next/static/media/Comfyrobe-002.3k4aag2r-nscb.webp",
+      "locale": "nb_NO",
+      "breadcrumb": true,
+      "variants": 3,
+      "h1": 1,
+      "imageStatus": 200,
+      "imageType": "image/webp"
+    },
+    {
+      "handle": "utekos-stapper",
+      "status": 200,
+      "canonical": "https://utekos.no/produkter/utekos-stapper",
+      "image": "https://utekos.no/_next/static/media/stapper-hvit.01y4y887i5sqs.png",
+      "locale": "nb_NO",
+      "breadcrumb": true,
+      "variants": 1,
+      "h1": 1,
+      "imageStatus": 200,
+      "imageType": "image/png"
+    },
+    {
+      "path": "/produkter/utekos-techdown?variant=invalid",
+      "status": 404,
+      "robots": [
+        "noindex"
+      ]
+    },
+    {
+      "path": "/produkter/does-not-exist-seo-test",
+      "status": 404,
+      "robots": [
+        "noindex"
+      ]
+    }
+  ]
+}

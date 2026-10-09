@@ -14,6 +14,9 @@
   padding: 3rem 1rem 6rem;
 }
 
+/* Progressive enhancement: content stays visible without JavaScript. */
+.animation[data-motion='pending'] :is(.logoBox, .content) { opacity: 0; }
+
 .glow {
   position: absolute;
   z-index: -1;

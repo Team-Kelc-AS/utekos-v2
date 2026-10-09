@@ -89,7 +89,8 @@
       "source": "src/lib/analytics/metaParameterBuilderUserData.ts",
       "target": "src/lib/analytics/metaParameterBuilderUserData.ts",
       "sourceSha256": "c948f32e75accc3478f3c28ae87d9a3836a12124f13860a1f071971efdc942f3",
-      "adapted": false
+      "adapted": true,
+      "reason": "Zod Mini migration; original source hash retained. Current hash and equivalence evidence are recorded in contract-overrides.json."
     },
     {
       "source": "src/lib/analytics/metaAudience.ts",

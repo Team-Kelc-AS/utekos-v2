@@ -1,19 +1,21 @@
-import { Suspense } from 'react';
-import { getProduct } from '@/lib/shopify/getProduct';
-import { getProductHandles } from '@/lib/shopify/getProductHandles';
-import { notFound } from 'next/navigation';
-import type { Metadata } from 'next';
-import Breadcrumbs from '@/components/Breadcrumbs';
-import { ProductMaterialGuide } from '@/components/knowledge/RelatedContent';
-import { assertProductHandles } from '@/lib/catalog/categories';
-import { productTitle } from '@/lib/catalog/productTitle';
-import { absoluteUrl, productPath } from '@/lib/seo/site';
-import { SelectedProduct } from '@/components/product/SelectedProduct';
-import { ProductDetails } from '@/components/product/ProductDetails';
-import { RelatedProducts } from '@/components/product/RelatedProducts';
-import { resolveVariant, type ProductSearchParams } from '@/lib/products/variants';
-import { googleSansFlex } from '@/lib/fonts';
-import styles from '@/components/product/product.module.css';
+import { Suspense } from "react";
+import { getProduct } from "@/lib/shopify/getProduct";
+import { getProductHandles } from "@/lib/shopify/getProductHandles";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { assertProductHandles } from "@/lib/catalog/categories";
+import { buildProductMetadata } from "@/lib/seo/productMetadata";
+import { productBreadcrumbs } from "@/lib/seo/productBreadcrumbs";
+import { SelectedProduct } from "@/components/product/SelectedProduct";
+import { ProductDetails } from "@/components/product/ProductDetails";
+import { RelatedProducts } from "@/components/product/RelatedProducts";
+import {
+  resolveVariant,
+  type ProductSearchParams,
+} from "@/lib/products/variants";
+import { googleSansFlex } from "@/lib/fonts";
+import styles from "@/components/product/product.module.css";
 
 // This route intentionally waits for URL validation to preserve HTTP 404.
 export const instant = false;
@@ -31,27 +33,22 @@ export async function generateStaticParams() {
 
   // Cache Components validates at least one real path during the build.
   if (handles.length === 0) {
-    throw new Error('No Storefront products available to prerender');
+    throw new Error("No Storefront products available to prerender");
   }
 
   return handles.map((handle) => ({ handle }));
 }
 
-export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
   const { handle } = await params;
   const product = await getProduct(handle);
   if (!product) notFound();
   if (!resolveVariant(product, await searchParams)) notFound();
 
-  const title = product.seo.title || productTitle(product);
-  const description = product.seo.description || product.description;
-  const canonical = absoluteUrl(productPath(product.handle));
-  return {
-    title,
-    description,
-    alternates: { canonical },
-    openGraph: { title, description, url: canonical },
-  };
+  return buildProductMetadata(product);
 }
 
 export default function ProductPage({ params, searchParams }: Props) {
@@ -73,18 +70,23 @@ async function ProductContent({ params, searchParams }: Props) {
   return (
     <main className={`${googleSansFlex.variable} ${styles.page}`}>
       <div className={styles.container}>
-        <div className={styles.breadcrumbs}><Breadcrumbs items={[
-          { label: 'Forsiden', href: '/' },
-          { label: 'Produkter', href: '/produkter' },
-          { label: productTitle(product) },
-        ]} /></div>
-        <Suspense fallback={<div className={styles.fallback} role="status">Laster produktvalg …</div>}>
+        <div className={styles.breadcrumbs}>
+          <Breadcrumbs items={productBreadcrumbs(product)} />
+        </div>
+        <Suspense
+          fallback={
+            <div className={styles.fallback} role="status">
+              Laster produktvalg …
+            </div>
+          }
+        >
           <SelectedProduct product={product} searchParams={searchParams} />
         </Suspense>
         <ProductDetails handle={product.handle} productId={product.id} />
-        <ProductMaterialGuide handle={product.handle} />
       </div>
-      <Suspense fallback={null}><RelatedProducts handle={product.handle} /></Suspense>
+      <Suspense fallback={null}>
+        <RelatedProducts handle={product.handle} />
+      </Suspense>
     </main>
   );
 }

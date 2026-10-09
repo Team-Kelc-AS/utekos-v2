@@ -86,11 +86,11 @@ Tallene summerer analyzerens output-moduldeler på `/om-oss` for de synkrone
 avhengighetene fra Header sine klientinnganger. Delte runtime-moduler inngår
 i importgrafen; dette er ikke overførte nettverksbytes eller en lastetidsmåling.
 
-| Måling | Før | Etter |
-| --- | ---: | ---: |
-| Header sine egne synkrone TSX-moduler | 3 587 bytes | 3 362 bytes |
+| Måling                                        |          Før |        Etter |
+| --------------------------------------------- | -----------: | -----------: |
+| Header sine egne synkrone TSX-moduler         |  3 587 bytes |  3 362 bytes |
 | Synkron JS-importgraf, inkludert delt runtime | 21 434 bytes | 14 022 bytes |
-| CSS i samme graf | 3 312 bytes | 9 305 bytes |
+| CSS i samme graf                              |  3 312 bytes |  9 305 bytes |
 
 Den synkrone grafen inneholder ikke Motion, React Query, Shopify-lesere,
 søkeindeksen eller de tre utsatte interaksjonsmodulene. De nye funksjonene har

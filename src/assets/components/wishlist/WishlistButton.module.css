@@ -1,10 +1,27 @@
-.heart { position: relative; display: block; width: 24px; height: 24px; }
-.filled { position: absolute; inset: 0; opacity: 0; }
-.cardWishlist:focus-visible .outline { opacity: 0; }
-.cardWishlist:focus-visible .filled { opacity: 1; }
+.heart {
+  position: relative;
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+.filled {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.cardWishlist:focus-visible .outline {
+  opacity: 0;
+}
+.cardWishlist:focus-visible .filled {
+  opacity: 1;
+}
 @media (hover: hover) {
-  .cardWishlist:hover .outline { opacity: 0; }
-  .cardWishlist:hover .filled { opacity: 1; }
+  .cardWishlist:hover .outline {
+    opacity: 0;
+  }
+  .cardWishlist:hover .filled {
+    opacity: 1;
+  }
 }
 .hoverCard {
   width: max-content;
@@ -12,9 +29,13 @@
   background: #012622;
   color: #f0eee9;
   border: 1px solid #f0eee930;
-  padding: .625rem .875rem;
+  padding: 0.625rem 0.875rem;
   font-family: var(--font-google-sans-flex), sans-serif;
-  font-variation-settings: 'opsz' 120;
+  font-variation-settings: "opsz" 120;
   font-weight: 500;
 }
-@media (prefers-reduced-motion: reduce) { .hoverCard { animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .hoverCard {
+    animation: none;
+  }
+}

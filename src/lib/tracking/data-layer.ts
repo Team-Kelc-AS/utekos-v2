@@ -16,7 +16,7 @@ import { buildViewCategoryDataLayerEvent } from '@/lib/analytics/viewCategoryEve
 import { buildScrollDepthDataLayerEvent } from '@/lib/analytics/scrollDepthEvent';
 import { buildHeroInteractDataLayerEvent } from '@/lib/analytics/heroInteractEvent';
 import { buildInteractWithAccordionDataLayerEvent } from '@/lib/analytics/interactWithAccordionEvent';
-import { buildGenerateLeadDataLayerEvent } from '@/lib/analytics/generateLeadEvent';
+import { buildGenerateLeadDataLayerEvent } from '@/lib/analytics/generateLeadDataLayerEvent';
 
 export function buildDataLayer(event: CanonicalEvent): Record<string, unknown> {
   switch (event.event_name) {

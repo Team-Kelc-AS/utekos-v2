@@ -6,7 +6,8 @@ import type { CursorConnection } from '@/lib/catalog/paginateConnection';
 import type { ShopifyProduct, ProductImage, ProductVariant, ProductCollection } from './product-types';
 
 export type { ShopifyProduct } from './product-types';
-type ProductResponse = ShopifyProduct & {
+type ProductResponse = Omit<ShopifyProduct, 'options'> & {
+  options: { name: string; optionValues: { name: string }[] }[];
   images: CursorConnection<ProductImage>;
   variants: CursorConnection<ProductVariant>;
   collections: CursorConnection<ProductCollection>;
@@ -57,5 +58,9 @@ export async function getProduct(handle: string): Promise<ShopifyProduct | null>
     }),
   ]);
   cacheLife('minutes');
-  return { ...product, images, variants, collections };
+  return {
+    ...product, images, variants, collections,
+    // Preserve the UI contract while using Storefront 2026-10's optionValues.
+    options: product.options.map(option => ({ name: option.name, values: option.optionValues.map(value => value.name) })),
+  };
 }

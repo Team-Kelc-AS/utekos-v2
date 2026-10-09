@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import * as z from '@/lib/validation/zodMini';
 import { canonicalPageViewSchema } from '@/lib/analytics/pageViewEvent';
 import { canonicalViewItemSchema } from '@/lib/analytics/viewItemEvent';
 import { canonicalViewItemListSchema } from '@/lib/analytics/viewItemListEvent';

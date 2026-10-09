@@ -4,7 +4,7 @@ import styles from './knowledgeChrome.module.css'
 export function KnowledgeLearnings({
   article
 }: {
-  article: KnowledgeArticle
+  article: Pick<KnowledgeArticle, 'slug' | 'learnings'>
 }) {
   const headingId = `${article.slug}-hva-du-vil-laere`
 

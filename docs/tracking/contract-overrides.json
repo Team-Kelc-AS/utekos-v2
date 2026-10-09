@@ -11,10 +11,66 @@
     },
     "src/lib/analytics/generateLeadEvent.ts": {
       "baseSha256": "3519427256b64d64d098c76117593dbdd0c82e419da37a925c35e42796e5ac73",
-      "sha256": "44c886a81f3073ed5d7c94026bb9c1d008762d0b63df7aa17e9d79016b8e49af",
-      "reason": "Explicit unvalued dealer-inquiry branch. Other leads retain mandatory documented positive monetary value.",
-      "implementationRepository": "utekos-tracking-backend",
+      "sha256": "b8a9994c21c6ada527559bf5af20a020950ee5256537f61df2735eea804c5e8f",
+      "reason": "Explicit unvalued dealer-inquiry branch. Other leads retain mandatory documented positive monetary value. Pure data-layer builder extracted to generateLeadDataLayerEvent.ts; schema and server validation unchanged.",
+      "implementationRepository": "utekos-v2",
       "implementationPath": "src/lib/analytics/generateLeadEvent.ts"
+    },
+    "src/lib/analytics/addToWishlistEvent.ts": {
+      "baseSha256": "19837d8f374c0bf62f0228a65e62fc5f34d386222e9d08c74f127b5fefffc175",
+      "sha256": "b458d4c79ee5899f4bd594272b48f454e59731e1a656d0640655dc5aaafd9c46",
+      "reason": "Zod Mini client-boundary optimization; accepted inputs, parsed outputs and complete validation issues compared against classic definitions in tests/zod-client-contracts.test.cjs.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/addToWishlistEvent.ts"
+    },
+    "src/lib/analytics/heroInteractEvent.ts": {
+      "baseSha256": "6ee41988404902aa8eec5510cbcc26522ca2a64c730797b2ceb603205d291b79",
+      "sha256": "3a5b69bde6febecc009d097d59c8e37f32916811cd8a0739f692417b962f4af3",
+      "reason": "Zod Mini client-boundary optimization; accepted inputs, parsed outputs and complete validation issues compared against classic definitions in tests/zod-client-contracts.test.cjs.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/heroInteractEvent.ts"
+    },
+    "src/lib/analytics/interactWithAccordionEvent.ts": {
+      "baseSha256": "81163876d77d8b6e14c3361781be10277e5727b3f42a08973cde9ffd2d04a2af",
+      "sha256": "224c400de35461563a84a0ec27ccea24e80e3a60098626d105cb023af8f62009",
+      "reason": "Zod Mini client-boundary optimization; accepted inputs, parsed outputs and complete validation issues compared against classic definitions in tests/zod-client-contracts.test.cjs.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/interactWithAccordionEvent.ts"
+    },
+    "src/lib/analytics/sizeGuideViewEvent.ts": {
+      "baseSha256": "751c7892a9c4a0d571b7f5eb506ad3a2a9c5133b43ebabc4c60005c10820abc0",
+      "sha256": "f6fef75f9c1008115780d5cfff5fc6a9bd2c89e89d284679bf5261d19183906d",
+      "reason": "Zod Mini client-boundary optimization; accepted inputs, parsed outputs and complete validation issues compared against classic definitions in tests/zod-client-contracts.test.cjs.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/sizeGuideViewEvent.ts"
+    },
+    "src/lib/analytics/formStartEvent.ts": {
+      "baseSha256": "45946160bdfe2322546750559ce935d992ba2e16f02cebaa9d2bf0106310dcb0",
+      "sha256": "29115573d88b7588eacb59fe864cca2931de1b1b855a53f61ae28112a63ac7ef",
+      "reason": "Zod Mini client-boundary optimization; accepted inputs, parsed outputs and complete validation issues compared against classic definitions in tests/zod-client-contracts.test.cjs.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/formStartEvent.ts"
+    },
+    "src/lib/analytics/formErrorEvent.ts": {
+      "baseSha256": "ec1f9ca522986cd5161536e8a83429a1f679aaf29bfaeee04aa8acc312df77a3",
+      "sha256": "0fd8156ea7c7374a396ae5d0cb98de30a6a521c973c2a3040cc54aa521e145e3",
+      "reason": "Zod Mini client-boundary optimization; accepted inputs, parsed outputs and complete validation issues compared against classic definitions in tests/zod-client-contracts.test.cjs.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/formErrorEvent.ts"
+    },
+    "src/lib/analytics/videoProgressEvent.ts": {
+      "baseSha256": "57b2fac9ca9059d9c4e2bb8106db08235b21699278125ae63c2dec8edbc72239",
+      "sha256": "8933ef7e06fe60707829300a6bc9a44374b8702f0e676fd1e29c4fc4b66e373a",
+      "reason": "Zod Mini client-boundary optimization; accepted inputs, parsed outputs and complete validation issues compared against classic definitions in tests/zod-client-contracts.test.cjs.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/videoProgressEvent.ts"
+    },
+    "src/lib/analytics/metaParameterBuilderUserData.ts": {
+      "baseSha256": "c948f32e75accc3478f3c28ae87d9a3836a12124f13860a1f071971efdc942f3",
+      "sha256": "4d73d2d7224e0b50f44a9ce6fbcf3893a8c9c4a240a65cc495ab6f77b334b761",
+      "reason": "Zod Mini client-boundary optimization; accepted inputs, parsed outputs and complete validation issues compared against classic definitions in tests/zod-client-contracts.test.cjs.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/metaParameterBuilderUserData.ts"
     }
   }
 }

@@ -32,8 +32,8 @@ export default function Header() {
     <header className={`${googleSansFlex.variable} ${styles.header}`}>
       <div className={styles.container}>
         <Link href="/" aria-label="Utekos – til forsiden" className={styles.logo}>
-          <Image src="/IconWhite.svg" alt="" width={1280} height={1109.33} loading="eager" className={styles.icon} />
-          <Image src="/WordmarkWhite.svg" alt="" width={1280} height={311.16} loading="eager" className={styles.wordmark} />
+          <Image src="/IconWhite.svg" alt="" width={1280} height={1109} loading="eager" className={styles.icon} />
+          <Image src="/WordmarkWhite.svg" alt="" width={1280} height={311} loading="eager" className={styles.wordmark} />
         </Link>
         <nav className={styles.desktopNavigation} aria-label="Hovedmeny">
           <ul className={styles.links}>
@@ -49,7 +49,7 @@ export default function Header() {
           <Suspense fallback={<CartHost />}><CartSlot /></Suspense>
           <HeaderMenu
             trigger={<><LineHorizontal3Icon size={20} tone="orange" className={styles.primaryIcon} /><span>Meny</span></>}
-            logo={<Link href="/" aria-label="Utekos – til forsiden"><Image src="/IconWhite.svg" alt="" width={1280} height={1109.33} /></Link>}
+            logo={<Link href="/" aria-label="Utekos – til forsiden"><Image src="/IconWhite.svg" alt="" width={1280} height={1109} /></Link>}
             closeIcon={closeIcon}
           >
             <nav className={styles.panelNavigation} aria-label="Alle sider">

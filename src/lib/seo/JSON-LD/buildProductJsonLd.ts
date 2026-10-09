@@ -1,11 +1,14 @@
 import 'server-only';
-import type { Offer, Product, ProductGroup, Review, WithContext } from 'schema-dts';
+import type { BreadcrumbList, Graph, Offer, Product, ProductGroup, Review, WithContext } from 'schema-dts';
 import type { ShopifyProduct, ProductVariant } from '@/lib/shopify/product-types';
 import type { JudgeMeReviews } from '@/lib/products/judgeme';
 import { productTitle } from '@/lib/catalog/productTitle';
 import { getProductPageDescriptionText } from '@/lib/products/content';
 import { productGallery } from '@/lib/products/gallery';
+import { productAvailability } from '@/lib/products/availability';
+import { productBreadcrumbs } from '@/lib/seo/productBreadcrumbs';
 import { absoluteUrl, productPath } from '@/lib/seo/site';
+import { productOfferPolicies } from './productPolicies';
 import { utekosTechDown } from './techdown/UtekosTechDown';
 import { utekosMikrofiber } from './mikrofiber/UtekosMikrofiber';
 import { utekosDun } from './dun/UtekosDun';
@@ -66,27 +69,19 @@ function reviewProperties(data: JudgeMeReviews | null, canonical: string): Pick<
   };
 }
 
-function offerFor(variant: ProductVariant, url: string, template?: ProductNode): OfferNode | undefined {
+function offerFor(handle: string, variant: ProductVariant, url: string): OfferNode | undefined {
   const price = Number(variant.price.amount);
-  if (!variant.price.amount.trim() || !Number.isFinite(price) || price < 0) return undefined;
-  const stored = template?.offers;
-  const policy = stored && !Array.isArray(stored) && typeof stored === 'object' && '@type' in stored && stored['@type'] === 'Offer' ? stored : undefined;
+  if (!/^\d+(?:\.\d+)?$/.test(variant.price.amount) || !Number.isFinite(price) || price < 0 || !/^[A-Z]{3}$/.test(variant.price.currencyCode)) return undefined;
   const compare = variant.compareAtPrice;
-  const shipping = policy?.shippingDetails;
-  // Rate for one unit at its current price; /frakt-og-retur says free from 999 NOK.
-  const shippingDetails = variant.price.currencyCode === 'NOK' && shipping && !Array.isArray(shipping) && typeof shipping === 'object' && '@type' in shipping && shipping['@type'] === 'OfferShippingDetails'
-    ? { ...shipping, shippingRate: { '@type': 'MonetaryAmount' as const, value: price >= 999 ? 0 : 99, currency: 'NOK' } }
-    : undefined;
   return {
     '@type': 'Offer', url, price: variant.price.amount, priceCurrency: variant.price.currencyCode,
-    availability: !variant.availableForSale ? 'https://schema.org/OutOfStock' : variant.currentlyNotInStock ? 'https://schema.org/BackOrder' : 'https://schema.org/InStock',
+    availability: productAvailability(variant).schema,
     itemCondition: 'https://schema.org/NewCondition',
     seller: { '@type': 'Organization', name: 'Utekos', legalName: 'KELC AS', url: absoluteUrl('/') },
-    ...(compare && compare.currencyCode === variant.price.currencyCode && Number(compare.amount) > price && {
+    ...(compare && /^\d+(?:\.\d+)?$/.test(compare.amount) && Number.isFinite(Number(compare.amount)) && compare.currencyCode === variant.price.currencyCode && Number(compare.amount) > price && {
       priceSpecification: { '@type': 'UnitPriceSpecification', priceType: 'https://schema.org/StrikethroughPrice', price: compare.amount, priceCurrency: compare.currencyCode },
     }),
-    ...(shippingDetails && { shippingDetails }),
-    ...(policy?.hasMerchantReturnPolicy && { hasMerchantReturnPolicy: policy.hasMerchantReturnPolicy }),
+    ...productOfferPolicies(handle, variant.price),
   };
 }
 
@@ -116,7 +111,7 @@ export function buildProductJsonLd(product: ShopifyProduct, reviews: JudgeMeRevi
     const url = `${canonical}?variant=${variant.id.split('/').pop()}`;
     const gallery = productGallery(product, variant);
     const image = [...new Set([...gallery.desktop, ...gallery.mobile].map(item => absoluteUrl(item.url)))];
-    const offers = offerFor(variant, url, template);
+    const offers = offerFor(product.handle, variant, url);
     const swatch = template?.color === color && typeof template?.colorSwatch === 'string' && /^https?:\/\//.test(template.colorSwatch) ? template.colorSwatch : undefined;
     return {
       '@type': 'Product', '@id': `${canonical}#variant-${variant.id.split('/').pop()}`,
@@ -151,6 +146,23 @@ export function buildProductJsonLd(product: ShopifyProduct, reviews: JudgeMeRevi
   };
 }
 
-export function serializeProductJsonLd(data: WithContext<Product | ProductGroup>): string {
+/** One page graph: existing product identity plus the exact visible breadcrumb trail. */
+export function buildProductPageJsonLd(product: ShopifyProduct, reviews: JudgeMeReviews | null): Graph | null {
+  const productNode = buildProductJsonLd(product, reviews);
+  if (!productNode) return null;
+  const breadcrumb: BreadcrumbList = {
+    '@type': 'BreadcrumbList',
+    '@id': `${absoluteUrl(productPath(product.handle))}#breadcrumb`,
+    itemListElement: productBreadcrumbs(product).map((crumb, index) => ({
+      '@type': 'ListItem', position: index + 1, name: crumb.label,
+      ...(crumb.href && { item: absoluteUrl(crumb.href) }),
+    })),
+  };
+  // Keep @context only at the graph root; entity IDs and relationships are unchanged.
+  const { '@context': context, ...entity } = productNode;
+  return { '@context': context, '@graph': [entity, breadcrumb] };
+}
+
+export function serializeProductJsonLd(data: WithContext<Product | ProductGroup> | Graph): string {
   return JSON.stringify(data).replace(/</g, '\\u003c');
 }

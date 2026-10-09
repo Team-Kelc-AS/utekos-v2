@@ -4,7 +4,7 @@ import styles from './knowledgeChrome.module.css'
 export function KnowledgeToc({
   article
 }: {
-  article: KnowledgeArticle
+  article: Pick<KnowledgeArticle, 'slug' | 'toc'>
 }) {
   const headingId = `${article.slug}-innhold`
 

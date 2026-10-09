@@ -267,7 +267,7 @@ function productHarness(handler) {
 
 test('getProduct returns all image and variant pages while preserving source order and cache tags', async () => {
   const h = productHarness(({ query, variables }) => {
-    if (query.includes('query Product(')) return { product: { ...product([]), images: connection([{ id: 'image-1' }], 'image-cursor', true), variants: connection([variant(1, 'Medium')], 'variant-cursor', true) } };
+    if (query.includes('query Product(')) return { product: { ...product([]), options: [{ name: 'Farge', optionValues: [{ name: 'Fjellblå' }, { name: 'Vargnatt' }] }], images: connection([{ id: 'image-1' }], 'image-cursor', true), variants: connection([variant(1, 'Medium')], 'variant-cursor', true) } };
     if (query.includes('query ProductImages')) {
       if (variables.after === 'image-cursor') return { product: { images: connection([{ id: 'image-2' }], 'last-image-cursor', true) } };
       assert.equal(variables.after, 'last-image-cursor');
@@ -279,6 +279,7 @@ test('getProduct returns all image and variant pages while preserving source ord
   const result = await h.getProduct('utekos-techdown');
   assert.deepEqual(Array.from(result.images.nodes, image => image.id), ['image-1', 'image-2', 'image-3']);
   assert.deepEqual(Array.from(result.variants.nodes, item => item.id), ['gid://shopify/ProductVariant/1', 'gid://shopify/ProductVariant/2']);
+  assert.deepEqual(JSON.parse(JSON.stringify(result.options)), [{ name: 'Farge', values: ['Fjellblå', 'Vargnatt'] }]);
   assert.equal(h.calls.length, 4);
   assert.deepEqual(h.tags, ['shopify:products', 'shopify:product:utekos-techdown']);
   assert.deepEqual(h.lifetimes, ['minutes']);

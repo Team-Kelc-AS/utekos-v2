@@ -2,11 +2,7 @@
   --knowledge-ink: #010b0a;
   --knowledge-ink-muted: #012622;
   --knowledge-link: #b44701;
-  --knowledge-border: color-mix(
-    in srgb,
-    #001a18 22%,
-    transparent
-  );
+  --knowledge-border: color-mix(in srgb, #001a18 22%, transparent);
   --overview-surface: #f0eee9;
   --overview-card: color-mix(in srgb, #001a18 4%, #f0eee9);
   padding-bottom: clamp(4rem, 8vw, 7rem);
@@ -35,7 +31,7 @@
   color: #f0eee9;
   font-optical-sizing: none;
   /* Google Sans Flex v4.005 STAT maps the 120pt variant to opsz 120. */
-  font-variation-settings: 'opsz' 120;
+  font-variation-settings: "opsz" 120;
 }
 .signupLogo {
   display: block;
@@ -136,48 +132,12 @@
 }
 .featuredGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
-  gap: clamp(2rem, 4vw, 4rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.75rem;
+  align-items: stretch;
 }
-.leadStory {
-  min-width: 0;
-}
-.leadLink {
-  display: block;
-  color: inherit;
-  text-decoration: none;
-}
-.leadImage {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 12px;
-}
-.leadCopy {
-  padding-top: 1.5rem;
-}
-.meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
-  margin: 0 0 1rem;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: var(--knowledge-ink-muted);
-  font-weight: 500;
-}
-.categoryTag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.375rem 0.625rem;
-  border-radius: 6px;
-  background: #012622;
-  color: #f0eee9;
-}
-.categoryTag svg {
-  flex-shrink: 0;
+.featuredCard [data-slot="card-header"] {
+  padding: 1.5rem;
 }
 .cardImage {
   display: block;
@@ -186,62 +146,82 @@
   margin: 0 auto 1.25rem;
   border-radius: 12px;
 }
-.leadCopy h3 {
-  margin: 0;
-  font-size: clamp(2rem, 3.4vw, 3rem);
-  line-height: 1.12;
-  letter-spacing: -0.03em;
-  font-weight: 800;
+.featuredCard [data-slot="card-title"] {
+  font-size: clamp(1.5rem, 2.3vw, 2rem);
+  line-height: 1.2;
 }
-.description {
-  margin: 1rem 0 0;
+.featuredDescription {
+  margin: 0 0 1rem;
+  color: #f0eee9e6;
   font-size: 1rem;
-  font-weight: 500;
   line-height: 1.65;
-  color: var(--knowledge-ink-muted);
 }
-.readMore {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-  color: var(--knowledge-link);
-  font-weight: 800;
-}
-.recommended > h3 {
-  margin: 0;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--knowledge-border);
-  font-weight: 800;
-  font-size: 1.1rem;
-}
-.recommendedStory {
-  margin-top: 1.5rem;
-  border: 1px solid var(--knowledge-border);
-  border-radius: 20px;
-}
-.recommendedStory a {
-  position: relative;
-  display: block;
-  padding: 1.25rem;
-  color: inherit;
-  text-decoration: none;
-}
-.storyText {
+.recommended {
+  display: grid;
+  grid-template-rows: minmax(min-content, 1fr) repeat(3, auto);
+  gap: 1.25rem;
   min-width: 0;
 }
-.recommendedStory h4 {
-  margin: 0;
+.recommended > h3 {
+  align-self: start;
+  margin: 0 0 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--knowledge-border);
   font-weight: 800;
-  font-size: clamp(1.25rem, 1.8vw, 1.65rem);
-  line-height: 1.25;
-  letter-spacing: -0.02em;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.recommendedStory {
+  min-width: 0;
+}
+.recommendedCard {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
+  gap: 1.5rem;
+  height: 100%;
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--knowledge-border);
+  border-radius: 1.25rem;
+  background: var(--overview-surface);
+  color: var(--knowledge-ink);
+  text-decoration: none;
+  transition:
+    border-color 160ms ease-out,
+    background-color 160ms ease-out;
+}
+.recommendedCard:hover {
+  border-color: #b44701;
+  background: var(--overview-card);
+}
+.recommendedImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+}
+.recommendedCopy {
+  min-width: 0;
+}
+.recommendedCategory {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--knowledge-ink-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.recommendedCopy h4 {
+  margin: 0;
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  font-weight: 800;
+  line-height: 1.4;
   text-wrap: pretty;
 }
-.storyArrow {
-  display: block;
-  margin-top: 1rem;
-  color: var(--knowledge-link);
+@media (prefers-reduced-motion: reduce) {
+  .recommendedCard {
+    transition: none;
+  }
 }
 .librarySection {
   margin-top: clamp(4rem, 8vw, 7rem);
@@ -293,28 +273,7 @@
   gap: 1.5rem;
 }
 .articleCard {
-  border: 1px solid var(--knowledge-border);
-  border-radius: 20px;
-}
-.articleCard a {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 1.25rem;
-  color: inherit;
-  text-decoration: none;
-}
-.articleCard :is(h3, h4) {
-  margin: 0;
-  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-  text-wrap: pretty;
-}
-.articleCard .readMore {
-  margin-top: auto;
-  padding-top: 1.5rem;
+  min-width: 0;
 }
 .showMore {
   display: block;
@@ -349,34 +308,26 @@
   background: var(--overview-card);
 }
 
-@media (min-width: 1024px) {
-  .recommendedStory .cardImage {
-    display: none;
-  }
-  .recommendedStory h4 {
-    font-size: 1.25rem;
-  }
-  .recommendedStory .meta {
-    gap: 0.625rem;
-    margin-bottom: 0.75rem;
-  }
-}
-
 @media (max-width: 1023px) {
   .featuredGrid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .recommended,
-  .articleGrid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
+  .recommended {
+    grid-template-rows: auto repeat(3, auto);
   }
   .recommended > h3 {
-    grid-column: 1 / -1;
+    margin-bottom: 0;
   }
-  .recommendedStory {
-    margin-top: 0;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .articleGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  .articleGrid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -392,8 +343,10 @@
   .hero {
     padding-block: 2.5rem;
   }
-  .recommended {
-    margin-top: 0.5rem;
+  .recommendedCard {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.75rem 1rem;
   }
   .topicNav a {
     width: 100%;
@@ -405,11 +358,7 @@
     --knowledge-ink: #f0eee9;
     --knowledge-ink-muted: #f0eee9;
     --knowledge-link: #f0eee9;
-    --knowledge-border: color-mix(
-      in srgb,
-      #f0eee9 25%,
-      transparent
-    );
+    --knowledge-border: color-mix(in srgb, #f0eee9 25%, transparent);
     --overview-surface: #001a18;
     --overview-card: #012622;
   }

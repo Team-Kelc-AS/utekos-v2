@@ -22,7 +22,7 @@ function formatTimestamp(value: string): string {
 export function KnowledgeArticleMeta({
   article
 }: {
-  article: KnowledgeArticle
+  article: Partial<Pick<KnowledgeArticle, 'publishedAt' | 'readingMinutes'>>
 }) {
   const author = knowledgeAuthors.utekos
 
@@ -52,14 +52,20 @@ export function KnowledgeArticleMeta({
             {author.name}
           </a>
         </p>
-        <p className={styles.publicationLine}>
-          Publisert{' '}
-          <time dateTime={article.publishedAt}>
-            {formatTimestamp(article.publishedAt)}
-          </time>
-          {' · '}
-          {article.readingMinutes} min lesetid
-        </p>
+        {article.publishedAt || article.readingMinutes ? (
+          <p className={styles.publicationLine}>
+            {article.publishedAt ? (
+              <>
+                Publisert{' '}
+                <time dateTime={article.publishedAt}>
+                  {formatTimestamp(article.publishedAt)}
+                </time>
+              </>
+            ) : null}
+            {article.publishedAt && article.readingMinutes ? ' · ' : null}
+            {article.readingMinutes ? `${article.readingMinutes} min lesetid` : null}
+          </p>
+        ) : null}
       </div>
     </aside>
   )

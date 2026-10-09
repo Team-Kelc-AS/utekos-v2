@@ -10,7 +10,7 @@ import styles from './knowledgeChrome.module.css'
 export function KnowledgeSources({
   article
 }: {
-  article: KnowledgeArticle
+  article: Pick<KnowledgeArticle, 'slug' | 'references'>
 }) {
   const headingId = `${article.slug}-kilder`
 

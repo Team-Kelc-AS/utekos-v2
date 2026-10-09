@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const { loadTypeScript } = require('./load-typescript.cjs');
-const { buildProductJsonLd, serializeProductJsonLd } = loadTypeScript('lib/seo/JSON-LD/buildProductJsonLd.ts', {
+const { buildProductJsonLd, buildProductPageJsonLd, serializeProductJsonLd } = loadTypeScript('lib/seo/JSON-LD/buildProductJsonLd.ts', {
   mocks: {
     '@/lib/products/gallery': {
       productGallery: (_product, variant) => ({
@@ -79,4 +79,40 @@ test('only current public reviews are emitted and script termination is escaped'
   assert.equal(json.includes('<'), false);
   assert.equal(JSON.parse(json).review[0].reviewBody, reviews.reviews[0].body);
   assert.equal(buildProductJsonLd(product(), { count: 0, average: 0, reviews: [] }).aggregateRating, undefined);
+});
+
+test('new variants of current products keep the applicable shipping and return policy', () => {
+  for (const [amount, expected] of [['998.99', 99], ['999.00', 0], ['999.01', 0]]) {
+    const result = buildProductJsonLd(product([variant({ id: 'gid://shopify/ProductVariant/999', price: { amount, currencyCode: 'NOK' } })]), null);
+    assert.equal(result.offers.shippingDetails.shippingRate.value, expected);
+    assert.equal(result.offers.hasMerchantReturnPolicy.merchantReturnDays, 14);
+    assert.equal(result.offers.shippingDetails.deliveryTime.handlingTime, undefined);
+  }
+  const foreign = buildProductJsonLd(product([variant({ price: { amount: '100', currencyCode: 'EUR' } })]), null);
+  assert.equal(foreign.offers.shippingDetails, undefined);
+  assert.equal(foreign.offers.hasMerchantReturnPolicy, undefined);
+  const unknown = buildProductJsonLd({ ...product([variant()]), handle: 'unreviewed-product' }, null);
+  assert.equal(unknown.offers.shippingDetails, undefined);
+});
+
+test('malformed prices are not converted into apparently valid offers', () => {
+  for (const amount of ['', ' ', '-1', '1e3', '0x10', 'Infinity', '1,99']) {
+    assert.equal(buildProductJsonLd(product([variant({ price: { amount, currencyCode: 'NOK' } })]), null).offers, undefined);
+  }
+  const invalidCompare = buildProductJsonLd(product([variant({ compareAtPrice: { amount: 'Infinity', currencyCode: 'NOK' } })]), null);
+  assert.equal(invalidCompare.offers.priceSpecification, undefined);
+});
+
+test('page graph preserves product identity and marks up the visible breadcrumb trail', () => {
+  const graph = plain(buildProductPageJsonLd(product(), null));
+  assert.equal(graph['@graph'].length, 2);
+  assert.equal(graph['@graph'][0]['@id'], buildProductJsonLd(product(), null)['@id']);
+  assert.equal(graph['@graph'][0]['@context'], undefined);
+  assert.deepEqual(graph['@graph'][1].itemListElement, [
+    { '@type': 'ListItem', position: 1, name: 'Forsiden', item: 'https://utekos.no/' },
+    { '@type': 'ListItem', position: 2, name: 'Produkter', item: 'https://utekos.no/produkter' },
+    { '@type': 'ListItem', position: 3, name: 'Utekos TechDown™' },
+  ]);
+  assert.deepEqual(JSON.parse(serializeProductJsonLd(graph)), graph);
+  assert.equal(buildProductPageJsonLd(product([]), null), null);
 });

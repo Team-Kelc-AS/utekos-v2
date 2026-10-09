@@ -34,10 +34,10 @@ export const PRODUCT_QUERY = `#graphql
       title
       vendor productType
       collections(first: 100) { nodes { id title } pageInfo { hasNextPage endCursor } }
-      description(truncateAt: 160)
+      description
       descriptionHtml
       seo { title description }
-      options { name values }
+      options { name optionValues { name } }
       images(first: 100) {
         nodes { url altText width height }
         pageInfo { hasNextPage endCursor }
