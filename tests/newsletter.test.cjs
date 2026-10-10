@@ -14,7 +14,10 @@ function setup(responses = [newCustomer(), subscribed()], configured = true) {
   const tracking = [];
   const { subscribeToNewsletter } = loadTypeScript('lib/newsletter/subscribe.ts', {
     env: configured ? { SHOPIFY_ADMIN_API_TOKEN: 'test-only-token', SHOPIFY_STORE_DOMAIN: 'test-store.myshopify.com' } : {},
-    mocks: { '@/lib/tracking/server-forms': { recordAcceptedForm: async (_form, id) => tracking.push(id) } },
+    mocks: {
+      '@/lib/validation/zodMini': require('zod/mini'),
+      '@/lib/tracking/server-forms': { recordAcceptedForm: async (_form, id) => tracking.push(id) },
+    },
     fetch: async (url, options) => {
       calls.push({ url, ...options, payload: JSON.parse(options.body) });
       const response = responses.shift();

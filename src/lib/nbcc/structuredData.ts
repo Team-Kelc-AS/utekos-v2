@@ -1,5 +1,6 @@
 import { NBCC_PATH, nbccFaqItems, nbccPage } from "./content";
-import { absoluteUrl, SITE_ORIGIN } from "@/lib/seo/site";
+import { absoluteUrl } from "@/lib/seo/site";
+import { SITE_ORGANIZATION_ID, SITE_WEBSITE_ID } from "@/lib/seo/siteIdentity";
 
 // The source NBCC page owned WebPage, FAQPage and BreadcrumbList markup.
 // Keep it local to this route; product offers belong to the product pages.
@@ -15,8 +16,9 @@ export function nbccStructuredData() {
         name: nbccPage.heading,
         description: nbccPage.description,
         inLanguage: "nb-NO",
+        isPartOf: { "@id": SITE_WEBSITE_ID },
         about: [
-          { "@type": "Organization", name: "Utekos", url: SITE_ORIGIN },
+          { "@id": SITE_ORGANIZATION_ID },
           { "@type": "Organization", name: "Norsk Bobil og Caravan Club", alternateName: "NBCC", url: "https://www.nbocc.no" },
         ],
         breadcrumb: { "@id": `${url}#breadcrumb` },

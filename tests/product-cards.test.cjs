@@ -14,7 +14,8 @@ const product = (variants, handle = 'test-product') => ({ id: `product-${handle}
 function harness(responses) {
   const calls = [];
   const api = loadTypeScript('lib/shopify/getProductCards.ts', { mocks: {
-    'next/cache': { cacheLife() {}, cacheTag() {} },
+    'next/dist/server/use-cache/cache-life': { cacheLife() {} },
+    'next/dist/server/use-cache/cache-tag': { cacheTag() {} },
     './client': { shopifyFetch: async (request) => {
       calls.push(request);
       const response = responses.shift();

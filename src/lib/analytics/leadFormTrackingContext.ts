@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   consentSnapshotSchema,
   type ConsentSnapshot
@@ -7,15 +7,15 @@ import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAutho
 
 export const leadFormTrackingContextSchema = z.strictObject({
   consent: consentSnapshotSchema,
-  page_url: z.string().url(),
-  page_view_id: z.string().uuid().optional(),
-  journey_id: z.uuid().optional(),
-  referrer_url: z.string().url().optional(),
-  cookie_header: z.string().max(4096).optional(),
-  campaign: z.string().max(200).optional(),
-  medium: z.string().max(200).optional(),
-  content: z.string().max(200).optional(),
-  term: z.string().max(200).optional()
+  page_url: z.string().check(z.url()),
+  page_view_id: z.optional(z.string().check(z.uuid())),
+  journey_id: z.optional(z.uuid()),
+  referrer_url: z.optional(z.string().check(z.url())),
+  cookie_header: z.optional(z.string().check(z.maxLength(4096))),
+  campaign: z.optional(z.string().check(z.maxLength(200))),
+  medium: z.optional(z.string().check(z.maxLength(200))),
+  content: z.optional(z.string().check(z.maxLength(200))),
+  term: z.optional(z.string().check(z.maxLength(200)))
 })
 
 export type LeadFormTrackingContext = z.infer<

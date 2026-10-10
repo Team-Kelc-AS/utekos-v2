@@ -1,6 +1,6 @@
 import { getSearchIndex } from "@/lib/search/getSearchIndex";
-import { connection } from "next/server";
-import { unstable_rethrow } from "next/navigation";
+import { connection } from "next/dist/server/request/connection";
+import { unstable_rethrow } from "next/dist/client/components/unstable-rethrow";
 
 export async function GET() {
   // Cache the validated data, never a route response produced during an outage.

@@ -36,7 +36,7 @@ async function validInput(api) {
 }
 
 test('only canonical cart IDs with a single secret key yield a public reference', () => {
-  const api = server();
+  const api = loadTypeScript('lib/cart/identity.ts');
   assert.equal(api.cartIdentity(fullId).publicId, publicId);
   for (const id of [undefined, '', publicId, `${fullId}&key=other`, `${fullId}&x=1`, `${fullId}#fragment`, 'gid://attacker/Cart/fixture?key=x', 'gid://shopify/Cart/?key=x', 'gid://shopify/Cart/a/b?key=x', 'gid://shopify/Cart/a?key=%20', 'gid://shopify/Cart/a%20b?key=x', 'gid://shopify/Cart/a?key=x\r\nCookie: stolen']) {
     assert.equal(api.cartIdentity(id), null, String(id));
@@ -141,9 +141,11 @@ function routes(mocks = {}) {
   const forwards = [];
   const bridge = server();
   const shared = {
-    'next/server': { NextResponse: MockResponse, connection: async () => {} },
+    'next/dist/server/web/spec-extension/response': { NextResponse: MockResponse },
+    'next/dist/server/request/connection': { connection: async () => {} },
     '@/lib/klarna/attribution': { readKlarnaOrderAttribution: async () => ({ attribution: { consent: { source: 'operator_policy' } } }) },
-    '@/lib/cart/server': { CART_COOKIE: 'utekos_cart', CartError: class CartError extends Error {}, mutateCart: async (...args) => { mutations.push(args); return { id: fullId, cart: { totalQuantity: 1, lines: [] }, warnings: [] }; } },
+    '@/lib/cart/server': { CART_COOKIE: 'utekos_cart', CartError: class CartError extends Error {} },
+    '@/lib/cart/mutations': { mutateCart: async (...args) => { mutations.push(args); return { id: fullId, cart: { totalQuantity: 1, lines: [] }, warnings: [] }; } },
     '@/lib/klarna/server': { ...bridge, forwardOrder: async (...args) => { forwards.push(args); return { klarna_order_id: 'fixture' }; } },
     ...mocks,
   };

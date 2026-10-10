@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { CART_COOKIE } from '@/lib/cart/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
+import { CART_COOKIE, cartIdentity } from '@/lib/cart/identity';
 import { sameOrigin, buyerIp, privateHeaders } from '@/lib/cart/request';
 import { readKlarnaOrderAttribution } from '@/lib/klarna/attribution';
 import { createOrderSchema } from '@/lib/klarna/contracts';
-import { cartIdentity, forwardOrder, headlessOrigin, KlarnaBridgeError } from '@/lib/klarna/server';
+import { forwardOrder, headlessOrigin, KlarnaBridgeError } from '@/lib/klarna/server';
 
 export async function POST(request: NextRequest) {
   if (!sameOrigin(request)) return NextResponse.json({ error: 'Ugyldig forespørsel.', paymentStatus: 'not_submitted' }, { status: 403, headers: privateHeaders });

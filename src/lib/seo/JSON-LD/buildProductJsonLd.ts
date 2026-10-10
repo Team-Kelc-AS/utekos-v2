@@ -8,6 +8,8 @@ import { productGallery } from '@/lib/products/gallery';
 import { productAvailability } from '@/lib/products/availability';
 import { productBreadcrumbs } from '@/lib/seo/productBreadcrumbs';
 import { absoluteUrl, productPath } from '@/lib/seo/site';
+import { SITE_ORGANIZATION_ID } from '@/lib/seo/siteIdentity';
+import { serializeJsonLd } from './serializeJsonLd';
 import { productOfferPolicies } from './productPolicies';
 import { utekosTechDown } from './techdown/UtekosTechDown';
 import { utekosMikrofiber } from './mikrofiber/UtekosMikrofiber';
@@ -77,7 +79,7 @@ function offerFor(handle: string, variant: ProductVariant, url: string): OfferNo
     '@type': 'Offer', url, price: variant.price.amount, priceCurrency: variant.price.currencyCode,
     availability: productAvailability(variant).schema,
     itemCondition: 'https://schema.org/NewCondition',
-    seller: { '@type': 'Organization', name: 'Utekos', legalName: 'KELC AS', url: absoluteUrl('/') },
+    seller: { '@id': SITE_ORGANIZATION_ID },
     ...(compare && /^\d+(?:\.\d+)?$/.test(compare.amount) && Number.isFinite(Number(compare.amount)) && compare.currencyCode === variant.price.currencyCode && Number(compare.amount) > price && {
       priceSpecification: { '@type': 'UnitPriceSpecification', priceType: 'https://schema.org/StrikethroughPrice', price: compare.amount, priceCurrency: compare.currencyCode },
     }),
@@ -164,5 +166,5 @@ export function buildProductPageJsonLd(product: ShopifyProduct, reviews: JudgeMe
 }
 
 export function serializeProductJsonLd(data: WithContext<Product | ProductGroup> | Graph): string {
-  return JSON.stringify(data).replace(/</g, '\\u003c');
+  return serializeJsonLd(data);
 }

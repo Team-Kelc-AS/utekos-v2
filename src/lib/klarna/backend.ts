@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { Buffer } from 'node:buffer';
 import { isIP } from 'node:net';
 import { getVercelOidcToken } from '@vercel/oidc';
-import { geolocation, ipAddress } from '@vercel/functions';
+import { geolocation, ipAddress } from '@vercel/functions/headers';
 import type { NextRequest } from 'next/server';
 import { BRIDGE_URL } from '@/lib/tracking/bridge-contract';
 import { verifiedFacebookLoginId } from '@/lib/tracking/backend';

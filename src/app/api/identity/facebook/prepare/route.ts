@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { facebookConfig, sealSession, FACEBOOK_STATE_COOKIE } from '@/lib/facebook-login/session';
 import { sameOrigin, privateHeaders } from '@/lib/cart/request';
 export async function POST(request: NextRequest) {

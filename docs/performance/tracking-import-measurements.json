@@ -1,0 +1,884 @@
+{
+  "date": "2026-10-09",
+  "versions": {
+    "next": "16.3.8",
+    "zod": "4.6.5",
+    "oidc": "3.8.0",
+    "esbuild": "0.27.7"
+  },
+  "isolatedImport": {
+    "before": {
+      "bytes": 967523,
+      "gzip": 202746
+    },
+    "after": {
+      "bytes": 531588,
+      "gzip": 115437
+    }
+  },
+  "method": "esbuild node/esm/minified, production, react-server; only server-only external. Route sizes are generated JavaScript module graph bytes from Next experimental-analyze, not transfer sizes. Do not sum routes with shared modules.",
+  "changedExistingFiles": [
+    "src/assets/components/knowledge/BackToTop.tsx",
+    "src/assets/components/knowledge/KnowledgeArticleMeta.tsx",
+    "src/assets/components/knowledge/KnowledgeArticleBreadcrumbs.tsx",
+    "src/lib/facebook-login/session.ts"
+  ],
+  "note": "Only session.ts belongs to this change. Two knowledge component edits occurred concurrently; small page-route deltas are not attributed to this optimization.",
+  "routes": [
+    {
+      "route": "/__sgtm/[[...path]]",
+      "before": {
+        "server": 2120003,
+        "client": 0
+      },
+      "after": {
+        "server": 2140952,
+        "client": 0
+      },
+      "saved": {
+        "server": -20949,
+        "client": 0
+      }
+    },
+    {
+      "route": "/_global-error",
+      "before": {
+        "server": 1786670,
+        "client": 566334
+      },
+      "after": {
+        "server": 1786670,
+        "client": 566334
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/_not-found",
+      "before": {
+        "server": 3631988,
+        "client": 1311085
+      },
+      "after": {
+        "server": 3632033,
+        "client": 1311085
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/",
+      "before": {
+        "server": 4030320,
+        "client": 1431539
+      },
+      "after": {
+        "server": 4030365,
+        "client": 1431539
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/cart",
+      "before": {
+        "server": 2363107,
+        "client": 0
+      },
+      "after": {
+        "server": 2384056,
+        "client": 0
+      },
+      "saved": {
+        "server": -20949,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/cart/checkout",
+      "before": {
+        "server": 2174447,
+        "client": 0
+      },
+      "after": {
+        "server": 2197117,
+        "client": 0
+      },
+      "saved": {
+        "server": -22670,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/events/[...path]",
+      "before": {
+        "server": 2586230,
+        "client": 0
+      },
+      "after": {
+        "server": 2295212,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/identity/facebook/complete",
+      "before": {
+        "server": 2140247,
+        "client": 0
+      },
+      "after": {
+        "server": 2165437,
+        "client": 0
+      },
+      "saved": {
+        "server": -25190,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/identity/facebook/disconnect",
+      "before": {
+        "server": 2138831,
+        "client": 0
+      },
+      "after": {
+        "server": 1847813,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/identity/facebook/prepare",
+      "before": {
+        "server": 2139167,
+        "client": 0
+      },
+      "after": {
+        "server": 1848149,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/identity/facebook/status",
+      "before": {
+        "server": 2138708,
+        "client": 0
+      },
+      "after": {
+        "server": 1847690,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/internal/shopify/[...path]",
+      "before": {
+        "server": 2586312,
+        "client": 0
+      },
+      "after": {
+        "server": 2295294,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/klarna/client-config",
+      "before": {
+        "server": 2663957,
+        "client": 0
+      },
+      "after": {
+        "server": 2689147,
+        "client": 0
+      },
+      "saved": {
+        "server": -25190,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/klarna/orders",
+      "before": {
+        "server": 2634400,
+        "client": 0
+      },
+      "after": {
+        "server": 2657070,
+        "client": 0
+      },
+      "saved": {
+        "server": -22670,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/klarna/prepare",
+      "before": {
+        "server": 2839407,
+        "client": 0
+      },
+      "after": {
+        "server": 2864597,
+        "client": 0
+      },
+      "saved": {
+        "server": -25190,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/log",
+      "before": {
+        "server": 2586117,
+        "client": 0
+      },
+      "after": {
+        "server": 2295099,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/meta/[...path]",
+      "before": {
+        "server": 2586212,
+        "client": 0
+      },
+      "after": {
+        "server": 2295194,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/observability/[...path]",
+      "before": {
+        "server": 2586286,
+        "client": 0
+      },
+      "after": {
+        "server": 2295268,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/search-index",
+      "before": {
+        "server": 2421931,
+        "client": 0
+      },
+      "after": {
+        "server": 2442880,
+        "client": 0
+      },
+      "saved": {
+        "server": -20949,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/shopify/checkout-observations",
+      "before": {
+        "server": 2586359,
+        "client": 0
+      },
+      "after": {
+        "server": 2295341,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/shopify/checkout-recovery-evidence",
+      "before": {
+        "server": 2586399,
+        "client": 0
+      },
+      "after": {
+        "server": 2295381,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/shopify/webhooks/[...path]",
+      "before": {
+        "server": 2586313,
+        "client": 0
+      },
+      "after": {
+        "server": 2295295,
+        "client": 0
+      },
+      "saved": {
+        "server": 291018,
+        "client": 0
+      }
+    },
+    {
+      "route": "/bli-forhandler",
+      "before": {
+        "server": 4835694,
+        "client": 1320399
+      },
+      "after": {
+        "server": 4835739,
+        "client": 1320399
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/bli-forhandler/pdf",
+      "before": {
+        "server": 5214195,
+        "client": 1750841
+      },
+      "after": {
+        "server": 5214240,
+        "client": 1750841
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/customer/account/authorize",
+      "before": {
+        "server": 1746605,
+        "client": 0
+      },
+      "after": {
+        "server": 1746605,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/forhandlere/[slug]",
+      "before": {
+        "server": 3697265,
+        "client": 1313791
+      },
+      "after": {
+        "server": 3697310,
+        "client": 1313791
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/forhandlere",
+      "before": {
+        "server": 3687391,
+        "client": 1313791
+      },
+      "after": {
+        "server": 3687436,
+        "client": 1313791
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/frakt-og-retur",
+      "before": {
+        "server": 3758490,
+        "client": 1371894
+      },
+      "after": {
+        "server": 3758535,
+        "client": 1371894
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/handlehjelp/storrelsesguide",
+      "before": {
+        "server": 3765005,
+        "client": 1371894
+      },
+      "after": {
+        "server": 3765050,
+        "client": 1371894
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/handlehjelp/vask-og-vedlikehold",
+      "before": {
+        "server": 3754527,
+        "client": 1371894
+      },
+      "after": {
+        "server": 3754572,
+        "client": 1371894
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/kontaktskjema",
+      "before": {
+        "server": 3752634,
+        "client": 1413367
+      },
+      "after": {
+        "server": 3752679,
+        "client": 1413367
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/middleware",
+      "before": {
+        "server": 817258,
+        "client": 0
+      },
+      "after": {
+        "server": 817258,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/om-oss",
+      "before": {
+        "server": 3836549,
+        "client": 1402815
+      },
+      "after": {
+        "server": 3836594,
+        "client": 1402815
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/personvern",
+      "before": {
+        "server": 3765554,
+        "client": 1371894
+      },
+      "after": {
+        "server": 3765599,
+        "client": 1371894
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/[handle]",
+      "before": {
+        "server": 4386383,
+        "client": 1484716
+      },
+      "after": {
+        "server": 4386428,
+        "client": 1484716
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter",
+      "before": {
+        "server": 3961051,
+        "client": 1409534
+      },
+      "after": {
+        "server": 3961096,
+        "client": 1409534
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/camping-og-bobil",
+      "before": {
+        "server": 3884948,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3884993,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/camping-og-bobil/nbcc",
+      "before": {
+        "server": 3940849,
+        "client": 1434852
+      },
+      "after": {
+        "server": 3940894,
+        "client": 1434852
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/glamping",
+      "before": {
+        "server": 3884870,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3884915,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/hytte",
+      "before": {
+        "server": 3884840,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3884885,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/terrasse",
+      "before": {
+        "server": 3884862,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3884907,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/tilbehor",
+      "before": {
+        "server": 3884866,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3884911,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/varmeplagg",
+      "before": {
+        "server": 3884892,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3884937,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/robots.txt",
+      "before": {
+        "server": 1820857,
+        "client": 0
+      },
+      "after": {
+        "server": 1820857,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/sitemap.xml",
+      "before": {
+        "server": 2504772,
+        "client": 0
+      },
+      "after": {
+        "server": 2525721,
+        "client": 0
+      },
+      "saved": {
+        "server": -20949,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden",
+      "before": {
+        "server": 3824843,
+        "client": 1372137
+      },
+      "after": {
+        "server": 3824888,
+        "client": 1372137
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/cloudweave",
+      "before": {
+        "server": 3826929,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3826993,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -64,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/glamping-i-norge",
+      "before": {
+        "server": 3830328,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3830373,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/hva-er-glamping",
+      "before": {
+        "server": 3853040,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3853085,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/hva-skal-man-ha-innerst",
+      "before": {
+        "server": 3835142,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3835206,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -64,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/hvordan-forlenge-terassesesongen",
+      "before": {
+        "server": 3835094,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3835158,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -64,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/hvordan-holde-varmen-ute",
+      "before": {
+        "server": 3835489,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3835553,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -64,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/hvorfor-blir-man-kald",
+      "before": {
+        "server": 3842704,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3842768,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -64,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/julegaven-til-den-som-har-alt",
+      "before": {
+        "server": 3852109,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3852173,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -64,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/vinterlagring-av-campingvogn-og-bobil",
+      "before": {
+        "server": 3882175,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3882220,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/ykk",
+      "before": {
+        "server": 3833066,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3833130,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -64,
+        "client": 0
+      }
+    },
+    {
+      "route": "/vilkar-betingelser",
+      "before": {
+        "server": 3759775,
+        "client": 1371894
+      },
+      "after": {
+        "server": 3759820,
+        "client": 1371894
+      },
+      "saved": {
+        "server": -45,
+        "client": 0
+      }
+    }
+  ]
+}

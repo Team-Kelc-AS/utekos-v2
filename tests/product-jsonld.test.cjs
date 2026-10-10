@@ -13,6 +13,7 @@ const { buildProductJsonLd, buildProductPageJsonLd, serializeProductJsonLd } = l
   },
 });
 const plain = value => JSON.parse(JSON.stringify(value));
+const { buildSiteJsonLd } = loadTypeScript('lib/seo/JSON-LD/buildSiteJsonLd.ts');
 function variant(overrides = {}) {
   return {
     id: 'gid://shopify/ProductVariant/46944403849464', sku: 'CURRENT-SKU', barcode: '07090062980009',
@@ -37,6 +38,7 @@ test('uses current variants, prices, availability and direct variant URLs instea
   assert.equal(first.url, 'https://utekos.no/produkter/utekos-techdown?variant=46944403849464');
   assert.equal(first.isVariantOf['@id'], result['@id']);
   assert.equal(first.offers.price, '899.00');
+  assert.deepEqual(first.offers.seller, { '@id': buildSiteJsonLd()['@graph'][0]['@id'] });
   assert.equal(first.offers.priceSpecification.price, '1990.00');
   assert.equal(first.offers.shippingDetails.shippingRate.value, 99);
   assert.equal(first.offers.hasMerchantReturnPolicy.returnFees, 'https://schema.org/ReturnFeesCustomerResponsibility');

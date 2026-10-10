@@ -1,6 +1,6 @@
 import "server-only";
 
-import { connection } from "next/server";
+import { connection } from "next/dist/server/request/connection";
 import { retailerMapsUrl, type Retailer } from "@/lib/retailers";
 import { getRetailerOpeningHours } from "@/lib/retailers/opening-hours";
 import styles from "./retailers.module.css";

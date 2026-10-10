@@ -1,6 +1,7 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheLife } from "next/dist/server/use-cache/cache-life";
+import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { shopifyFetch } from "@/lib/shopify/client";
 import type { NbccVariant } from "./variants";
 

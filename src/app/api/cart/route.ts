@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { mutateCart } from '@/lib/cart/mutations';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { z } from 'zod';
-import { CART_COOKIE, CartError, readCart, cartView, mutateCart } from '@/lib/cart/server';
+import { CART_COOKIE, CartError, readCart, cartView } from '@/lib/cart/server';
 import { sameOrigin, buyerIp, privateHeaders } from '@/lib/cart/request';
 const quantity = z.number().int().min(1).max(99);
 const operationSchema = z.discriminatedUnion('action', [

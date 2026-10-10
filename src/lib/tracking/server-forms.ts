@@ -1,10 +1,10 @@
 import 'server-only';
 import { createHash } from 'node:crypto';
-import { headers } from 'next/headers';
-import { NextRequest } from 'next/server';
+import { headers } from 'next/dist/server/request/headers';
+import { NextRequest } from 'next/dist/server/web/spec-extension/request';
 import { getVercelOidcToken } from '@vercel/oidc';
-import { ipAddress, geolocation } from '@vercel/functions';
-import { z } from 'zod';
+import { ipAddress, geolocation } from '@vercel/functions/headers';
+import * as z from '@/lib/validation/zodMini';
 import { parseLeadFormTrackingContext } from '@/lib/analytics/leadFormTrackingContext';
 import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAuthorization';
 import { canonicalGenerateLeadSchema, buildGenerateLeadDataLayerEvent, type GenerateLeadDataLayerEvent } from '@/lib/analytics/generateLeadEvent';
@@ -76,7 +76,7 @@ export async function recordAcceptedWaitlist(form: FormData, input: { receiptId:
       trackingContext: context.trackingContext,
     });
     await recordAcceptedForm(form, 'product_waitlist_utekos_dun', submissionId);
-    const parsed = z.object({ status: z.enum(['accepted', 'duplicate']), eventId: z.uuid(), dataLayerEvent: z.object({ canonical_event: canonicalGenerateLeadSchema }).passthrough() }).safeParse(result.data);
+    const parsed = z.object({ status: z.enum(['accepted', 'duplicate']), eventId: z.uuid(), dataLayerEvent: z.looseObject({ canonical_event: canonicalGenerateLeadSchema }) }).safeParse(result.data);
     if (result.httpStatus === 200 && parsed.success && parsed.data.eventId === submissionId && parsed.data.dataLayerEvent.canonical_event.event_id === submissionId) {
       return buildGenerateLeadDataLayerEvent(parsed.data.dataLayerEvent.canonical_event);
     }
@@ -101,7 +101,7 @@ export async function recordAcceptedDealerInquiry(form: FormData, input: {
       try {
         const result = await submitOperation(context.request, '/internal/storefront/accepted-dealer-inquiry', body, 12000);
         if (result.httpStatus === 200 && result.data?.status === 'stored_without_tracking') return;
-        const parsed = z.object({ status: z.enum(['accepted', 'duplicate']), eventId: z.uuid(), dataLayerEvent: z.object({ canonical_event: canonicalGenerateLeadSchema }).passthrough() }).safeParse(result.data);
+        const parsed = z.object({ status: z.enum(['accepted', 'duplicate']), eventId: z.uuid(), dataLayerEvent: z.looseObject({ canonical_event: canonicalGenerateLeadSchema }) }).safeParse(result.data);
         if (result.httpStatus === 200 && parsed.success && parsed.data.eventId === submissionId &&
           parsed.data.dataLayerEvent.canonical_event.event_id === submissionId &&
           parsed.data.dataLayerEvent.canonical_event.custom_data.form_id === 'dealer_inquiry') {

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import * as z from '@/lib/validation/zodMini'
 import {
   canonicalEventEnvelopeSchema,
   type CanonicalEventEnvelope,
@@ -10,18 +10,18 @@ import { mapEventDeviceInfo } from './mapEventDeviceInfo'
 
 export const canonicalGenerateLeadCustomDataSchema = z.union([
   z.strictObject({
-    submission_id: z.string().min(1),
-    form_id: z.string().min(1),
-    lead_type: z.string().min(1).optional(),
-    currency: z.string().regex(/^[A-Z]{3}$/),
-    value: z.number().positive()
+    submission_id: z.string().check(z.minLength(1)),
+    form_id: z.string().check(z.minLength(1)),
+    lead_type: z.optional(z.string().check(z.minLength(1))),
+    currency: z.string().check(z.regex(/^[A-Z]{3}$/)),
+    value: z.number().check(z.gt(0))
   }),
   z.strictObject({
-    submission_id: z.string().min(1),
+    submission_id: z.string().check(z.minLength(1)),
     form_id: z.literal('dealer_inquiry'),
     lead_type: z.literal('dealer_inquiry'),
-    currency: z.never().optional(),
-    value: z.never().optional()
+    currency: z.optional(z.never()),
+    value: z.optional(z.never())
   })
 ])
 
@@ -34,8 +34,8 @@ export const canonicalGenerateLeadSchema = z.strictObject({
   event_name: z.literal('generate_lead'),
   source: z.literal('server'),
   page_url: z.url(),
-  referrer_url: z.url().optional(),
-  page_view_id: z.uuid().optional(),
+  referrer_url: z.optional(z.url()),
+  page_view_id: z.optional(z.uuid()),
   custom_data: canonicalGenerateLeadCustomDataSchema
 })
 

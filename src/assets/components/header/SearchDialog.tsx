@@ -11,7 +11,7 @@ import styles from "./Header.module.css";
 type SearchState = { status: "loading" | "error" } | { status: "ready"; index: SearchIndex };
 
 export default function SearchDialog({ trigger, initialQuery, closeIcon, onClose }: {
-  trigger: RefObject<HTMLInputElement | null>;
+  trigger: RefObject<HTMLButtonElement | null>;
   initialQuery: string;
   closeIcon: ReactNode;
   onClose: () => void;

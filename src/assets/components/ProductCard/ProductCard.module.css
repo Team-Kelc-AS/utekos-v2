@@ -17,6 +17,9 @@
 .card a:focus-visible { outline: 2px solid var(--card-foreground); outline-offset: -3px; }
 
 @media (min-width: 1280px) {
+  .card:has([data-card-flipped='true']) [data-slot='card-header'] {
+    margin-top: 0;
+  }
   /* Keep the full video visible without adding height to the card. */
   .card:has(video:not([hidden])) [data-slot='card-header'] {
     margin-top: 0;

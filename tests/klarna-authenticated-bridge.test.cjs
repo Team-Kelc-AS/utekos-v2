@@ -15,7 +15,7 @@ function harness({ environment = 'production', tokenFails = false, networkFails 
     mocks: {
       'node:net': require('node:net'),
       '@vercel/oidc': { getVercelOidcToken: async input => { audiences.push(input); if (tokenFails) throw new Error('OIDC unavailable'); return 'fixture-token'; } },
-      '@vercel/functions': { geolocation: () => ({ city: 'Oslo', country: 'NO', postalCode: '0001', countryRegion: '03' }), ipAddress: () => '192.0.2.1' },
+      '@vercel/functions/headers': { geolocation: () => ({ city: 'Oslo', country: 'NO', postalCode: '0001', countryRegion: '03' }), ipAddress: () => '192.0.2.1' },
       '@/lib/tracking/backend': { verifiedFacebookLoginId: () => '12345' },
     },
     fetch: async (url, init) => { sends.push({ url, init }); if (networkFails) throw new Error('Lost response'); return { ok: true, status: 200 }; },

@@ -3,7 +3,7 @@ import type { MerchantReturnPolicy, Offer, OfferShippingDetails } from 'schema-d
 import type { Money } from '@/lib/shopify/product-types';
 import { absoluteUrl } from '@/lib/seo/site';
 
-// Scope verified against src/app/frakt-og-retur/page.mdx (2026-10-05)
+// Scope verified against src/app/(storefront)/frakt-og-retur/page.mdx (2026-10-05)
 // and the six existing product definitions. Future products require review.
 const policyHandles = new Set([
   'utekos-techdown', 'utekos-svale', 'utekos-mikrofiber',

@@ -1,17 +1,17 @@
-import { SITE_ORIGIN as SITE_URL } from '@/lib/seo/site'
+import { SITE_ORGANIZATION_ID, siteIdentity } from '@/lib/seo/siteIdentity'
 
 export const knowledgeAuthors = {
   utekos: {
     type: 'Organization',
-    name: 'Utekos',
-    url: `${SITE_URL}/om-oss`,
-    id: `${SITE_URL}/#organization`,
-    image: '/HorizontalSVGLogo.svg',
+    name: siteIdentity.name,
+    url: siteIdentity.aboutUrl,
+    id: SITE_ORGANIZATION_ID,
+    image: siteIdentity.logo.src,
     /**
      * Circular black/white mark for article bylines. Utekos is always the
      * author; never swap per article.
      */
-    avatarImage: '/icon.png'
+    avatarImage: siteIdentity.logo.src
   }
 } as const
 

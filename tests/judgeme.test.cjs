@@ -19,7 +19,7 @@ function setup(responses = [widget()], configured = true) {
   const calls = [];
   const cache = [];
   const api = loadTypeScript('lib/products/judgeme.ts', {
-    mocks: { 'cheerio/slim': require('cheerio/slim'), 'next/cache': { cacheLife: value => cache.push(value), cacheTag: () => {} } },
+    mocks: { 'cheerio/slim': require('cheerio/slim'), 'next/dist/server/use-cache/cache-life': { cacheLife: value => cache.push(value) }, 'next/dist/server/use-cache/cache-tag': { cacheTag: () => {} } },
     env: configured ? { JUDGE_ME_PUBLIC_API_TOKEN: 'test-only-token', SHOPIFY_STORE_DOMAIN: 'https://example.myshopify.com/' } : {},
     fetch: async (url, options) => {
       calls.push({ url: String(url), options });

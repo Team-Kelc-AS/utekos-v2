@@ -1,0 +1,118 @@
+import { KnowledgeArticleScaffold } from '@/components/knowledge/KnowledgeArticleScaffold';
+import { BaseLayerHero } from './BaseLayerHero';
+import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles';
+
+export default function BaseLayerPage({ children }) {
+    return (<KnowledgeArticleScaffold article={knowledgeArticles.baseLayer} hero={<BaseLayerHero />}>
+      {children}
+    </KnowledgeArticleScaffold>);
+}
+
+import { Cite } from '@/components/knowledge/Cite'
+import { KnowledgeCallout } from '@/components/knowledge/KnowledgeCallout'
+import Image from 'next/image'
+import imageStyles from '@/components/knowledge/knowledgeChrome.module.css'
+
+Innerlaget sitter rett mot huden og avgjør om svetten forblir fuktig mot kroppen eller transporteres effektivt vekk. Ull og syntetiske fibre håndterer denne fukten på ulikt vis, mens bomull egner seg svært dårlig til oppgaven<Cite ids={[6, 7]} />. Denne artikkelen tar for seg hva innerlaget må prestere, hvordan de ulike materialene reagerer på kulde, og hvordan du velger riktig bekledning basert på aktivitetsnivået ditt.
+
+## Hva er det beste innerlaget – ull eller syntetisk?
+
+Det optimale innerlaget avhenger av aktivitetens intensitet, hvor mye du svetter, omgivelsestemperaturen og hvilke plagg du har på deg ytterst<Cite ids={[6, 7]} />. Både ull og tekniske syntetiske materialer fungerer utmerket, men de har ulike egenskaper når det gjelder fukthåndtering og tørketid<Cite ids={[6]} />. Ull har den fordelen at den fortsetter å isolere selv om den blir fuktig. Syntetiske fibre tørker på sin side raskere på kroppen og ventilerer bedre under høy intensitet<Cite ids={[2, 6]} />. Dersom du skal sitte stille over lengre tid, er ull det tryggeste og varmeste valget. Ved høy aktivitet og kraftig svetting – spesielt om du har mulighet til å skifte etterpå – vil et syntetisk materiale, eller en kombinasjon (ull-hybrid), være et svært godt alternativ<Cite ids={[2]} />. Bomull bør konsekvent unngås som innerlag under kalde forhold<Cite ids={[6]} />.
+
+## Hva skal innerlaget egentlig gjøre?
+
+Innerlaget, som er plagget du har aller nærmest huden, har som hovedoppgave å holde huden tørr og bidra til å regulere kroppstemperaturen når både vær og aktivitetsnivå endrer seg<Cite ids={[6]} />. Dette er laget som først møter kroppsvarmen og som håndterer utvekslingen av vanndamp og svette<Cite ids={[6]} />. Som forklart i artikkelen [Hvorfor blir man kald](/uteguiden/hvorfor-blir-man-kald), vil kroppen avgi varme til omgivelsene, og det er konveksjon, særlig i kombinasjon med fukt, som utgjør det største varmetapet<Cite ids={[8]} />.
+
+Selv i fullstendig hvile skiller en voksen person ut omtrent 30 gram fuktighet per time<Cite ids={[6]} />. Ved høy intensitet i kulde, kan denne utskillelsen komme opp i nærmere én liter i timen<Cite ids={[6]} />. Det er derfor helt nødvendig at innerlaget absorberer svetten og transporterer den videre til neste lag. På den måten unngår du å bli nedkjølt mens du er aktiv, eller når du tar en velfortjent pause. Innerlaget har også en annen kritisk funksjon: Det fanger opp luft. Det er den stillestående luften som holdes på plass mellom klesfibrene som utgjør selve isolasjonen mot kulden<Cite ids={[6]} />.
+
+## Ull som innerlag
+
+Ullfibre er hydrofile, noe som betyr at de tiltrekker seg vann. De kan dermed absorbere betydelige mengder fukt fra kroppen, uten at tekstilet føles vått eller klamt mot huden<Cite ids={[6]} />. Når ullen absorberer denne fukten, skjer det en eksoterm reaksjon der varme frigjøres. Målinger viser at denne varmeutviklingen er omtrent 2,5 ganger kraftigere fra ull enn fra syntetisk polyamid<Cite ids={[6]} />.
+
+Dette er en av hovedårsakene til at ull bevarer isolasjonsevnen sin selv etter at den har blitt våt<Cite ids={[2]} />. Ullfiberen er naturlig kruset og svært fleksibel, noe som gjør at den holder godt på den stillestående luften i fiberen, garnet og selve stoffet<Cite ids={[6]} />. Slike egenskaper er svært nyttige for å bremse det brå temperaturfallet – populært kalt "etter-nedkjøling" – som ofte inntreffer når du slutter å bevege deg og muskelarbeidet opphører<Cite ids={[6]} />.
+
+Hovedulempen med ull er tørketiden: Ull plagg bruker vesentlig lengre tid på å tørke sammenlignet med mange av de lette, syntetiske alternativene<Cite ids={[6]} />. Mange assosierer også ull med kløe, men dette henger direkte sammen med tykkelsen på fibrene. Moderne merinoull, som typisk består av fibre som er tynnere enn 23 mikrometer, føyer seg mykt etter huden og forårsaker derfor langt mindre irritasjon<Cite ids={[6]} />.
+
+<figure className={imageStyles.figure}>
+  <span className={imageStyles.figureFrame}>
+    <Image
+      className={imageStyles.figureImage}
+      src="/images/kunnskap/Vinterpause med varm drikke og fjordutsikt.webp"
+      alt="En turgåer tar en pause i et snødekket vinterlandskap, sittende på et sitteunderlag. Personen har på seg en tykk, mørk genser i merinoull (innerlag), og smiler mens de holder en rykende kopp med varm drikke."
+      width={1312}
+      height={1199}
+      sizes="(min-width: 1024px) 816px, (min-width: 832px) 752px, (min-width: 800px) calc(100vw - 80px), (min-width: 400px) 90vw, calc(100vw - 40px)"
+    />
+  </span>
+</figure>
+
+## Syntetisk som innerlag
+
+I motsetning til ull, er syntetiske materialer som polypropylen, polyester og polyamid hydrofobe, hvilket innebærer at de er vannavvisende<Cite ids={[6]} />. Disse materialene sørger for at svette fordamper mye raskere i kalde omgivelser, rett og slett fordi selve klesfiberen ikke holder på væsken<Cite ids={[6]} />.
+
+Særlig de lettere syntetiske plaggene, for eksempel de laget av polyamid, reduserer varmetapet forbundet med fuktfordampning, spesielt sammenlignet med tykkere stoffer som absorberer fuktigheten<Cite ids={[6]} />. I stedet ledes fuktigheten hurtig langs overflaten av fibrene, transporteres vekk fra huden, og ut i klessjiktet som ligger utenpå.
+
+Nettingkonstruksjoner – slik man kjenner fra den klassiske helsetrøyen – skaper dype, isolerende luftlag når du sitter i ro og har en vindtett jakke ytterst. Samtidig ventilerer den utrolig effektivt når du er i bevegelse, ettersom mer av huden eksponeres direkte og svetten kan fordampe fritt<Cite ids={[7]} />. Skal du trene med høy puls, er derfor lette og tynne syntetiske stoffer et svært praktisk og rasjonelt valg<Cite ids={[2, 7]} />.
+
+<figure className={imageStyles.figure}>
+  <span className={imageStyles.figureFrame}>
+    <Image
+      className={imageStyles.figureImage}
+      src="/images/kunnskap/Langrenn i vinterlandskapet.webp"
+      alt="En langrennsutøver i full aktivitet på vei opp en snødekket bakke i en vinterskog. Vedkommende har på seg en tynn, teknisk overdel (syntetisk innerlag) under en åpen vindjakke for å transportere bort svette."
+      width={1370}
+      height={1148}
+      sizes="(min-width: 1024px) 816px, (min-width: 832px) 752px, (min-width: 800px) calc(100vw - 80px), (min-width: 400px) 90vw, calc(100vw - 40px)"
+    />
+  </span>
+</figure>
+
+## Hva med bomull?
+
+Bomull egner seg overhodet ikke som innerlag i kulde<Cite ids={[6]} />. Dette fibermaterialet er svært absorberende og har en tendens til å holde på svette i lang tid<Cite ids={[6]} />. Bomull mangler dessuten ulla sin evne til å generere varme ved fuktopptak, og mangler syntetiske stoffers evne til å avvise vann. Dette resulterer raskt i et kaldt og klamt lag direkte mot kroppen.
+
+Når et bomullsplagg først har blitt vått, stjeler fordampningsprosessen verdifull varme fra huden din. Undersøkelser bekrefter at hudtemperaturen under hvile er lavere dersom man har på seg bomull, sammenlignet med et innerlag av polypropylen<Cite ids={[6]} />. Uten mulighet til å bytte til tørt skift, vil bomull i praksis miste nesten all sin isolasjonsevne.
+
+<KnowledgeCallout title="Tommelregel: Aldri bruk bomull innerst i kulden">
+Hvis du kun kan velge ett lag, skal du alltid velge enten ull eller et syntetisk materiale. Våt bomull holder på fuktigheten og øker kroppens varmetap radikalt – og dette er spesielt merkbart i pausene rett etter du har svettet<Cite ids={[6]} />.
+</KnowledgeCallout>
+
+## Aktivitet vs. stillesitting
+
+Valg av innerlag bør først og fremst styres av aktivitetsnivået, da kroppens egen varmeproduksjon varierer voldsomt<Cite ids={[7]} />. Går du en bratt motbakke fullt påkledd, kan kroppen produsere opptil åtte ganger mer varme enn når du sitter i ro<Cite ids={[7]} />.
+
+Befinner du deg på en snøscooter, en jaktpost eller på en utendørstribune, genererer du svært lite overskuddsvarme<Cite ids={[6, 7]} />. Da er et fyldigere ullplagg det klart tryggeste valget for å beholde kroppsvarmen<Cite ids={[6]} />.
+
+For mer anstrengende aktiviteter, som langrenn, toppturer på ski eller fysisk arbeid ute i snøen, er det en fordel å være litt kjølig kledd helt fra start<Cite ids={[7]} />. Den fysiske anstrengelsen vil raskt gi varme, og et syntetisk innerlag vil effektivt forhindre at svette og fukt bygger seg opp inne i klærne<Cite ids={[2, 7]} />.
+
+<KnowledgeCallout title="Tommelregel: Kle deg for bevegelsen, ikke for pausen">
+Det er lurt å kjenne litt på kulden når du starter turen. Så snart du tar en pause, bør du umiddelbart ta på deg et ekstra isolasjonslag, før kroppstemperaturen rekker å falle<Cite ids={[6, 7]} />.
+</KnowledgeCallout>
+
+## Hva skjer når innerlaget blir fuktig?
+
+Når fuktighet fra svette trenger inn i innerklærne, blir den verdifulle isolerende luften mellom fibrene presset ut og erstattet med vann<Cite ids={[6]} />. Vann har en varmeledningsevne på omtrent 0,58 W/mK, mens stillestående luft ligger på kun 0,024 W/mK ved samme temperatur – vann leder altså varme rundt 24 ganger bedre. Et fuktig klesplagg vil derfor trekke varme fra kroppen mye raskere enn et som er tørt<Cite ids={[6]} />.
+
+Selv svette som fordamper ut i kleslagene lenger ut, kan redusere isolasjonsevnen til et vinterantrekk med så mye som 25 prosent<Cite ids={[7]} />. Tapet av isolasjonsevne er omtrent proporsjonalt med mengden væske som har samlet seg i tøyet<Cite ids={[6]} />. Det kraftigste temperaturfallet vil du oppleve i det nøyaktige sekundet du slutter å bevege deg<Cite ids={[6]} />. Å alltid ha et tørt klesskift (ull eller syntetisk) liggende i ryggsekken, er den desidert beste forsikringen mot kulden<Cite ids={[6, 7]} />.
+
+## Passform, tykkelse og konstruksjon
+
+Selv om innerlagets tykkelse er viktig for varmeisolasjonen, er selve passformen minst like avgjørende for hvor varmt det føles<Cite ids={[2, 6]} />. Fibermaterialet alene står typisk for kun 5 til 20 prosent av klesplaggets effektive isolasjon. Resten – imponerende 80 til 95 prosent – kommer fra den innesperrede luften mellom plaggene<Cite ids={[6]} />. Sitter klærne for tettsittende og stramt, vil luftlagene klemmes sammen og varmetapet øker betraktelig<Cite ids={[6, 7]} />.
+
+Plagg strikket i en løsere og mer åpen struktur har evnen til å binde mye mer stillestående luft enn stramt vevde og tette materialer<Cite ids={[6, 7]} />.
+
+## Praktisk anbefaling etter brukssituasjon
+
+* **Lange fjellturer med variert, moderat tempo:** Gå for et hydrofilt ull-innerlag, gjerne merinoull. Det gir behagelig varme under rastene, og håndterer svetten tilstrekkelig godt under selve marsjen<Cite ids={[6, 7]} />.
+* **Høy intensitet – som løping eller tunge toppturer:** Velg tynne, syntetiske materialer som polyester, polyamid eller et nettingplagg. Disse materialene flytter overskuddsvarme og svette vesentlig raskere vekk fra huden<Cite ids={[2, 7]} />.
+* **Stillesitting i streng kulde:** Velg tykk, solid ull, veldig gjerne varianter med innvendige frottéløkker. I denne situasjonen er det viktigste å binde mest mulig luft, ikke å ventilere vekk svette<Cite ids={[6]} />.
+
+Det er også verdt å merke seg at beina utgjør en stor del av kroppens totale overflate, og kan dermed forårsake over 50 prosent av det totale varmetapet<Cite ids={[2, 7]} />. Å velge en ekstra tykk ullstillongs, kombinert med romslige vinterstøvler, er oftere et bedre tiltak mot kulden enn å ta på seg enda en tykk ullgenser<Cite ids={[2, 6, 7]} />.
+
+## Hva forskningen ikke kan si sikkert
+
+Det er viktig å huske at laboratorietester utført på friske og unge mennesker ikke nødvendigvis representerer virkeligheten for alle. Faktorer som kuldetoleranse, kroppsfasong, muskelmasse, alder og helsetilstand varierer stort fra person til person<Cite ids={[3, 4, 7]} />. I tillegg er følelsen av fukt, kløe eller stikking fra plagg høyst individuell: En ulltrøye som én person opplever som silkemyk, kan være plagsom og irriterende for en annen<Cite ids={[2, 6, 7]} />. Hvorvidt ull eller syntetiske stoffer fungerer best gjennom en lang utendørsdag, påvirkes sterkt av den eksakte forskningsmetodikken – for mer dybdeinformasjon kan du lese artikkelen [Hvordan holder man seg varm ute](/uteguiden/hvordan-holde-varmen-ute).
+
+## Oppsummering
+
+Det eksisterer rett og slett ikke ett enkelt innerlag som er "best i test" for alt av vær og aktivitet. Suksessen ligger i å planlegge bekledningen etter forventet intensitet, ha gode mellomlag tilgjengelig for pausene, og å sørge for at huden holdes så tørr som overhodet mulig<Cite ids={[6, 7]} />. Velg ull som innerlag når aktiviteten er lav, eller når det er kritisk at plagget isolerer til tross for fuktighet. Gå for syntetiske fibre når pulsen stiger og svettingen begynner. Bomull innerst mot huden er farlig i kulde, da det fører til et stort varmetap når det blir vått<Cite ids={[2, 6]} />. Pass på at klærne har en romslig passform, og ha alltid et ekstra, tørt skift i ryggsekken for å bevare det viktige luftlaget mot kroppen<Cite ids={[6, 7]} />.

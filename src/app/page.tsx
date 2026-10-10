@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { absoluteUrl } from "@/lib/seo/site";
+import { buildHomeMetadata } from "@/lib/seo/siteMetadata";
 import { HeroSection } from "@/components/frontpage/HeroSection";
 import { HomeVideo } from "@/components/frontpage/HomeVideo";
 import { HomeProducts, HomeProductsLoading } from "@/components/frontpage/HomeProducts";
@@ -9,9 +9,7 @@ import { TrustSection } from "@/components/frontpage/TrustSection";
 import { PromiseSection } from "@/components/frontpage/PromiseSection";
 import { IntersportSection } from "@/components/frontpage/IntersportSection";
 
-export const metadata: Metadata = {
-  alternates: { canonical: absoluteUrl("/") },
-};
+export const metadata: Metadata = buildHomeMetadata();
 
 export default function Home() {
   return (

@@ -1,11 +1,12 @@
 import 'server-only';
 
-import { cacheLife, cacheTag } from 'next/cache';
+import { cacheLife } from 'next/dist/server/use-cache/cache-life';
+import { cacheTag } from 'next/dist/server/use-cache/cache-tag';
 import type { CursorConnection } from '@/lib/catalog/paginateConnection';
 import { publicVariants } from '@/lib/products/variants';
 import { shopifyFetch } from './client';
 import type { ProductVariant, ProductCollection, ShopifyProduct } from './product-types';
-import { completeConnection } from './getProduct';
+import { completeConnection } from './completeConnection';
 import { PRODUCT_COLLECTIONS_QUERY } from './queries/products';
 import { PRODUCT_CARDS_QUERY, PRODUCT_CARD_VARIANTS_QUERY } from './queries/productCards';
 

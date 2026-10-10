@@ -1,5 +1,5 @@
-import styles from './knowledgeChrome.module.css'
-
+import Link from "next/link";
+import styles from "./knowledgeChrome.module.css";
 /**
  * In-text citation marker. `ids` are 1-based positions in the article's
  * registry `references` array and must match the numbered source list
@@ -7,28 +7,26 @@ import styles from './knowledgeChrome.module.css'
  */
 export function Cite({
   ids,
-  targets
+  targets,
 }: {
-  ids: readonly number[]
-  targets?: Readonly<
-    Record<number, { id: string; label: string }>
-  >
+  ids: readonly number[];
+  targets?: Readonly<Record<number, { id: string; label: string }>>;
 }) {
   return (
     <sup className={styles.cite}>
       [
       {ids.map((id, index) => (
         <span key={id}>
-          {index > 0 ? ', ' : null}
-          <a
+          {index > 0 ? ", " : null}
+          <Link
             href={`#${targets?.[id]?.id ?? `kilde-${id}`}`}
             aria-label={targets?.[id]?.label}
           >
             {id}
-          </a>
+          </Link>
         </span>
       ))}
       ]
     </sup>
-  )
+  );
 }

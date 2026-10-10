@@ -1,0 +1,1307 @@
+{
+  "date": "2026-10-09",
+  "versions": {
+    "next": "16.3.8",
+    "zod": "4.6.5",
+    "esbuild": "0.27.7"
+  },
+  "isolated": {
+    "header": {
+      "before": {
+        "bytes": 1192765,
+        "gzip": 344454
+      },
+      "after": {
+        "bytes": 1192765,
+        "gzip": 344454
+      }
+    },
+    "footer": {
+      "before": {
+        "bytes": 983666,
+        "gzip": 208012
+      },
+      "after": {
+        "bytes": 562389,
+        "gzip": 124659
+      }
+    }
+  },
+  "headerClient": {
+    "files": [
+      {
+        "path": "header-client-audit/MenuDialog-KSOGK32V.js",
+        "bytes": 1227,
+        "gzip": 683,
+        "initial": false,
+        "entry": "src/assets/components/header/MenuDialog.tsx"
+      },
+      {
+        "path": "header-client-audit/SearchDialog-T7AHAML3.js",
+        "bytes": 3079,
+        "gzip": 1531,
+        "initial": false,
+        "entry": "src/assets/components/header/SearchDialog.tsx"
+      },
+      {
+        "path": "header-client-audit/chunk-VYNC534T.js",
+        "bytes": 12344,
+        "gzip": 4317,
+        "initial": false
+      },
+      {
+        "path": "header-client-audit/CategoryCombobox-65AEDO46.js",
+        "bytes": 117337,
+        "gzip": 42137,
+        "initial": false,
+        "entry": "src/assets/components/header/CategoryCombobox.tsx"
+      },
+      {
+        "path": "header-client-audit/chunk-ZT2HIQVW.js",
+        "bytes": 88530,
+        "gzip": 32049,
+        "initial": false
+      },
+      {
+        "path": "header-client-audit/commerce/CartHost.js",
+        "bytes": 1905,
+        "gzip": 1027,
+        "initial": true,
+        "entry": "src/assets/components/commerce/CartHost.tsx"
+      },
+      {
+        "path": "header-client-audit/header/HeaderMenu.js",
+        "bytes": 675,
+        "gzip": 447,
+        "initial": true,
+        "entry": "src/assets/components/header/HeaderMenu.tsx"
+      },
+      {
+        "path": "header-client-audit/header/HeaderSearch.js",
+        "bytes": 1101,
+        "gzip": 635,
+        "initial": true,
+        "entry": "src/assets/components/header/HeaderSearch.tsx"
+      },
+      {
+        "path": "header-client-audit/header/ProductCategories.js",
+        "bytes": 706,
+        "gzip": 476,
+        "initial": true,
+        "entry": "src/assets/components/header/ProductCategories.tsx"
+      },
+      {
+        "path": "header-client-audit/chunk-ZANKV4IM.js",
+        "bytes": 25,
+        "gzip": 45,
+        "initial": true
+      },
+      {
+        "path": "header-client-audit/campaignAttributionSessionStore-LYQUJBC5.js",
+        "bytes": 197,
+        "gzip": 165,
+        "initial": false,
+        "entry": "src/lib/analytics/campaignAttributionSessionStore.ts"
+      },
+      {
+        "path": "header-client-audit/clientParamBuilder.bundle-N6KIM3RQ.js",
+        "bytes": 54396,
+        "gzip": 20303,
+        "initial": false,
+        "entry": "node_modules/.pnpm/meta-capi-param-builder-clientjs@1.3.2/node_modules/meta-capi-param-builder-clientjs/dist/clientParamBuilder.bundle.js"
+      },
+      {
+        "path": "header-client-audit/runtime-MKGDURIJ.js",
+        "bytes": 50556,
+        "gzip": 14953,
+        "initial": false,
+        "entry": "src/lib/tracking/runtime.ts"
+      },
+      {
+        "path": "header-client-audit/chunk-KQGNTXRB.js",
+        "bytes": 44499,
+        "gzip": 13605,
+        "initial": false
+      },
+      {
+        "path": "header-client-audit/CartDrawer-WNLWQSL3.js",
+        "bytes": 10331,
+        "gzip": 3730,
+        "initial": false,
+        "entry": "src/assets/components/commerce/CartDrawer.tsx"
+      },
+      {
+        "path": "header-client-audit/chunk-F2T6CC2S.js",
+        "bytes": 1627,
+        "gzip": 815,
+        "initial": true
+      },
+      {
+        "path": "header-client-audit/chunk-OQNLNUVS.js",
+        "bytes": 3428,
+        "gzip": 1466,
+        "initial": true
+      },
+      {
+        "path": "header-client-audit/chunk-FSRPMVAS.js",
+        "bytes": 861,
+        "gzip": 484,
+        "initial": true
+      }
+    ],
+    "initial": {
+      "bytes": 10328,
+      "gzip": 5395
+    },
+    "all": {
+      "bytes": 392824,
+      "gzip": 138868
+    }
+  },
+  "initialPageScripts": {
+    "before": [
+      {
+        "html": ".next/server/app/index.html",
+        "scripts": [
+          {
+            "path": "/_next/static/chunks/turbopack-00tm_j0-z5qmw.js",
+            "bytes": 9688,
+            "gzip": 3841
+          },
+          {
+            "path": "/_next/static/chunks/0u9mgdssbvfnp.js",
+            "bytes": 227989,
+            "gzip": 71172
+          },
+          {
+            "path": "/_next/static/chunks/2uc47kxmpr9va.js",
+            "bytes": 15821,
+            "gzip": 4063
+          },
+          {
+            "path": "/_next/static/chunks/3b78qqey_ydyr.js",
+            "bytes": 156764,
+            "gzip": 42970
+          },
+          {
+            "path": "/_next/static/chunks/27u1zeajbpluy.js",
+            "bytes": 30889,
+            "gzip": 12029
+          },
+          {
+            "path": "/_next/static/chunks/3v2ep__5kjepr.js",
+            "bytes": 37104,
+            "gzip": 14803
+          },
+          {
+            "path": "/_next/static/chunks/34834hcg4u_d_.js",
+            "bytes": 46004,
+            "gzip": 11867
+          },
+          {
+            "path": "/_next/static/chunks/24qp4xp0hp5qv.js",
+            "bytes": 28652,
+            "gzip": 8817
+          },
+          {
+            "path": "/_next/static/chunks/3k126bzcmgj2c.js",
+            "bytes": 29060,
+            "gzip": 10496
+          },
+          {
+            "path": "/_next/static/chunks/0482tlhklo8k5.js",
+            "bytes": 316,
+            "gzip": 224
+          },
+          {
+            "path": "/_next/static/chunks/0cz1d0mv5g_q7.js",
+            "bytes": 112594,
+            "gzip": 39373
+          },
+          {
+            "path": "/_next/static/chunks/0if0-kapxppzx.js",
+            "bytes": 31358,
+            "gzip": 11032
+          }
+        ],
+        "bytes": 726239,
+        "gzip": 230687
+      },
+      {
+        "html": ".next/server/app/handlehjelp/storrelsesguide.html",
+        "scripts": [
+          {
+            "path": "/_next/static/chunks/turbopack-00tm_j0-z5qmw.js",
+            "bytes": 9688,
+            "gzip": 3841
+          },
+          {
+            "path": "/_next/static/chunks/0u9mgdssbvfnp.js",
+            "bytes": 227989,
+            "gzip": 71172
+          },
+          {
+            "path": "/_next/static/chunks/2uc47kxmpr9va.js",
+            "bytes": 15821,
+            "gzip": 4063
+          },
+          {
+            "path": "/_next/static/chunks/3b78qqey_ydyr.js",
+            "bytes": 156764,
+            "gzip": 42970
+          },
+          {
+            "path": "/_next/static/chunks/34834hcg4u_d_.js",
+            "bytes": 46004,
+            "gzip": 11867
+          },
+          {
+            "path": "/_next/static/chunks/24qp4xp0hp5qv.js",
+            "bytes": 28652,
+            "gzip": 8817
+          },
+          {
+            "path": "/_next/static/chunks/35s_us-cj6kr5.js",
+            "bytes": 46827,
+            "gzip": 18104
+          },
+          {
+            "path": "/_next/static/chunks/3nocshytuo9ev.js",
+            "bytes": 264,
+            "gzip": 221
+          },
+          {
+            "path": "/_next/static/chunks/0cz1d0mv5g_q7.js",
+            "bytes": 112594,
+            "gzip": 39373
+          },
+          {
+            "path": "/_next/static/chunks/02tr7mn4jo2q3.js",
+            "bytes": 13677,
+            "gzip": 4512
+          },
+          {
+            "path": "/_next/static/chunks/0if0-kapxppzx.js",
+            "bytes": 31358,
+            "gzip": 11032
+          }
+        ],
+        "bytes": 689638,
+        "gzip": 215972
+      }
+    ],
+    "after": [
+      {
+        "html": ".next/server/app/index.html",
+        "scripts": [
+          {
+            "path": "/_next/static/chunks/0if0-kapxppzx.js",
+            "bytes": 31358,
+            "gzip": 11032
+          },
+          {
+            "path": "/_next/static/chunks/34834hcg4u_d_.js",
+            "bytes": 46004,
+            "gzip": 11867
+          },
+          {
+            "path": "/_next/static/chunks/0u9mgdssbvfnp.js",
+            "bytes": 227989,
+            "gzip": 71172
+          },
+          {
+            "path": "/_next/static/chunks/27u1zeajbpluy.js",
+            "bytes": 30889,
+            "gzip": 12029
+          },
+          {
+            "path": "/_next/static/chunks/24qp4xp0hp5qv.js",
+            "bytes": 28652,
+            "gzip": 8817
+          },
+          {
+            "path": "/_next/static/chunks/3v2ep__5kjepr.js",
+            "bytes": 37104,
+            "gzip": 14803
+          },
+          {
+            "path": "/_next/static/chunks/2uc47kxmpr9va.js",
+            "bytes": 15821,
+            "gzip": 4063
+          },
+          {
+            "path": "/_next/static/chunks/0482tlhklo8k5.js",
+            "bytes": 316,
+            "gzip": 224
+          },
+          {
+            "path": "/_next/static/chunks/turbopack-00tm_j0-z5qmw.js",
+            "bytes": 9688,
+            "gzip": 3841
+          },
+          {
+            "path": "/_next/static/chunks/3b78qqey_ydyr.js",
+            "bytes": 156764,
+            "gzip": 42970
+          },
+          {
+            "path": "/_next/static/chunks/3k126bzcmgj2c.js",
+            "bytes": 29060,
+            "gzip": 10496
+          },
+          {
+            "path": "/_next/static/chunks/0cz1d0mv5g_q7.js",
+            "bytes": 112594,
+            "gzip": 39373
+          }
+        ],
+        "bytes": 726239,
+        "gzip": 230687
+      },
+      {
+        "html": ".next/server/app/handlehjelp/storrelsesguide.html",
+        "scripts": [
+          {
+            "path": "/_next/static/chunks/0if0-kapxppzx.js",
+            "bytes": 31358,
+            "gzip": 11032
+          },
+          {
+            "path": "/_next/static/chunks/3nocshytuo9ev.js",
+            "bytes": 264,
+            "gzip": 221
+          },
+          {
+            "path": "/_next/static/chunks/0u9mgdssbvfnp.js",
+            "bytes": 227989,
+            "gzip": 71172
+          },
+          {
+            "path": "/_next/static/chunks/34834hcg4u_d_.js",
+            "bytes": 46004,
+            "gzip": 11867
+          },
+          {
+            "path": "/_next/static/chunks/35s_us-cj6kr5.js",
+            "bytes": 46827,
+            "gzip": 18104
+          },
+          {
+            "path": "/_next/static/chunks/24qp4xp0hp5qv.js",
+            "bytes": 28652,
+            "gzip": 8817
+          },
+          {
+            "path": "/_next/static/chunks/02tr7mn4jo2q3.js",
+            "bytes": 13677,
+            "gzip": 4512
+          },
+          {
+            "path": "/_next/static/chunks/2uc47kxmpr9va.js",
+            "bytes": 15821,
+            "gzip": 4063
+          },
+          {
+            "path": "/_next/static/chunks/turbopack-00tm_j0-z5qmw.js",
+            "bytes": 9688,
+            "gzip": 3841
+          },
+          {
+            "path": "/_next/static/chunks/3b78qqey_ydyr.js",
+            "bytes": 156764,
+            "gzip": 42970
+          },
+          {
+            "path": "/_next/static/chunks/0cz1d0mv5g_q7.js",
+            "bytes": 112594,
+            "gzip": 39373
+          }
+        ],
+        "bytes": 689638,
+        "gzip": 215972
+      }
+    ]
+  },
+  "routes": [
+    {
+      "route": "/__sgtm/[[...path]]",
+      "before": {
+        "server": 2140952,
+        "client": 0
+      },
+      "after": {
+        "server": 2140952,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/_global-error",
+      "before": {
+        "server": 1786670,
+        "client": 566334
+      },
+      "after": {
+        "server": 1786670,
+        "client": 566334
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/_not-found",
+      "before": {
+        "server": 3632134,
+        "client": 1311085
+      },
+      "after": {
+        "server": 3337428,
+        "client": 1311085
+      },
+      "saved": {
+        "server": 294706,
+        "client": 0
+      }
+    },
+    {
+      "route": "/",
+      "before": {
+        "server": 4030466,
+        "client": 1431539
+      },
+      "after": {
+        "server": 3735760,
+        "client": 1431539
+      },
+      "saved": {
+        "server": 294706,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/cart",
+      "before": {
+        "server": 2384056,
+        "client": 0
+      },
+      "after": {
+        "server": 2384056,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/cart/checkout",
+      "before": {
+        "server": 2197117,
+        "client": 0
+      },
+      "after": {
+        "server": 2197117,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/events/[...path]",
+      "before": {
+        "server": 2295212,
+        "client": 0
+      },
+      "after": {
+        "server": 2295212,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/identity/facebook/complete",
+      "before": {
+        "server": 2165437,
+        "client": 0
+      },
+      "after": {
+        "server": 2165437,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/identity/facebook/disconnect",
+      "before": {
+        "server": 1847813,
+        "client": 0
+      },
+      "after": {
+        "server": 1847813,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/identity/facebook/prepare",
+      "before": {
+        "server": 1848149,
+        "client": 0
+      },
+      "after": {
+        "server": 1848149,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/identity/facebook/status",
+      "before": {
+        "server": 1847690,
+        "client": 0
+      },
+      "after": {
+        "server": 1847690,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/internal/shopify/[...path]",
+      "before": {
+        "server": 2295294,
+        "client": 0
+      },
+      "after": {
+        "server": 2295294,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/klarna/client-config",
+      "before": {
+        "server": 2689147,
+        "client": 0
+      },
+      "after": {
+        "server": 2689147,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/klarna/orders",
+      "before": {
+        "server": 2657070,
+        "client": 0
+      },
+      "after": {
+        "server": 2657070,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/klarna/prepare",
+      "before": {
+        "server": 2864597,
+        "client": 0
+      },
+      "after": {
+        "server": 2864597,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/log",
+      "before": {
+        "server": 2295099,
+        "client": 0
+      },
+      "after": {
+        "server": 2295099,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/meta/[...path]",
+      "before": {
+        "server": 2295194,
+        "client": 0
+      },
+      "after": {
+        "server": 2295194,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/observability/[...path]",
+      "before": {
+        "server": 2295268,
+        "client": 0
+      },
+      "after": {
+        "server": 2295268,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/search-index",
+      "before": {
+        "server": 2442880,
+        "client": 0
+      },
+      "after": {
+        "server": 2442880,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/shopify/checkout-observations",
+      "before": {
+        "server": 2295341,
+        "client": 0
+      },
+      "after": {
+        "server": 2295341,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/shopify/checkout-recovery-evidence",
+      "before": {
+        "server": 2295381,
+        "client": 0
+      },
+      "after": {
+        "server": 2295381,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/shopify/webhooks/[...path]",
+      "before": {
+        "server": 2295295,
+        "client": 0
+      },
+      "after": {
+        "server": 2295295,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/bli-forhandler",
+      "before": {
+        "server": 4835840,
+        "client": 1320399
+      },
+      "after": {
+        "server": 4854259,
+        "client": 1320399
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/bli-forhandler/pdf",
+      "before": {
+        "server": 5214341,
+        "client": 1750841
+      },
+      "after": {
+        "server": 5232760,
+        "client": 1750841
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/customer/account/authorize",
+      "before": {
+        "server": 1746605,
+        "client": 0
+      },
+      "after": {
+        "server": 1746605,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/forhandlere/[slug]",
+      "before": {
+        "server": 3697411,
+        "client": 1313791
+      },
+      "after": {
+        "server": 3715830,
+        "client": 1313791
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/forhandlere",
+      "before": {
+        "server": 3687537,
+        "client": 1313791
+      },
+      "after": {
+        "server": 3392831,
+        "client": 1313791
+      },
+      "saved": {
+        "server": 294706,
+        "client": 0
+      }
+    },
+    {
+      "route": "/frakt-og-retur",
+      "before": {
+        "server": 3768623,
+        "client": 1371894
+      },
+      "after": {
+        "server": 3463949,
+        "client": 1371894
+      },
+      "saved": {
+        "server": 304674,
+        "client": 0
+      }
+    },
+    {
+      "route": "/handlehjelp/storrelsesguide",
+      "before": {
+        "server": 3775138,
+        "client": 1371894
+      },
+      "after": {
+        "server": 3470464,
+        "client": 1371894
+      },
+      "saved": {
+        "server": 304674,
+        "client": 0
+      }
+    },
+    {
+      "route": "/handlehjelp/vask-og-vedlikehold",
+      "before": {
+        "server": 3764660,
+        "client": 1371894
+      },
+      "after": {
+        "server": 3459986,
+        "client": 1371894
+      },
+      "saved": {
+        "server": 304674,
+        "client": 0
+      }
+    },
+    {
+      "route": "/kontaktskjema",
+      "before": {
+        "server": 3752780,
+        "client": 1413367
+      },
+      "after": {
+        "server": 3771199,
+        "client": 1413367
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/middleware",
+      "before": {
+        "server": 817258,
+        "client": 0
+      },
+      "after": {
+        "server": 817258,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/om-oss",
+      "before": {
+        "server": 3846682,
+        "client": 1402815
+      },
+      "after": {
+        "server": 3542008,
+        "client": 1402815
+      },
+      "saved": {
+        "server": 304674,
+        "client": 0
+      }
+    },
+    {
+      "route": "/personvern",
+      "before": {
+        "server": 3775687,
+        "client": 1371894
+      },
+      "after": {
+        "server": 3471013,
+        "client": 1371894
+      },
+      "saved": {
+        "server": 304674,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/[handle]",
+      "before": {
+        "server": 4386529,
+        "client": 1484716
+      },
+      "after": {
+        "server": 4404948,
+        "client": 1484716
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter",
+      "before": {
+        "server": 3961197,
+        "client": 1409534
+      },
+      "after": {
+        "server": 3979616,
+        "client": 1409534
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/camping-og-bobil",
+      "before": {
+        "server": 3885094,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3903513,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/camping-og-bobil/nbcc",
+      "before": {
+        "server": 3940995,
+        "client": 1434852
+      },
+      "after": {
+        "server": 3646289,
+        "client": 1434852
+      },
+      "saved": {
+        "server": 294706,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/glamping",
+      "before": {
+        "server": 3885016,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3903435,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/hytte",
+      "before": {
+        "server": 3884986,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3903405,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/terrasse",
+      "before": {
+        "server": 3885008,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3903427,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/tilbehor",
+      "before": {
+        "server": 3885012,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3903431,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/varmeplagg",
+      "before": {
+        "server": 3885038,
+        "client": 1311392
+      },
+      "after": {
+        "server": 3903457,
+        "client": 1311392
+      },
+      "saved": {
+        "server": -18419,
+        "client": 0
+      }
+    },
+    {
+      "route": "/robots.txt",
+      "before": {
+        "server": 1820857,
+        "client": 0
+      },
+      "after": {
+        "server": 1820857,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/sitemap.xml",
+      "before": {
+        "server": 2525721,
+        "client": 0
+      },
+      "after": {
+        "server": 2525721,
+        "client": 0
+      },
+      "saved": {
+        "server": 0,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden",
+      "before": {
+        "server": 3834976,
+        "client": 1372137
+      },
+      "after": {
+        "server": 3843427,
+        "client": 1372137
+      },
+      "saved": {
+        "server": -8451,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/cloudweave",
+      "before": {
+        "server": 3836915,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3845551,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -8636,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/glamping-i-norge",
+      "before": {
+        "server": 3840365,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3848912,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -8547,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/hva-er-glamping",
+      "before": {
+        "server": 3863207,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3871643,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -8436,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/hva-skal-man-ha-innerst",
+      "before": {
+        "server": 3845102,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3853764,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -8662,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/hvordan-forlenge-terassesesongen",
+      "before": {
+        "server": 3845036,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3853716,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -8680,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/hvordan-holde-varmen-ute",
+      "before": {
+        "server": 3845447,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3854111,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -8664,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/hvorfor-blir-man-kald",
+      "before": {
+        "server": 3852668,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3861326,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -8658,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/julegaven-til-den-som-har-alt",
+      "before": {
+        "server": 3862057,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3870731,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -8674,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/vinterlagring-av-campingvogn-og-bobil",
+      "before": {
+        "server": 3892342,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3900778,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -8436,
+        "client": 0
+      }
+    },
+    {
+      "route": "/uteguiden/ykk",
+      "before": {
+        "server": 3843066,
+        "client": 1372044
+      },
+      "after": {
+        "server": 3851688,
+        "client": 1372044
+      },
+      "saved": {
+        "server": -8622,
+        "client": 0
+      }
+    },
+    {
+      "route": "/vilkar-betingelser",
+      "before": {
+        "server": 3769908,
+        "client": 1371894
+      },
+      "after": {
+        "server": 3465234,
+        "client": 1371894
+      },
+      "saved": {
+        "server": 304674,
+        "client": 0
+      }
+    }
+  ],
+  "browser": {
+    "headerAttributesAndGeometryUnchanged": true,
+    "desktopMenuAndFocus": true,
+    "categoryFilter": true,
+    "searchOpens": true,
+    "emptyCart": true,
+    "newsletterEmailValidity": true,
+    "mobileMenuAndOverflow": true,
+    "pageErrors": []
+  },
+  "verification": {
+    "tests": 49,
+    "schemaEquivalenceCases": 41,
+    "productionBuild": true,
+    "staticPages": 59,
+    "scopedLint": true
+  },
+  "boundaries": [
+    "Isolated Node imports exclude shared React, Next and CSS but include the entire server action and dynamic dependencies.",
+    "Header client isolation excludes shared React, Next and CSS and distinguishes static from dynamic imports.",
+    "Route values are Next generated JavaScript module graphs, not transfers. Shared routes must not be summed.",
+    "Two invalid next/navigation Link imports were repaired during verification; article-source formatting changed concurrently and was preserved.",
+    "Header SVG trial was fully reverted: no size saving. Final Header and Footer presentation source files are unchanged.",
+    "Local only; no provider mutations or deployment."
+  ]
+}

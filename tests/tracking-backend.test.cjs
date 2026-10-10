@@ -22,10 +22,10 @@ function harness({ entry = 'lib/tracking/backend.ts', env = {}, incoming, tokenF
       '@/lib/validation/zodMini': require('zod/mini'),
       './internalJourneyContext': { stripInternalJourneyContext: event => { const copy = { ...event }; delete copy.journey_id; delete copy.previous_page_view_id; return copy; } },
       '@vercel/oidc': { getVercelOidcToken: async options => { audiences.push(options); if (tokenFailure) throw new Error('fixture OIDC unavailable'); return 'fixture-oidc-token'; } },
-      '@vercel/functions': { ipAddress: () => '2001:db8::10', geolocation: () => ({ city: 'Tønsberg', country: 'NO', countryRegion: '39', postalCode: '3100' }) },
+      '@vercel/functions/headers': { ipAddress: () => '2001:db8::10', geolocation: () => ({ city: 'Tønsberg', country: 'NO', countryRegion: '39', postalCode: '3100' }) },
       '@/lib/facebook-login/session': { FACEBOOK_SESSION_COOKIE: 'utekos_v2_fb_session', readSession: (token, purpose) => { sessions.push({ token, purpose }); return token === 'verified-fixture-session' ? { userId: '123456' } : undefined; } },
-      'next/headers': { headers: async () => new Headers(incoming ?? { origin: ORIGIN, referer: `${ORIGIN}/produkter/utekos-dun`, 'user-agent': 'Fixture browser', cookie: '_fbp=fb.1.fixture; _epik=pinterest-fixture; utekos_v2_fb_session=verified-fixture-session' }) },
-      'next/server': { NextRequest },
+      'next/dist/server/request/headers': { headers: async () => new Headers(incoming ?? { origin: ORIGIN, referer: `${ORIGIN}/produkter/utekos-dun`, 'user-agent': 'Fixture browser', cookie: '_fbp=fb.1.fixture; _epik=pinterest-fixture; utekos_v2_fb_session=verified-fixture-session' }) },
+      'next/dist/server/web/spec-extension/request': { NextRequest },
     },
     globals: { Request, Response, Headers, Uint8Array, Buffer, crypto: webcrypto, console: { ...console, error: (...args) => errors.push(args) } },
     fetch: async (url, init) => {

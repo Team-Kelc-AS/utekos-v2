@@ -1,6 +1,7 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheLife } from "next/dist/server/use-cache/cache-life";
+import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { z } from "zod";
 import { categories, categorySlugs, listingPath } from "@/lib/catalog/categories";
 import { productTitle } from "@/lib/catalog/productTitle";

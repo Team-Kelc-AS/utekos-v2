@@ -1,16 +1,16 @@
-import type { ReactNode } from 'react'
-import styles from './knowledgeChrome.module.css'
+import type { ReactNode } from "react";
+import styles from "./knowledgeChrome.module.css";
 
 export function KnowledgeCallout({
   title,
-  tone = 'evidence',
+  tone = "evidence",
   appearance,
-  children
+  children,
 }: {
-  title: string
-  tone?: 'evidence' | 'note' | 'caution'
-  appearance?: 'dark'
-  children: ReactNode
+  title: string;
+  tone?: "evidence" | "note" | "caution";
+  appearance?: "dark";
+  children: ReactNode;
 }) {
   return (
     <aside
@@ -22,5 +22,5 @@ export function KnowledgeCallout({
       <p className={styles.calloutTitle}>{title}</p>
       <div className={styles.calloutBody}>{children}</div>
     </aside>
-  )
+  );
 }

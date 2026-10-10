@@ -1,3 +1,4 @@
+import { knowledgeArticleList, knowledgeOverview } from "@/lib/knowledge/knowledgeArticles";
 import { productGallery } from '@/lib/products/gallery';
 import type { ShopifyProduct } from '@/lib/shopify/product-types';
 import { absoluteUrl } from './site';
@@ -33,32 +34,6 @@ export const editorialSitemapImages: Readonly<Record<string, readonly string[]>>
     '/glimt-1.webp', '/glimt-2.webp', '/glimt-3.webp',
     '/glimt-4.webp', '/glimt-5.webp', '/glimt-6.webp',
   ],
-  '/uteguiden': [
-    '/fea-simulation-mesh-16_9.png',
-    '/images/kunnskap/innerlag-16x9.png',
-    '/og-image-skreddersy-varmen.jpg',
-    '/og-emphathy-bonfire.webp',
-    '/images/kunnskap/hvorfor-blir-man-kald-16x9.jpg',
-  ],
-  '/uteguiden/ykk': [
-    '/glidelas-struktur-mikro.jpg',
-    '/fea-simulation-mesh-16_9.png',
-    '/fabrikkarbeider-revisjon_3_4.jpg',
-  ],
-  '/uteguiden/hvorfor-blir-man-kald': [
-    '/images/kunnskap/hvorfor-blir-man-kald-16x9.jpg',
-    '/images/kunnskap/hvorfor-blir-man-kald-4x3.jpg',
-  ],
-  '/uteguiden/hvordan-holde-varmen-ute': [
-    '/images/kunnskap/Fjellvandrer i vinterstorm.webp',
-    '/images/kunnskap/Fjellvinter i gyllent motlys.webp',
-    '/images/kunnskap/Vintertur med fjellutsikt.webp',
-    '/images/kunnskap/Varm drikke i vinterlandskapet.webp',
-  ],
-  '/uteguiden/hva-skal-man-ha-innerst': [
-    '/images/kunnskap/Vandrer på snødekt fjellrygg.webp',
-    '/images/kunnskap/Enslig vandrer ved vinterfjorden.webp',
-    '/images/kunnskap/Vinterpause med varm drikke og fjordutsikt.webp',
-    '/images/kunnskap/Langrenn i vinterlandskapet.webp',
-  ],
+  [knowledgeOverview.path]: knowledgeArticleList.map(article => article.cardImage.src),
+  ...Object.fromEntries(knowledgeArticleList.map(article => [article.path, article.images.map(image => image.src)])),
 };

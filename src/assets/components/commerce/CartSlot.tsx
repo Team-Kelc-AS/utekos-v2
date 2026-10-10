@@ -1,5 +1,6 @@
 import 'server-only';
-import { cookies, headers } from 'next/headers';
+import { cookies } from 'next/dist/server/request/cookies';
+import { headers } from 'next/dist/server/request/headers';
 import { CART_COOKIE, cartView, readCart } from '@/lib/cart/server';
 import type { Cart } from '@/lib/cart/types';
 import { CartHost } from './CartHost';

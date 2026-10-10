@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheLife } from "next/dist/server/use-cache/cache-life";
+import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { assertProductHandles, categorySlugs, listingPath } from "@/lib/catalog/categories";
 import { absoluteUrl, productPath } from "@/lib/seo/site";
+import { supportPages } from "@/lib/seo/supportPages";
 import { getProductHandles } from "@/lib/shopify/getProductHandles";
 import { getProductListing } from "@/lib/shopify/getProductListing";
 import { knowledgeArticleList, knowledgeOverview } from "@/lib/knowledge/knowledgeArticles";
@@ -48,14 +50,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ]),
       videos: homeSitemapVideos,
     },
-    { url: absoluteUrl("/kontaktskjema") },
+    { url: absoluteUrl(supportPages.contact.path) },
     { url: absoluteUrl("/forhandlere"), images: sitemapImages(retailers.map((retailer) => retailer.image.src)) },
     { url: absoluteUrl("/bli-forhandler") },
     ...retailers.map((retailer) => ({ url: absoluteUrl(retailerPath(retailer)), images: sitemapImages([retailer.image.src]) })),
-    { url: absoluteUrl("/frakt-og-retur") },
-    { url: absoluteUrl("/handlehjelp/vask-og-vedlikehold") },
-    { url: absoluteUrl("/handlehjelp/storrelsesguide") },
-    editorialEntry("/om-oss"),
+    { url: absoluteUrl(supportPages.shippingReturns.path), lastModified: supportPages.shippingReturns.dateModified },
+    { url: absoluteUrl(supportPages.maintenance.path), lastModified: supportPages.maintenance.article.dateModified },
+    { url: absoluteUrl(supportPages.sizeGuide.path) },
+    editorialEntry(supportPages.about.path),
     { url: absoluteUrl("/personvern") },
     { url: absoluteUrl("/vilkar-betingelser") },
     {
@@ -72,9 +74,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       videos: getProductSitemapVideos(product),
     })),
     editorialEntry(knowledgeOverview.path),
-    ...knowledgeArticleList.map((article) => ({ ...editorialEntry(article.path), lastModified: article.updatedAt })),
-    // This existing article has no verified editorial publication/update date.
-    editorialEntry("/uteguiden/glamping-i-norge"),
+    ...knowledgeArticleList.map((article) => ({
+      ...editorialEntry(article.path),
+      ...(article.updatedAt && { lastModified: article.updatedAt }),
+    })),
   ];
 
   return entries.map(encodeSitemapEntry);

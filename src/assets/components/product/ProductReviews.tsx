@@ -1,7 +1,7 @@
 import 'server-only';
 
 import Image from 'next/image';
-import { io } from 'next/cache';
+import { io } from 'next/dist/server/request/io';
 import { getJudgeMeReviews } from '@/lib/products/judgeme';
 import styles from './ProductReviews.module.css';
 

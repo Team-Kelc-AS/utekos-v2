@@ -7,7 +7,7 @@ import styles from './ProductCardVideo.module.css';
 
 export type ProductCardVideoSource = ProductVideoSource;
 
-export function ProductCardVideo({ src, width, height, poster, label, children, desktopOnly = false }: ProductCardVideoSource & { label: string; children: ReactNode; desktopOnly?: boolean }) {
+export function ProductCardVideo({ src, width, height, poster, label, children, desktopOnly = false, onPlayingChange }: ProductCardVideoSource & { label: string; children: ReactNode; desktopOnly?: boolean; onPlayingChange?: (playing: boolean) => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playRef = useRef<HTMLButtonElement>(null);
   const attempt = useRef({ generation: 0 });
@@ -20,8 +20,9 @@ export function ProductCardVideo({ src, width, height, poster, label, children, 
     const restoreFocus = document.activeElement === video;
     video?.pause();
     setPlaying(false);
+    onPlayingChange?.(false);
     if (restoreFocus) requestAnimationFrame(() => playRef.current?.focus({ preventScroll: true }));
-  }, []);
+  }, [onPlayingChange]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -47,6 +48,7 @@ export function ProductCardVideo({ src, width, height, poster, label, children, 
     const currentAttempt = ++attempt.current.generation;
     setError('');
     setPlaying(true);
+    onPlayingChange?.(true);
     // The source is discoverable in server HTML; preload="none" defers the
     // media download until the customer chooses to play it.
     if (video.error) video.load();

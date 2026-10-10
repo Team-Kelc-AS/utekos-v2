@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { CART_COOKIE, CartError, mutateCart } from '@/lib/cart/server';
+import { mutateCart } from '@/lib/cart/mutations';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
+import { CART_COOKIE, CartError } from '@/lib/cart/server';
 import type { CartResult } from '@/lib/cart/types';
 import { sameOrigin, buyerIp, privateHeaders } from '@/lib/cart/request';
 import { prepareSchema } from '@/lib/klarna/contracts';

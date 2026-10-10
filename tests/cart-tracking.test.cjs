@@ -76,11 +76,67 @@ test('checkout identity exactly follows the pinned URL token and SHA256 revision
 
 const connection = nodes => ({ nodes, pageInfo: { hasNextPage: false, endCursor: null } });
 const rawCart = quantity => ({ id: fullId, checkoutUrl: 'https://checkout.example.test', totalQuantity: quantity, cost: { subtotalAmount: money(String(quantity * 800)), totalAmount: money(String(quantity * 800)) }, lines: connection(quantity ? [{ id: 'line-1', quantity, cost: { totalAmount: money(String(quantity * 800)) }, merchandise: { ...variant, __typename: 'ProductVariant', product: { ...product, collections: connection(product.collections.nodes) } } }] : []) });
-function mutationHarness(replies) {
+
+test('cart reads preserve paginated lines, collections, buyer IP and private identity boundaries', async () => {
+  const first = rawCart(1);
+  first.totalQuantity = 2;
+  first.cost = { subtotalAmount: money('1600'), totalAmount: money('1500') };
+  first.lines.pageInfo = { hasNextPage: true, endCursor: 'line-cursor' };
+  first.lines.nodes[0].merchandise.product.collections.pageInfo = { hasNextPage: true, endCursor: 'collection-cursor' };
+  const second = { ...rawCart(1).lines.nodes[0], id: 'line-2' };
   const requests = [];
   const api = loadTypeScript('lib/cart/server.ts', { mocks: {
-    './backend': { prepareKlarnaOrderForwarder: async () => { throw new Error('Payment forbidden in cart tests'); } },
-    '@/lib/shopify/getProduct': { getProduct: async () => ({ ...product, variants: { nodes: [variant] } }), completeConnection: async first => ({ nodes: first.nodes }) },
+    '@/lib/shopify/client': { shopifyFetch: async request => {
+      requests.push(request);
+      assert.equal(request.cache, 'no-store');
+      assert.equal(request.buyerIp, '192.0.2.1');
+      assert.match(request.query, /\bquery (?:Cart|CartLines|ProductCollections)\(/);
+      if (request.query.includes('query Cart(')) {
+        assert.equal(request.variables.id, fullId);
+        return { cart: first };
+      }
+      if (request.query.includes('query CartLines(')) {
+        assert.equal(request.variables.after, 'line-cursor');
+        assert.equal(request.variables.id, fullId);
+        return { cart: { lines: connection([second]) } };
+      }
+      assert.match(request.query, /query ProductCollections/);
+      assert.equal(request.variables.after, 'collection-cursor');
+      return { product: { collections: connection([{ id: 'gid://shopify/Collection/2', title: 'Hytte' }]) } };
+    } },
+  } });
+  const result = await api.cartView(await api.readCart(fullId, '192.0.2.1'), '192.0.2.1');
+  assert.equal(requests.length, 3);
+  assert.equal(api.CART_COOKIE, 'utekos_cart');
+  assert.equal(result.id, publicId);
+  assert.equal(result.lines.length, 2);
+  assert.equal(result.lines[1].id, 'line-2');
+  assert.equal(result.lines[0].commerce.items[0].collection_ids.length, 2);
+  assert.equal(result.commerce.gross_value, 1500);
+  assert.equal(result.commerce.value, 1200);
+  assert.equal(JSON.stringify(result).includes('secret-fixture'), false);
+});
+
+test('cart reads fail on expiry or a repeated cursor instead of returning a partial cart', async () => {
+  for (const expired of [true, false]) {
+    const first = rawCart(1);
+    first.lines.pageInfo = { hasNextPage: true, endCursor: 'stuck' };
+    let requests = 0;
+    const api = loadTypeScript('lib/cart/server.ts', { mocks: {
+      '@/lib/shopify/client': { shopifyFetch: async () => {
+        requests++;
+        return { cart: expired ? null : { lines: first.lines } };
+      } },
+    } });
+    await assert.rejects(api.cartView(first), expired ? api.CartError : /pagination did not advance/);
+    assert.equal(requests, 1);
+  }
+});
+
+function mutationHarness(replies) {
+  const requests = [];
+  const api = loadTypeScript('lib/cart/mutations.ts', { mocks: {
+    '@/lib/shopify/getProduct': { getProduct: async () => ({ ...product, variants: { nodes: [variant] } }) },
     '@/lib/shopify/client': { shopifyFetch: async request => {
       requests.push(request);
       const result = replies.shift();
@@ -115,7 +171,7 @@ class CartError extends Error { constructor(message, status = 422) { super(messa
 function checkoutHarness(handler = async () => { throw new Error('Unexpected Shopify request'); }) {
   return loadTypeScript('lib/cart/checkout.ts', { env: { VERCEL_ENV: 'production' }, mocks: {
     '@/lib/validation/zodMini': require('zod/mini'),
-    './server': { CartError },
+    './error': { CartError },
     '@/lib/shopify/client': { shopifyFetch: handler },
   } });
 }

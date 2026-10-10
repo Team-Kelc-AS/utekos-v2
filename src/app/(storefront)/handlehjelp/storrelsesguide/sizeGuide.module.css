@@ -1,0 +1,190 @@
+/* sizeGuide.module.css */
+.page {
+  --guide-background: #012a2e;
+  --guide-card: #18546a;
+  --guide-notice: #f24405;
+  --knowledge-ink: #fff;
+  --knowledge-ink-muted: #fff;
+  --knowledge-link: #fff;
+  --knowledge-surface: var(--guide-card);
+  --knowledge-border: #ffffff40;
+  --primary: var(--guide-background);
+  flex: 1;
+  padding: 2rem 1rem 4rem;
+  background: var(--guide-background);
+  color: #fff;
+}
+
+.page :is(.sizeCard, .infoCard, .stepCard) {
+  --card-spacing: clamp(1.25rem, 3vw, 2rem);
+  gap: 1.25rem;
+  min-width: 0;
+  border-radius: 2rem;
+  background: var(--guide-card);
+  color: #fff;
+  font-size: inherit;
+  box-shadow: none;
+  /* Nytt for å gi mer luft inni kortene, spesielt med avrundede hjørner */
+  padding: 1.5rem;
+  /* Sikre at kort strekker seg for å fylle høyden i et grid */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Fjern intern padding fra CardContent osv siden hovedkortet nå har padding */
+.page :is(.sizeCard, .infoCard, .stepCard) > div {
+  padding: 0;
+}
+
+.grid {
+  display: grid;
+  gap: 1.25rem;
+  margin-block: 2rem; /* Litt mer luft rundt gridet */
+  align-items: stretch; /* Sørg for at elementer i samme rad blir like høye */
+}
+
+.page .sizeCard h3 {
+  margin: 0 0 1rem; /* Fjernet margin-top for ryddigere start */
+  font-size: clamp(
+    1.75rem,
+    3vw,
+    2.5rem
+  ); /* Justert litt ned for mindre dominans */
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.sizeContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.measurement span {
+  display: inline-block;
+}
+.page .measurement {
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.15rem, 2vw, 1.5rem); /* Justert litt ned */
+  line-height: 1.4;
+}
+
+.page :is(.sizeCard, .infoCard, .stepCard) :is(ul, ol) {
+  margin-block: 0;
+}
+
+.page :is(.sizeCard, .infoCard, .stepCard) li,
+.page :is(.sizeCard, .infoCard, .stepCard) p {
+  margin-block: 0.5rem;
+  line-height: 1.6; /* Økt linjeavstand for bedre lesbarhet */
+}
+
+.page .sizeFooter {
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 1rem; /* Avrundet selve knappen litt */
+  background: #113d4d; /* Mørkere farge for å se mer ut som en knapp */
+  margin-top: auto; /* Skyv ned i bunnen */
+  margin-inline: -0.5rem; /* La knappen strekke seg litt utover paddingen for design */
+  margin-bottom: -0.5rem;
+}
+
+.sizeFooter a {
+  display: block;
+  min-height: 3.5rem;
+  padding: 1.25rem;
+  border-radius: inherit;
+  color: #fff;
+  font-size: 1.25rem; /* Justert litt ned */
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+}
+.sizeFooter a:hover {
+  text-decoration: none;
+  background-color: #0e303d; /* Hover-effekt */
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start; /* Endret fra center for å holde ikonet oppe ved mye tekst */
+  flex-wrap: nowrap;
+  gap: 1.25rem; /* Litt mer avstand mellom ikon og tekst */
+  margin-block: 2rem;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  background: var(--guide-notice);
+  color: #fff;
+  font-size: 1.25rem; /* Justert litt ned for bedre flyt på mobil */
+  line-height: 1.5;
+}
+.notice img {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-top: 0.25rem; /* Juster ikonet litt ned slik at det flukter med første tekstlinje */
+}
+.page .notice p {
+  margin: 0;
+}
+.page .notice strong {
+  font-weight: 500;
+}
+
+.infoCard,
+.stepCard {
+  margin-block: 1.25rem;
+}
+.page .stepCard h4 {
+  margin: 0 0 0.5rem 0; /* Litt luft under overskriften */
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+.page .stepCard p {
+  margin: 0;
+  line-height: 1.6;
+}
+.page .infoCard p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Scope the existing MDX tables and FAQ card to this page's palette. */
+.page [data-slot="card"] {
+  --card: var(--guide-card);
+  --card-foreground: #fff;
+  border-radius: 1.5rem; /* Litt mindre radius på FAQ-kortet for variasjon */
+  box-shadow: none;
+}
+.page [data-slot="accordion-trigger"] {
+  font-weight: 800;
+}
+.page [data-slot="accordion-body"] :is(ul, ol) {
+  margin-block: 0.5rem;
+}
+.page section[id] {
+  scroll-margin-block-start: 2rem;
+}
+.page a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+@media (min-width: 40rem) {
+  .page {
+    padding: 3rem 1.5rem 5rem;
+  }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 64rem) {
+  .grid:has(> :nth-child(3)) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

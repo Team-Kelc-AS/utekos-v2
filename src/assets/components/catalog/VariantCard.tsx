@@ -8,6 +8,10 @@ import { WishlistButton } from '@/components/wishlist/WishlistButton';
 import type { OverviewCard } from '@/lib/catalog/overview';
 import { formatMoney } from '@/lib/products/money';
 import { optionParam, variantHref } from '@/lib/products/variants';
+import { dunSelection } from '@/lib/reservations/dun';
+import { productVariantColorSheet } from '@/lib/products/variantColorSheets';
+import { ProductCardFlip } from '@/components/ProductCard/ProductCardFlip';
+import { ProductCardColorSheet } from '@/components/ProductCard/ProductCardColorSheet';
 import { VariantCardActions } from './VariantCardActions';
 import styles from './ProductOverview.module.css';
 
@@ -18,7 +22,8 @@ export function VariantCard({ card, eager = false }: { card: OverviewCard; eager
   const href = variantHref(product.handle, variant, product.variants.nodes);
   const gender = variant.selectedOptions.find(option => optionParam(option.name) === 'kjonn')?.value
     ?? (product.handle === 'utekos-svale' ? 'Unisex' : null);
-  return <Card className={styles.card} data-variant-card={variant.id} data-tracking-commerce={JSON.stringify(productCommerce(product, variant))} data-color={color} aria-label={title}>
+  const colorSheet = productVariantColorSheet(product.handle, variant);
+  const front = <div className={styles.front}>
     <Link href={href} prefetch={false} className={styles.imageLink} aria-label={`Se ${title}`}>
       <Image src={image.url} alt={image.altText || title} width={image.width} height={image.height}
         className={styles.image} sizes={sizes} loading={eager ? 'eager' : 'lazy'} />
@@ -33,8 +38,12 @@ export function VariantCard({ card, eager = false }: { card: OverviewCard; eager
         <CardTitle><h3 className={styles.title}><Link href={href} prefetch={false}>{title}</Link></h3></CardTitle>
         <CardDescription className={styles.price}>{formatMoney(variant.price)}</CardDescription>
       </CardHeader>
-      <VariantCardActions handle={product.handle} variantId={variant.id} available={variant.availableForSale} title={title} />
+      <VariantCardActions handle={product.handle} variantId={variant.id} available={variant.availableForSale} title={title}
+        reservationSelection={product.handle === 'utekos-dun' ? dunSelection(variant) : undefined} />
     </CardContent>
+  </div>;
+  return <Card className={styles.card} data-variant-card={variant.id} data-tracking-commerce={JSON.stringify(productCommerce(product, variant))} data-color={color} aria-label={title}>
+    {colorSheet ? <ProductCardFlip label={title} back={<ProductCardColorSheet sheet={colorSheet} />}>{front}</ProductCardFlip> : front}
   </Card>;
 }
 

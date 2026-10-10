@@ -1,7 +1,8 @@
 import "server-only";
 
 import { cache } from "react";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheLife } from "next/dist/server/use-cache/cache-life";
+import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { assertProductHandles, categories, type ListingKey } from "@/lib/catalog/categories";
 import { PAGE_SIZE } from "@/lib/catalog/pagination";
 import { readConnectionPage, type CursorConnection } from "@/lib/catalog/paginateConnection";

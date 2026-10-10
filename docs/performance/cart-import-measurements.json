@@ -1,0 +1,137 @@
+{
+  "date": "2026-10-09",
+  "next": "16.3.8",
+  "deployment": "local only",
+  "isolated": {
+    "entry": "export { CART_COOKIE, cartView, readCart } from \"./src/lib/cart/server\";",
+    "bundler": "esbuild 0.27.7",
+    "options": {
+      "platform": "node",
+      "format": "esm",
+      "minify": true,
+      "conditions": [
+        "react-server"
+      ],
+      "external": [
+        "server-only",
+        "@opentelemetry/api"
+      ],
+      "NODE_ENV": "production"
+    },
+    "before": {
+      "bytes": 1159836,
+      "gzip": 254590
+    },
+    "after": {
+      "bytes": 10401,
+      "gzip": 3914
+    }
+  },
+  "nextRouteGraphs": [
+    {
+      "route": "/",
+      "before": {
+        "server": 4033247,
+        "client": 1431539
+      },
+      "after": {
+        "server": 4030320,
+        "client": 1431539
+      },
+      "saved": {
+        "server": 2927,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter",
+      "before": {
+        "server": 3962399,
+        "client": 1409534
+      },
+      "after": {
+        "server": 3961051,
+        "client": 1409534
+      },
+      "saved": {
+        "server": 1348,
+        "client": 0
+      }
+    },
+    {
+      "route": "/produkter/[handle]",
+      "before": {
+        "server": 4387269,
+        "client": 1484716
+      },
+      "after": {
+        "server": 4386383,
+        "client": 1484716
+      },
+      "saved": {
+        "server": 886,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/cart",
+      "before": {
+        "server": 2838192,
+        "client": 0
+      },
+      "after": {
+        "server": 2363107,
+        "client": 0
+      },
+      "saved": {
+        "server": 475085,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/cart/checkout",
+      "before": {
+        "server": 2861762,
+        "client": 0
+      },
+      "after": {
+        "server": 2174447,
+        "client": 0
+      },
+      "saved": {
+        "server": 687315,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/klarna/prepare",
+      "before": {
+        "server": 2837857,
+        "client": 0
+      },
+      "after": {
+        "server": 2839407,
+        "client": 0
+      },
+      "saved": {
+        "server": -1550,
+        "client": 0
+      }
+    },
+    {
+      "route": "/api/klarna/orders",
+      "before": {
+        "server": 2855064,
+        "client": 0
+      },
+      "after": {
+        "server": 2634400,
+        "client": 0
+      },
+      "saved": {
+        "server": 220664,
+        "client": 0
+      }
+    }
+  ]
+}

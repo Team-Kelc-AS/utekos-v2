@@ -1,7 +1,7 @@
 import 'server-only';
 import { isIP } from 'node:net';
 import { getVercelOidcToken } from '@vercel/oidc';
-import { geolocation, ipAddress } from '@vercel/functions';
+import { geolocation, ipAddress } from '@vercel/functions/headers';
 import type { NextRequest } from 'next/server';
 import { FACEBOOK_SESSION_COOKIE, readSession } from '@/lib/facebook-login/session';
 import { BRIDGE_URL, isBridgeOperation, isCallbackOperation } from './bridge-contract';

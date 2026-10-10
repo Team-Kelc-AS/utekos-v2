@@ -1,5 +1,7 @@
 import 'server-only';
-import { cacheLife, cacheTag } from 'next/cache';
+import { completeConnection } from './completeConnection';
+import { cacheLife } from 'next/dist/server/use-cache/cache-life';
+import { cacheTag } from 'next/dist/server/use-cache/cache-tag';
 import { PRODUCT_QUERY, PRODUCT_IMAGES_QUERY, PRODUCT_VARIANTS_QUERY, PRODUCT_COLLECTIONS_QUERY } from './queries/products';
 import { shopifyFetch } from './client';
 import type { CursorConnection } from '@/lib/catalog/paginateConnection';
@@ -12,20 +14,6 @@ type ProductResponse = Omit<ShopifyProduct, 'options'> & {
   variants: CursorConnection<ProductVariant>;
   collections: CursorConnection<ProductCollection>;
 };
-
-export async function completeConnection<T>(first: CursorConnection<T>, next: (after: string) => Promise<CursorConnection<T>>) {
-  const nodes = [...first.nodes];
-  const seen = new Set<string>();
-  let page = first;
-  while (page.pageInfo.hasNextPage) {
-    const cursor = page.pageInfo.endCursor;
-    if (!cursor || seen.has(cursor)) throw new Error('Product pagination did not advance');
-    seen.add(cursor);
-    page = await next(cursor);
-    nodes.push(...page.nodes);
-  }
-  return { nodes };
-}
 
 export async function getProduct(handle: string): Promise<ShopifyProduct | null> {
   'use cache';

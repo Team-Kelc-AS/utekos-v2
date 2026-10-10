@@ -3,6 +3,14 @@ import createMDX from "@next/mdx";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  // Next 16.3.8: retain typed entry points while tree-shaking the ESM cache
+  // implementation. Recheck cache scope and bundle output when upgrading Next.
+  turbopack: {
+    resolveAlias: {
+      "next/dist/server/use-cache/cache-tag": "next/dist/esm/server/use-cache/cache-tag.js",
+      "next/dist/server/use-cache/cache-life": "next/dist/esm/server/use-cache/cache-life.js",
+    },
+  },
   reactCompiler: true,
   partialPrefetching: true,
   // Resolve route/variant validation before sending headers, so invalid URLs

@@ -1,6 +1,6 @@
 import 'server-only';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
-import { z } from 'zod';
+import * as z from '@/lib/validation/zodMini';
 export const FACEBOOK_STATE_COOKIE = 'utekos_v2_fb_state';
 export const FACEBOOK_SESSION_COOKIE = 'utekos_v2_fb_session';
 export function facebookConfig() {
@@ -24,7 +24,7 @@ export function readSession(value: string | undefined, purpose: string) {
     const [iv, encrypted, tag] = value.split('.').map(v => Buffer.from(v, 'base64url'));
     const decipher = createDecipheriv('aes-256-gcm', facebookConfig().key, iv);
     decipher.setAAD(Buffer.from(purpose)); decipher.setAuthTag(tag);
-    const data = z.object({ expiresAt: z.number(), userId: z.string().regex(/^\d+$/).optional() }).parse(JSON.parse(Buffer.concat([decipher.update(encrypted), decipher.final()]).toString()));
+    const data = z.object({ expiresAt: z.number(), userId: z.optional(z.string().check(z.regex(/^\d+$/))) }).parse(JSON.parse(Buffer.concat([decipher.update(encrypted), decipher.final()]).toString()));
     return data.expiresAt > Date.now() ? data : null;
   } catch { return null; }
 }

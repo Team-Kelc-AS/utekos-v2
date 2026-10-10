@@ -1,7 +1,5 @@
 import "server-only";
 
-import { Fragment } from "react";
-import Link from "next/link";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,6 +8,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/Breadcrumb";
+
+import { Fragment } from "react";
+import Link from "next/link";
 
 type Crumb = { label: string; href?: string };
 

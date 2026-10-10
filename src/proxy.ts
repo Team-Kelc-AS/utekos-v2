@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/dist/server/web/spec-extension/response";
+import { type NextRequest } from "next/server";
 import { applyCookieKeeperUserIdCookie } from "@/lib/analytics/server/stapeCookieKeeperUserId";
 import { captureProxyMetaCookies } from "@/lib/analytics/server/captureProxyMetaCookies";
 import { applyProxyMetaCookies } from "@/lib/analytics/server/applyProxyMetaCookies";

@@ -1,7 +1,8 @@
 import 'server-only';
 
 import { load } from 'cheerio/slim';
-import { cacheLife, cacheTag } from 'next/cache';
+import { cacheLife } from 'next/dist/server/use-cache/cache-life';
+import { cacheTag } from 'next/dist/server/use-cache/cache-tag';
 import { z } from 'zod';
 
 export type JudgeMeReview = {

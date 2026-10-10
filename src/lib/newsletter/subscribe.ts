@@ -1,6 +1,6 @@
 "use server";
 
-import { z } from "zod";
+import * as z from "@/lib/validation/zodMini";
 import { recordAcceptedForm } from "@/lib/tracking/server-forms";
 
 export type NewsletterState = {
@@ -10,12 +10,12 @@ export type NewsletterState = {
   invalidEmail?: boolean;
 };
 
-const emailSchema = z.email().max(254);
+const emailSchema = z.email().check(z.maxLength(254));
 const customerResult = z.object({
-  customer: z.object({
-    id: z.string().min(1),
-    defaultEmailAddress: z.object({ marketingState: z.string() }).nullable(),
-  }).nullable(),
+  customer: z.nullable(z.object({
+    id: z.string().check(z.minLength(1)),
+    defaultEmailAddress: z.nullable(z.object({ marketingState: z.string() })),
+  })),
   userErrors: z.array(z.object({ message: z.string() })),
 });
 
@@ -40,7 +40,7 @@ export async function subscribeToNewsletter(_previous: NewsletterState, form: Fo
       signal: AbortSignal.timeout(10000),
     });
     if (!response.ok) throw new Error("newsletter_provider_unavailable");
-    const result = z.object({ data: z.record(z.string(), z.unknown()).optional(), errors: z.array(z.unknown()).optional() }).parse(await response.json());
+    const result = z.object({ data: z.optional(z.record(z.string(), z.unknown())), errors: z.optional(z.array(z.unknown())) }).parse(await response.json());
     if (result.errors?.length || !result.data) throw new Error("newsletter_provider_rejected");
     return result.data;
   }

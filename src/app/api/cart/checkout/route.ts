@@ -3,15 +3,17 @@ import {
   FACEBOOK_SESSION_COOKIE,
   readSession,
 } from "@/lib/facebook-login/session";
-import { NextRequest, NextResponse } from "next/server";
 import { buyerIp, privateHeaders, sameOrigin } from "@/lib/cart/request";
 import {
   parseCheckoutEvent,
   persistCheckoutAttributes,
 } from "@/lib/cart/checkout";
 
+import { NextRequest } from "next/dist/server/web/spec-extension/request";
+import { NextResponse } from "next/dist/server/web/spec-extension/response";
 import { campaignAttributionSchema } from "@/lib/analytics/campaignAttribution";
 import { z } from "zod";
+
 const preparationSchema = z.strictObject({
   method: z.enum(["shopify", "klarna"]),
   event: z.unknown().nullable(),

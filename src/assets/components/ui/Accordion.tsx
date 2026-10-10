@@ -1,11 +1,8 @@
-import { CaretDownIcon } from "@/components/utekos-icons/CaretDownIcon"
-import { CaretUpIcon } from "@/components/utekos-icons/CaretUpIcon"
+import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
+import { CaretDownIcon } from "@/components/utekos-icons/CaretDownIcon";
+import { CaretUpIcon } from "@/components/utekos-icons/CaretUpIcon";
+import { cn } from "cn";
 
-import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
-import { cn } from "cn"
-
-// Keep these wrappers server-compatible. Base UI owns the client boundary;
-// page content and icons can be rendered on the server and passed as children.
 function Accordion({
   className,
   hiddenUntilFound = true,
@@ -20,7 +17,7 @@ function Accordion({
       className={cn("flex w-full min-w-0 flex-col", className)}
       {...props}
     />
-  )
+  );
 }
 
 function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
@@ -30,7 +27,7 @@ function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
       className={cn("min-w-0 not-last:border-b", className)}
       {...props}
     />
-  )
+  );
 }
 
 function AccordionTrigger({
@@ -39,15 +36,19 @@ function AccordionTrigger({
   headingLevel = 3,
   ...props
 }: AccordionPrimitive.Trigger.Props & { headingLevel?: 2 | 3 | 4 | 5 | 6 }) {
-  const Heading = `h${headingLevel}` as const
+  const Heading = `h${headingLevel}` as const;
 
   return (
-    <AccordionPrimitive.Header render={<Heading />} data-slot="accordion-header" className="m-0 flex">
+    <AccordionPrimitive.Header
+      render={<Heading />}
+      data-slot="accordion-header"
+      className="m-0 flex"
+    >
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
           "group/accordion-trigger relative flex min-h-12 flex-1 items-center justify-between gap-4 rounded-lg border border-transparent py-2.5 text-left text-base font-extrabold outline-none hover:underline focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:after:border-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4",
-          className
+          className,
         )}
         {...props}
       >
@@ -64,7 +65,7 @@ function AccordionTrigger({
         />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
-  )
+  );
 }
 
 function AccordionContent({
@@ -82,13 +83,13 @@ function AccordionContent({
         data-slot="accordion-body"
         className={cn(
           "pt-0 pb-4 [&_a]:underline [&_a]:underline-offset-3 [&_p:not(:last-child)]:mb-4",
-          className
+          className,
         )}
       >
         {children}
       </div>
     </AccordionPrimitive.Panel>
-  )
+  );
 }
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };

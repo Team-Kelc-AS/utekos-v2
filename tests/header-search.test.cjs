@@ -46,7 +46,8 @@ test('search fails on repeated or missing cursors and propagates provider errors
 
 test('index uses canonical product names, includes public pages and has unique safe destinations', async () => {
   const { getSearchIndex } = loadTypeScript('lib/search/getSearchIndex.ts', { mocks: {
-    'next/cache': { cacheLife() {}, cacheTag() {} },
+    'next/dist/server/use-cache/cache-life': { cacheLife() {} },
+    'next/dist/server/use-cache/cache-tag': { cacheTag() {} },
     '@/lib/shopify/getSearchProducts': { getSearchProducts: async () => [product('utekos-techdown')] },
   } });
   const { groups } = await getSearchIndex();
@@ -63,8 +64,8 @@ test('route returns 503 with no-store on provider failure, never an empty succes
   const { GET } = loadTypeScript('app/api/search-index/route.ts', {
     globals: { Response },
     mocks: {
-      'next/server': { connection: async () => {} },
-      'next/navigation': { unstable_rethrow() {} },
+      'next/dist/server/request/connection': { connection: async () => {} },
+      'next/dist/client/components/unstable-rethrow': { unstable_rethrow() {} },
       '@/lib/search/getSearchIndex': { getSearchIndex: async () => { throw new Error('unavailable'); } },
     },
   });

@@ -1,0 +1,12 @@
+import { KnowledgeJsonLd } from '@/components/knowledge/KnowledgeJsonLd';
+import { KnowledgeArticleBreadcrumbs } from '@/components/knowledge/KnowledgeArticleBreadcrumbs';
+import { buildKnowledgeMetadata } from '@/lib/knowledge/buildKnowledgeMetadata';
+export const metadata = buildKnowledgeMetadata(knowledgeArticles.glampingNorway);
+import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles';
+export default function GlampingArticleLayout({ children }) { return children; }
+
+<KnowledgeJsonLd article={knowledgeArticles.glampingNorway} />
+
+<KnowledgeArticleBreadcrumbs article={knowledgeArticles.glampingNorway} />
+
+{props.children}

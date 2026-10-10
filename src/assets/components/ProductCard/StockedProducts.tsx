@@ -2,8 +2,8 @@ import 'server-only';
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { unstable_rethrow } from 'next/navigation';
-import { io } from 'next/cache';
+import { unstable_rethrow } from 'next/dist/client/components/unstable-rethrow';
+import { io } from 'next/dist/server/request/io';
 import { ProductCard } from '@/components/ProductCard/ProductCard';
 import { ProductCarousel } from '@/components/ProductCard/ProductCarousel';
 import { getProductCards, type ProductCardData } from '@/lib/shopify/getProductCards';

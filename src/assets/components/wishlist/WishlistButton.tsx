@@ -1,25 +1,19 @@
 "use client";
 
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import {
   addWishlistItem,
   hasWishlistVariant,
 } from "@/lib/wishlist/wishlistStore";
-import { useState, useSyncExternalStore } from "react";
+import { lazy, Suspense, useState, useSyncExternalStore } from "react";
 
 import { HeartIcon } from "@/components/utekos-icons/HeartIcon";
 import { HeartOutlineIcon } from "@/components/utekos-icons/HeartOutlineIcon";
-import dynamic from "next/dynamic";
 import { emitStorefrontAction } from "@/lib/tracking/browser-events";
 import styles from "@/components/commerce/commerce.module.css";
 import wishlistStyles from "./WishlistButton.module.css";
-const WishlistDialog = dynamic(() => import("./WishlistDialog"), {
-  ssr: false,
-});
+import WishlistHoverCard from "./WishlistHoverCard";
+const WishlistDialog = lazy(() => import("./WishlistDialog"));
+
 const subscribe = (callback: () => void) => {
   window.addEventListener("storage", callback);
   window.addEventListener("utekos:wishlist", callback);
@@ -54,7 +48,6 @@ export function WishlistButton({
   );
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
-  const [hoverOpen, setHoverOpen] = useState(false);
   const button = (
     <button
       type="button"
@@ -63,7 +56,6 @@ export function WishlistButton({
       aria-pressed={wished}
       aria-haspopup="dialog"
       onClick={(event) => {
-        setHoverOpen(false);
         const saved = addWishlistItem({
           productId,
           productHandle: handle,
@@ -107,25 +99,12 @@ export function WishlistButton({
   );
   return (
     <div>
-      {showHoverCard ? (
-        <HoverCard open={hoverOpen && !open} onOpenChange={setHoverOpen}>
-          <HoverCardTrigger render={button} delay={250} />
-          <HoverCardContent
-            side="top"
-            align="end"
-            alignOffset={0}
-            sideOffset={8}
-            className={wishlistStyles.hoverCard}
-          >
-            Legg i ønskeliste
-          </HoverCardContent>
-        </HoverCard>
-      ) : (
-        button
-      )}
+      {showHoverCard ? <WishlistHoverCard button={button} dialogOpen={open} /> : button}
       {error && <p role="alert">{error}</p>}
       {open && (
-        <WishlistDialog returnTo={returnTo} onClose={() => setOpen(false)} />
+        <Suspense fallback={null}>
+          <WishlistDialog returnTo={returnTo} onClose={() => setOpen(false)} />
+        </Suspense>
       )}
     </div>
   );

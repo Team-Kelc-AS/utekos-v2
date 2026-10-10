@@ -57,7 +57,7 @@ export async function sendContactMessage({ replyTo, subject, text, attachments =
   subject: string;
   text: string;
   attachments?: ContactEmailAttachment[];
-  idempotencyPrefix?: "contact-form" | "dealer-inquiry";
+  idempotencyPrefix?: "contact-form" | "dealer-inquiry" | "dun-reservation";
   recipient?: string;
 }) {
   const config = getContactEmailConfig(recipient);

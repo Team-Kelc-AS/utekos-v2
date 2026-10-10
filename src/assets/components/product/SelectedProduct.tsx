@@ -3,7 +3,7 @@ import { Fragment, Suspense } from 'react';
 import { productCommerce } from '@/lib/shopify/commerce';
 import { selectionKey } from '@/lib/tracking/selection-key';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound } from 'next/dist/client/components/not-found';
 import type { ShopifyProduct } from '@/lib/shopify/product-types';
 import { productTitle } from '@/lib/catalog/productTitle';
 import { productGallery } from '@/lib/products/gallery';
@@ -20,7 +20,8 @@ import { getProductSizeGuideDialogContent } from '@/lib/products/getProductSizeG
 import { AddToCart } from '@/components/commerce/AddToCart';
 import { KlarnaProductExpressCheckout } from '@/components/klarna/KlarnaProductExpressCheckout';
 import { WishlistButton } from '@/components/wishlist/WishlistButton';
-import { Waitlist } from '@/components/waitlist/Waitlist';
+import { DunReservationButton } from '@/components/reservations/DunReservationButton';
+import { dunSelection } from '@/lib/reservations/dun';
 import { CheckMarkIcon } from '@/components/utekos-icons/CheckMarkIcon';
 import { TruckOutlineIcon } from '@/components/utekos-icons/TruckOutlineIcon';
 import { ReturnsOutlineIcon } from '@/components/utekos-icons/ReturnsOutlineIcon';
@@ -52,7 +53,7 @@ export async function SelectedProduct({ product, searchParams }: { product: Shop
             <KlarnaProductExpressCheckout key={variant.id} handle={product.handle} variantId={variant.id} />
           )}
         </div>
-        {product.handle === 'utekos-dun' && !product.variants.nodes.some(v => v.availableForSale) && <Waitlist />}
+        {product.handle === 'utekos-dun' && !variant.availableForSale && <DunReservationButton selection={dunSelection(variant)} />}
         <ul className={styles.trust}><li><TruckOutlineIcon />Gratis frakt fra 999 kr</li><li><ReturnsOutlineIcon /><Link href="/frakt-og-retur">Gratis størrelsesbytte</Link></li></ul>
         <div className={styles.reviewSummary}><Suspense fallback={null}><ProductReviews productId={product.id} /></Suspense></div>
         <ProductDescription handle={product.handle} descriptionHtml={product.descriptionHtml} />
