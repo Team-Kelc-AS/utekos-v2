@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-import { cacheLife } from "next/dist/server/use-cache/cache-life";
-import { cacheTag } from "next/dist/server/use-cache/cache-tag";
+import { connection } from "next/dist/server/request/connection";
 import { assertProductHandles, categorySlugs, listingPath } from "@/lib/catalog/categories";
 import { absoluteUrl, productPath } from "@/lib/seo/site";
 import { supportPages } from "@/lib/seo/supportPages";
@@ -19,9 +18,9 @@ import tabletHeroImage from "../../public/Hero-iPad.webp";
 import mobileHeroImage from "../../public/TechDown_1.webp";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  "use cache";
-  cacheLife("minutes");
-  cacheTag("shopify:products", "shopify:collections");
+  // Check current publication on every crawl; draft products must not remain
+  // in a cached sitemap after their product pages become unavailable.
+  await connection();
 
   const [handles, listings] = await Promise.all([
     getProductHandles(),
