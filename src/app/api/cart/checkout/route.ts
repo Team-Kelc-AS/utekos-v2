@@ -13,6 +13,7 @@ import { NextRequest } from "next/dist/server/web/spec-extension/request";
 import { NextResponse } from "next/dist/server/web/spec-extension/response";
 import { campaignAttributionSchema } from "@/lib/analytics/campaignAttribution";
 import { z } from "zod";
+import { compareCheckoutUrls } from "@/lib/cart/checkout-identity";
 
 const preparationSchema = z.strictObject({
   method: z.enum(["shopify", "klarna"]),
@@ -66,12 +67,28 @@ export async function POST(request: NextRequest) {
         { status: 409, headers: privateHeaders },
       );
     const view = await cartView(cart, buyerIp(request));
-    const event = parseCheckoutEvent(
-      parsed.data.event,
-      view,
-      request.nextUrl.origin,
-      parsed.data.method,
-    );
+    let event;
+    try {
+      event = parseCheckoutEvent(
+        parsed.data.event,
+        view,
+        request.nextUrl.origin,
+        parsed.data.method,
+      );
+    } catch (error) {
+      if (error instanceof CartError && error.status === 409) {
+        // Re-read only a rejected preparation; no attributes/payment are written.
+        try {
+          const reread = await readCart(cart.id, buyerIp(request));
+          console.warn('checkout_url_variability', reread
+            ? compareCheckoutUrls(view.id!, cart.checkoutUrl, reread.checkoutUrl)
+            : { cart_available: false });
+        } catch {
+          console.warn('checkout_url_variability', { readback_available: false });
+        }
+      }
+      throw error;
+    }
     const facebookId = readSession(
       request.cookies.get(FACEBOOK_SESSION_COOKIE)?.value,
       "session",

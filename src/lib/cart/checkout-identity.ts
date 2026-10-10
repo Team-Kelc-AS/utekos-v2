@@ -15,3 +15,20 @@ export function cartCheckoutIdentity(publicCartId: string, checkoutUrl: string) 
   const revision = createHash('sha256').update([checkoutId, url.href].join('|')).digest('hex');
   return { checkout_id: checkoutId, creation_revision: `checkout_rev_${revision.slice(0, 32)}` };
 }
+
+// Diagnostics contain only equality and field names, never URLs or key values.
+export function compareCheckoutUrls(publicCartId: string, before: string, after: string) {
+  const first = new URL(before);
+  const second = new URL(after);
+  const keys = new Set([...first.searchParams.keys(), ...second.searchParams.keys()]);
+  return {
+    origin_unchanged: first.origin === second.origin,
+    path_unchanged: first.pathname === second.pathname,
+    fragment_unchanged: first.hash === second.hash,
+    changed_query_keys: [...keys].filter(key =>
+      JSON.stringify(first.searchParams.getAll(key)) !== JSON.stringify(second.searchParams.getAll(key)),
+    ).map(key => /^[a-zA-Z0-9_]{1,40}$/.test(key) ? key : '[other]'),
+    identity_unchanged: cartCheckoutIdentity(publicCartId, before).creation_revision ===
+      cartCheckoutIdentity(publicCartId, after).creation_revision,
+  };
+}

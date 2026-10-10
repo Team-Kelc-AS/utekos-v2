@@ -82,6 +82,20 @@ test('checkout identity ignores rotating Shopify analytics but preserves checkou
   assert.throws(() => cartCheckoutIdentity(publicId, 'http://untrusted.example.test'));
 });
 
+test('checkout variability diagnostics identify changed fields without exposing private URLs or values', () => {
+  const { compareCheckoutUrls } = loadTypeScript('lib/cart/checkout-identity.ts');
+  const before = 'https://checkout.example.test/cart/token?key=private-first&_s=analytics-first';
+  const analytics = compareCheckoutUrls(publicId, before, before.replace('analytics-first', 'analytics-second'));
+  assert.deepEqual([...analytics.changed_query_keys], ['_s']);
+  assert.equal(analytics.identity_unchanged, true);
+  const changed = compareCheckoutUrls(publicId, before, before.replace('private-first', 'private-second'));
+  assert.deepEqual([...changed.changed_query_keys], ['key']);
+  assert.equal(changed.identity_unchanged, false);
+  for (const secret of ['private-first', 'private-second', 'analytics-first', 'checkout.example.test', '/cart/token']) {
+    assert.equal(JSON.stringify(changed).includes(secret), false);
+  }
+});
+
 const connection = nodes => ({ nodes, pageInfo: { hasNextPage: false, endCursor: null } });
 const rawCart = quantity => ({ id: fullId, checkoutUrl: 'https://checkout.example.test', totalQuantity: quantity, cost: { subtotalAmount: money(String(quantity * 800)), totalAmount: money(String(quantity * 800)) }, lines: connection(quantity ? [{ id: 'line-1', quantity, cost: { totalAmount: money(String(quantity * 800)) }, merchandise: { ...variant, __typename: 'ProductVariant', product: { ...product, collections: connection(product.collections.nodes) } } }] : []) });
 

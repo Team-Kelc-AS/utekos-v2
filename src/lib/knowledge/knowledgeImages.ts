@@ -40,10 +40,10 @@ export const knowledgeImages = {
       }
     ],
     "cardImage": {
-      "src": "/images/kunnskap/luksuriøs-julegave-i-varm-stue.webp",
-      "alt": "Gaveutveksling under juletreet som viser gaveasymmetri, der giverens forventninger krasjer med mottakerens ønske om praktisk nytteverdi.",
-      "width": 1536,
-      "height": 1024
+      "src": "/images/kunnskap/bergens-julemarked-i-vinterglød.webp",
+      "alt": "Travle nordmenn på julehandel i en snødekt handlegate, som illustrerer det enorme økonomiske omfanget og stresset rundt kjøp av julegaver.",
+      "width": 1672,
+      "height": 941
     }
   },
   "glamping": {
