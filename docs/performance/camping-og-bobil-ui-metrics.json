@@ -1,0 +1,22 @@
+{
+  "before": {
+    "artifact": "/var/folders/h1/mmr263ts7lg7l0vnyl9m97z00000gn/T/utekos-camping-before-0b9a_jsq/analyze",
+    "bytes": 1311914,
+    "compressed_module_bytes": 522205,
+    "parts": 706,
+    "files": 28
+  },
+  "after": {
+    "artifact": "/var/folders/h1/mmr263ts7lg7l0vnyl9m97z00000gn/T/utekos-camping-after-66266i12/analyze",
+    "bytes": 1423420,
+    "compressed_module_bytes": 569035,
+    "parts": 771,
+    "files": 32
+  },
+  "delta": {
+    "bytes": 111506,
+    "compressed_module_bytes": 46830,
+    "parts": 65,
+    "files": 4
+  }
+}

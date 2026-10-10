@@ -100,3 +100,27 @@ test('missing configuration and invalid product IDs make no requests', async () 
   assert.equal(await invalid.getJudgeMeReviews('gid://shopify/ProductVariant/123'), null);
   assert.equal(invalid.calls.length, 0);
 });
+
+test('listing preview makes one public request and caps unique published reviews at three', async () => {
+  const h = setup([widget([review('1'), review('1'), review('2'), review('3'), review('4')], 15)]);
+  const result = await h.getJudgeMePreview('gid://shopify/Product/123');
+  assert.equal(result.count, 15);
+  assert.equal(result.average, 4);
+  assert.deepEqual(Array.from(result.reviews, review => review.id), ['1', '2', '3']);
+  assert.equal(h.calls.length, 1);
+  assert.equal(new URL(h.calls[0].url).searchParams.get('per_page'), '3');
+  assert.equal(new URL(h.calls[0].url).searchParams.get('page'), '1');
+});
+
+test('preview distinguishes zero reviews from errors, missing config and mismatched product', async () => {
+  const empty = setup([widget([], 0)]);
+  assert.equal((await empty.getJudgeMePreview('gid://shopify/Product/123')).count, 0);
+  for (const response of [new Error('timeout'), { status: 500 }, widget([], 0, 999)]) {
+    const h = setup([response]);
+    assert.equal(await h.getJudgeMePreview('gid://shopify/Product/123'), null);
+    assert.equal(h.cache.at(-1), 'seconds');
+  }
+  const missing = setup([], false);
+  assert.equal(await missing.getJudgeMePreview('gid://shopify/Product/123'), null);
+  assert.equal(missing.calls.length, 0);
+});

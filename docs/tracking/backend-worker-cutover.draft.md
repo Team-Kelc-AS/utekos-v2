@@ -1,59 +1,39 @@
-# Eksisterende worker: overtakelsesutkast, ikke aktivert
+# Eksisterende workers: gjennomført backend-overtakelse
 
-10. oktober 2026. Backend er `utekos-tracking-backend`; pensjonert `utekos-headless` skal aldri publiseres igjen. Backend main `f236cac692c3ec964a4066583d3740803a51ffa2` er deployet og health-verifisert. Inngang/køpublisering og transactional-email-modus er avslått. Dette dokumentet aktiverer ingen jobb og endrer ingen Vercel-konfigurasjon.
+Oppdatert 10. oktober 2026. Filnavnet beholdes for eksisterende lenker. Workers og publisering er uttrykkelig godkjent; tidligere begrensning er opphevet. Utekos-headless skal aldri publiseres igjen.
 
-Brukeren har godkjent overføring av eksisterende workers. En nyere Brand Studio-instruks sier likevel «ingen bakgrunnsjobber»; det er denne begrensningen som hindrer aktivering, ikke manglende brukerautorisasjon.
+Backend bcb7ddffd0c7a71fa5e19fa172c8951349229c07 er READY som dpl_EvdZTQSa4Pw8ACgVXpZaBoj6zFyQ på backend.utekos.no. Health bekrefter workers/ingress/køpublisering true, Redis/database OK og brokonfigurasjon klar. Transactional-email-modus er disabled; abandoned-checkout-recovery er avslått med egen featuregate.
 
-## Privat køforbruker
+## Én periodisk eier og historiske køer
 
-Backend har `crons: []` og ingen køtrigger i `vercel.ts`. Køpublisering alene er utilstrekkelig. Ved gjennomføring av den godkjente overtakelsen klargjøres den eksisterende funksjonen:
+Gamle storefront-crons deaktivert før backend-release: disabledAt=1791627484313. Backend har ni registrerte planer med disabledAt=null. V2 inneholder ingen provider-workers eller cron-planer.
 
-```ts
-functions: {
-  'src/app/api/queues/canonical-provider-dispatch/route.ts': {
-    experimentalTriggers: [{
-      type: 'queue/v2beta',
-      topic: 'canonical-provider-dispatch-v1',
-      initialDelaySeconds: 0,
-      retryAfterSeconds: 15
-    }]
-  }
-}
-```
+Køer er prosjekt-/deploymentbundet. Backend arver ikke gammel kø. Gamle deploymenter beholdes for målrettet historisk drenering. Siste avstemte 12-timersvindu viste 488 publisert/mottatt/slettet, null redeliveries og maksimal meldingsalder ett sekund. Dette er ikke en øyeblikkelig pending-måling. Ved skiftet var ingen provider-outbox-rader pending/retry_scheduled/processing.
 
-Dette er en privat intern funksjon under Vercels køisolasjon, ikke et offentlig HTTP-endepunkt. Behold offentlig proxy stengt. `handleCallback` er ikke en separat JWT-kontroll; sikkerheten må verifiseres i faktisk build/trigger/readback. Se [Vercel consumer security](https://vercel.com/docs/queues/concepts#consumer-function-security).
+To eldre LaunchGuard-workflows ble gjennomgått separat. Kilden leser health/ledger og skriver incidents/varsling; ingen provider-konverteringsdispatch identifisert. De er ikke slettet eller erklært drenert.
 
-## Én eier og varige forsøk
+## Privat kø og leases
 
-- Avstem provider-outbox: pending, retry_scheduled og processing med alder, provider og deployment. Ingen kundedata eller tokens i rapporten.
-- Dokumenter gammel worker-/deploymentbinding og utestående kømeldinger før overtakelse. En ny produksjonsdeployment stanser ikke nødvendigvis gammel konsument. Ikke slett gamle deploymenter automatisk. Se [stopping deliveries](https://vercel.com/docs/queues/concepts#stopping-deliveries-to-a-deployment).
-- Avklar én forbruker, publiseringsgate, gjenforsøk og eksisterende recovery/sweeper før inngangen åpnes. Overføring av gamle planlagte jobber er godkjent av brukeren; avstemming og gjeldende instruksjonsbegrensning gjenstår. Ingen nye jobber opprettes.
-- Bekreft at midlertidig providerfeil gir et varig senere forsøk, og at idempotent gjensending ikke gir ny konvertering. Et normalt callback-svar kvitterer meldingen; `retry_scheduled` håndteres nå lokalt med SDK-retry til lagret `nextAttemptAt` (1–3600 sekunder per gjensending). For tidlige leveringer/aktiv lease beholdes meldingen. Terminale rader kvitteres. Dette er testet uten aktiv kø; runtime må fremdeles verifiseres. Se [push-mode SDK](https://vercel.com/docs/queues/sdk#consuming-messages-in-push-mode).
-- Verifiser positiv OIDC-bro, Shopify HMAC/checkout-OIDC, Redis, miljønavn/scope og provider-konfigurasjon på riktig deployment før v2 peker produksjonstrafikk mot backend.
+canonical-provider-dispatch-v1-trigger er aktiv. Offentlig HTTP-kall gir 404. Operatorautentisert no-op-probe med tilfeldig, ikke-eksisterende attempt-ID er korrelert med provider_queue_no_pending_attempt på riktig backenddeployment. Ingen ledger-hendelse, attempt eller konvertering opprettes av proben.
 
-Ingen av punktene over er bevist av et lokalt bygg, HTTP 200 fra provider eller en READY-deployment alene.
+Batch- og målrettet claim deler fem minutters lease, med attempt-fencing. SDK-retry følger lagret nextAttemptAt; terminalt/manglende arbeid kvitteres. Varig checkout-completion har lease/CAS innen eksisterende outbox-cron, uten ny scheduler. Promotion-feil stanser ikke øvrig provider-dispatch.
 
+## Aktive cron-planer
 
-## Eksisterende cron-planer som skal avstemmes
+Planene er avlest fra Vercel for deploymenten over. Tidene er UTC.
 
-Listen er lest fra backendens `config/cronRegistry.ts`. `vercel.ts` har fortsatt `crons: []`; tabellen er en overtakelsesplan, ikke aktiv konfigurasjon. Tidene er UTC.
-
-| Rute under `/api/cron/` | Eksisterende plan |
+| Rute under /api/cron/ | Plan |
 |---|---|
-| provider-outbox-dispatch | `*/5 * * * *` |
-| shopify-dun-waitlist-sync | `*/5 * * * *` |
-| abandoned-checkout-recovery | `*/5 * * * *` |
-| shopify-order-snapshots | `*/15 * * * *` |
-| google-data-manager-status | `*/5 * * * *` |
-| provider-dispatch-health | `*/5 * * * *` |
-| meta-dataset-quality | `17 3 * * *` |
-| meta-dataset-quality-retry | `17 4 * * *` |
-| meta-ad-delivery-insights | `17 10 * * *` |
+| provider-outbox-dispatch | */5 * * * * |
+| shopify-dun-waitlist-sync | */5 * * * * |
+| abandoned-checkout-recovery | */5 * * * * |
+| shopify-order-snapshots | */15 * * * * |
+| google-data-manager-status | */5 * * * * |
+| provider-dispatch-health | */5 * * * * |
+| meta-dataset-quality | 17 3 * * * |
+| meta-dataset-quality-retry | 17 4 * * * |
+| meta-ad-delivery-insights | 17 10 * * * |
 
-`meta-view-item-dispatch`, `shopify-commerce-reconciliation` og `sync-google-merchant` er eksplisitt unscheduled; de skal ikke få nye timere som del av overføringen.
+meta-view-item-dispatch, shopify-commerce-reconciliation og sync-google-merchant er fortsatt unscheduled. Cron krever eksisterende operatorhemmelighet; offentlige collectors er stengt. [Konsumentsikkerhet](https://vercel.com/docs/queues/concepts#consumer-function-security), [deploymentbundne leveringer](https://vercel.com/docs/queues/concepts#stopping-deliveries-to-a-deployment).
 
-Backendens offentlige proxy tillater nå bare health og OIDC-broen. Cron-ruting/verifikasjon må derfor klargjøres og kontrolleres sammen med Vercel-planen, uten å åpne offentlige collectors. Køforbrukerens private trigger må verifiseres separat i faktisk deployment.
-
-Vercel-køer er prosjekt-/deploymentbundet. Det nye backendprosjektet arver ikke gammel storefront-backlog. Les antall/alder/status i outbox, gamle kømeldinger og Workflow-inflight før skiftet, og dokumenter hvordan gammelt arbeid fullføres med samme event-ID og én utsendelseseier. Ikke slett gamle deploymenter eller anta at Git-frakobling stanser allerede kjørende arbeid.
-
-Storefrontprosjektets Git-kobling til headless er frakoblet; dette er ikke en worker-overføring. V2-sporing og Microsoft PageLoad-overtakelse skal først aktiveres etter fungerende backend og korrelert provider-mottak.
+V2-produksjons-OIDC, rå Shopify-HMAC og korrelert naturlig checkout-completion/kjøp er neste bevisgrense. READY og HTTP-aksept er ikke dedupliserings-/attribusjonsbevis.

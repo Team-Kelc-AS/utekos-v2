@@ -6,10 +6,10 @@ Les [status og verifikasjon](STATUS-2026-10-10.md), [stegvis plan](MIGRATION-PLA
 
 ## Observert produksjonsstatus
 
-- Backend main `f236cac692c3ec964a4066583d3740803a51ffa2` er deployet som `dpl_BERUCQP8BMsTLNUyuqUDRWNzxBf6`, READY. `/healthz` svarer med samme deploy-SHA. Inngang/køpublisering er avslått, cron-planen er tom og ingen privat køtrigger er aktivert.
+- Backend main `bcb7ddffd0c7a71fa5e19fa172c8951349229c07` er READY som `dpl_EvdZTQSa4Pw8ACgVXpZaBoj6zFyQ`. Health bekrefter samme SHA, workers/ingress/køpublisering true, Redis/database OK. Ni backend-crons og privat kø er runtime-verifisert; gamle storefront-crons er deaktivert.
 - Web-GTM live **174** har fjernet søk fra fire triggere; alle 15 tagger er identiske med live 173. [Publiseringsbevis](gtm-search-removal.verification.json). Server-GTM 44 og Stape Power Ups er uendret.
-- Storefrontprosjekt `prj_MpZN3Z0PDp8rfwpdzAeplGe4Di0s` heter fortsatt `utekos-headless`. Git-koblingen til pensjonert repo er frakoblet. Prosjektet er foreløpig ikke koblet til `Team-Kelc-AS/utekos-v2`, og ingen v2-trafikkovertakelse er utført.
-- Brukeren har godkjent deploy og eksisterende worker-overføring. En nyere Brand Studio-instruks sier «ingen bakgrunnsjobber» og begrenser derfor aktiveringen. Det mangler ikke brukerautorisasjon.
+- Storefrontprosjekt `prj_MpZN3Z0PDp8rfwpdzAeplGe4Di0s` heter fortsatt `utekos-headless`. Git-koblingen peker nå til `Team-Kelc-AS/utekos-v2`; selve v2-trafikkreleasen gjenstår.
+- Brukeren har uttrykkelig godkjent workers, køer, cron og publisering. Tidligere Brand Studio-begrensning er opphevet. Tre manglende Microsoft Purchase er levert med eventsReceived=1 uten valideringsfeil; fire utløpte redateres ikke.
 
 ## Eierskap
 
@@ -24,7 +24,7 @@ Les [status og verifikasjon](STATUS-2026-10-10.md), [stegvis plan](MIGRATION-PLA
 | Stape transport | `https://edge.utekos.no`, via v2s `/__sgtm` |
 | Varig sannhet | Supabase ledger, idempotens og provider-outbox |
 | Autoritativ Purchase/refund | Verifiserte Shopify-webhooks; `orders/paid` eier Purchase |
-| Eksisterende workers | Gammel kjørende deployment fram til avstemt overføring; ingen ny headless-release |
+| Eksisterende workers | Backend eier periodiske jobber; gamle deploymenter beholdes for historisk kødrenering |
 
 V2 skal ikke få parallelle providerjobber. Bekreftelsesside, Klarna callback og `checkout_completed` oppretter ikke konkurrerende Purchase. Meta Pixel/CAPI eies av appen; pausede GTM-Meta-tagger forblir pausede. Microsoft PageLoad-forslaget er upublisert, slik at browser-PageView ikke slås av før CAPI fungerer. Google Data Tag-fordeling beholdes; `purchase`/`view_item` kopieres ikke inn i nye destinasjoner.
 
@@ -40,7 +40,7 @@ Broen bruker Vercel OIDC med fast audience og eksplisitt operasjonsliste. V2 byg
 
 | Hvor | Navn / verdi | Kontroll |
 |---|---|---|
-| Storefront | `NEXT_PUBLIC_TRACKING_ENABLED` | Produksjon er satt til `false`; `true` krever nytt build etter fungerende backend/overtakelse |
+| Storefront | `NEXT_PUBLIC_TRACKING_ENABLED` | Produksjon er satt til `true`; krever nytt v2-build før runtime-endring |
 | Storefront | `NEXT_PUBLIC_VERCEL_ENV=production` | Browsergrenen krever nøyaktig denne verdien |
 | Begge servere | `VERCEL_ENV=production` | Vercel-runtime; lokalt production-build er ikke tilstrekkelig |
 | Begge servere | `VERCEL_GIT_COMMIT_SHA` | Korrelasjon av konkret storefront-/backend-SHA |
@@ -56,7 +56,7 @@ Broen bruker Vercel OIDC med fast audience og eksplisitt operasjonsliste. V2 byg
 
 | Storefront | `SHOPIFY_STORE_DOMAIN` | Opprettet fra verifisert eksisterende myshopify.com-domene |
 | Storefront, server | `SHOPIFY_STOREFRONT_PRIVATE_TOKEN` eller eksisterende `STOREFRONT_PRIVATE_ACCESS_TOKEN` | Kanonisk navn har prioritet; begge bruker privat header. Ingen offentlig tokenfallback |
-| Backend | `STOREFRONT_TRACKING_INGRESS_ENABLED=false`, `CANONICAL_PROVIDER_QUEUE_PUBLISH_ENABLED=false` | Verifisert avslått i produksjon; ingen worker/cron-aktivering |
+| Backend | `STOREFRONT_TRACKING_INGRESS_ENABLED=true`, `CANONICAL_PROVIDER_QUEUE_PUBLISH_ENABLED=true` | Verifisert aktivt i backend-runtime; ni cron-planer og privat kø |
 
 Browser-sporing er sperret for local/preview og andre verter. Callback-/webhook-kontinuitet og allerede lagret arbeid er separate fra browserens tracking-bryter. Eksisterende containere er web `GTM-5TWMJQFP`, server `GTM-M8GT97CV`, Stape `gqnrnczg` og Meta Pixel `1092362672918571`.
 

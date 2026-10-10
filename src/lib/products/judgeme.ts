@@ -55,6 +55,35 @@ export function parseReviewWidget(input: unknown, externalId: string): JudgeMeRe
   return { average, count, reviews };
 }
 
+async function readWidget(domain: string, externalId: string, token: string, perPage: number, page: number) {
+  const url = new URL('https://api.judge.me/api/v1/widgets/product_review');
+  url.search = new URLSearchParams({ shop_domain: domain, external_id: externalId, per_page: String(perPage), page: String(page) }).toString();
+  const response = await fetch(url, {
+    headers: { 'X-Api-Token': token },
+    cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(5000),
+  });
+  if (!response.ok) throw new Error('judgeme_unavailable');
+  return parseReviewWidget(await response.json(), externalId);
+}
+
+/** One bounded request, retaining the real total; no full review pagination on listings. */
+export async function getJudgeMePreview(productId: string): Promise<JudgeMeReviews | null> {
+  'use cache';
+  cacheLife({ stale: 300, revalidate: 300, expire: 3600 });
+  cacheTag(`judgeme:product:${productId}`);
+  const externalId = /^gid:\/\/shopify\/Product\/(\d+)$/.exec(productId)?.[1];
+  const token = process.env.JUDGE_ME_PUBLIC_API_TOKEN;
+  const domain = process.env.SHOPIFY_STORE_DOMAIN?.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  if (!externalId || !token || !domain) { cacheLife('seconds'); return null; }
+  try {
+    const data = await readWidget(domain, externalId, token, 3, 1);
+    return { ...data, reviews: [...new Map(data.reviews.map(review => [review.id, review])).values()].slice(0, 3) };
+  } catch {
+    cacheLife('seconds');
+    return null;
+  }
+}
+
 /** The public widget endpoint respects Judge.me's storefront publication settings. */
 export async function getJudgeMeReviews(productId: string): Promise<JudgeMeReviews | null> {
   'use cache';
@@ -70,14 +99,7 @@ export async function getJudgeMeReviews(productId: string): Promise<JudgeMeRevie
     const reviews = new Map<string, JudgeMeReview>();
     // Bounded pagination also handles providers imposing a smaller per-page limit.
     for (let page = 1; page <= 10; page++) {
-      const url = new URL('https://api.judge.me/api/v1/widgets/product_review');
-      url.search = new URLSearchParams({ shop_domain: domain, external_id: externalId, per_page: '100', page: String(page) }).toString();
-      const response = await fetch(url, {
-        headers: { 'X-Api-Token': token },
-        cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(5000),
-      });
-      if (!response.ok) throw new Error('judgeme_unavailable');
-      const data = parseReviewWidget(await response.json(), externalId);
+      const data = await readWidget(domain, externalId, token, 100, page);
       result ??= data;
       if (data.count !== result.count || data.average !== result.average) throw new Error('judgeme_changed_during_pagination');
       const previousSize = reviews.size;

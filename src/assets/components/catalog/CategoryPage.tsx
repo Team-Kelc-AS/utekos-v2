@@ -38,7 +38,7 @@ import {
 
 export type CategoryPageProps = { searchParams: Promise<SearchParams> };
 
-async function readListing(
+export async function readCategoryListing(
   key: ListingKey,
   searchParams: Promise<SearchParams>,
 ) {
@@ -56,7 +56,7 @@ export async function getCategoryMetadata(
   key: ListingKey,
   searchParams: Promise<SearchParams>,
 ): Promise<Metadata> {
-  const listing = await readListing(key, searchParams);
+  const listing = await readCategoryListing(key, searchParams);
   const category = key === "all" ? catalogIndex : categories[key];
   const title = `${category.title}${listing.page > 1 ? ` – side ${listing.page}` : ""}`;
   const canonical = absoluteUrl(listingPath(key, listing.page));
@@ -230,7 +230,7 @@ async function ProductList({
   categoryKey,
   searchParams,
 }: CategoryPageProps & { categoryKey: ListingKey }) {
-  const { products, page, hasNextPage } = await readListing(
+  const { products, page, hasNextPage } = await readCategoryListing(
     categoryKey,
     searchParams,
   );

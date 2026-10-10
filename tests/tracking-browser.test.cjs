@@ -286,6 +286,36 @@ test('confirmed action queued before runtime mount preserves its original page a
   assert.equal(event.event_time, mutation.event_time);
 });
 
+test('inline variant actions queued before runtime hydration keep their committed identity and page and deduplicate replays', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter', { deferCommerce: true });
+  await api.waitFor('page_view');
+  const initialPage = api.events('page_view')[0];
+  const selection = { interaction_id: 'inline-selection-1', product_id: 'gid://shopify/Product/1',
+    variant_id: 'gid://shopify/ProductVariant/2', item_id: 'gid://shopify/ProductVariant/2',
+    item_variant: 'Large / Blå', availability: 'available' };
+  await api.page.evaluate(selection => {
+    UtekosTrackingHarness.emitStorefrontAction('utekos:variant-selection-confirmed', selection);
+    UtekosTrackingHarness.emitStorefrontAction('utekos:variant-selection-confirmed', selection);
+    history.pushState({}, '', '/other'); UtekosTrackingHarness.reportNavigation();
+    UtekosTrackingHarness.attachCommerceTracking();
+  }, selection);
+  await api.waitFor('variant_select');
+  const events = api.events('variant_select');
+  assert.equal(events.length, 1);
+  assert.equal(events[0].page_url, initialPage.page_url);
+  assert.equal(events[0].page_view_id, initialPage.page_view_id);
+  assert.deepEqual(events[0].custom_data, selection);
+  const next = { ...selection, interaction_id: 'inline-selection-2', variant_id: 'gid://shopify/ProductVariant/3',
+    item_id: 'gid://shopify/ProductVariant/3', item_variant: 'Small / Blå', availability: 'unavailable' };
+  await api.page.evaluate(next => {
+    UtekosTrackingHarness.emitStorefrontAction('utekos:variant-selection-confirmed', next);
+    UtekosTrackingHarness.emitStorefrontAction('utekos:variant-selection-confirmed', next);
+  }, next);
+  await api.waitFor('variant_select', 2);
+  assert.equal(api.events('variant_select').length, 2);
+  assert.deepEqual(api.events('variant_select')[1].custom_data, next);
+});
+
 test('preview runtime remains isolated even when actions execute on the production hostname fixture', async t => {
   const api = await fixture(t, undefined, { preview: true });
   await api.page.evaluate(value => {

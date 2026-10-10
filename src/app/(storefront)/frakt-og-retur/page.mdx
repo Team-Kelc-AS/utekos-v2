@@ -1,4 +1,5 @@
 import styles from "./shipping-returns.module.css";
+import { ShippingReturnsSummary } from "@/components/commerce/ShippingReturnsSummary";
 
 <header className={styles.header}>
 <p className={styles.eyebrow}>Kundeservice</p>
@@ -17,29 +18,7 @@ import styles from "./shipping-returns.module.css";
 </div>
 </header>
 
-<dl className={styles.overview} aria-label="Kort om frakt og retur">
-  <div>
-    <dt>Frakt og levering i Norge</dt>
-    <dd>
-      <strong>99 kr · gratis fra 999 kr</strong>
-      <span>Normalt 2–5 virkedager fra PostNord henter pakken.</span>
-    </dd>
-  </div>
-  <div>
-    <dt>Angrerett</dt>
-    <dd>
-      <strong>14 kalenderdager</strong>
-      <span>Du ordner og betaler vanlig returfrakt.</span>
-    </dd>
-  </div>
-  <div>
-    <dt>Gratis størrelsesbytte</dt>
-    <dd>
-      <strong>Samme modell og farge</strong>
-      <span>Kontakt oss innen 14 dager fra mottak.</span>
-    </dd>
-  </div>
-</dl>
+<ShippingReturnsSummary className={styles.overview} />
 
 <div className={styles.layout}>
 <aside className={styles.sidebar}>

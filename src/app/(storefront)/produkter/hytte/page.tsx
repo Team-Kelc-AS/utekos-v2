@@ -4,7 +4,6 @@ import {
   type CategoryPageProps,
 } from "@/components/catalog/CategoryPage";
 
-// Wait for pagination validation/redirects before committing the response.
 export const instant = false;
 
 export function generateMetadata({ searchParams }: CategoryPageProps) {

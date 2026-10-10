@@ -304,6 +304,11 @@ export function attachCommerceTracking() {
           { event_time: mutation.event_time, context },
         ),
       );
+    } else if (name === "utekos:variant-selection-confirmed") {
+      const selection =
+        detail as import("@/lib/analytics/variantSelectEvent").CanonicalVariantSelectCustomData;
+      if (selection?.interaction_id && claimAction(`variant:${selection.interaction_id}`))
+        reportInteraction("variant_select", selection, { context });
     } else if (name === "utekos:cart-view") {
       const cart = detail as Cart;
       if (cart?.id && cart.commerce)

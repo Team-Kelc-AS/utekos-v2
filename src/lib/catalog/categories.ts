@@ -19,12 +19,12 @@ export const categories = {
   },
   "camping-og-bobil": {
     label: "Camping og bobil",
-    title: "Varmeplagg og tilbehør til camping og bobil",
-    description: "Se et utvalg Utekos-produkter til camping og bobil. Sammenlign varmeplagg og tilbehør til pakking før neste tur.",
-    intro: "Velg et plagg til pausene utenfor bobilen og tenk gjennom hvordan det skal pakkes mellom stoppene. Her har vi samlet TechDown™ og Dun™, som omtaler bobilbruk i produktbeskrivelsene, sammen med Stapper™ til transport og oppbevaring.",
+    title: "Skreddersy varmen på camping- og bobiltur",
+    description: "Sammenlign Utekos Svale, TechDown™, Mikrofiber™ og Dun™ til camping og bobil. Velg størrelse og farge, og finn varme til pausene utendørs.",
+    intro: "Morgenkaffen utenfor bobilen, en pause i campingstolen eller en lang kveld rundt campingbordet. Her finner du komfortable varmeplagg som både oppgraderer og forlenger de fine stundene utendørs. Juster, form og nyt.",
     guidanceTitle: "Velg ut fra hvordan du reiser",
     guidance: ["Skal plagget brukes mest ved bobilen eller også når du går korte turer? Sammenlign passform og funksjoner på produktsiden.", "Se på plassen du har til oppbevaring, og vurder kompresjonsbag separat fra plagget.", "Sjekk materialer, størrelse og vedlikehold før du pakker til turen."],
-    source: { kind: "selection", handles: ["utekos-techdown", "utekos-dun", "utekos-stapper"] },
+    source: { kind: "selection", handles: ["utekos-svale", "utekos-techdown", "utekos-mikrofiber", "utekos-dun"] },
   },
   hytte: {
     label: "Hytte",
