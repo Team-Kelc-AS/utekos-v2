@@ -1,5 +1,5 @@
 {
-  "status": "local_review_only_not_applied",
+  "status": "published_live_175_supersedes_local_draft",
   "container": "GTM-5TWMJQFP",
   "accountId": "6295468138",
   "containerId": "220236256",
@@ -236,5 +236,6 @@
     "Keep app-owned Meta; do not activate server-GTM Meta/Microsoft tags.",
     "No cron/queue activation included."
   ],
-  "rebaseEvidence": "gtm-search-removal.verification.json: all 15 tags including 130 and 173 identical to version 173. No publication or PageLoad-owner switch performed."
+  "rebaseEvidence": "Live 175 published after backend PageLoad receipt, native compilation and ID Sync verification. Historical before/proposed fields retain reviewed version-174 provenance.",
+  "liveVerification": "microsoft-pageload-owner.verification.json"
 }

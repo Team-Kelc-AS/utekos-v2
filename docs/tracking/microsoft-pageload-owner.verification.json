@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-10-10T10:53:30.764Z",
+  "accountId": "6295468138",
+  "containerId": "220236256",
+  "container": "GTM-5TWMJQFP",
+  "previousVersion": "174",
+  "liveVersion": "175",
+  "changedTagIds": [
+    "130",
+    "173"
+  ],
+  "preservedTagIds": [
+    "109",
+    "118",
+    "126",
+    "131",
+    "148",
+    "149",
+    "153",
+    "160",
+    "170",
+    "171",
+    "172",
+    "174",
+    "182"
+  ],
+  "compilerError": false,
+  "browserVerification": "pending"
+}

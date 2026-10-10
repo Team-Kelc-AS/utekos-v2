@@ -6,8 +6,8 @@ Les [status og verifikasjon](STATUS-2026-10-10.md), [stegvis plan](MIGRATION-PLA
 
 ## Observert produksjonsstatus
 
-- Backend main `bcb7ddffd0c7a71fa5e19fa172c8951349229c07` er READY som `dpl_EvdZTQSa4Pw8ACgVXpZaBoj6zFyQ`. Health bekrefter samme SHA, workers/ingress/køpublisering true, Redis/database OK. Ni backend-crons og privat kø er runtime-verifisert; gamle storefront-crons er deaktivert.
-- Web-GTM live **174** har fjernet søk fra fire triggere; alle 15 tagger er identiske med live 173. [Publiseringsbevis](gtm-search-removal.verification.json). Server-GTM 44 og Stape Power Ups er uendret.
+- Backend main `c50275590c29fa2d95b5ce9aaf36291864cfd813` er READY som `dpl_5YCVLXK4fcSmdq35Jj8554hBgHe2`. Health bekrefter samme SHA, workers/ingress/køpublisering true, Redis/database OK. Ni backend-crons og privat kø er runtime-verifisert; gamle storefront-crons er deaktivert.
+- Web-GTM live **175** viderefører søkfjerningen fra 174 og gjør backend CAPI til eneste Microsoft PageLoad-eier. Business- og ID Sync-tagger er bevart. [Publiseringsbevis](gtm-search-removal.verification.json). Server-GTM 44 og Stape Power Ups er uendret.
 - Storefrontprosjekt `prj_MpZN3Z0PDp8rfwpdzAeplGe4Di0s` heter fortsatt `utekos-headless`. Git-koblingen peker nå til `Team-Kelc-AS/utekos-v2`; v2 f12bbae er READY på utekos.no/www/feed. Produksjons-OIDC og rå Shopify-HMAC er verifisert.
 - Brukeren har uttrykkelig godkjent workers, køer, cron og publisering. Tidligere Brand Studio-begrensning er opphevet. Tre manglende Microsoft Purchase er levert med eventsReceived=1 uten valideringsfeil; fire utløpte redateres ikke.
 
@@ -28,7 +28,7 @@ Produktfeeder beholder `/klarna-feed.xml`, `/api/feeds/microsoft-merchant` og ro
 | Autoritativ Purchase/refund | Verifiserte Shopify-webhooks; `orders/paid` eier Purchase |
 | Eksisterende workers | Backend eier periodiske jobber; gamle deploymenter beholdes for historisk kødrenering |
 
-V2 skal ikke få parallelle providerjobber. Bekreftelsesside, Klarna callback og `checkout_completed` oppretter ikke konkurrerende Purchase. Meta Pixel/CAPI eies av appen; pausede GTM-Meta-tagger forblir pausede. Microsoft PageLoad-forslaget er upublisert, slik at browser-PageView ikke slås av før CAPI fungerer. Google Data Tag-fordeling beholdes; `purchase`/`view_item` kopieres ikke inn i nye destinasjoner.
+V2 skal ikke få parallelle providerjobber. Bekreftelsesside, Klarna callback og `checkout_completed` oppretter ikke konkurrerende Purchase. Meta Pixel/CAPI eies av appen; pausede GTM-Meta-tagger forblir pausede. Microsoft PageLoad-endringen er publisert i live 175 etter verifisert CAPI-mottak; faktisk browser-reload og ID Sync er kontrollert. Se [PageLoad-bevis](microsoft-pageload-owner.verification.json). Google Data Tag-fordeling beholdes; `purchase`/`view_item` kopieres ikke inn i nye destinasjoner.
 
 ## Kontrakter og lokale reparasjoner
 
