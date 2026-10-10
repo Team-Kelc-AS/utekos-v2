@@ -63,13 +63,21 @@ test('cart-wide discounts and shipping retain authoritative Shopify cart totals'
   assert.equal(shipping.items[0].gross_unit_price, 800);
 });
 
-test('checkout identity exactly follows the pinned URL token and SHA256 revision without exposing the key', () => {
+test('checkout identity ignores rotating Shopify analytics but preserves checkout and private-key changes', () => {
   const { createHash } = require('node:crypto');
   const { cartCheckoutIdentity } = loadTypeScript('lib/cart/checkout-identity.ts');
   const url = 'https://checkout.example.test/checkouts/cn/checkout-token?key=secret-fixture';
   const result = cartCheckoutIdentity(publicId, url);
   assert.equal(result.checkout_id, 'checkout-token');
   assert.equal(result.creation_revision, `checkout_rev_${createHash('sha256').update(`checkout-token|${url}`).digest('hex').slice(0, 32)}`);
+  assert.deepEqual(cartCheckoutIdentity(publicId, `${url}&_s=first&_y=first`), result);
+  assert.deepEqual(cartCheckoutIdentity(publicId, `${url}&_y=second&_s=second`), result);
+  for (const changed of [
+    url.replace('checkout-token', 'another-checkout'),
+    url.replace('secret-fixture', 'another-private-key'),
+    url.replace('checkout.example.test', 'another.example.test'),
+    `${url}&discount=changed`,
+  ]) assert.notEqual(cartCheckoutIdentity(publicId, changed).creation_revision, result.creation_revision);
   assert.equal(JSON.stringify(result).includes('secret-fixture'), false);
   assert.throws(() => cartCheckoutIdentity(publicId, 'http://untrusted.example.test'));
 });
@@ -189,6 +197,8 @@ test('checkout validates owned cart, origin, environment, method and accepted va
     { ...event, environment: 'preview' }, { ...event, page_url: 'https://evil.example.test/' },
     { ...event, checkout_method: 'klarna_express' },
     { ...event, custom_data: { ...event.custom_data, cart_id: 'other' } },
+    { ...event, custom_data: { ...event.custom_data, checkout_id: 'other' } },
+    { ...event, custom_data: { ...event.custom_data, creation_revision: 'stale' } },
     { ...event, custom_data: { ...event.custom_data, gross_value: 100 } },
   ]) assert.throws(() => api.parseCheckoutEvent(changed, cart, 'https://utekos.no', 'shopify'), CartError);
 });
