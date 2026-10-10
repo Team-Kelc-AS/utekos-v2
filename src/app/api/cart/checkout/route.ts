@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         try {
           const reread = await readCart(cart.id, buyerIp(request));
           console.warn('checkout_url_variability', reread
-            ? compareCheckoutUrls(view.id!, cart.checkoutUrl, reread.checkoutUrl)
+            ? compareCheckoutUrls(cart.id, cart.checkoutUrl, reread.checkoutUrl)
             : { cart_available: false });
         } catch {
           console.warn('checkout_url_variability', { readback_available: false });

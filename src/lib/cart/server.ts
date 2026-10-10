@@ -100,7 +100,7 @@ export async function cartView(
   );
   return {
     id: identity.publicId,
-    checkout: cartCheckoutIdentity(identity.publicId, raw.checkoutUrl),
+    checkout: cartCheckoutIdentity(identity.fullId, raw.checkoutUrl),
     totalQuantity: raw.totalQuantity,
     subtotal: raw.cost.subtotalAmount,
     total: raw.cost.totalAmount,

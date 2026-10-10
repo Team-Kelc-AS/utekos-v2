@@ -63,34 +63,39 @@ test('cart-wide discounts and shipping retain authoritative Shopify cart totals'
   assert.equal(shipping.items[0].gross_unit_price, 800);
 });
 
-test('checkout identity ignores rotating Shopify analytics but preserves checkout and private-key changes', () => {
+test('checkout identity binds the owned cart key while tolerating rotating checkout URL keys and analytics', () => {
   const { createHash } = require('node:crypto');
   const { cartCheckoutIdentity } = loadTypeScript('lib/cart/checkout-identity.ts');
   const url = 'https://checkout.example.test/checkouts/cn/checkout-token?key=secret-fixture';
-  const result = cartCheckoutIdentity(publicId, url);
+  const result = cartCheckoutIdentity(fullId, url);
   assert.equal(result.checkout_id, 'checkout-token');
-  assert.equal(result.creation_revision, `checkout_rev_${createHash('sha256').update(`checkout-token|${url}`).digest('hex').slice(0, 32)}`);
-  assert.deepEqual(cartCheckoutIdentity(publicId, `${url}&_s=first&_y=first`), result);
-  assert.deepEqual(cartCheckoutIdentity(publicId, `${url}&_y=second&_s=second`), result);
+  assert.equal(result.creation_revision, `checkout_rev_${createHash('sha256').update(`checkout-token|${fullId}|https://checkout.example.test/checkouts/cn/checkout-token`).digest('hex').slice(0, 32)}`);
+  assert.deepEqual(cartCheckoutIdentity(fullId, `${url}&_s=first&_y=first`), result);
+  assert.deepEqual(cartCheckoutIdentity(fullId, `${url}&_y=second&_s=second`), result);
+  assert.deepEqual(cartCheckoutIdentity(fullId, url.replace('secret-fixture', 'rotated-checkout-key')), result);
+  assert.notEqual(cartCheckoutIdentity(fullId.replace('secret-fixture', 'another-owned-key'), url).creation_revision, result.creation_revision);
+  assert.throws(() => cartCheckoutIdentity(publicId, url));
   for (const changed of [
     url.replace('checkout-token', 'another-checkout'),
-    url.replace('secret-fixture', 'another-private-key'),
     url.replace('checkout.example.test', 'another.example.test'),
     `${url}&discount=changed`,
-  ]) assert.notEqual(cartCheckoutIdentity(publicId, changed).creation_revision, result.creation_revision);
+  ]) assert.notEqual(cartCheckoutIdentity(fullId, changed).creation_revision, result.creation_revision);
   assert.equal(JSON.stringify(result).includes('secret-fixture'), false);
-  assert.throws(() => cartCheckoutIdentity(publicId, 'http://untrusted.example.test'));
+  const pathless = cartCheckoutIdentity(fullId, 'https://checkout.example.test');
+  assert.equal(pathless.checkout_id, publicId);
+  assert.equal(JSON.stringify(pathless).includes('secret-fixture'), false);
+  assert.throws(() => cartCheckoutIdentity(fullId, 'http://untrusted.example.test'));
 });
 
 test('checkout variability diagnostics identify changed fields without exposing private URLs or values', () => {
   const { compareCheckoutUrls } = loadTypeScript('lib/cart/checkout-identity.ts');
   const before = 'https://checkout.example.test/cart/token?key=private-first&_s=analytics-first';
-  const analytics = compareCheckoutUrls(publicId, before, before.replace('analytics-first', 'analytics-second'));
+  const analytics = compareCheckoutUrls(fullId, before, before.replace('analytics-first', 'analytics-second'));
   assert.deepEqual([...analytics.changed_query_keys], ['_s']);
   assert.equal(analytics.identity_unchanged, true);
-  const changed = compareCheckoutUrls(publicId, before, before.replace('private-first', 'private-second'));
+  const changed = compareCheckoutUrls(fullId, before, before.replace('private-first', 'private-second'));
   assert.deepEqual([...changed.changed_query_keys], ['key']);
-  assert.equal(changed.identity_unchanged, false);
+  assert.equal(changed.identity_unchanged, true);
   for (const secret of ['private-first', 'private-second', 'analytics-first', 'checkout.example.test', '/cart/token']) {
     assert.equal(JSON.stringify(changed).includes(secret), false);
   }
