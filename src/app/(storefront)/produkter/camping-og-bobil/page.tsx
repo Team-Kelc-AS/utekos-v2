@@ -1,4 +1,7 @@
-import { getCategoryMetadata, type CategoryPageProps } from "@/components/catalog/CategoryPage";
+import {
+  getCategoryMetadata,
+  type CategoryPageProps,
+} from "@/components/catalog/CategoryPage";
 import { CampingPage } from "@/components/catalog/CampingPage";
 
 // Wait for pagination validation/redirects before committing the response.
