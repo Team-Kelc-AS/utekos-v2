@@ -1,0 +1,29 @@
+{
+  "observed_at": "2026-10-10T11:44:50.513Z",
+  "storefront_sha": "4c2b2c2b13bdc5d3c1d302d55db6603e483fc466",
+  "truncated": false,
+  "hasMore": false,
+  "responses": [
+    {
+      "path": "/d83cd4b17c2e47da/script.js",
+      "http_status": 200
+    },
+    {
+      "path": "/561871d5b41fdaa9/script.js",
+      "http_status": 200
+    },
+    {
+      "path": "/d83cd4b17c2e47da/view",
+      "http_status": 200
+    },
+    {
+      "path": "/api/observability/journey",
+      "http_status": 202
+    },
+    {
+      "path": "/api/observability/journey",
+      "http_status": 202
+    }
+  ],
+  "routing": "SDK2 automatically injected unique platform paths, observed in DOM script attributes"
+}

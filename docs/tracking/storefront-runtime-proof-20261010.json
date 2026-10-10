@@ -1,0 +1,43 @@
+{
+  "observed_at": "2026-10-10T11:44:26.217Z",
+  "mode": "storefront",
+  "checks": [
+    {
+      "name": "production_oidc_checkout_options",
+      "status": 204,
+      "expected": 204,
+      "ok": true,
+      "body": "",
+      "headers": {
+        "x-utekos-storefront-deploy-sha": "4c2b2c2b13bdc5d3c1d302d55db6603e483fc466",
+        "x-utekos-backend-deploy-sha": "e03c69759aa620e8f63c8de03922daabbfcb0392"
+      }
+    },
+    {
+      "name": "raw_hmac_verified_before_json",
+      "status": 400,
+      "expected": 400,
+      "ok": true,
+      "body": {
+        "error": "invalid_json"
+      },
+      "headers": {
+        "x-utekos-storefront-deploy-sha": "4c2b2c2b13bdc5d3c1d302d55db6603e483fc466",
+        "x-utekos-backend-deploy-sha": "e03c69759aa620e8f63c8de03922daabbfcb0392"
+      }
+    },
+    {
+      "name": "invalid_hmac_rejected",
+      "status": 401,
+      "expected": 401,
+      "ok": true,
+      "body": {
+        "error": "invalid_webhook_signature"
+      },
+      "headers": {
+        "x-utekos-storefront-deploy-sha": "4c2b2c2b13bdc5d3c1d302d55db6603e483fc466",
+        "x-utekos-backend-deploy-sha": "e03c69759aa620e8f63c8de03922daabbfcb0392"
+      }
+    }
+  ]
+}
