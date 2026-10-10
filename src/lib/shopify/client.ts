@@ -3,8 +3,9 @@ import 'server-only';
 const STOREFRONT_API_VERSION = '2026-10';
 const STOREFRONT_TIMEOUT_MS = 10_000;
 
-function requiredEnv(name: string): string {
-  const value = process.env[name];
+function requiredEnv(name: string, fallbackName?: string): string {
+  const value =
+    process.env[name] || (fallbackName ? process.env[fallbackName] : undefined);
 
   if (!value) {
     throw new Error(`Missing environment variable: ${name}`);
@@ -54,6 +55,7 @@ export async function shopifyFetch<
     'Content-Type': 'application/json',
     'Shopify-Storefront-Private-Token': requiredEnv(
       'SHOPIFY_STOREFRONT_PRIVATE_TOKEN',
+      'STOREFRONT_PRIVATE_ACCESS_TOKEN',
     ),
   });
 

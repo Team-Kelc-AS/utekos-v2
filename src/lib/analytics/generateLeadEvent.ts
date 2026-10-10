@@ -11,7 +11,7 @@ import { mapEventDeviceInfo } from './mapEventDeviceInfo'
 export const canonicalGenerateLeadCustomDataSchema = z.union([
   z.strictObject({
     submission_id: z.string().check(z.minLength(1)),
-    form_id: z.string().check(z.minLength(1)),
+    form_id: z.string().check(z.minLength(1), z.refine(value => value !== 'product_reservation_utekos_dun')),
     lead_type: z.optional(z.string().check(z.minLength(1))),
     currency: z.string().check(z.regex(/^[A-Z]{3}$/)),
     value: z.number().check(z.gt(0))
@@ -20,6 +20,18 @@ export const canonicalGenerateLeadCustomDataSchema = z.union([
     submission_id: z.string().check(z.minLength(1)),
     form_id: z.literal('dealer_inquiry'),
     lead_type: z.literal('dealer_inquiry'),
+    currency: z.optional(z.never()),
+    value: z.optional(z.never())
+  }),
+  z.strictObject({
+    submission_id: z.string().check(z.minLength(1)),
+    form_id: z.literal('product_reservation_utekos_dun'),
+    lead_type: z.literal('product_reservation'),
+    product_handle: z.literal('utekos-dun'),
+    product_id: z.string().check(z.regex(/^gid:\/\/shopify\/Product\/\d+$/)),
+    variant_id: z.string().check(z.regex(/^gid:\/\/shopify\/ProductVariant\/\d+$/)),
+    color: z.enum(['Vargnatt', 'Fjellblå']),
+    size: z.enum(['Small', 'Medium', 'Large']),
     currency: z.optional(z.never()),
     value: z.optional(z.never())
   })

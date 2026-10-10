@@ -60,6 +60,19 @@ test('Meta protected values preserve regex, array limits, optional fields and st
   for (const entry of [...invalidValues, valid, valid.toUpperCase(), valid + 'x']) compare(value, actual.metaParameterBuilderProtectedValueSchema, entry);
   for (const entry of [...variants({ email: [valid] }), { email: [] }, { email: [valid, valid] }, { email: [valid, valid, valid] }, { email: ['bad'] }, { email: undefined }]) compare(classic, actual.metaParameterBuilderUserDataSchema, entry);
 });
+test('lead context Mini preserves classic bounds and accepted attribution fields', () => {
+  const { consentSnapshotSchema } = load('canonicalEventEnvelope');
+  const classic = z.strictObject({
+    consent: consentSnapshotSchema, page_url: z.string().url(), page_view_id: z.string().uuid().optional(), journey_id: z.string().uuid().optional(),
+    referrer_url: z.string().url().optional(), cookie_header: z.string().max(4096).optional(),
+    campaign: z.string().max(200).optional(), medium: z.string().max(200).optional(), content: z.string().max(200).optional(), term: z.string().max(200).optional(),
+  });
+  const { leadFormTrackingContextSchema: actual } = load('leadFormTrackingContext');
+  const valid = { consent: { analytics: 'granted', marketing: 'granted', preferences: 'granted', source: 'operator_policy', version: '1' },
+    page_url: 'https://utekos.no/produkter/utekos-dun', page_view_id: '12345678-1234-4234-8234-123456789012', journey_id: '12345678-1234-4234-8234-123456789012',
+    referrer_url: 'https://example.com/', cookie_header: '_fbp=fixture', campaign: 'fixture', medium: 'cpc', content: 'creative', term: 'fixture' };
+  for (const value of [...variants(valid), { ...valid, cookie_header: 'x'.repeat(4096) }, { ...valid, cookie_header: 'x'.repeat(4097) }, { ...valid, campaign: 'x'.repeat(201) }]) compare(classic, actual, value);
+});
 test('browser union preserves discriminator failures and parsed event output', () => {
   const { browserEventSchema } = loadTypeScript('lib/tracking/browser-schema.ts', { mocks: { '@/lib/validation/zodMini': mini } });
   const classic = z.discriminatedUnion('event_name', browserEventSchema.def.options);

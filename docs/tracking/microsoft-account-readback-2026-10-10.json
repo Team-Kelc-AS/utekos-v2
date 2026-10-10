@@ -1,0 +1,483 @@
+{
+  "capturedAt": "2026-10-10T08:22:21.823Z",
+  "source": "Authenticated official CampaignManagement/CustomerManagement v13 APIs through existing local client",
+  "accountId": "188365141",
+  "customerId": "254835341",
+  "readOnly": true,
+  "providerMutationsPerformed": false,
+  "accounts": [
+    {
+      "Id": "188445594",
+      "Name": "Comfyrobe",
+      "AccountLifeCycleStatus": "Active"
+    },
+    {
+      "Id": "188465194",
+      "Name": "Shopify",
+      "AccountLifeCycleStatus": "Active"
+    },
+    {
+      "Id": "188365141",
+      "Name": "Utekos",
+      "AccountLifeCycleStatus": "Active"
+    },
+    {
+      "Id": "188445569",
+      "Name": "Utekos Brand",
+      "AccountLifeCycleStatus": "Active"
+    }
+  ],
+  "uet": [
+    {
+      "Id": "97247724",
+      "Name": "UtekosTag",
+      "TrackingStatus": "Active"
+    }
+  ],
+  "goals": [
+    {
+      "Id": "47539433",
+      "Name": "Add To Cart",
+      "Type": "Event",
+      "Status": "Paused",
+      "TrackingStatus": "NoRecentConversions",
+      "Scope": "Account",
+      "ExcludeFromBidding": true,
+      "CountType": "Unique",
+      "Revenue": {
+        "Type": "VariableValue",
+        "Value": 1,
+        "CurrencyCode": "NOK"
+      },
+      "ConversionWindowInMinutes": 43200,
+      "ActionExpression": "add_to_cart",
+      "ActionOperator": "Equals",
+      "CategoryExpression": null,
+      "CategoryOperator": null,
+      "LabelExpression": null,
+      "LabelOperator": null,
+      "Value": null,
+      "ValueOperator": null
+    },
+    {
+      "Id": "47546689",
+      "Name": "Begin Checkout",
+      "Type": "Event",
+      "Status": "Paused",
+      "TrackingStatus": "NoRecentConversions",
+      "Scope": "Account",
+      "ExcludeFromBidding": true,
+      "CountType": "Unique",
+      "Revenue": {
+        "Type": "VariableValue",
+        "Value": 1,
+        "CurrencyCode": "NOK"
+      },
+      "ConversionWindowInMinutes": 43200,
+      "ActionExpression": "AutoEvent_begin_checkout",
+      "ActionOperator": "Equals",
+      "CategoryExpression": null,
+      "CategoryOperator": null,
+      "LabelExpression": null,
+      "LabelOperator": null,
+      "Value": null,
+      "ValueOperator": null
+    },
+    {
+      "Id": "47546690",
+      "Name": "Utgående klikk",
+      "Type": "Event",
+      "Status": "Paused",
+      "TrackingStatus": "NoRecentConversions",
+      "Scope": "Account",
+      "ExcludeFromBidding": true,
+      "CountType": "All",
+      "Revenue": {
+        "Type": "NoValue",
+        "Value": null,
+        "CurrencyCode": "USD"
+      },
+      "ConversionWindowInMinutes": 43200,
+      "ActionExpression": "AutoEvent_outbound_click",
+      "ActionOperator": "Equals",
+      "CategoryExpression": null,
+      "CategoryOperator": null,
+      "LabelExpression": null,
+      "LabelOperator": null,
+      "Value": null,
+      "ValueOperator": null
+    },
+    {
+      "Id": "47554899",
+      "Name": "PageView",
+      "Type": "Event",
+      "Status": "Paused",
+      "TrackingStatus": "NoRecentConversions",
+      "Scope": "Account",
+      "ExcludeFromBidding": true,
+      "CountType": "Unique",
+      "Revenue": {
+        "Type": "NoValue",
+        "Value": null,
+        "CurrencyCode": null
+      },
+      "ConversionWindowInMinutes": 43200,
+      "ActionExpression": "page_view",
+      "ActionOperator": "Equals",
+      "CategoryExpression": null,
+      "CategoryOperator": null,
+      "LabelExpression": null,
+      "LabelOperator": null,
+      "Value": null,
+      "ValueOperator": null
+    },
+    {
+      "Id": "47565274",
+      "Name": "Begin Checkout – CanonicalEvent",
+      "Type": "Event",
+      "Status": "Paused",
+      "TrackingStatus": "NoRecentConversions",
+      "Scope": "Account",
+      "ExcludeFromBidding": true,
+      "CountType": "Unique",
+      "Revenue": {
+        "Type": "VariableValue",
+        "Value": 1,
+        "CurrencyCode": "NOK"
+      },
+      "ConversionWindowInMinutes": 43200,
+      "ActionExpression": "begin_checkout",
+      "ActionOperator": "Equals",
+      "CategoryExpression": null,
+      "CategoryOperator": null,
+      "LabelExpression": null,
+      "LabelOperator": null,
+      "Value": null,
+      "ValueOperator": null
+    },
+    {
+      "Id": "47565275",
+      "Name": "Purchase – CanonicalEvent",
+      "Type": "Event",
+      "Status": "Paused",
+      "TrackingStatus": "NoRecentConversions",
+      "Scope": "Account",
+      "ExcludeFromBidding": false,
+      "CountType": "All",
+      "Revenue": {
+        "Type": "VariableValue",
+        "Value": 1,
+        "CurrencyCode": "NOK"
+      },
+      "ConversionWindowInMinutes": 129600,
+      "ActionExpression": "purchase",
+      "ActionOperator": "Equals",
+      "CategoryExpression": null,
+      "CategoryOperator": null,
+      "LabelExpression": null,
+      "LabelOperator": null,
+      "Value": null,
+      "ValueOperator": null
+    },
+    {
+      "Id": "47565453",
+      "Name": "add_to_cart",
+      "Type": "Event",
+      "Status": "Active",
+      "TrackingStatus": "NoRecentConversions",
+      "Scope": "Customer",
+      "ExcludeFromBidding": false,
+      "CountType": "Unique",
+      "Revenue": {
+        "Type": "VariableValue",
+        "Value": 1,
+        "CurrencyCode": "NOK"
+      },
+      "ConversionWindowInMinutes": 43200,
+      "ActionExpression": "add_to_cart",
+      "ActionOperator": "Equals",
+      "CategoryExpression": null,
+      "CategoryOperator": null,
+      "LabelExpression": null,
+      "LabelOperator": null,
+      "Value": null,
+      "ValueOperator": null
+    },
+    {
+      "Id": "47565454",
+      "Name": "begin_checkout",
+      "Type": "Event",
+      "Status": "Paused",
+      "TrackingStatus": "NoRecentConversions",
+      "Scope": "Customer",
+      "ExcludeFromBidding": true,
+      "CountType": "Unique",
+      "Revenue": {
+        "Type": "VariableValue",
+        "Value": 1,
+        "CurrencyCode": "NOK"
+      },
+      "ConversionWindowInMinutes": 43200,
+      "ActionExpression": "begin_checkout",
+      "ActionOperator": "Equals",
+      "CategoryExpression": null,
+      "CategoryOperator": null,
+      "LabelExpression": null,
+      "LabelOperator": null,
+      "Value": null,
+      "ValueOperator": null
+    },
+    {
+      "Id": "47565502",
+      "Name": "purchase",
+      "Type": "Event",
+      "Status": "Active",
+      "TrackingStatus": "NoRecentConversions",
+      "Scope": "Customer",
+      "ExcludeFromBidding": false,
+      "CountType": "All",
+      "Revenue": {
+        "Type": "VariableValue",
+        "Value": 1,
+        "CurrencyCode": "NOK"
+      },
+      "ConversionWindowInMinutes": 129600,
+      "ActionExpression": "purchase",
+      "ActionOperator": "Equals",
+      "CategoryExpression": null,
+      "CategoryOperator": null,
+      "LabelExpression": null,
+      "LabelOperator": null,
+      "Value": null,
+      "ValueOperator": null
+    },
+    {
+      "Id": "47577093",
+      "Name": "PageView – Destination URL",
+      "Type": "Url",
+      "Status": "Active",
+      "TrackingStatus": "RecordingConversions",
+      "Scope": "Customer",
+      "ExcludeFromBidding": true,
+      "CountType": "All",
+      "Revenue": {
+        "Type": "NoValue",
+        "Value": null,
+        "CurrencyCode": null
+      },
+      "ConversionWindowInMinutes": 43200,
+      "UrlExpression": "utekos.no",
+      "UrlOperator": "Contains"
+    },
+    {
+      "Id": "47577094",
+      "Name": "Purchase – Thank you URL",
+      "Type": "Url",
+      "Status": "Active",
+      "TrackingStatus": "NoRecentConversions",
+      "Scope": "Customer",
+      "ExcludeFromBidding": false,
+      "CountType": "All",
+      "Revenue": {
+        "Type": "NoValue",
+        "Value": null,
+        "CurrencyCode": null
+      },
+      "ConversionWindowInMinutes": 43200,
+      "UrlExpression": "thank_you",
+      "UrlOperator": "Contains"
+    }
+  ],
+  "campaigns": [
+    {
+      "accountId": "188365141",
+      "Id": "488084381",
+      "Name": "PerformanceMax-Kampanje_072526_155814-79",
+      "CampaignType": "PerformanceMax",
+      "Status": "Paused",
+      "BiddingScheme": {
+        "Type": "MaxConversions",
+        "MaxCpc": {
+          "Amount": null
+        }
+      },
+      "GoalIds": null
+    },
+    {
+      "accountId": "188365141",
+      "Id": "488103805",
+      "Name": "New Sales Campaign-FB120246829667470788",
+      "CampaignType": "Audience",
+      "Status": "Paused",
+      "BiddingScheme": {
+        "Type": "EnhancedCpc"
+      },
+      "GoalIds": null
+    },
+    {
+      "accountId": "188365141",
+      "Id": "488122186",
+      "Name": "Publikum statisk_080426_175331",
+      "CampaignType": "Audience",
+      "Status": "Paused",
+      "BiddingScheme": {
+        "Type": "EnhancedCpc"
+      },
+      "GoalIds": null
+    },
+    {
+      "accountId": "188365141",
+      "Id": "488140585",
+      "Name": "Campaign #1MS-G23882080079",
+      "CampaignType": "Search",
+      "Status": "Paused",
+      "BiddingScheme": {
+        "Type": "EnhancedCpc"
+      },
+      "GoalIds": null
+    },
+    {
+      "accountId": "188365141",
+      "Id": "488141953",
+      "Name": "Comfyrobe_Search_v1",
+      "CampaignType": "Search",
+      "Status": "Paused",
+      "BiddingScheme": {
+        "Type": "EnhancedCpc"
+      },
+      "GoalIds": null
+    },
+    {
+      "accountId": "188365141",
+      "Id": "488229305",
+      "Name": "PerformanceMax-Kampanje_082726_194523-45",
+      "CampaignType": "PerformanceMax",
+      "Status": "Paused",
+      "BiddingScheme": {
+        "Type": "MaxConversions",
+        "MaxCpc": {
+          "Amount": null
+        }
+      },
+      "GoalIds": null
+    },
+    {
+      "accountId": "188365141",
+      "Id": "488229594",
+      "Name": "PerformanceMax-Kampanje_082726_214053-5",
+      "CampaignType": "PerformanceMax",
+      "Status": "Paused",
+      "BiddingScheme": {
+        "Type": "MaxConversions",
+        "MaxCpc": {
+          "Amount": null
+        }
+      },
+      "GoalIds": null
+    },
+    {
+      "accountId": "188365141",
+      "Id": "488229928",
+      "Name": "Search-Campaig",
+      "CampaignType": "Search",
+      "Status": "Paused",
+      "BiddingScheme": {
+        "Type": "MaxConversions",
+        "MaxCpc": {
+          "Amount": null
+        }
+      },
+      "GoalIds": null
+    },
+    {
+      "accountId": "188365141",
+      "Id": "488233608",
+      "Name": "PerformanceMax-Kampanje_082826_182425-43",
+      "CampaignType": "PerformanceMax",
+      "Status": "Paused",
+      "BiddingScheme": null,
+      "GoalIds": null
+    },
+    {
+      "accountId": "188365141",
+      "Id": "488339133",
+      "Name": "Shopping_Audience_091926_110111",
+      "CampaignType": "Audience",
+      "Status": "Paused",
+      "BiddingScheme": {
+        "Type": "EnhancedCpc"
+      },
+      "GoalIds": null
+    },
+    {
+      "accountId": "188445594",
+      "Id": "488145568",
+      "Name": "Comfyrobe_Search_Campaign_081026",
+      "CampaignType": "Search",
+      "Status": "Active",
+      "BiddingScheme": {
+        "Type": "EnhancedCpc"
+      },
+      "GoalIds": null
+    },
+    {
+      "accountId": "188445594",
+      "Id": "488146021",
+      "Name": "Sales-Campaigne-Comfyrobe-XL",
+      "CampaignType": "Search",
+      "Status": "Active",
+      "BiddingScheme": {
+        "Type": "EnhancedCpc"
+      },
+      "GoalIds": [
+        "47565502"
+      ]
+    },
+    {
+      "accountId": "188445594",
+      "Id": "488167615",
+      "Name": "PerformanceMax-Kampanje_081326_225254-1",
+      "CampaignType": "PerformanceMax",
+      "Status": "Paused",
+      "BiddingScheme": {
+        "Type": "MaxConversions",
+        "MaxCpc": {
+          "Amount": null
+        }
+      },
+      "GoalIds": null
+    }
+  ],
+  "errors": [],
+  "accountProperties": [
+    {
+      "Name": "MSCLKIDAutoTaggingEnabled",
+      "Value": "true"
+    }
+  ],
+  "campaignSpecificGoalDraft": {
+    "status": "not_applied",
+    "reason": "Shared goals are Customer-scoped and active Comfyrobe campaigns exist. Select future Utekos sales campaigns individually after verifying campaign intent; do not mutate shared goals globally.",
+    "method": "POST",
+    "path": "/CampaignConversionGoals",
+    "bodyExample": {
+      "CampaignConversionGoal": [
+        {
+          "CampaignId": "488229928",
+          "GoalId": "47565502"
+        }
+      ]
+    },
+    "rollbackMethod": "DELETE",
+    "readbackField": "CampaignConversionGoal"
+  },
+  "sources": [
+    "https://learn.microsoft.com/en-us/advertising/bulk-service/campaign-conversion-goal?view=bingads-13",
+    "https://learn.microsoft.com/en-us/advertising/campaign-management-service/addcampaignconversiongoals?view=bingads-13",
+    "https://learn.microsoft.com/en-us/advertising/campaign-management-service/deletecampaignconversiongoals?view=bingads-13"
+  ],
+  "limitations": [
+    "Provider API access and configuration do not prove CAPI receipt, deduplication or attribution.",
+    "No campaign activation, budget, bidding strategy or shared-goal mutation performed."
+  ]
+}

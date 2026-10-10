@@ -55,6 +55,9 @@ export default function DunReservationDialog({ selection, onClose }: { selection
       try { result = await submitDunReservation(data); }
       catch { result = { status: 'error', message: 'Vi fikk ikke registrert reservasjonen. Prøv igjen litt senere.' }; }
       setState(result);
+      if (result.status === 'success' && result.trackingEvent) {
+        emitStorefrontAction('utekos:accepted-lead', result.trackingEvent);
+      }
       if (result.status === 'error') {
         if (result.errors) setItem(result.errors.color || result.errors.size ? 'variant' : result.errors.consent ? 'consent' : 'contact');
         emitStorefrontAction('utekos:form-error', { formId: 'product_reservation_utekos_dun', attemptId: crypto.randomUUID(), category: result.errors ? 'validation' : 'submission_failed' });

@@ -1,0 +1,83 @@
+{
+  "recordedAt": "2026-10-10T07:12:58.860Z",
+  "node": "v24.17.0",
+  "runtimeSha256": "4bebc12694755bc5edf1d849783992c7d470db7ede2b9cc74fa2dfd246c20aa1",
+  "compiledGtmSha256": "2b855e6f5d864704d78406003bc9c6280c8ae6c0a5a00ac77f5f578cca632cd3",
+  "container": "GTM-5TWMJQFP",
+  "nativeBautSupports": {
+    "existingExportedCustomConfigTable": true,
+    "templateAlternativeInputs": [
+      "c_disableAutoPageView",
+      "c_enableAutoSpaTracking"
+    ],
+    "newTopLevelApiKeysVerified": false
+  },
+  "draftBaseTagParameters": [
+    {
+      "type": "list",
+      "key": "customConfigTable",
+      "list": [
+        {
+          "type": "map",
+          "map": [
+            {
+              "type": "template",
+              "key": "customConfigName",
+              "value": "gtmTagSource"
+            },
+            {
+              "type": "template",
+              "key": "customConfigValue",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "type": "map",
+          "map": [
+            {
+              "type": "template",
+              "key": "customConfigName",
+              "value": "disableAutoPageView"
+            },
+            {
+              "type": "template",
+              "key": "customConfigValue",
+              "value": "true"
+            }
+          ]
+        },
+        {
+          "type": "map",
+          "map": [
+            {
+              "type": "template",
+              "key": "customConfigName",
+              "value": "enableAutoSpaTracking"
+            },
+            {
+              "type": "template",
+              "key": "customConfigValue",
+              "value": "false"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assertions": {
+    "browserPageLoads": 0,
+    "customEventsWithoutPriorBrowserPageLoad": 2,
+    "customEventIdsPreserved": true,
+    "currentCustomPagePathsPreserved": true,
+    "forwardedRequests": 0
+  },
+  "limitations": [
+    "Native compiled template was inspected statically; this experiment initializes the same documented UET flags directly.",
+    "No provider acceptance, PageLoad association, remarketing behavior, account goals or provider deduplication verified.",
+    "UET native mid remains distinct from canonical CAPI pageLoadId; no internal MID override used.",
+    "Use the already exported customConfigTable rows. Alternative c_* template inputs are visible in compiled code, but acceptance as new API resource keys was not verified."
+  ],
+  "compiledConfigChain": "makeTableMap -> exact string true/false boolean coercion -> named config fallback to optional c_* template inputs -> UET_init. For false with no c_* input, value becomes undefined; UET defaults enableAutoSpaTracking to false unless option is strictly true.",
+  "status": "offline_evidence_only_not_provider_receipt"
+}

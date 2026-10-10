@@ -4,15 +4,15 @@
   "files": {
     "src/lib/analytics/eventCatalog.ts": {
       "baseSha256": "f0e8e901414abb6d08012c8400e690ce23892fb2b6cf182c2d099815e7487d48",
-      "sha256": "23a3ba65ae7c8680e73dfe90d39a6ce45c59ac51e43378b18233847acf3fa932",
-      "reason": "Dealer-only provider routes and CTA observation; adapters and workers implemented in isolated tracking backend. Not a production activation claim.",
-      "implementationRepository": "utekos-tracking-backend",
+      "sha256": "36af8059070e1f447b2b23a53c896757c14a65310141a0dcfb441586627b48c7",
+      "reason": "Reviewed v2/backend dealer and unvalued Dun reservation routes; Microsoft Purchase adapter/worker eligible in code. Tests verify qualification and denied/missing-ID paths. Backend repair is deployed with ingress/queue disabled; catalog status does not prove provider delivery.",
+      "implementationRepository": "utekos-v2",
       "implementationPath": "src/lib/analytics/eventCatalog.ts"
     },
     "src/lib/analytics/generateLeadEvent.ts": {
       "baseSha256": "3519427256b64d64d098c76117593dbdd0c82e419da37a925c35e42796e5ac73",
-      "sha256": "b8a9994c21c6ada527559bf5af20a020950ee5256537f61df2735eea804c5e8f",
-      "reason": "Explicit unvalued dealer-inquiry branch. Other leads retain mandatory documented positive monetary value. Pure data-layer builder extracted to generateLeadDataLayerEvent.ts; schema and server validation unchanged.",
+      "sha256": "02dbda4f2162f8040fce4a39ace442c27b53ec286c9abaf3a19dd20f1b4e0158",
+      "reason": "Zod Mini with explicit unvalued dealer and exact-variant Dun reservation branches; other leads retain required positive monetary value. Reserved form ID cannot bypass the variant/unvalued branch. Browser builder remains extracted.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "src/lib/analytics/generateLeadEvent.ts"
     },
@@ -71,6 +71,27 @@
       "reason": "Zod Mini client-boundary optimization; accepted inputs, parsed outputs and complete validation issues compared against classic definitions in tests/zod-client-contracts.test.cjs.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "src/lib/analytics/metaParameterBuilderUserData.ts"
+    },
+    "src/lib/analytics/leadFormTrackingContext.ts": {
+      "baseSha256": "7f587b8fbb8784a78a5048f8c80f77116c8e471bc6b6aa0f911abfc8ebb7c5f9",
+      "sha256": "2ae235439872297f15bc13a482d181eba93ddd3f40b46b99eb28296c77b3a55e",
+      "reason": "Zod Mini optimization; classic parsed output, validation issues, URL/UUID/strictness and attribution length limits compared by tests/zod-client-contracts.test.cjs.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/leadFormTrackingContext.ts"
+    },
+    "src/lib/analytics/selectPromotionEvent.ts": {
+      "baseSha256": "b7324c463679d12d7f802195648296e57a256c3f54210be13c165057480c0e3c",
+      "sha256": "4640e4eb077493ea682af9fc3ea33b729a5678aff9c7e01b4d3177c88c0c99e9",
+      "reason": "Formatting-only difference reviewed against pinned source with TypeScript token comparison; schema fields, checks and event construction unchanged.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/selectPromotionEvent.ts"
+    },
+    "public/analytics/meta-pixel-canonical-v1.js": {
+      "baseSha256": "194a9fedfcf335a4a5203aaa7cdc10f1faece1b9b92a07e130265a8a271fe273",
+      "sha256": "6e8b1ed24eed5895a38d45531b399c6c9c7dffaf2c675ef142dbb4701e40fc42",
+      "reason": "Whitelisted product, variant, color and size custom properties for confirmed unvalued Dun reservation Lead. Same server/browser event ID and single browser replay tested in offline Chromium; other event mappings unchanged.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "public/analytics/meta-pixel-canonical-v1.js"
     }
   }
 }

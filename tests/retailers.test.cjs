@@ -76,7 +76,7 @@ function submission(overrides = {}) {
 function inquirySetup(response = { ok: true, json: async () => ({ id: 'mock-receipt' }) }, { pdfError, leadEvent, env = { RESEND_API_KEY: 'test-key', CONTACT_FORM_SEND_TO_EMAIL: 'support@example.com' } } = {}) {
   const calls = [], tracking = [], pdfValues = [];
   const attachment = { filename: 'Utekos-forhandlerhenvendelse.pdf', content: Buffer.from('mock PDF').toString('base64'), content_type: 'application/pdf' };
-  const { submitDealerInquiry } = loadTypeScript('app/bli-forhandler/actions.ts', {
+  const { submitDealerInquiry } = loadTypeScript('app/(storefront)/bli-forhandler/actions.ts', {
     env,
     mocks: {
       '@/lib/tracking/server-forms': { recordAcceptedDealerInquiry: async (form, accepted) => {
@@ -95,7 +95,7 @@ function inquirySetup(response = { ok: true, json: async () => ({ id: 'mock-rece
       return response;
     },
   });
-  const { initialDealerInquiryState } = loadTypeScript('app/bli-forhandler/form-state.ts');
+  const { initialDealerInquiryState } = loadTypeScript('app/(storefront)/bli-forhandler/form-state.ts');
   return { submit: data => submitDealerInquiry(initialDealerInquiryState, data), calls, tracking, pdfValues, attachment };
 }
 

@@ -1,10 +1,11 @@
 import type { ProductVariant } from '@/lib/shopify/product-types';
+import type { GenerateLeadDataLayerEvent } from '@/lib/analytics/generateLeadEvent';
 
 export const dunColors = ['Vargnatt', 'Fjellblå'] as const;
 export const dunSizes = ['Small', 'Medium', 'Large'] as const;
 export const dunReservationConsent = 'Ja, hold av en jakke til meg og send uforpliktende betalingslenke på e-post og SMS når den er på lager.';
 export type DunSelection = { color: typeof dunColors[number]; size: typeof dunSizes[number] };
-export type DunReservationState = { status: 'idle' | 'success' | 'error'; message?: string; errors?: Record<string, string[] | undefined> };
+export type DunReservationState = { status: 'idle' | 'success' | 'error'; message?: string; errors?: Record<string, string[] | undefined>; trackingEvent?: GenerateLeadDataLayerEvent };
 
 export function dunSelection(variant: Pick<ProductVariant, 'selectedOptions'>): DunSelection {
   const color = variant.selectedOptions.find(option => ['Farge', 'Color'].includes(option.name))?.value;

@@ -429,6 +429,11 @@
 
     if (eventName === 'generate_lead') {
       var lead = {}
+      if (customData.form_id === 'product_reservation_utekos_dun') {
+        ;['form_id', 'lead_type', 'product_handle', 'product_id', 'variant_id', 'color', 'size'].forEach(function (key) {
+          if (typeof customData[key] === 'string') lead[key] = customData[key]
+        })
+      }
       var leadCurrency = isoCurrency(customData.currency)
       var leadValue =
         finiteNumber(customData.value) ? customData.value : null

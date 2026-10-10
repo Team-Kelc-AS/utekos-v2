@@ -155,13 +155,17 @@ test('telemetry mapping is fixed and URL redaction removes query and fragment', 
   assert.equal(withoutTrackingQuery('https://utekos.no/p?email=fixture@example.test&fbclid=fixture#secret'), 'https://utekos.no/p')
 })
 
-test('generated loader and unchanged source contracts match the pinned manifest', () => {
+test('generated loader and reviewed contracts match their recorded provenance', () => {
   const manifest = JSON.parse(readFileSync(new URL('../docs/tracking/gateway-source-manifest.json', import.meta.url), 'utf8'))
   assert.equal(manifest.sourceCommit, 'e74e6cd8310c88f2777cbfdf5ad6b431647d7f77')
-  for (const file of manifest.files as { target: string; sourceSha256: string; adapted: boolean }[]) {
+  for (const file of manifest.files as { target: string; sourceSha256: string; adapted: boolean; reviewedTargetSha256?: string; generatedScriptSha256?: string; reason?: string }[]) {
     if (file.adapted) continue
     const data = readFileSync(new URL(`../${file.target}`, import.meta.url))
-    assert.equal(createHash('sha256').update(data).digest('hex'), file.sourceSha256, file.target)
+    if (file.reviewedTargetSha256) assert.ok(file.reason, 'reviewed formatting requires an explanation')
+    assert.equal(createHash('sha256').update(data).digest('hex'), file.reviewedTargetSha256 ?? file.sourceSha256, file.target)
+    if (file.target === 'src/lib/tracking/stapeCustomLoader.ts') {
+      assert.equal(createHash('sha256').update(STAPE_CUSTOM_LOADER).digest('hex'), file.generatedScriptSha256, 'generated executable Stape loader')
+    }
   }
 })
 

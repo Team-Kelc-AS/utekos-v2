@@ -31,6 +31,31 @@ test.before(async () => {
 });
 test.after(async () => { await browser?.close(); });
 
+test('accepted Dun reservation projects one rich unvalued Pixel Lead with the server ID', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/utekos-dun');
+  await api.waitFor('page_view');
+  const entry = await api.page.evaluate(pageEvent => {
+    const event = UtekosTrackingHarness.createCanonicalGenerateLead({
+      eventId: crypto.randomUUID(), eventTime: '2026-10-10T10:00:00.000Z', environment: 'production',
+      consent: pageEvent.consent, pageUrl: location.href, pageViewId: pageEvent.page_view_id,
+      customData: { submission_id: 'accepted-reservation', form_id: 'product_reservation_utekos_dun', lead_type: 'product_reservation',
+        product_handle: 'utekos-dun', product_id: 'gid://shopify/Product/1', variant_id: 'gid://shopify/ProductVariant/67610887160056', color: 'Vargnatt', size: 'Small' },
+    });
+    const entry = UtekosTrackingHarness.buildGenerateLeadDataLayerEvent(event);
+    UtekosTrackingHarness.emitStorefrontAction('utekos:accepted-lead', entry);
+    UtekosTrackingHarness.emitStorefrontAction('utekos:accepted-lead', entry);
+    return entry;
+  }, api.events('page_view')[0]);
+  await api.waitFor('generate_lead');
+  const result = await api.page.evaluate(() => ({ leads: dataLayer.filter(event => event?.event === 'generate_lead'), pixel: window.__pixelCalls.filter(call => call[2] === 'Lead') }));
+  assert.equal(result.leads.length, 1);
+  assert.equal(result.pixel.length, 1);
+  assert.equal(result.pixel[0][4].eventID, entry.event_id);
+  assert.deepEqual(result.pixel[0][3], { form_id: 'product_reservation_utekos_dun', lead_type: 'product_reservation', product_handle: 'utekos-dun',
+    product_id: 'gid://shopify/Product/1', variant_id: 'gid://shopify/ProductVariant/67610887160056', color: 'Vargnatt', size: 'Small' });
+  assert.equal(api.events('generate_lead').length, 0, 'confirmed server Lead is never collected again');
+});
+
 function commerce(id = '1') {
   return { currency: 'NOK', value: 800, gross_value: 1000, tax_value: 200, items: [{
     item_id: `gid://shopify/ProductVariant/${id}`, product_id: 'gid://shopify/Product/1', variant_id: `gid://shopify/ProductVariant/${id}`,

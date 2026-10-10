@@ -610,7 +610,7 @@ function activeEventProviders(
           adapterVersion: 1,
           productionStatus: "active",
           productionDetail: input.microsoft.serverActive
-            ? "Canonical dealer-only Microsoft adapter and worker are registered; deployment and provider receipt require verification."
+            ? "Canonical Microsoft adapter and worker are registered with explicit funnel qualification; deployment and provider receipt require verification."
             : "Browser UET is active; server delivery is blocked because no UET CAPI worker exists.",
           serverOutbox: input.microsoft.serverActive
             ? "active"
@@ -1251,10 +1251,10 @@ const purchaseProviders = {
     dedupeField: "event_id",
     consentRequirement: "marketing",
     adapterVersion: 2,
-    productionStatus: "not_implemented",
+    productionStatus: "active",
     productionDetail:
-      "Microsoft Purchase delivery is inactive; the retained adapter is not eligible for new outbox work.",
-    serverOutbox: "disabled",
+      "Authoritative server Purchase adapter and worker are registered; backend activation, conversion goals and provider receipt require verification.",
+    serverOutbox: "active",
   }),
   pinterest: {
     ...pinterestCatalogProvider(PINTEREST_CANONICAL_EVENT_MAP.purchase.api, {
@@ -1902,7 +1902,7 @@ const eventCatalogBase = {
         "submission_id",
         "form_id",
         "lead classification without PII",
-        "approved versioned monetary-value policy, or explicitly unvalued dealer inquiry",
+        "approved versioned monetary-value policy, or explicitly unvalued dealer inquiry/Dun reservation",
       ],
     },
     dedupe: dedupe(

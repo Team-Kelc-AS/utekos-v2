@@ -1,6 +1,8 @@
 # Migreringsmatrise for sporing
 
-Kilde låst til headless-commit `e74e6cd8310c88f2777cbfdf5ad6b431647d7f77`.
+Historisk kildeproveniens: headless-commit `e74e6cd8310c88f2777cbfdf5ad6b431647d7f77`.
+Oppdatert 10. oktober 2026: headless er pensjonert. V2 er storefront; isolert `utekos-tracking-backend` eier collectors, webhooks og outbox etter godkjent overtakelse. Søkesporing er fjernet fra v2-broen og er ikke en releasegate. Se [aktuell plan](MIGRATION-PLAN.md).
+
 Denne matrisen er laget fra evaluert `src/lib/analytics/eventCatalog.ts`, de faktiske
 Zod-skjemaene, `server/providerAdapterRegistry.ts`, backend-rutekatalogen og
 v2s runtime/UI. Katalogens ord «active» er kildekodestatus, ikke ferskt bevis på
@@ -38,7 +40,7 @@ Klientpayload, komplette cookies og rå kundeopplysninger skal ikke logges.
 `V2` betyr at faktisk UI-/mutasjonsflate finnes og har et lokalt kodepunkt.
 Beskrivelsene angir kontrakten som skal verifiseres; de utgjør ikke automatisk
 bestått akseptanse. Collectors med `/api/events/` er relative adresser i v2 og
-sendes bare gjennom den avgrensede autentiserte broen til headless.
+sendes bare gjennom den avgrensede autentiserte broen til `utekos-tracking-backend`.
 
 | Hendelse | V2-kilde / beholdt ansvar | Collector / inngang | Domenenøkkel fra kildekatalog |
 |---|---|---|---|
@@ -51,15 +53,15 @@ sendes bare gjennom den avgrensede autentiserte broen til headless.
 | `remove_from_cart` | V2: bekreftet negativt Shopify-delta; normal ordre-mutasjon blir ikke en ekstra hendelse. | `/api/events/remove-from-cart` | `cart_mutation_id` |
 | `view_cart` | V2: handlekurvflaten åpnet med resolved innhold. | `/api/events/view-cart` | `page_view_id + cart_id + view_sequence` |
 | `begin_checkout` | V2: bekreftet checkout-URL/Express-forberedelse og skrevne attribusjonsattributter før navigasjon. | `/api/events/begin-checkout` | `checkout_id + creation_revision` |
-| `add_shipping_info` | Beholdt headless: verifisert Shopify checkout-observasjon; ingen ny v2-generator. | `/api/shopify/checkout-observations` | `Shopify checkout_shipping_info_submitted event_id` |
-| `add_payment_info` | Beholdt headless: verifisert Shopify payment_info_submitted; beviser ikke betalt ordre. | `/api/shopify/checkout-observations` | `Shopify payment_info_submitted event_id` |
-| `purchase` | Beholdt headless: HMAC-verifisert orders/paid. V2 er bare kompatibilitetsrute. | `/api/shopify/webhooks/orders-paid` | `Shopify order legacy ID + paid state` |
-| `refund` | Beholdt headless: HMAC-verifisert refunds/create. V2 er bare kompatibilitetsrute. | `/api/shopify/webhooks/refunds-create` | `refund_id` |
-| `search` | Ingen aktiv v2-søkekilde funnet; behold kontrakt, send ingen konstruert hendelse. | `/api/events/search` | `search_id` |
-| `view_search_results` | Ingen aktiv v2-søkeresultatkilde funnet. | `/api/events/view-search-results` | `search_id + result_revision` |
+| `add_shipping_info` | Isolert backend: verifisert Shopify checkout-observasjon; ingen ny v2-generator. | `/api/shopify/checkout-observations` | `Shopify checkout_shipping_info_submitted event_id` |
+| `add_payment_info` | Isolert backend: verifisert Shopify payment_info_submitted; beviser ikke betalt ordre. | `/api/shopify/checkout-observations` | `Shopify payment_info_submitted event_id` |
+| `purchase` | Isolert backend: HMAC-verifisert orders/paid. V2 er bare kompatibilitetsrute. | `/api/shopify/webhooks/orders-paid` | `Shopify order legacy ID + paid state` |
+| `refund` | Isolert backend: HMAC-verifisert refunds/create. V2 er bare kompatibilitetsrute. | `/api/shopify/webhooks/refunds-create` | `refund_id` |
+| `search` | Fjernet etter brukerbeslutning; historisk skjema beholdes. | Ikke tillatt i v2-broen | Historisk `search_id` |
+| `view_search_results` | Fjernet etter brukerbeslutning; historisk skjema beholdes. | Ikke tillatt i v2-broen | Historisk `search_id + result_revision` |
 | `view_promotion` | V2: faktisk kampanjeelement minst 50% synlig sammenhengende i 1 sekund. | `/api/events/view-promotion` | `page_view_id + promotion_id + impression_sequence` |
 | `select_promotion` | V2: akseptert lenkehandling fra faktisk kampanjeelement. | `/api/events/select-promotion` | `interaction_id` |
-| `generate_lead` | V2: akseptert Dun-venteliste persisteres i eksisterende headless lead-flyt med gjeldende verdipolicy. Kontakt produserer bare `form_submit`. Browser speiler Lead først etter kanonisk readback. | Intern brooperasjon `/internal/storefront/accepted-dun-waitlist`; kanonisk headless-handler | `submission_id` |
+| `generate_lead` | V2: akseptert Dun-reservasjon med eksakt Shopify-variant lagres som uverdsatt Lead. Forhandlerhenvendelser har egen uverdsatt kontrakt. Browser speiler først bekreftet backendkvittering. Kontakt produserer `form_submit`. Historisk venteliste beholder egen verdipolicy. | Interne brooperasjoner `accepted-dun-reservation`, `accepted-dealer-inquiry`, `accepted-dun-waitlist` | `submission_id` |
 | `form_start` | V2: første meningsfulle verdiendring i kontakt/venteliste, aldri focus alene. | `/api/events/form-start` | `form_id + page_view_id` |
 | `form_submit` | V2 har kontakt/venteliste. Krever serveraksept og original submission_id; source=server. | `/api/events/form-submit` | `submission_id` |
 | `form_error` | V2 har kontakt/venteliste. Krever vist definitiv feil og original attempt_id; ingen fritekst/PII. | `/api/events/form-error` | `attempt_id` |
@@ -75,8 +77,8 @@ sendes bare gjennom den avgrensede autentiserte broen til headless.
 | `interact_with_accordion` | V2: bruker åpner tidligere lukket PDP-accordion; resolved faktisk variant. | `/api/events/interact-with-accordion` | `page_view_id + product_id + variant_id + accordion_id + interaction_sequence` |
 | `open_quick_view` | Ingen quick-view-dialog finnes i v2. Ikke erstatt produktnavigasjon med denne hendelsen. | `/api/events/open-quick-view` | `page_view_id + source_surface + product_id + variant_id + open_sequence` |
 | `video_progress` | V2: faktisk video passerer 10/25/50/75/90/100%, én gang per side/video/milepæl. | `/api/events/video-progress` | `page_view_id + video_id + milestone` |
-| `meta_app_event` | Eksisterende autentisert headless-produsent. Ikke en nettbutikkhendelse; ingen v2-generator. | `Beholdt autentisert headless-ingest` | `source_type + source event_name + source event_id` |
-| `meta_offline_event` | Eksisterende autentisert headless-produsent. Ikke en nettbutikkhendelse; ingen v2-generator. | `Beholdt autentisert headless-ingest` | `source_type + source event_name + source event_id` |
+| `meta_app_event` | Eksisterende autentisert backend-produsent; aktiv kilde må verifiseres ved overtakelse. Ikke en nettbutikkhendelse; ingen v2-generator. | `Isolert backend-ingest` | `source_type + source event_name + source event_id` |
+| `meta_offline_event` | Eksisterende autentisert backend-produsent; aktiv kilde må verifiseres ved overtakelse. Ikke en nettbutikkhendelse; ingen v2-generator. | `Isolert backend-ingest` | `source_type + source event_name + source event_id` |
 
 ## Eksakte utløsere og nødvendige felt
 
@@ -143,13 +145,13 @@ Dette er aldri en påstand om mottak eller annonseattribusjon.
 | `begin_checkout` | `begin_checkout` | `InitiateCheckout` | `begin_checkout` | `initiate_checkout` | `START_CHECKOUT` |
 | `add_shipping_info` | `add_shipping_info` (disabled; uten registeradapter) | `AddShippingInfo` | — | — | — |
 | `add_payment_info` | `add_payment_info` | `AddPaymentInfo` | — | — | `ADD_BILLING` |
-| `purchase` | `purchase` | `Purchase` | `purchase` (disabled) | `checkout` (disabled) | `PURCHASE` (disabled) |
+| `purchase` | `purchase` | `Purchase` | `purchase` (lokalt aktiv; produksjon ikke aktivert) | `checkout` (disabled) | `PURCHASE` (disabled) |
 | `refund` | `refund` | — | — | — | — |
 | `search` | `search` | `Search` | `search` (blocked_no_worker; uten registeradapter) | `search` | — |
 | `view_search_results` | `view_search_results` | — | — | — | — |
 | `view_promotion` | `view_promotion` | — | — | — | — |
 | `select_promotion` | `select_promotion` | — | — | — | — |
-| `generate_lead` | `generate_lead` | `Lead` | `generate_lead` (blocked_no_worker; uten registeradapter) | `lead` | — |
+| `generate_lead` | `generate_lead` | `Lead` | `generate_lead` (lokal adapter for forhandler/Dun-reservasjon; produksjon uverifisert) | `lead` | — |
 | `form_start` | `form_start` | — | — | — | — |
 | `form_submit` | `form_submit` | — | — | — | — |
 | `form_error` | `form_error` | — | — | — | — |
@@ -179,16 +181,13 @@ Dette er aldri en påstand om mottak eller annonseattribusjon.
 - Web-GTM/Stape Data Tag beholdes med eksplisitt liste for `page_view`,
   `view_item_list`, `select_item`, `add_to_wishlist`, `add_to_cart`,
   `remove_from_cart`, `view_cart`, `begin_checkout`, `view_promotion`,
-  `select_promotion`, `search` og `generate_lead`. `purchase` og `view_item`
-  er utelatt i den vedtatte konfigurasjonen. Full aktuell trigger-/taggkjøring
-  må leses tilbake før publisering.
+  `select_promotion` og `generate_lead`. `search` er fjernet i publisert live 174; fire triggerendringer og uendrede tagger er bekreftet i `gtm-search-removal.verification.json`. `purchase` og `view_item`
+  er utelatt i den vedtatte konfigurasjonen. Publisert konfigurasjon er lest tilbake; faktisk end-to-end kjøring gjenstår.
 - GA4 PageView har **ingen Google backend-outbox-adapter**; denne grenen eies
   av den eksisterende GTM/Stape-ruten. `add_shipping_info` har heller ingen
   Google backend-adapter. Disse skal ikke skapes ved å kopiere mappingen til
   andre hendelser.
-- Serverkatalogen slår av Purchase-outbox for Microsoft, Pinterest og
-  Snapchat, selv om alle tre Purchase-adaptere finnes i registeret. Dette
-  avviket er eksplisitt og må ikke «repareres» ved automatisk aktivering.
+- Microsoft Purchase er kvalifisert i katalogen; adapter/retry er testet og deployet. Konto/UET/mål er avlest. Backendinngang, købinding, konkret kampanjemålvalg og faktisk provider-mottak er fortsatt releasegater. Pinterest og Snapchat Purchase forblir deaktivert.
 - Pausede GTM-Meta-tagger forblir pausede. V2 oppretter ingen nye Google Ads-
   destinasjoner. Power Ups er berikelse i Stape-grenen og dokumenterer ikke
   automatisk berikelse i appens direkte Meta CAPI-gren.
@@ -197,7 +196,7 @@ Dette er aldri en påstand om mottak eller annonseattribusjon.
 
 Shopify-observasjoner v1–v4, checkout-recovery, `orders/paid` og
 `refunds/create` beholder sine rå kropper og eksisterende HMAC/OIDC-verifikasjon
-hos headless. Bekreftelsesside, `checkout_completed` og Klarna callback er
+i isolert backend. Bekreftelsesside, `checkout_completed` og Klarna callback er
 ikke ekstra Purchase-eiere. Kjøpsavstemming og gjenforsøk beholder samme
 backend, ledger og idempotenslager.
 
@@ -283,7 +282,7 @@ mottakerdeduplisering og ytelsesmåling er fortsatt `unverified`.
    navigasjon eller betaling. Retries gjenbruker samme ID/tid.
 6. Gyldig OIDC-prosjekt/team/miljø/origin slipper gjennom; manipulert context,
    feil prosjekt og preview/local kan ikke levere produksjonskonverteringer.
-7. Verifisert testreise korreleres browser → bro → headless → Supabase →
+7. Verifisert testreise korreleres browser → bro → isolert backend → Supabase →
    provider. HTTP 200/202 er bare aksept; `accepted_unverified` beholdes
    inntil selvstendig provider-mottak er observert.
 8. Betalte testkjøp, publisering og butikkdomene-cutover følger brukerens

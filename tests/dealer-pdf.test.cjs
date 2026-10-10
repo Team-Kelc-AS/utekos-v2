@@ -28,7 +28,7 @@ test('real dealer PDF reaches the simulated provider with Norwegian fields, cons
   const templateBefore = await readFile(templatePath);
   const calls = [], accepted = [];
   const env = { RESEND_API_KEY: 'mock-only-key', CONTACT_FORM_SEND_TO_EMAIL: 'ordinary-contact@example.com' };
-  const { submitDealerInquiry } = loadTypeScript('app/bli-forhandler/actions.ts', {
+  const { submitDealerInquiry } = loadTypeScript('app/(storefront)/bli-forhandler/actions.ts', {
     env,
     globals: { process: { env, cwd: () => root } },
     mocks: {
@@ -50,7 +50,7 @@ test('real dealer PDF reaches the simulated provider with Norwegian fields, cons
       return { ok: true, json: async () => ({ id: 'mock-pdf-receipt' }) };
     },
   });
-  const { initialDealerInquiryState } = loadTypeScript('app/bli-forhandler/form-state.ts');
+  const { initialDealerInquiryState } = loadTypeScript('app/(storefront)/bli-forhandler/form-state.ts');
   for (let attempt = 0; attempt < 2; attempt++) {
     const result = await submitDealerInquiry(initialDealerInquiryState, formData());
     assert.equal(result.status, 'success');

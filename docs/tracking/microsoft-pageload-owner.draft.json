@@ -1,0 +1,240 @@
+{
+  "status": "local_review_only_not_applied",
+  "container": "GTM-5TWMJQFP",
+  "accountId": "6295468138",
+  "containerId": "220236256",
+  "baseLiveVersion": "174",
+  "strategy": "CAPI solely owns Microsoft PageLoad. Browser business events use canonical event_id; ID Sync remains. No browser PageLoad event_id override.",
+  "changes": [
+    {
+      "tagId": "130",
+      "expectedFingerprint": "1789810477003",
+      "before": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "tagId": "130",
+        "name": "Base Tag(UET 97247724)",
+        "type": "baut",
+        "notes": "Loads once on every page independently of Cookiebot; canonical Microsoft events use the shared uetq.",
+        "parameter": [
+          {
+            "type": "list",
+            "key": "customConfigTable",
+            "list": [
+              {
+                "type": "map",
+                "map": [
+                  {
+                    "type": "template",
+                    "key": "customConfigName",
+                    "value": "gtmTagSource"
+                  },
+                  {
+                    "type": "template",
+                    "key": "customConfigValue",
+                    "value": "1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "template",
+            "key": "tagId",
+            "value": "97247724"
+          },
+          {
+            "type": "template",
+            "key": "uetqName",
+            "value": "uetq"
+          },
+          {
+            "type": "template",
+            "key": "eventType",
+            "value": "PAGE_LOAD"
+          }
+        ],
+        "fingerprint": "1789810477003",
+        "firingTriggerId": [
+          "2147479553"
+        ],
+        "tagFiringOption": "oncePerLoad",
+        "consentSettings": {
+          "consentStatus": "notNeeded"
+        }
+      },
+      "proposed": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "tagId": "130",
+        "name": "Base Tag(UET 97247724)",
+        "type": "baut",
+        "notes": "Initializes shared UET without browser PageLoads. Canonical Microsoft pageLoad is owned solely by backend CAPI; retain custom business events and ID Sync.",
+        "parameter": [
+          {
+            "type": "list",
+            "key": "customConfigTable",
+            "list": [
+              {
+                "type": "map",
+                "map": [
+                  {
+                    "type": "template",
+                    "key": "customConfigName",
+                    "value": "gtmTagSource"
+                  },
+                  {
+                    "type": "template",
+                    "key": "customConfigValue",
+                    "value": "1"
+                  }
+                ]
+              },
+              {
+                "type": "map",
+                "map": [
+                  {
+                    "type": "template",
+                    "key": "customConfigName",
+                    "value": "disableAutoPageView"
+                  },
+                  {
+                    "type": "template",
+                    "key": "customConfigValue",
+                    "value": "true"
+                  }
+                ]
+              },
+              {
+                "type": "map",
+                "map": [
+                  {
+                    "type": "template",
+                    "key": "customConfigName",
+                    "value": "enableAutoSpaTracking"
+                  },
+                  {
+                    "type": "template",
+                    "key": "customConfigValue",
+                    "value": "false"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "template",
+            "key": "tagId",
+            "value": "97247724"
+          },
+          {
+            "type": "template",
+            "key": "uetqName",
+            "value": "uetq"
+          },
+          {
+            "type": "template",
+            "key": "eventType",
+            "value": "PAGE_LOAD"
+          }
+        ],
+        "fingerprint": "1789810477003",
+        "firingTriggerId": [
+          "2147479553"
+        ],
+        "tagFiringOption": "oncePerLoad",
+        "consentSettings": {
+          "consentStatus": "notNeeded"
+        }
+      }
+    },
+    {
+      "tagId": "173",
+      "expectedFingerprint": "1789809568146",
+      "before": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "tagId": "173",
+        "name": "GA4 – Canonical page_view(Microsoft UET)",
+        "type": "baut",
+        "parameter": [
+          {
+            "type": "template",
+            "key": "uetqName",
+            "value": "uetq"
+          },
+          {
+            "type": "template",
+            "key": "customEventAction",
+            "value": "page_view"
+          },
+          {
+            "type": "template",
+            "key": "eventType",
+            "value": "userDefined"
+          }
+        ],
+        "fingerprint": "1789809568146",
+        "firingTriggerId": [
+          "145"
+        ],
+        "tagFiringOption": "oncePerEvent",
+        "monitoringMetadata": {
+          "type": "map"
+        },
+        "consentSettings": {
+          "consentStatus": "notNeeded"
+        }
+      },
+      "proposed": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "tagId": "173",
+        "name": "GA4 – Canonical page_view(Microsoft UET)",
+        "type": "baut",
+        "parameter": [
+          {
+            "type": "template",
+            "key": "uetqName",
+            "value": "uetq"
+          },
+          {
+            "type": "template",
+            "key": "customEventAction",
+            "value": "page_view"
+          },
+          {
+            "type": "template",
+            "key": "eventType",
+            "value": "userDefined"
+          }
+        ],
+        "fingerprint": "1789809568146",
+        "firingTriggerId": [
+          "145"
+        ],
+        "tagFiringOption": "oncePerEvent",
+        "monitoringMetadata": {
+          "type": "map"
+        },
+        "consentSettings": {
+          "consentStatus": "notNeeded"
+        },
+        "paused": true,
+        "notes": "Paused legacy browser PageView. Backend CAPI is the sole Microsoft PageLoad owner."
+      }
+    }
+  ],
+  "preserveTagIds": [
+    "131",
+    "160"
+  ],
+  "gates": [
+    "Verify backend CAPI PageLoad worker/receipt before pausing browser PageLoads; do not publish this draft alone.",
+    "Verify Microsoft account, goals, consent and ID Sync on actual deployment.",
+    "Validate GTM workspace, compile/preview native customConfigTable and intercept outgoing requests before approval.",
+    "Keep app-owned Meta; do not activate server-GTM Meta/Microsoft tags.",
+    "No cron/queue activation included."
+  ],
+  "rebaseEvidence": "gtm-search-removal.verification.json: all 15 tags including 130 and 173 identical to version 173. No publication or PageLoad-owner switch performed."
+}

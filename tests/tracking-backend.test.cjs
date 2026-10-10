@@ -73,6 +73,8 @@ test('browser collectors fail closed outside production, with switch off, wrong 
     [request('/api/events/page-view', { method: 'OPTIONS' }), 405],
     [request('/internal/storefront/accepted-dun-waitlist'), 404],
     [request('/api/cron/canonical-provider-dispatch'), 404],
+    [request('/api/events/search'), 404],
+    [request('/api/events/view-search-results'), 404],
   ]) {
     const api = harness(); const response = await api.forwardTrackingRequest(req);
     assert.equal(response.status, status); assert.equal(api.sends.length, 0); assert.equal(api.audiences.length, 0);
@@ -266,5 +268,58 @@ test('browser cannot forge accepted dealer form or lead through public collector
     assert.equal((await response.json()).error, 'server_receipt_required');
     assert.equal(api.sends.length, 0);
     assert.equal(api.audiences.length, 0);
+  }
+});
+
+const reservation = { ...waitlist, productId: 'gid://shopify/Product/1', variantId: 'gid://shopify/ProductVariant/67610887160056', color: 'Vargnatt', size: 'Small' };
+function reservationReceipt(body, status = 'accepted') {
+  return Response.json({ status, eventId: body.submissionId, dataLayerEvent: { canonical_event: {
+    schema_version: 1, event_name: 'generate_lead', source: 'server', environment: 'production',
+    event_id: body.submissionId, event_time: body.acceptedAt, consent: body.trackingContext.consent,
+    page_url: body.trackingContext.page_url, page_view_id: body.trackingContext.page_view_id,
+    custom_data: { submission_id: body.submissionId, form_id: 'product_reservation_utekos_dun', lead_type: 'product_reservation',
+      product_handle: 'utekos-dun', product_id: body.productId, variant_id: body.variantId, color: body.color, size: body.size },
+  } } });
+}
+test('Dun readback confirms the exact reserved variant without exposing contact data or assigning a value', async () => {
+  const api = harness({ entry: 'lib/tracking/server-forms.ts', respond: ({ body }) => reservationReceipt(body) });
+  const entry = await api.recordAcceptedDunReservation(form(), reservation);
+  assert.ok(entry);
+  assert.equal(entry.event_id, api.submissionIdFromReceipt(reservation.receiptId));
+  assert.equal(entry.canonical_event.custom_data.variant_id, reservation.variantId);
+  assert.equal(entry.canonical_event.custom_data.size, 'Small');
+  assert.equal(entry.canonical_event.page_view_id, pageViewId);
+  assert.equal(entry.custom_data.value, undefined);
+  assert.equal(entry.custom_data.currency, undefined);
+  assert.equal(api.sends.length, 1);
+  assert.equal(api.sends[0].envelope.operation, '/internal/storefront/accepted-dun-reservation');
+  assert.equal(api.sends[0].body.receiptId, undefined);
+  for (const value of [reservation.email, reservation.phone, reservation.firstName]) assert.ok(!JSON.stringify(entry).includes(value));
+});
+test('Dun lost response retries the immutable receipt and accepts a confirmed duplicate', async () => {
+  const api = harness({ entry: 'lib/tracking/server-forms.ts', respond: ({ body }, count) => {
+    if (count === 1) throw new Error('lost response');
+    return reservationReceipt(body, 'duplicate');
+  } });
+  assert.ok(await api.recordAcceptedDunReservation(form(), reservation));
+  assert.equal(api.sends.length, 2);
+  assert.deepEqual(api.sends[0].body, api.sends[1].body);
+});
+test('Dun rejects pending, mismatched and valued readbacks and remains silent in preview', async () => {
+  const preview = harness({ entry: 'lib/tracking/server-forms.ts', env: { VERCEL_ENV: 'preview' } });
+  assert.equal(await preview.recordAcceptedDunReservation(form(), reservation), undefined);
+  assert.equal(preview.sends.length, 0);
+  for (const failure of ['pending', 'id', 'variant', 'page', 'value']) {
+    const api = harness({ entry: 'lib/tracking/server-forms.ts', respond: async ({ body }) => {
+      if (failure === 'pending') return Response.json({ status: 'lead_stored_event_unverified' }, { status: 202 });
+      const data = await reservationReceipt(body).json();
+      if (failure === 'id') data.eventId = pageViewId;
+      if (failure === 'variant') data.dataLayerEvent.canonical_event.custom_data.variant_id = 'gid://shopify/ProductVariant/2';
+      if (failure === 'page') data.dataLayerEvent.canonical_event.page_url = ORIGIN + '/other';
+      if (failure === 'value') Object.assign(data.dataLayerEvent.canonical_event.custom_data, { value: 415.65, currency: 'NOK' });
+      return Response.json(data);
+    } });
+    assert.equal(await api.recordAcceptedDunReservation(form(), reservation), undefined, failure);
+    assert.equal(api.sends.length, 2, failure);
   }
 });

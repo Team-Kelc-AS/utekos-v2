@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { singleLine, sendContactMessage } from '@/lib/contact';
 import { getProduct } from '@/lib/shopify/getProduct';
 import { optionParam } from '@/lib/products/variants';
-import { recordAcceptedForm, submissionIdFromReceipt } from '@/lib/tracking/server-forms';
+import { recordAcceptedDunReservation, recordAcceptedForm, submissionIdFromReceipt } from '@/lib/tracking/server-forms';
 import { dunColors, dunSizes, dunReservationConsent, type DunReservationState } from './dun';
 
 const schema = z.object({
@@ -49,7 +49,11 @@ export async function submitDunReservation(data: FormData): Promise<DunReservati
       ].join('\n'),
     });
     if (!receipt) return failed;
+    const trackingEvent = await recordAcceptedDunReservation(data, {
+      receiptId: receipt.receiptId, email, phone, firstName,
+      productId: product.id, variantId: matches[0].id, color, size,
+    });
     await recordAcceptedForm(data, 'product_reservation_utekos_dun', submissionIdFromReceipt(receipt.receiptId));
-    return { status: 'success' };
+    return { status: 'success', ...(trackingEvent ? { trackingEvent } : {}) };
   } catch { return failed; }
 }

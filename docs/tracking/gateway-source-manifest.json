@@ -41,7 +41,10 @@
       "source": "src/components/analytics/stapeCustomLoader.ts",
       "target": "src/lib/tracking/stapeCustomLoader.ts",
       "sourceSha256": "1bd4e64f948a47fa5ce70fdfab633566e719f00d27c970920ed419b391c3f02f",
-      "adapted": false
+      "adapted": false,
+      "reviewedTargetSha256": "9140dd8f14aa2c0048e7f52e77c4639b4935fa615f7c7a0490fa0feec69b2c17",
+      "generatedScriptSha256": "36b5d2c49a90978e4f510de60225d7ffcfbc857e49e5ff740ad0559e87653450",
+      "reason": "TypeScript formatting differs from pinned source; executable generated loader exactly matched native Stape jsCode readback on 2026-10-10 (1377 bytes). Original source hash retained."
     },
     {
       "source": "src/lib/analytics/withoutTrackingQuery.ts",

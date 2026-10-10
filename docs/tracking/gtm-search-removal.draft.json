@@ -1,0 +1,238 @@
+{
+  "status": "published_verified",
+  "container": "GTM-5TWMJQFP",
+  "accountId": "6295468138",
+  "containerId": "220236256",
+  "baseLiveVersion": "173",
+  "capturedAt": "2026-10-10",
+  "purpose": "Historical reviewed payload, published as live 174. Search removed; tag states and other events preserved.",
+  "changes": [
+    {
+      "triggerId": "122",
+      "expectedFingerprint": "1784295295713",
+      "before": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "triggerId": "122",
+        "name": "Canonical Microsoft business events",
+        "type": "customEvent",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(view_item_list|select_item|view_item|add_to_cart|begin_checkout|search|generate_lead)$"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1784295295713",
+        "notes": "Microsoft UET business-event trigger. page_view remains owned by the UET page-load strategy pending its dedicated canonical redesign."
+      },
+      "proposed": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "triggerId": "122",
+        "name": "Canonical Microsoft business events",
+        "type": "customEvent",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(view_item_list|select_item|view_item|add_to_cart|begin_checkout|generate_lead)$"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1784295295713",
+        "notes": "Microsoft UET business-event trigger. page_view remains owned by the UET page-load strategy pending its dedicated canonical redesign."
+      }
+    },
+    {
+      "triggerId": "147",
+      "expectedFingerprint": "1784295238466",
+      "before": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "triggerId": "147",
+        "name": "Canonical GA4 – non-commerce events",
+        "type": "customEvent",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(search|generate_lead)$"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1784295238466",
+        "notes": "Canonical non-commerce events; ecommerce payload disabled."
+      },
+      "proposed": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "triggerId": "147",
+        "name": "Canonical GA4 – non-commerce events",
+        "type": "customEvent",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(generate_lead)$"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1784295238466",
+        "notes": "Canonical non-commerce events; ecommerce payload disabled."
+      }
+    },
+    {
+      "triggerId": "152",
+      "expectedFingerprint": "1785076380314",
+      "before": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "triggerId": "152",
+        "name": "Meta – Canonical browser events",
+        "type": "customEvent",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(page_view|view_item_list|view_item|select_item|add_to_wishlist|add_to_cart|remove_from_cart|view_cart|begin_checkout|search|generate_lead|scroll_depth|view_category|hero_interact|interact_with_accordion|open_quick_view)$"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1785076380314",
+        "notes": "Canonical Meta browser events mirrored with the CAPI event_id; includes ViewItemList, InteractWithAccordion and OpenQuickView cutover 2026-07-26."
+      },
+      "proposed": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "triggerId": "152",
+        "name": "Meta – Canonical browser events",
+        "type": "customEvent",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(page_view|view_item_list|view_item|select_item|add_to_wishlist|add_to_cart|remove_from_cart|view_cart|begin_checkout|generate_lead|scroll_depth|view_category|hero_interact|interact_with_accordion|open_quick_view)$"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1785076380314",
+        "notes": "Canonical Meta browser events mirrored with the CAPI event_id; includes ViewItemList, InteractWithAccordion and OpenQuickView cutover 2026-07-26."
+      }
+    },
+    {
+      "triggerId": "183",
+      "expectedFingerprint": "1791105242270",
+      "before": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "triggerId": "183",
+        "name": "Data Tag - Canonical GA4 events",
+        "type": "customEvent",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(page_view|view_item_list|select_item|add_to_wishlist|add_to_cart|remove_from_cart|view_cart|begin_checkout|view_promotion|select_promotion|search|generate_lead)$"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1791105242270",
+        "notes": "Sole web-to-sGTM GA4 transport for this event set. view_item and purchase retain their existing app-owned Google Data Manager delivery."
+      },
+      "proposed": {
+        "accountId": "6295468138",
+        "containerId": "220236256",
+        "triggerId": "183",
+        "name": "Data Tag - Canonical GA4 events",
+        "type": "customEvent",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(page_view|view_item_list|select_item|add_to_wishlist|add_to_cart|remove_from_cart|view_cart|begin_checkout|view_promotion|select_promotion|generate_lead)$"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1791105242270",
+        "notes": "Sole web-to-sGTM GA4 transport for this event set. view_item and purchase retain their existing app-owned Google Data Manager delivery."
+      }
+    }
+  ],
+  "publishedVersion": "174",
+  "workspaceId": "186",
+  "verification": "gtm-search-removal.verification.json"
+}

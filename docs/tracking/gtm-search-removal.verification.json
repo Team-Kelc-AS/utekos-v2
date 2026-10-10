@@ -1,0 +1,279 @@
+{
+  "status": "published_verified",
+  "capturedAt": "2026-10-10",
+  "accountId": "6295468138",
+  "containerId": "220236256",
+  "publicId": "GTM-5TWMJQFP",
+  "baseLiveVersion": "173",
+  "liveVersion": "174",
+  "liveFingerprint": "1791617860603",
+  "workspaceId": "186",
+  "compilerError": false,
+  "compilerEvidence": "Recorded native quickPreview and createVersion before approved publication; live readback refreshed independently.",
+  "changedTriggerIds": [
+    "122",
+    "147",
+    "152",
+    "183"
+  ],
+  "triggers": [
+    {
+      "before": {
+        "triggerId": "122",
+        "fingerprint": "1784295295713",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(view_item_list|select_item|view_item|add_to_cart|begin_checkout|search|generate_lead)$"
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "triggerId": "122",
+        "fingerprint": "1791617828189",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(view_item_list|select_item|view_item|add_to_cart|begin_checkout|generate_lead)$"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "before": {
+        "triggerId": "147",
+        "fingerprint": "1784295238466",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(search|generate_lead)$"
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "triggerId": "147",
+        "fingerprint": "1791617830418",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(generate_lead)$"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "before": {
+        "triggerId": "152",
+        "fingerprint": "1785076380314",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(page_view|view_item_list|view_item|select_item|add_to_wishlist|add_to_cart|remove_from_cart|view_cart|begin_checkout|search|generate_lead|scroll_depth|view_category|hero_interact|interact_with_accordion|open_quick_view)$"
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "triggerId": "152",
+        "fingerprint": "1791617832537",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(page_view|view_item_list|view_item|select_item|add_to_wishlist|add_to_cart|remove_from_cart|view_cart|begin_checkout|generate_lead|scroll_depth|view_category|hero_interact|interact_with_accordion|open_quick_view)$"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "before": {
+        "triggerId": "183",
+        "fingerprint": "1791105242270",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(page_view|view_item_list|select_item|add_to_wishlist|add_to_cart|remove_from_cart|view_cart|begin_checkout|view_promotion|select_promotion|search|generate_lead)$"
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "triggerId": "183",
+        "fingerprint": "1791617834519",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(page_view|view_item_list|select_item|add_to_wishlist|add_to_cart|remove_from_cart|view_cart|begin_checkout|view_promotion|select_promotion|generate_lead)$"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "tags": {
+    "count": 15,
+    "identicalToVersion173": true,
+    "states": [
+      {
+        "tagId": "109",
+        "fingerprint": "1791103257677",
+        "paused": false
+      },
+      {
+        "tagId": "118",
+        "fingerprint": "1791105286517",
+        "paused": true
+      },
+      {
+        "tagId": "126",
+        "fingerprint": "1789809541323",
+        "paused": true
+      },
+      {
+        "tagId": "130",
+        "fingerprint": "1789810477003",
+        "paused": false
+      },
+      {
+        "tagId": "131",
+        "fingerprint": "1786383695523",
+        "paused": false
+      },
+      {
+        "tagId": "148",
+        "fingerprint": "1791105290521",
+        "paused": true
+      },
+      {
+        "tagId": "149",
+        "fingerprint": "1791105298159",
+        "paused": true
+      },
+      {
+        "tagId": "153",
+        "fingerprint": "1789889367540",
+        "paused": true
+      },
+      {
+        "tagId": "160",
+        "fingerprint": "1787502152831",
+        "paused": false
+      },
+      {
+        "tagId": "170",
+        "fingerprint": "1789889367540",
+        "paused": true
+      },
+      {
+        "tagId": "171",
+        "fingerprint": "1789889574892",
+        "paused": true
+      },
+      {
+        "tagId": "172",
+        "fingerprint": "1791104613165",
+        "paused": true
+      },
+      {
+        "tagId": "173",
+        "fingerprint": "1789809568146",
+        "paused": false
+      },
+      {
+        "tagId": "174",
+        "fingerprint": "1791104615880",
+        "paused": true
+      },
+      {
+        "tagId": "182",
+        "fingerprint": "1791105706709",
+        "paused": false
+      }
+    ]
+  },
+  "providerEventsSentForVerification": false
+}

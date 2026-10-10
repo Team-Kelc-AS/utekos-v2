@@ -1,6 +1,6 @@
 import "server-only";
 
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -72,13 +72,21 @@ export async function getCategoryMetadata(
 export function CategoryPage({
   categoryKey,
   searchParams,
-}: CategoryPageProps & { categoryKey: ListingKey }) {
+  title,
+  subtitle,
+  bottomContent,
+}: CategoryPageProps & {
+  categoryKey: ListingKey;
+  title?: string;
+  subtitle?: ReactNode;
+  bottomContent?: ReactNode;
+}) {
   const category =
     categoryKey === "all" ? catalogIndex : categories[categoryKey];
   return (
     <main
       data-tracking-route={listingPath(categoryKey)}
-      className="flex-1 bg-night px-6 py-10 text-foreground"
+      className="flex-1 bg-night px-6 py-10 text-primary-foreground"
     >
       <div className="mx-auto max-w-6xl space-y-10">
         <Breadcrumbs
@@ -91,8 +99,10 @@ export function CategoryPage({
           ]}
         />
         <header className="max-w-3xl space-y-4">
-          <h1 className="text-3xl font-extrabold">{category.title}</h1>
-          <p className="font-medium leading-relaxed">{category.intro}</p>
+          <h1 className="text-3xl font-extrabold">{title ?? category.title}</h1>
+          {subtitle ?? (
+            <p className="font-medium leading-relaxed">{category.intro}</p>
+          )}
         </header>
 
         {categoryKey === "all" && <CategoryNavigation />}
@@ -161,6 +171,7 @@ export function CategoryPage({
         )}
         {categoryKey !== "all" && <CategoryNavigation current={categoryKey} />}
         <CategoryRelatedGuides categoryKey={categoryKey} />
+        {bottomContent}
       </div>
     </main>
   );

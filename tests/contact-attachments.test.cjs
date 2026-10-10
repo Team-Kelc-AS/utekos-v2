@@ -14,7 +14,7 @@ function submission(files = []) {
 function setup(response = { ok: true, json: async () => ({ id: 'mock-email-id' }) }) {
   const calls = [];
   const tracking = [];
-  const { submitContactForm } = loadTypeScript('app/kontaktskjema/actions.ts', {
+  const { submitContactForm } = loadTypeScript('app/(storefront)/kontaktskjema/actions.ts', {
     mocks: { '@/lib/tracking/server-forms': { recordAcceptedForm: async (form, id, receipt) => { tracking.push({ id, receipt }); }, submissionIdFromReceipt: id => `fixture:${id}` } },
     env: { RESEND_API_KEY: 'test-only-key', CONTACT_FORM_SEND_TO_EMAIL: 'support@example.com' },
     fetch: async (url, options) => { calls.push({ url, ...options, payload: JSON.parse(options.body) }); return response; },

@@ -33,7 +33,7 @@ async function formRequest(form: FormData) {
     cookie_header: identityCookieHeader(request),
   } };
 }
-async function submitOperation(request: NextRequest, operation: '/internal/storefront/accepted-dun-waitlist' | '/internal/storefront/accepted-dealer-inquiry' | '/api/events/form-submit', body: unknown, timeout = 8000) {
+async function submitOperation(request: NextRequest, operation: '/internal/storefront/accepted-dun-waitlist' | '/internal/storefront/accepted-dun-reservation' | '/internal/storefront/accepted-dealer-inquiry' | '/api/events/form-submit', body: unknown, timeout = 8000) {
   const requestId = crypto.randomUUID();
   const geo = geolocation(request); const ip = ipAddress(request);
   const facebookLoginId = verifiedFacebookLoginId(request);
@@ -82,6 +82,38 @@ export async function recordAcceptedWaitlist(form: FormData, input: { receiptId:
     }
     console.error('waitlist_tracking_unverified', { submissionId });
   } catch { console.error('waitlist_tracking_unverified'); }
+}
+
+/** The accepted email receipt is immutable across bounded, idempotent bridge retries. */
+export async function recordAcceptedDunReservation(form: FormData, input: {
+  receiptId: string; email: string; phone: string; firstName: string;
+  productId: string; variantId: string; color: 'Vargnatt' | 'Fjellblå'; size: 'Small' | 'Medium' | 'Large';
+}): Promise<GenerateLeadDataLayerEvent | undefined> {
+  const submissionId = submissionIdFromReceipt(input.receiptId);
+  try {
+    const context = await formRequest(form); if (!context) return;
+    const body = {
+      submissionId, acceptedAt: new Date().toISOString(), trackingContext: context.trackingContext,
+      email: input.email, phone: input.phone, firstName: input.firstName,
+      productId: input.productId, variantId: input.variantId, color: input.color, size: input.size,
+    };
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const result = await submitOperation(context.request, '/internal/storefront/accepted-dun-reservation', body);
+        const parsed = z.object({ status: z.enum(['accepted', 'duplicate']), eventId: z.uuid(), dataLayerEvent: z.looseObject({ canonical_event: canonicalGenerateLeadSchema }) }).safeParse(result.data);
+        if (result.httpStatus !== 200 || !parsed.success || parsed.data.eventId !== submissionId) continue;
+        const event = parsed.data.dataLayerEvent.canonical_event;
+        const data = event.custom_data;
+        if (event.event_id === submissionId && data.submission_id === submissionId &&
+          data.form_id === 'product_reservation_utekos_dun' && data.lead_type === 'product_reservation' &&
+          'variant_id' in data && data.variant_id === input.variantId && data.product_id === input.productId &&
+          data.color === input.color && data.size === input.size && event.page_url === context.trackingContext.page_url) {
+          return buildGenerateLeadDataLayerEvent(event);
+        }
+      } catch { /* Retry the same receipt, never send the email again here. */ }
+    }
+  } catch { /* Email acceptance remains successful if telemetry is unavailable. */ }
+  console.error('dun_reservation_tracking_unverified', { submissionId });
 }
 
 /** The email receipt is authoritative. Tracking retries never resend the email. */
