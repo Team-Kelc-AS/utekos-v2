@@ -229,6 +229,21 @@ test('checkout requires successful mutation and returned attribute equality', as
   ]) await assert.rejects(checkoutHarness(async () => ({ cartAttributesUpdate: payload })).persistCheckoutAttributes(fullId, cart, event), CartError);
 });
 
+test('checkout accepts cleared attributes omitted by Shopify but rejects retained stale identity', async () => {
+  const cart = makeCart([makeLine(1, '800')]);
+  const event = beginEvent(cart);
+  for (const stale of [false, true]) {
+    const api = checkoutHarness(async request => ({ cartAttributesUpdate: {
+      cart: { id: fullId, attributes: [
+        ...request.variables.attributes.filter(attribute => attribute.value !== ''),
+        ...(stale ? [{ key: 'utekos_facebook_login_id', value: 'stale-identity' }] : []),
+      ] }, userErrors: [], warnings: [],
+    } }));
+    if (stale) await assert.rejects(api.persistCheckoutAttributes(fullId, cart, event), CartError);
+    else await api.persistCheckoutAttributes(fullId, cart, event);
+  }
+});
+
 test('Klarna reads attribution and correlation from the owned server-side cart', async () => {
   const api = checkoutHarness();
   const cart = makeCart([makeLine(1, '800')]);

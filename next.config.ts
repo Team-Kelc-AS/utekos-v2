@@ -20,6 +20,17 @@ const nextConfig: NextConfig = {
   experimental: { serverActions: { bodySizeLimit: "4.25mb" } },
   images: { remotePatterns: [{ protocol: "https", hostname: "cdn.shopify.com", pathname: "/s/files/1/0634/2154/6744/**" }] },
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  async rewrites() {
+    return {
+      beforeFiles: [{
+        source: '/', has: [{ type: 'host', value: 'feed\\.utekos\\.no' }],
+        destination: 'https://backend.utekos.no/klarna-feed.xml',
+      }],
+      afterFiles: ['/klarna-feed.xml', '/api/feeds/microsoft-merchant'].map(source => ({
+        source, destination: `https://backend.utekos.no${source}`,
+      })),
+    };
+  },
   async redirects() {
     return [
       { source: "/contact", destination: "/kontaktskjema", permanent: true },

@@ -54,6 +54,15 @@ export function parseCheckoutEvent(
     event.custom_data.checkout_id !== cart.checkout?.checkout_id ||
     event.custom_data.creation_revision !== cart.checkout?.creation_revision
   ) {
+    console.warn('checkout_preparation_rejected', {
+      stage: 'identity',
+      environment: event.environment === expectedEnvironment,
+      origin: new URL(event.page_url).origin === origin,
+      cart: event.custom_data.cart_id === cart.id,
+      method: event.checkout_method === (method === 'klarna' ? 'klarna_express' : 'shopify_checkout'),
+      checkout: event.custom_data.checkout_id === cart.checkout?.checkout_id,
+      revision: event.custom_data.creation_revision === cart.checkout?.creation_revision,
+    });
     throw new CartError("Kassen kunne ikke bekreftes. Prøv igjen.", 409);
   }
   // A newer cart in another tab must not attach stale product/value evidence.
@@ -162,10 +171,15 @@ export async function persistCheckoutAttributes(
       attribute.value,
     ]),
   );
-  if (
-    attributes.some(
-      (attribute) => actual.get(attribute.key) !== attribute.value,
-    )
-  )
+  const mismatched = attributes.filter(attribute =>
+    attribute.value === ''
+      ? actual.has(attribute.key) && actual.get(attribute.key) !== ''
+      : actual.get(attribute.key) !== attribute.value,
+  );
+  if (mismatched.length) {
+    console.warn('checkout_preparation_rejected', {
+      stage: 'attribute_readback', keys: mismatched.map(attribute => attribute.key),
+    });
     throw new CartError("Kassen kunne ikke bekreftes. Prøv igjen.", 409);
+  }
 }

@@ -36,4 +36,4 @@ Planene er avlest fra Vercel for deploymenten over. Tidene er UTC.
 
 meta-view-item-dispatch, shopify-commerce-reconciliation og sync-google-merchant er fortsatt unscheduled. Cron krever eksisterende operatorhemmelighet; offentlige collectors er stengt. [Konsumentsikkerhet](https://vercel.com/docs/queues/concepts#consumer-function-security), [deploymentbundne leveringer](https://vercel.com/docs/queues/concepts#stopping-deliveries-to-a-deployment).
 
-V2-produksjons-OIDC, rå Shopify-HMAC og korrelert naturlig checkout-completion/kjøp er neste bevisgrense. READY og HTTP-aksept er ikke dedupliserings-/attribusjonsbevis.
+V2-produksjons-OIDC og rå Shopify-HMAC er verifisert gjennom den publiserte v2-fronten. Korrelert naturlig checkout-completion/kjøp er neste bevisgrense. READY og HTTP-aksept er ikke dedupliserings-/attribusjonsbevis.

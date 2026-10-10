@@ -8,8 +8,10 @@ Les [status og verifikasjon](STATUS-2026-10-10.md), [stegvis plan](MIGRATION-PLA
 
 - Backend main `bcb7ddffd0c7a71fa5e19fa172c8951349229c07` er READY som `dpl_EvdZTQSa4Pw8ACgVXpZaBoj6zFyQ`. Health bekrefter samme SHA, workers/ingress/køpublisering true, Redis/database OK. Ni backend-crons og privat kø er runtime-verifisert; gamle storefront-crons er deaktivert.
 - Web-GTM live **174** har fjernet søk fra fire triggere; alle 15 tagger er identiske med live 173. [Publiseringsbevis](gtm-search-removal.verification.json). Server-GTM 44 og Stape Power Ups er uendret.
-- Storefrontprosjekt `prj_MpZN3Z0PDp8rfwpdzAeplGe4Di0s` heter fortsatt `utekos-headless`. Git-koblingen peker nå til `Team-Kelc-AS/utekos-v2`; selve v2-trafikkreleasen gjenstår.
+- Storefrontprosjekt `prj_MpZN3Z0PDp8rfwpdzAeplGe4Di0s` heter fortsatt `utekos-headless`. Git-koblingen peker nå til `Team-Kelc-AS/utekos-v2`; v2 f12bbae er READY på utekos.no/www/feed. Produksjons-OIDC og rå Shopify-HMAC er verifisert.
 - Brukeren har uttrykkelig godkjent workers, køer, cron og publisering. Tidligere Brand Studio-begrensning er opphevet. Tre manglende Microsoft Purchase er levert med eventsReceived=1 uten valideringsfeil; fire utløpte redateres ikke.
+
+Produktfeeder beholder `/klarna-feed.xml`, `/api/feeds/microsoft-merchant` og roten på `feed.utekos.no`, med eksakte rewrites til backend. Oppfølgingsrelease retter bortfalte ruter og checkout-validering; se statusrapporten for faktisk verifikasjon.
 
 ## Eierskap
 
@@ -40,7 +42,7 @@ Broen bruker Vercel OIDC med fast audience og eksplisitt operasjonsliste. V2 byg
 
 | Hvor | Navn / verdi | Kontroll |
 |---|---|---|
-| Storefront | `NEXT_PUBLIC_TRACKING_ENABLED` | Produksjon er satt til `true`; krever nytt v2-build før runtime-endring |
+| Storefront | `NEXT_PUBLIC_TRACKING_ENABLED` | Produksjon er satt til `true`; kanonisk innsamling og Meta/Microsoft-mottak observert fra v2 |
 | Storefront | `NEXT_PUBLIC_VERCEL_ENV=production` | Browsergrenen krever nøyaktig denne verdien |
 | Begge servere | `VERCEL_ENV=production` | Vercel-runtime; lokalt production-build er ikke tilstrekkelig |
 | Begge servere | `VERCEL_GIT_COMMIT_SHA` | Korrelasjon av konkret storefront-/backend-SHA |
