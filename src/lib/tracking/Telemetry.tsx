@@ -19,14 +19,9 @@ export function Telemetry() {
       <Analytics
         mode="production"
         beforeSend={beforeSend}
-        scriptSrc="/telemetry/v1/web.js"
-        viewEndpoint="/telemetry/v1/view"
-        eventEndpoint="/telemetry/v1/event"
       />
       <SpeedInsights
         beforeSend={beforeSend}
-        scriptSrc="/telemetry/v1/speed.js"
-        endpoint="/telemetry/v1/vitals"
       />
     </>
   )

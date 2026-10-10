@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-10-10T10:53:30.764Z",
+  "observed_at": "2026-10-10T11:39:16.534Z",
   "accountId": "6295468138",
   "containerId": "220236256",
   "container": "GTM-5TWMJQFP",
@@ -25,5 +25,79 @@
     "182"
   ],
   "compilerError": false,
-  "browserVerification": "pending"
+  "browserVerification": {
+    "observed_at": "2026-10-10T11:39:16.534Z",
+    "scope": "actual Chrome product reload after web GTM175",
+    "truncated": false,
+    "hasMore": false,
+    "canonical": [
+      {
+        "requestId": "37439.391",
+        "path": "/api/events/page-view",
+        "event_id": "b3b6d8b7-b50f-4683-94f1-a7b6b53c2c21",
+        "event_name": "page_view"
+      },
+      {
+        "requestId": "37439.393",
+        "path": "/api/events/view-item",
+        "event_id": "0699476f-0a1b-4859-be68-f1eac823123e",
+        "event_name": "view_item"
+      }
+    ],
+    "microsoft": [
+      {
+        "evt": "consent",
+        "ea": null,
+        "event_id": null
+      },
+      {
+        "evt": "custom",
+        "ea": "view_item",
+        "event_id": "0699476f-0a1b-4859-be68-f1eac823123e"
+      }
+    ],
+    "pageLoadCount": 0,
+    "customPageViewCount": 0,
+    "idSync": [
+      {
+        "http_status": 200,
+        "vid_present": true
+      }
+    ],
+    "canonicalResponses": [
+      {
+        "requestId": "37439.391",
+        "path": "/api/events/page-view",
+        "event_id": "b3b6d8b7-b50f-4683-94f1-a7b6b53c2c21",
+        "event_name": "page_view",
+        "http_status": 202
+      },
+      {
+        "requestId": "37439.393",
+        "path": "/api/events/view-item",
+        "event_id": "0699476f-0a1b-4859-be68-f1eac823123e",
+        "event_name": "view_item",
+        "http_status": 202
+      }
+    ]
+  },
+  "serverPageViewReceipts": {
+    "event_id": "b3b6d8b7-b50f-4683-94f1-a7b6b53c2c21",
+    "meta": {
+      "http_status": 200,
+      "eventsReceived": 1
+    },
+    "microsoft_uet": {
+      "http_status": 200,
+      "eventsReceived": 1
+    }
+  },
+  "postPublishAddToCart": {
+    "event_id": "6aa20367-6f22-463f-8d36-9d51e433aaa9",
+    "browser_microsoft_same_event_id": true,
+    "quantity_delta": 1,
+    "gross_value_nok": 1990,
+    "meta_http_status": 200,
+    "microsoft_http_status": 200
+  }
 }

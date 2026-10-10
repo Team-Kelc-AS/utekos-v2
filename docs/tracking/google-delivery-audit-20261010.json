@@ -1,0 +1,75 @@
+{
+  "capturedAt": "2026-10-10",
+  "readOnly": true,
+  "backendHead": "c50275590c29fa2d95b5ce9aaf36291864cfd813",
+  "config": {
+    "name": "GOOGLE_DATA_MANAGER_VALIDATE_ONLY",
+    "scope": "global all Google Data Manager event dispatchers including purchase, view_item and refund",
+    "missingOrBlankDefault": true,
+    "nativeProductionEnvId": "HSxxf1eGH2xO2IpA",
+    "nativeSensitiveValueAvailable": false,
+    "effectiveRuntimeValidateOnly": true,
+    "proofEventId": "9cbf4636-be9a-4de8-a2b7-36f4deb2d7fc"
+  },
+  "destinations": {
+    "currentSourceMeasurementId": "G-FCES3L0M9M",
+    "currentSourceAccountType": "GOOGLE_ANALYTICS_PROPERTY",
+    "currentSourceDestinationCount": 1,
+    "historicalConfirmedPurchasePropertyId": "489598217",
+    "historicalConfirmedPurchaseMeasurementId": "G-FCES3L0M9M",
+    "googleAdsDestinationPresentInSender": false,
+    "freshValidationRequestDestinationNotStoredInReceipt": true
+  },
+  "webGtm": {
+    "version": "175",
+    "fingerprint": "1791629511453",
+    "dataTagId": "182",
+    "triggerId": "183",
+    "purchaseExcluded": true,
+    "viewItemExcluded": true,
+    "transactionIdVariableId": "190",
+    "transactionIdFallbackEvents": [
+      "select_item",
+      "add_to_cart",
+      "begin_checkout"
+    ],
+    "transactionIdCustomDataFirst": true
+  },
+  "serverGtm": {
+    "evidence": "/tmp/utekos-stape-final-readback-20261010.json",
+    "sha256": "ed2cd0130e38e550beab02e47ef27338d609f819636fb562a2d7d26b7116da01",
+    "version": "44",
+    "dataClientAllowedOriginalEvents": [
+      "page_view",
+      "add_to_cart",
+      "begin_checkout"
+    ],
+    "cartAndCheckoutRewrittenTo": "poas_estimate",
+    "viewItemBlockedOnGa4Client": true,
+    "transactionIdAllowedByTransformation43": true,
+    "originalDataTagOverlapForwardedToGa4": false,
+    "verificationTier": "published configuration, not live server preview"
+  },
+  "validationOnlyAttempts": {
+    "latestObservedTotal": 1012,
+    "activeQueue": 0,
+    "scheduledRetry": 0,
+    "terminalAccepted": 1012,
+    "statusPollerExcludes": true,
+    "requiresTerminalMutation": false,
+    "replayRecommended": false
+  },
+  "minimumNextStep": [
+    "Set only backend production GOOGLE_DATA_MANAGER_VALIDATE_ONLY=false.",
+    "Deploy backend by approved pnpm run sync workflow with operator status change.",
+    "Create fresh actual view_category or view_item occurrence, then verify validate_only=false, same event_id, request_id and later provider-confirmed success.",
+    "Preserve historical validation receipts; do not replay or mark them succeeded."
+  ],
+  "docs": {
+    "nativeGoogleMcp": "requires reauthentication",
+    "context7Library": "/websites/developers_google_data-manager_api",
+    "validateOnly": "https://developers.google.com/data-manager/api/reference/rpc/google.ads.datamanager.v1",
+    "deduplication": "https://developers.google.com/data-manager/api/devguides/events/send-events",
+    "destination": "https://developers.google.com/data-manager/api/devguides/concepts/destinations"
+  }
+}

@@ -1,0 +1,506 @@
+{
+  "checkedAt": "2026-10-10T11:00:55.877Z",
+  "container": {
+    "identifier": "gqnrnczg",
+    "name": "Utekos sGTM Container",
+    "status": "running",
+    "warnings": [],
+    "serverGtm": "GTM-M8GT97CV",
+    "customDomain": "edge.utekos.no",
+    "gateway": "/__sgtm",
+    "webGtm": "GTM-5TWMJQFP"
+  },
+  "subscription": {
+    "plan": "pro",
+    "paidStatus": "paid",
+    "paymentStatus": "ok",
+    "usageState": "ok",
+    "limitExceeded": false,
+    "features": {
+      "monitoring": false,
+      "monitoringLimit": 0,
+      "exportLogs": false
+    }
+  },
+  "powerUps": {
+    "active": [
+      "customLoader",
+      "adBlocker",
+      "cookieKeeper",
+      "aiTrafficDetection",
+      "geoHeaders",
+      "userAgentInfo",
+      "userId",
+      "storage",
+      "clickIdRestorer",
+      "productFeed",
+      "enricher"
+    ],
+    "inactive": [
+      "blockRequestByIp",
+      "anonymizer",
+      "previewHeaderConfig",
+      "serviceAccount",
+      "botDetection",
+      "fileProxy",
+      "xmlToJson",
+      "schedule",
+      "requestDelay",
+      "botIndex",
+      "dedicatedIp"
+    ]
+  },
+  "cookieKeeper": {
+    "standard": {
+      "ga": true,
+      "gads": false,
+      "stape": true,
+      "tikTok": false,
+      "klaviyo": false,
+      "facebook": true,
+      "linkedin": false,
+      "snapchat": true,
+      "pinterest": false,
+      "affiliates": false,
+      "microsoft_bing": true,
+      "google_d_and_v_360": false
+    },
+    "customCount": 0
+  },
+  "productFeed": {
+    "isActive": true,
+    "options": {
+      "isSyncActive": false
+    }
+  },
+  "clickIdRestorer": {
+    "isActive": true,
+    "options": {
+      "googleClickId": null,
+      "microsoftClickId": "backup_msclkid"
+    }
+  },
+  "enricher": {
+    "isActive": true,
+    "options": {
+      "mode": "automatic",
+      "sources": {
+        "cookies": {
+          "enabled": true,
+          "requiresConsent": false
+        },
+        "store": {
+          "enabled": true,
+          "requiresConsent": false
+        }
+      },
+      "params": {
+        "email": true,
+        "phone": true,
+        "fullName": true,
+        "dateOfBirth": true,
+        "gender": true,
+        "geo": true,
+        "address": true,
+        "postalCode": true,
+        "commonCookies": true,
+        "externalId": true
+      }
+    }
+  },
+  "domain": [
+    {
+      "name": "edge.utekos.no",
+      "status": "ok",
+      "error": "ok",
+      "isBadDomain": false
+    }
+  ],
+  "connections": [
+    {
+      "provider": "data-manager",
+      "expired": false
+    },
+    {
+      "provider": "microsoftV2",
+      "expired": false
+    }
+  ],
+  "monitoring": {
+    "listHttpStatus": 409,
+    "aggregatedHttpStatus": 409,
+    "interpretation": "Unavailable subscription feature; API 409 alone is not delivery evidence",
+    "officialDocumentation": "https://stape.io/helpdesk/documentation/monitoring-feature"
+  },
+  "logExport": {
+    "available": false,
+    "interpretation": "Unavailable subscription feature; API Feature is not available"
+  },
+  "serverGtmLive": {
+    "publicId": "GTM-M8GT97CV",
+    "version": "44",
+    "fingerprint": "1791106652949",
+    "tagCount": 1,
+    "activeTags": [
+      {
+        "id": "4",
+        "name": "GA4",
+        "type": "sgtmgaaw"
+      }
+    ],
+    "pausedTags": []
+  },
+  "webGtmLive": {
+    "publicId": "GTM-5TWMJQFP",
+    "version": "175",
+    "fingerprint": "1791629511453",
+    "tagCount": 15,
+    "activeTags": [
+      {
+        "id": "109",
+        "name": "Canonical Google tag - GT-MKRLF5WK",
+        "type": "googtag"
+      },
+      {
+        "id": "130",
+        "name": "Base Tag(UET 97247724)",
+        "type": "baut"
+      },
+      {
+        "id": "131",
+        "name": "Microsoft UET – Canonical business events",
+        "type": "baut"
+      },
+      {
+        "id": "160",
+        "name": "Microsoft UET – Client ID Sync",
+        "type": "img"
+      },
+      {
+        "id": "182",
+        "name": "Data Tag",
+        "type": "cvt_MBTSV"
+      }
+    ],
+    "pausedTags": [
+      {
+        "id": "118",
+        "name": "GA4 – Canonical ecommerce events"
+      },
+      {
+        "id": "126",
+        "name": "Cookiebot CMP"
+      },
+      {
+        "id": "148",
+        "name": "GA4 – Canonical page_view"
+      },
+      {
+        "id": "149",
+        "name": "GA4 – Canonical non-commerce events"
+      },
+      {
+        "id": "153",
+        "name": "Meta – Pixel – Canonical browser parity"
+      },
+      {
+        "id": "170",
+        "name": "Meta Pixel ID 868548201601695"
+      },
+      {
+        "id": "171",
+        "name": "Signals Gateway – Canonical cbq bridge v1.0.0"
+      },
+      {
+        "id": "172",
+        "name": "GA4 – Canonical ecommerce events(Microsoft UET)"
+      },
+      {
+        "id": "173",
+        "name": "GA4 – Canonical page_view(Microsoft UET)"
+      },
+      {
+        "id": "174",
+        "name": "GA4 – Canonical non-commerce events(Microsoft UET)"
+      }
+    ]
+  },
+  "boundaries": {
+    "monitoring409": "Subscription capability unavailable; not an observed delivery failure.",
+    "productFeed": "Active capability, synchronization disabled; POAS enrichment not verified.",
+    "browserPowerUps": "Enabled configuration does not prove Safari persistence or advertising click recovery.",
+    "backendOwnership": "Server GTM44 has only a GA4 tag; no Meta/Microsoft sGTM senders, so Stape native connections and Enricher cannot establish backend adapter enrichment.",
+    "mutations": "No provider/repository mutations performed."
+  },
+  "httpHealth": [
+    {
+      "url": "https://edge.utekos.no/healthy",
+      "httpStatus": 200,
+      "body": "ok"
+    },
+    {
+      "url": "https://utekos.no/__sgtm/healthy",
+      "httpStatus": 200,
+      "body": "ok"
+    }
+  ],
+  "ga4Boundary": {
+    "accountId": "6333110851",
+    "containerId": "248521914",
+    "version": "44",
+    "ga4Tag": {
+      "id": "4",
+      "epToIncludeDropdown": "all",
+      "firingTriggers": [
+        "3",
+        "53"
+      ],
+      "blockingTriggers": [
+        "38"
+      ]
+    },
+    "allowlist": {
+      "transformationId": "43",
+      "fingerprint": "1791106634411",
+      "transactionIdAllowed": true,
+      "eventIdAllowed": true
+    },
+    "routing": [
+      {
+        "accountId": "6333110851",
+        "containerId": "248521914",
+        "triggerId": "3",
+        "name": "All GA4 Events",
+        "type": "always",
+        "filter": [
+          {
+            "type": "equals",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{Client Name}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "GA4"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1775523310166"
+      },
+      {
+        "accountId": "6333110851",
+        "containerId": "248521914",
+        "triggerId": "38",
+        "name": "Block GA4 view_item – Google Data Manager owner",
+        "type": "customEvent",
+        "customEventFilter": [
+          {
+            "type": "equals",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "view_item"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1784250432831",
+        "notes": "Exact view_item exception. Google Data Manager owns server delivery; page_view and all other GA4 events remain eligible."
+      },
+      {
+        "accountId": "6333110851",
+        "containerId": "248521914",
+        "triggerId": "53",
+        "name": "Data Client - Page views and POAS estimates",
+        "type": "always",
+        "filter": [
+          {
+            "type": "equals",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{Client Name}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "Data Client"
+              }
+            ]
+          },
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{Event Name}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "^(page_view|add_to_cart|begin_checkout)$"
+              }
+            ]
+          }
+        ],
+        "fingerprint": "1791106629883"
+      }
+    ],
+    "poasTransformation": {
+      "accountId": "6333110851",
+      "containerId": "248521914",
+      "transformationId": "55",
+      "name": "POAS - estimert produktmargin før kjøp",
+      "type": "tf_augment_event",
+      "parameter": [
+        {
+          "type": "boolean",
+          "key": "matchingConditionsEnabled",
+          "value": "true"
+        },
+        {
+          "type": "boolean",
+          "key": "allTagsExcept",
+          "value": "true"
+        },
+        {
+          "type": "template",
+          "key": "booleanExpressionString"
+        },
+        {
+          "type": "list",
+          "key": "augmentEventTable",
+          "list": [
+            {
+              "type": "map",
+              "map": [
+                {
+                  "type": "template",
+                  "key": "paramName",
+                  "value": "estimated_profit"
+                },
+                {
+                  "type": "template",
+                  "key": "paramValue",
+                  "value": "{{POAS - Stape margin}}"
+                }
+              ]
+            },
+            {
+              "type": "map",
+              "map": [
+                {
+                  "type": "template",
+                  "key": "paramName",
+                  "value": "poas_source_event"
+                },
+                {
+                  "type": "template",
+                  "key": "paramValue",
+                  "value": "{{Event Name}}"
+                }
+              ]
+            },
+            {
+              "type": "map",
+              "map": [
+                {
+                  "type": "template",
+                  "key": "paramName",
+                  "value": "event_name"
+                },
+                {
+                  "type": "template",
+                  "key": "paramValue",
+                  "value": "poas_estimate"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "key": "affectedTags"
+        },
+        {
+          "type": "list",
+          "key": "affectedTagTypes"
+        },
+        {
+          "type": "list",
+          "key": "matchingConditionsTable",
+          "list": [
+            {
+              "type": "map",
+              "map": [
+                {
+                  "type": "template",
+                  "key": "variableName",
+                  "value": "Client Name"
+                },
+                {
+                  "type": "template",
+                  "key": "variableReference",
+                  "value": "{{Client Name}}"
+                },
+                {
+                  "type": "template",
+                  "key": "expressionType",
+                  "value": "EQUALS"
+                },
+                {
+                  "type": "template",
+                  "key": "expressionValue",
+                  "value": "Data Client"
+                }
+              ]
+            },
+            {
+              "type": "map",
+              "map": [
+                {
+                  "type": "template",
+                  "key": "variableName",
+                  "value": "Event Name"
+                },
+                {
+                  "type": "template",
+                  "key": "variableReference",
+                  "value": "{{Event Name}}"
+                },
+                {
+                  "type": "template",
+                  "key": "expressionType",
+                  "value": "REGEX"
+                },
+                {
+                  "type": "template",
+                  "key": "expressionValue",
+                  "value": "^(add_to_cart|begin_checkout)$"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "fingerprint": "1791106603340",
+      "notes": "Separate poas_estimate event avoids duplicate canonical ecommerce events already sent by the application Data Manager outbox. Actual purchase profit remains on the authoritative purchase."
+    }
+  },
+  "officialDocumentation": [
+    "https://stape.io/helpdesk/documentation/monitoring-feature",
+    "https://stape.io/helpdesk/documentation/plan-tiers-and-limits"
+  ]
+}

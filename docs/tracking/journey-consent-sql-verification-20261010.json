@@ -1,0 +1,9 @@
+{
+  "postgres": "17",
+  "cases": 8,
+  "passed": 8,
+  "accepted": 2,
+  "invalid_rejected": 6,
+  "database": "isolated_unix_socket",
+  "migration": "20261010114000_align_journey_consent_sources.sql"
+}

@@ -6,9 +6,9 @@ Les [status og verifikasjon](STATUS-2026-10-10.md), [stegvis plan](MIGRATION-PLA
 
 ## Observert produksjonsstatus
 
-- Backend main `c50275590c29fa2d95b5ce9aaf36291864cfd813` er READY som `dpl_5YCVLXK4fcSmdq35Jj8554hBgHe2`. Health bekrefter samme SHA, workers/ingress/køpublisering true, Redis/database OK. Ni backend-crons og privat kø er runtime-verifisert; gamle storefront-crons er deaktivert.
-- Web-GTM live **175** viderefører søkfjerningen fra 174 og gjør backend CAPI til eneste Microsoft PageLoad-eier. Business- og ID Sync-tagger er bevart. [Publiseringsbevis](gtm-search-removal.verification.json). Server-GTM 44 og Stape Power Ups er uendret.
-- Storefrontprosjekt `prj_MpZN3Z0PDp8rfwpdzAeplGe4Di0s` heter fortsatt `utekos-headless`. Git-koblingen peker nå til `Team-Kelc-AS/utekos-v2`; v2 f12bbae er READY på utekos.no/www/feed. Produksjons-OIDC og rå Shopify-HMAC er verifisert.
+- Backend og v2 er i produksjon. [Dagens statusrapport](STATUS-2026-10-10.md) er autoritativ for konkrete releases, API-mottak og gjenstående kontroller.
+- Web-GTM live **175** viderefører søkfjerningen fra174 og gjør backend CAPI til eneste Microsoft PageView-eier. Business- og ID Sync-tagger er bevart. [Faktisk nettverks- og mottaksbevis](microsoft-pageload-owner.verification.json). Server-GTM44 og Stape Power Ups er videreført.
+- Storefrontprosjektet heter fortsatt utekos-headless, men Git peker til Team-Kelc-AS/utekos-v2. Chrome-produkt/kurv/checkout og Meta/Microsoft-mottak er kontrollert. Brukeren har valgt første naturlige kjøp til siste Purchase-avstemming. Safari-kontrollen er fortsatt uavklart.
 - Brukeren har uttrykkelig godkjent workers, køer, cron og publisering. Tidligere Brand Studio-begrensning er opphevet. Tre manglende Microsoft Purchase er levert med eventsReceived=1 uten valideringsfeil; fire utløpte redateres ikke.
 
 Produktfeeder beholder `/klarna-feed.xml`, `/api/feeds/microsoft-merchant` og roten på `feed.utekos.no`, med eksakte rewrites til backend. Oppfølgingsrelease retter bortfalte ruter og checkout-validering; se statusrapporten for faktisk verifikasjon.

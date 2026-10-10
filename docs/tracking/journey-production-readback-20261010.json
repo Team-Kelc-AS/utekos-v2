@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-10-10T11:39:45.633Z",
+  "truncated": false,
+  "hasMore": false,
+  "events": [
+    {
+      "event_id": "83759016-e336-4cc4-90f7-1a5bc6407da0",
+      "event_name": "page_arrival",
+      "consent_source": "operator_policy",
+      "http_status": 202
+    },
+    {
+      "event_id": "373b11db-b0c3-4b9f-a28d-d3d41fb27145",
+      "event_name": "section_view",
+      "consent_source": "operator_policy",
+      "http_status": 202
+    }
+  ]
+}
