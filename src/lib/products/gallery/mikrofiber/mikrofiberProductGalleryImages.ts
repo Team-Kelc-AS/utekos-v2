@@ -1,6 +1,5 @@
 import { productImage } from '@/lib/products/productImage'
 import type { ProductImage as Image } from '@/lib/shopify/product-types'
-import mikrofiberMobileStill11 from '@/assets/products/mikrofiber/11.webp'
 import mikrofiberMobileStill12 from '@/assets/products/mikrofiber/12.webp'
 import mikrofiberMobileStill13 from '@/assets/products/mikrofiber/13.webp'
 import mikrofiberMobileStill14 from '@/assets/products/mikrofiber/14.webp'
@@ -27,8 +26,6 @@ const MICROFIBER_DESKTOP_STILL_WIDE_WIDTH = 2048
 const MICROFIBER_DESKTOP_STILL_WIDE_HEIGHT = 2633
 const MICROFIBER_DESKTOP_STILL_4_WIDTH = 1048
 const MICROFIBER_DESKTOP_STILL_4_HEIGHT = 1347
-const MICROFIBER_MOBILE_STILL_11_WIDTH = 2800
-const MICROFIBER_MOBILE_STILL_11_HEIGHT = 3600
 const MICROFIBER_MOBILE_STILL_12_WIDTH = 2000
 const MICROFIBER_MOBILE_STILL_12_HEIGHT = 3000
 const MICROFIBER_MOBILE_STILL_14_WIDTH = 1264
@@ -39,13 +36,6 @@ const MICROFIBER_MOBILE_STILL_17_WIDTH = 1500
 const MICROFIBER_MOBILE_STILL_17_HEIGHT = 2250
 
 export const MICROFIBER_MOBILE_GALLERY_IMAGES: Image[] = [
-  productImage(
-    'utekos-mikrofiber-mobile-still-11',
-    mikrofiberMobileStill11,
-    'Fjellblå Utekos Mikrofiber i halvfigur forfra.',
-    MICROFIBER_MOBILE_STILL_11_WIDTH,
-    MICROFIBER_MOBILE_STILL_11_HEIGHT
-  ),
   productImage(
     'utekos-mikrofiber-mobile-still-12',
     mikrofiberMobileStill12,

@@ -62,10 +62,14 @@
   font-size: 1rem;
   line-height: 1.5;
   white-space: nowrap;
+  cursor: pointer;
 }
 .signupButton:focus-visible {
   outline: 3px solid #f0eee9;
   outline-offset: 5px;
+}
+.signupCallout dialog {
+  text-align: left;
 }
 @media (max-width: 767px) {
   .signupCallout {

@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { KnowledgeSignupButton } from './KnowledgeSignupButton'
 import styles from './knowledgeOverview.module.css'
 
 export function KnowledgeSignupCallout() {
@@ -15,10 +16,7 @@ export function KnowledgeSignupCallout() {
         <strong>Gjør fakta til praktisk nytte.</strong>{' '}
         Motta våre grundigste veiledere om uterom, bekledning og tekniske løsninger.
       </p>
-      {/* Enable when the newsletter destination is confirmed. */}
-      <button className={styles.signupButton} type='button' disabled>
-        Meld deg på
-      </button>
+      <KnowledgeSignupButton className={styles.signupButton} />
     </aside>
   )
 }

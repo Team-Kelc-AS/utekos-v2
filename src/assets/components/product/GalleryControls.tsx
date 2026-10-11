@@ -25,7 +25,7 @@ export function GalleryControls({ children, desktopCount, mobileCount, showMobil
     if (!rail) return;
     // Keep the same image when the width changes; clamp when switching to a shorter gallery.
     const observer = new ResizeObserver(() => {
-      const next = Math.min(currentIndex.current, count - 1);
+      const next = Math.max(0, Math.min(currentIndex.current, count - 1));
       currentIndex.current = next;
       setIndex(next);
       rail.scrollTo({ left: next * rail.clientWidth, behavior: 'instant' });

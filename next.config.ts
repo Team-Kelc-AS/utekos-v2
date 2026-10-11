@@ -33,6 +33,7 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      { source: "/produkter/techdown", destination: "/produkter/utekos-techdown", permanent: true },
       { source: "/contact", destination: "/kontaktskjema", permanent: true },
       { source: "/pages/contact", destination: "/kontaktskjema", permanent: true },
       { source: "/pages/kundeservice", destination: "/kontaktskjema", permanent: true },

@@ -46,6 +46,7 @@ export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
   )
 ]
 
+// Mobile gallery uses original 2:3 images only.
 export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
   productImage(
     'comfyrobe-mobile-1000x1500-mob',
@@ -53,13 +54,6 @@ export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
     'Kvinne i marineblå Comfyrobe foran mørkegrønne vegger.',
     COMFYROBE_MOBILE_STILL_WIDTH,
     COMFYROBE_MOBILE_STILL_HEIGHT
-  ),
-  productImage(
-    'comfyrobe-mobile-sherpa-hood',
-    '/Flytende_marineblue_parkas_med_sherpahette.webp',
-    'Marineblå Comfyrobe med sherpa-fôret hette.',
-    887,
-    1774
   ),
   productImage(
     'comfyrobe-mobile-still-002',
@@ -81,12 +75,5 @@ export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
     'Marineblå Comfyrobe i full lengde bakfra.',
     COMFYROBE_MOBILE_STILL_WIDTH,
     COMFYROBE_MOBILE_STILL_HEIGHT
-  ),
-  productImage(
-    'comfyrobe-mobile-still-005',
-    comfyrobeSherpa,
-    'Kremfarget sherpa-fôr mot mørk bakgrunn.',
-    COMFYROBE_SHERPA_STILL_WIDTH,
-    COMFYROBE_SHERPA_STILL_HEIGHT
   )
 ]
