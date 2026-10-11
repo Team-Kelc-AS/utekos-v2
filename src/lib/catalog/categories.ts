@@ -74,7 +74,7 @@ export const categories = {
     description:
       "Se Utekos-plagg til terrasseliv og rolige stunder ute. Sammenlign Svale, TechDown™, Dun™ og Comfyrobe™.",
     intro:
-      "Når du vil bli sittende ute, er behovet et annet enn når du er i aktivitet. Her har vi samlet Svale, som er laget for kvelder ute, og modeller som omtaler terrasseliv i produktbeskrivelsene.",
+      "Å sitte lenge ute handler om å fange og holde på kroppens egenvarme, uten at det blir klamt. Ulike vindforhold og temperaturer krever ulik isolasjon. Her har vi samlet Utekos-plaggene som er konstruert for terrassebruk – fra pustende mellomlag for sensommeren, til tykkere tekstiler som stenger kulden helt ute.",
     guidanceTitle: "Finn et plagg til uteplassen",
     guidance: [
       "Tenk gjennom hvilken del av sesongen du vil bruke plagget, og sammenlign modellene før du velger.",
@@ -83,7 +83,7 @@ export const categories = {
     ],
     source: {
       kind: "selection",
-      handles: ["utekos-svale", "utekos-techdown", "utekos-dun", "comfyrobe"],
+      handles: ["utekos-techdown", "utekos-dun", "comfyrobe"],
     },
   },
   glamping: {

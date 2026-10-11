@@ -4,9 +4,6 @@ import comfyrobeDesktop002 from '@/assets/products/comfyrobe/Comfyrobe-002.webp'
 import comfyrobeDesktop0003 from '@/assets/products/comfyrobe/Comfyrobe-0003.webp'
 import comfyrobeDesktop004 from '@/assets/products/comfyrobe/Comfyrobe-004.webp'
 import comfyrobeSherpa from '@/assets/products/comfyrobe/Sherpa.webp'
-import comfyrobeMobile002 from '@/assets/products/comfyrobe/Comfyrobe-Mobile-002.webp'
-import comfyrobeMobile003 from '@/assets/products/comfyrobe/Comfyrobe-Mobile-003.webp'
-import comfyrobeMobile004 from '@/assets/products/comfyrobe/Comfyrobe-Mobile-004.webp'
 
 const COMFYROBE_DESKTOP_STILL_WIDTH = 1400
 const COMFYROBE_DESKTOP_STILL_HEIGHT = 1800
@@ -56,22 +53,29 @@ export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
     COMFYROBE_MOBILE_STILL_HEIGHT
   ),
   productImage(
-    'comfyrobe-mobile-still-002',
-    comfyrobeMobile002,
+    'comfyrobe-mobile-1000x1500-1',
+    '/images/kunnskap/comfyrobe_1000x1500_1.jpg',
     'Marineblå Comfyrobe i full lengde forfra med hette.',
     COMFYROBE_MOBILE_STILL_WIDTH,
     COMFYROBE_MOBILE_STILL_HEIGHT
   ),
   productImage(
-    'comfyrobe-mobile-still-003',
-    comfyrobeMobile003,
-    'Marineblå Comfyrobe i full lengde forfra med synlig merkelapp.',
+    'comfyrobe-mobile-1000x1500-2',
+    '/images/kunnskap/comfyrobe_1000x1500_2.jpg',
+    'Marineblå Comfyrobe forfra med åpen hette og synlig sherpa-fôr.',
     COMFYROBE_MOBILE_STILL_WIDTH,
     COMFYROBE_MOBILE_STILL_HEIGHT
   ),
   productImage(
-    'comfyrobe-mobile-still-004',
-    comfyrobeMobile004,
+    'comfyrobe-mobile-1000x1500-3',
+    '/images/kunnskap/comfyrobe_1000x1500_3.jpg',
+    'Person i marineblå Comfyrobe sett fra siden på en terrasse i skumringen.',
+    COMFYROBE_MOBILE_STILL_WIDTH,
+    COMFYROBE_MOBILE_STILL_HEIGHT
+  ),
+  productImage(
+    'comfyrobe-mobile-1000x1500-bak-1',
+    '/images/kunnskap/comfyrobe_1000x1500_bak_1.jpg',
     'Marineblå Comfyrobe i full lengde bakfra.',
     COMFYROBE_MOBILE_STILL_WIDTH,
     COMFYROBE_MOBILE_STILL_HEIGHT

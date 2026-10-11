@@ -8,10 +8,10 @@ import { notFound } from "next/dist/client/components/not-found";
 import { permanentRedirect } from "next/dist/client/components/redirect";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { CategoryRelatedGuides } from "@/components/knowledge/RelatedContent";
+import { CategoryNavigation } from "./CategoryNavigation";
 import {
   categories,
   catalogIndex,
-  categorySlugs,
   listingPath,
   type ListingKey,
 } from "@/lib/catalog/categories";
@@ -154,78 +154,14 @@ export function CategoryPage({
           <ProductList categoryKey={categoryKey} searchParams={searchParams} />
         </Suspense>
 
-        {categoryKey !== "all" && (
-          <section
-            className="max-w-3xl space-y-4"
-            aria-labelledby="category-guidance"
-          >
-            <h2 id="category-guidance" className="text-xl font-extrabold">
-              {categories[categoryKey].guidanceTitle}
-            </h2>
-            <ul className="list-disc space-y-3 pl-5 font-medium">
-              {categories[categoryKey].guidance.map((text) => (
-                <li key={text}>{text}</li>
-              ))}
-            </ul>
-          </section>
-        )}
-        {categoryKey !== "all" && <CategoryNavigation current={categoryKey} />}
         <CategoryRelatedGuides categoryKey={categoryKey} />
         {bottomContent}
+        {categoryKey !== "all" && <CategoryNavigation current={categoryKey} />}
       </div>
     </main>
   );
 }
 
-function CategoryNavigation({ current }: { current?: ListingKey }) {
-  return (
-    <nav aria-label="Produktkategorier" className="space-y-5">
-      {[
-        {
-          title: "Se produkter etter bruk",
-          slugs: categorySlugs.filter(
-            (slug) => categories[slug].source.kind === "selection",
-          ),
-        },
-      ].map(({ title, slugs }) => (
-        <div key={title} className="space-y-4">
-          <h2 className="text-lg font-extrabold">{title}</h2>
-          <ul className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-            {slugs.map((slug) => (
-              <li key={slug}>
-                <Link
-                  href={listingPath(slug)}
-                  prefetch={false}
-                  aria-current={slug === current ? "page" : undefined}
-                  className="group block"
-                >
-                  <Card className="overflow-hidden border-none bg-[#001a18] text-[#f0eee9] transition-transform group-hover:scale-[1.02]">
-                    <div className="relative h-32 w-full bg-[#1a3331]">
-                      <Image
-                        src={`/images/kategorier/${slug}/${slug}_1600x900.webp`}
-                        alt={categories[slug].label}
-                        fill
-                        className="object-cover opacity-80 transition-opacity group-hover:opacity-100"
-                      />
-                    </div>
-                    <CardHeader className="p-4">
-                      <CardTitle className="text-base font-extrabold flex items-center justify-between">
-                        {categories[slug].label}
-                        <span className="text-[#f0eee9]/70 transition-transform group-hover:translate-x-1">
-                          →
-                        </span>
-                      </CardTitle>
-                    </CardHeader>
-                  </Card>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </nav>
-  );
-}
 async function ProductList({
   categoryKey,
   searchParams,

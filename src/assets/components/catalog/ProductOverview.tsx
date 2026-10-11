@@ -9,13 +9,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { ImageCard } from "@/components/ImageCard";
+import { CategoryNavigation } from "./CategoryNavigation";
+import { KnowledgeGuideCards } from "@/components/knowledge/KnowledgeGuideCards";
 import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
-import {
-  categories,
-  categorySlugs,
-  listingPath,
-} from "@/lib/catalog/categories";
 import { parsePage } from "@/lib/catalog/pagination";
 import { productOverviewRows } from "@/lib/catalog/overview";
 import { getProductListing } from "@/lib/shopify/getProductListing";
@@ -104,52 +100,16 @@ export async function ProductOverview({ searchParams }: CategoryPageProps) {
         )}
       </section>
       <div className={styles.guidance}>
-        <nav aria-labelledby="product-categories">
-          <h2 id="product-categories">Se produkter etter bruk</h2>
-          <ul className={styles.guidanceGrid}>
-            {categorySlugs
-              .filter((slug) => categories[slug].source.kind === "selection")
-              .map((slug) => (
-                <li key={slug}>
-                  <ImageCard
-                    href={listingPath(slug)}
-                    title={categories[slug].label}
-                    description={categories[slug].description}
-                    image={{
-                      src: `/images/kategorier/${slug}/${slug}_1600x900.webp`,
-                      alt: categories[slug].label,
-                      width: 1600,
-                      height: 900,
-                    }}
-                    badge="Produkter"
-                    action={categories[slug].label}
-                  />
-                </li>
-              ))}
-          </ul>
-        </nav>
-        <section aria-labelledby="selected-guides">
-          <h2 id="selected-guides">Råd fra Uteguiden</h2>
-          <ul className={styles.guidanceGrid}>
-            {[
-              knowledgeArticles.keepWarm,
-              knowledgeArticles.baseLayer,
-              knowledgeArticles.cloudweave,
-              knowledgeArticles.cold,
-            ].map((article) => (
-              <li key={article.slug}>
-                <ImageCard
-                  href={article.path}
-                  title={article.title}
-                  description={article.description}
-                  image={article.cardImage}
-                  badge="Uteguiden"
-                  action="Les artikkelen"
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
+        <CategoryNavigation />
+        <KnowledgeGuideCards
+          id="selected-guides"
+          articles={[
+            knowledgeArticles.keepWarm,
+            knowledgeArticles.baseLayer,
+            knowledgeArticles.cloudweave,
+            knowledgeArticles.cold,
+          ]}
+        />
       </div>
     </main>
   );

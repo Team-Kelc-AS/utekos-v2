@@ -4,12 +4,13 @@ import Link from 'next/link';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { CategoryRelatedGuides } from '@/components/knowledge/RelatedContent';
 import { ShippingReturnsSummary } from '@/components/commerce/ShippingReturnsSummary';
-import { categories, categorySlugs, listingPath } from '@/lib/catalog/categories';
+import { categories, listingPath } from '@/lib/catalog/categories';
 import { NBCC_PATH } from '@/lib/nbcc/content';
 import { getProduct } from '@/lib/shopify/getProduct';
 import { readCategoryListing, type CategoryPageProps } from './CategoryPage';
 import { InfoDialogButton } from './InfoDialogButton';
 import { ModelProductCard } from './ModelProductCard';
+import { CategoryNavigation } from './CategoryNavigation';
 import styles from './camping.module.css';
 
 const categoryKey = 'camping-og-bobil';
@@ -51,10 +52,9 @@ export async function CampingPage({ searchParams }: CategoryPageProps) {
         </aside>
       </div>
       <div className={styles.guidance}>
-        <section aria-labelledby="category-guidance"><h2 id="category-guidance">{category.guidanceTitle}</h2><ul>{category.guidance.map(text => <li key={text}>{text}</li>)}</ul></section>
         <CategoryRelatedGuides categoryKey={categoryKey} />
+        <CategoryNavigation current={categoryKey} />
       </div>
-      <nav className={styles.categoryLinks} aria-label="Produktkategorier"><h2>Se produkter etter bruk</h2><ul>{categorySlugs.filter(slug => slug !== categoryKey).map(slug => <li key={slug}><Link href={listingPath(slug)} prefetch={false}>{categories[slug].label} <span aria-hidden="true">↗</span></Link></li>)}</ul></nav>
     </div>
   </main>;
 }

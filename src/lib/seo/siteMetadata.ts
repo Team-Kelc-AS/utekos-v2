@@ -7,7 +7,6 @@ import {
 import type { Metadata } from "next";
 import { SITE_ORIGIN } from "./site";
 
-/** Leaf metadata must preserve preview noindex when replacing root robots. */
 export function buildRobotsMetadata(
   index = true,
 ): Exclude<Metadata["robots"], string | null | undefined> {
@@ -58,8 +57,6 @@ export function buildRootMetadata(): Metadata {
       apple: { url: siteIdentity.logo.src, type: "image/png" },
     },
     robots: buildRobotsMetadata(),
-    // Leave title/description/URL to each route and Next's metadata fallback.
-    // Root Twitter content would otherwise mask the current route's OG fallback.
     openGraph: {
       type: "website",
       siteName: siteIdentity.name,

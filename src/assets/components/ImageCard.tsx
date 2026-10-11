@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-type ImageCardProps = {
+export type ImageCardProps = {
   href: string;
   title: string;
   description: string;

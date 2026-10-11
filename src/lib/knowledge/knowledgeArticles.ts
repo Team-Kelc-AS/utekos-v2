@@ -890,9 +890,9 @@ const articleContent = {
     slug: "hva-er-glamping",
     path: "/uteguiden/hva-er-glamping",
     title:
-      "Fenomenet glamping: En dybdeanalyse av etymologi, historie, økonomi og sosiokulturelle normer i moderne Turisme",
+      ": En dybdeanalyse av etymologi, historie, økonomi og sosiokulturelle normer i moderne Turisme",
     metaTitle:
-      "Fenomenet glamping: En dybdeanalyse av etymologi, historie, økonomi og sosiokulturelle normer i moderne Turisme | Utekos",
+      ": En dybdeanalyse av etymologi, historie, økonomi og sosiokulturelle normer i moderne Turisme | Utekos",
     description: "",
     articleSection: "Glamping",
     topics: ["glamping", "historie", "turisme"],

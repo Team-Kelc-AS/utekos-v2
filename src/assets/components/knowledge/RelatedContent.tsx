@@ -3,6 +3,7 @@ import 'server-only'
 import Link from 'next/link'
 import type { ListingKey } from '@/lib/catalog/categories'
 import { knowledgeArticles, type KnowledgeArticle } from '@/lib/knowledge/knowledgeArticles'
+import { KnowledgeGuideCards } from './KnowledgeGuideCards'
 import styles from './knowledgeChrome.module.css'
 
 type ArticleKey = keyof typeof knowledgeArticles
@@ -20,15 +21,9 @@ const categoryGuides: Record<ListingKey, readonly ArticleKey[]> = {
 
 export function CategoryRelatedGuides({ categoryKey }: { categoryKey: ListingKey }) {
   return (
-    <section aria-labelledby='related-guides' className='max-w-3xl space-y-4'>
-      <h2 id='related-guides' className='text-xl font-extrabold'>Råd fra Uteguiden</h2>
-      <ul className='list-disc space-y-3 pl-5 font-medium'>
-        {categoryGuides[categoryKey].map((key) => (
-          <li key={key}><Link href={knowledgeArticles[key].path} prefetch={false} className='underline underline-offset-4'>{knowledgeArticles[key].title}</Link></li>
-        ))}
-      </ul>
-      <Link href='/uteguiden' prefetch={false} className='inline-flex min-h-11 items-center underline underline-offset-4'>Se hele Uteguiden</Link>
-    </section>
+    <KnowledgeGuideCards articles={categoryGuides[categoryKey].map(key => knowledgeArticles[key])}>
+      <Link href='/uteguiden' prefetch={false} className='mt-4 inline-flex min-h-11 items-center underline underline-offset-4'>Se hele Uteguiden</Link>
+    </KnowledgeGuideCards>
   )
 }
 
