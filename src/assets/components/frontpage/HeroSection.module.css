@@ -2,7 +2,6 @@
   isolation: isolate;
   width: 100%;
   padding: 1.25rem 1.25rem 0;
-  border-radius: 0 0 1rem 1rem;
   background: #001a18;
   color: #f0eee9;
   font-family: var(--font-google-sans-flex), sans-serif;
