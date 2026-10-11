@@ -11,11 +11,11 @@ Undertittelen kommer fra headless-komponenten `TypographyH2.tsx`.
   velger én kilde via `picture`, med eager/high for Hero-bildet.
   `next/link` er den eneste klientkomponenten i Hero-treet; ingen egne hooks,
   hendelsesbehandlere eller animasjonsbiblioteker er lagt til.
-- Originalfilene `TechDown_1.webp` (1080×1704), `Hero-iPad.webp` (1600×1067)
+- Originalfilene `images/kunnskap/FrontPageCover.webp` (1440×1800), `Hero-iPad.webp` (1600×1067)
   og `TechDown_32.jpg` (2200×1467) er kopiert uendret. Bruddpunktene er
   fortsatt 640 og 1024 px. Bildenes egne forhold beholdes med bredde/høyde
   på kildene og `height: auto`, uten gammel beskjæring eller hover-zoom.
-- Originalens mobilbilde inneholder wordmark og versaltekst i selve filen.
+- Mobilbildet inneholder wordmark og teksten «Skreddersy varmen» i selve filen.
   Disse er bevart; levende tekst bruker setningskasus. Mobilvisningen beholder
   originalens skjulte overlay/CTA og undertittel.
 - Ett H1-element: «Skreddersy varmen». Undertittelen er et avsnitt.

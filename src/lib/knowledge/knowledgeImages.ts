@@ -147,13 +147,25 @@ export const knowledgeImages = {
         "alt": "To personer i varme plagg på en terrasse",
         "width": 1200,
         "height": 630
+      },
+      {
+        "src": "/images/kunnskap/cloudweave-rain.jpg",
+        "alt": "En person kledd i en varm Utekos TechDown ute i typisk norsk nullføre med sludd og ruskevær.",
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "src": "/images/kunnskap/cloudweave-fill.jpg",
+        "alt": "Nærbilde av løse, syntetiske CloudWeave-fibre som utvider seg for å skape isolerende luftlommer",
+        "width": 1600,
+        "height": 900
       }
     ],
     "cardImage": {
-      "src": "/og-image-skreddersy-varmen.jpg",
-      "alt": "To personer i varme plagg på en terrasse",
-      "width": 1200,
-      "height": 630
+      "src": "/images/kunnskap/cloud.jpg",
+      "alt": "Hvite isolasjonsfibre med vanndråper ved siden av en blå CloudWeave™-etikett",
+      "width": 800,
+      "height": 450
     }
   },
   "baseLayer": {

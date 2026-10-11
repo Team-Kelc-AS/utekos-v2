@@ -48,9 +48,9 @@ export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
 
 export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
   productImage(
-    'comfyrobe-mobile-meta-1000x1500',
-    '/COMFY_META_1000x1500.webp',
-    'Marineblå Comfyrobe i portrettformat.',
+    'comfyrobe-mobile-1000x1500-mob',
+    '/images/kunnskap/Comfy_1000x1500_Mob.webp',
+    'Kvinne i marineblå Comfyrobe foran mørkegrønne vegger.',
     COMFYROBE_MOBILE_STILL_WIDTH,
     COMFYROBE_MOBILE_STILL_HEIGHT
   ),

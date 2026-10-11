@@ -4,7 +4,7 @@ import Link from "next/link";
 import desktopImage from "../../../../public/TechDown_32.jpg";
 import { getImageProps } from "next/image";
 import { googleSansFlex } from "@/lib/fonts";
-import mobileImage from "../../../../public/TechDown_1.webp";
+import mobileImage from "../../../../public/images/kunnskap/FrontPageCover.webp";
 import styles from "./HeroSection.module.css";
 import tabletImage from "../../../../public/Hero-iPad.webp";
 

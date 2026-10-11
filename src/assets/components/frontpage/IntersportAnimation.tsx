@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffectEvent, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import styles from "./IntersportSection.module.css";
 
 export function IntersportAnimation({ children }: { children: ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffectEvent(() => {
+  useEffect(() => {
     const root = containerRef.current;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!root || reducedMotion.matches) return;
@@ -41,7 +41,7 @@ export function IntersportAnimation({ children }: { children: ReactNode }) {
       reducedMotion.removeEventListener("change", finish);
       root.removeEventListener("focusin", finish);
     };
-  });
+  }, []);
 
   return (
     <div ref={containerRef} className={styles.animation}>
