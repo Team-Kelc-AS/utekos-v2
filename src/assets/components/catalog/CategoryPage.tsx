@@ -4,9 +4,9 @@ import { Suspense, type ReactNode } from "react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/dist/client/components/not-found";
-import { permanentRedirect } from "next/dist/client/components/redirect";
+import { notFound, permanentRedirect } from "next/navigation";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { ImageCard } from "@/components/ImageCard";
 import { CategoryRelatedGuides } from "@/components/knowledge/RelatedContent";
 import { CategoryNavigation } from "./CategoryNavigation";
 import {
@@ -21,6 +21,7 @@ import {
   type SearchParams,
 } from "@/lib/catalog/pagination";
 import { productTitle } from "@/lib/catalog/productTitle";
+import { productCardImages } from "@/lib/catalog/productCardImages";
 import { absoluteUrl, productPath } from "@/lib/seo/site";
 import {
   buildRobotsMetadata,
@@ -94,7 +95,7 @@ export function CategoryPage({
             { label: "Forsiden", href: "/" },
             ...(categoryKey === "all"
               ? []
-              : [{ label: "Produkter", href: "/produkter" }]),
+              : [{ label: "Produkter", href: "/produkter" as const }]),
             { label: category.label },
           ]}
         />
@@ -196,25 +197,45 @@ async function ProductList({
         </p>
       ) : (
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
-            <li
-              key={product.handle}
-              className="space-y-3 rounded-lg bg-[#001a18] p-6 text-[#f0eee9]"
-            >
-              <h3 className="text-lg font-extrabold">
-                <Link
+          {products.map((product) => {
+            const image =
+              categoryKey === "varmeplagg"
+                ? productCardImages[product.handle]
+                : undefined;
+            return image ? (
+              <li key={product.handle}>
+                <ImageCard
                   href={productPath(product.handle)}
-                  prefetch={false}
-                  className="inline-flex min-h-11 items-center underline underline-offset-4"
-                >
-                  {productTitle(product)}
-                </Link>
-              </h3>
-              <p className="font-medium leading-relaxed">
-                {product.description}
-              </p>
-            </li>
-          ))}
+                  title={productTitle(product)}
+                  description={product.description}
+                  image={{
+                    ...image,
+                    sizes: "(max-width: 639px) calc(100vw - 3rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1199px) calc(33.333vw - 2rem), 368px",
+                  }}
+                  badge="Varmeplagg"
+                  action="Se produktet"
+                />
+              </li>
+            ) : (
+              <li
+                key={product.handle}
+                className="space-y-3 rounded-lg bg-[#001a18] p-6 text-[#f0eee9]"
+              >
+                <h3 className="text-lg font-extrabold">
+                  <Link
+                    href={productPath(product.handle)}
+                    prefetch={false}
+                    className="inline-flex min-h-11 items-center underline underline-offset-4"
+                  >
+                    {productTitle(product)}
+                  </Link>
+                </h3>
+                <p className="font-medium leading-relaxed">
+                  {product.description}
+                </p>
+              </li>
+            );
+          })}
         </ul>
       )}
       {(page > 1 || hasNextPage) && (

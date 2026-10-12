@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import type { StaticImageData } from "next/image";
 import comfyrobeManWall from "@/assets/nbcc/Comfyrobe-Man-Wall-Logo-800x800.webp";
 import comfyrobeManOutside from "@/assets/nbcc/Comfyrobe-Man-Outside-Logo-800x800.webp";
@@ -24,7 +25,7 @@ export { default as nbccLogo } from "@/assets/nbcc/nbcc_logo_red_bg.png";
 export type NbccProductConfig = {
   title: string; shortTitle: string; description: string; bestFor: string;
   images: { src: StaticImageData; alt: string }[];
-  href: string; handle: string; sizes: string[]; color: string;
+  href: Route<`/produkter/${string}`>; handle: string; sizes: string[]; color: string;
   tracking: Record<string, string>;
 };
 

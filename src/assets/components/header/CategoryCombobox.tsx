@@ -2,13 +2,14 @@
 
 import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import type { Route } from "next";
 import {
   Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput,
   ComboboxItem, ComboboxList, ComboboxTrigger,
 } from "@/components/ui/combobox";
 import styles from "./Header.module.css";
 
-type CategoryLink = Readonly<{ label: string; href: string }>;
+type CategoryLink = Readonly<{ label: string; href: Route }>;
 
 export default function CategoryCombobox({ items, icon, listId }: {
   items: readonly CategoryLink[];

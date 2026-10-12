@@ -1,11 +1,12 @@
 import Link from 'next/link';
+import type { Route } from 'next';
 import { CardHeader, CardTitle } from '@/components/ui/card';
 import { formatMoney } from '@/lib/products/money';
 import { optionLabel, optionParam } from '@/lib/products/variants';
 import type { ProductVariant } from '@/lib/shopify/product-types';
 
 // The headless compact/desktop header, with fixed labels instead of selectors.
-export function ProductCardHeader({ title, href, variant }: { title: string; href: string; variant: ProductVariant }) {
+export function ProductCardHeader<T extends string>({ title, href, variant }: { title: string; href: Route<T>; variant: ProductVariant }) {
   const options = variant.selectedOptions.filter(option => option.value !== 'Default Title' && optionParam(option.name) !== 'kjonn');
   const compare = variant.compareAtPrice && Number(variant.compareAtPrice.amount) > Number(variant.price.amount) ? variant.compareAtPrice : null;
   return <CardHeader className="relative z-10 mt-3 flex flex-col gap-2.5 rounded-none bg-night px-5 pt-1 pb-0 max-[360px]:px-3 md:gap-3 md:px-6 xl:-mt-6 xl:rounded-t-3xl xl:border-t xl:border-border xl:p-6 xl:pb-0">

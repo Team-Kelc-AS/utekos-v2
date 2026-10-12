@@ -1,9 +1,11 @@
+import type { Route } from 'next'
 import { SITE_ORGANIZATION_ID, siteIdentity } from '@/lib/seo/siteIdentity'
 
 export const knowledgeAuthors = {
   utekos: {
     type: 'Organization',
     name: siteIdentity.name,
+    path: '/om-oss' satisfies Route,
     url: siteIdentity.aboutUrl,
     id: SITE_ORGANIZATION_ID,
     image: siteIdentity.logo.src,
@@ -11,7 +13,7 @@ export const knowledgeAuthors = {
      * Circular black/white mark for article bylines. Utekos is always the
      * author; never swap per article.
      */
-    avatarImage: siteIdentity.logo.src
+    avatarImage: siteIdentity.logo
   }
 } as const
 

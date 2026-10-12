@@ -1,6 +1,7 @@
 import "server-only";
 
 import Link from "next/link";
+import type { Route } from "next";
 import type { ReactNode } from "react";
 import { googleSansFlex } from "@/lib/fonts";
 import Newsletter from "./footer/Newsletter";
@@ -9,7 +10,7 @@ import styles from "./Footer.module.css";
 
 type FooterLink = Readonly<{
   label: ReactNode;
-  href: string;
+  href: Route;
 }>;
 
 type FooterSection = Readonly<{

@@ -6,27 +6,34 @@
   line-height: 1.4;
 }
 
-.breadcrumbs .breadcrumbList {
+/* Target the shared breadcrumb's slots, including when nested in MDX body lists. */
+.breadcrumbs [data-slot='breadcrumb-list'] {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.breadcrumbs [data-slot='breadcrumb-item'],
+.breadcrumbs [data-slot='breadcrumb-separator'] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  max-width: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.breadcrumbs .breadcrumbItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0;
-}
-
-.breadcrumbs .breadcrumbItem + .breadcrumbItem {
-  margin-top: 0;
-}
-
-.breadcrumbLink {
+.breadcrumbs [data-slot='breadcrumb-item'] [data-slot='breadcrumb-link'] {
   color: var(--knowledge-link);
   font-weight: 700;
   text-decoration: underline;
@@ -34,12 +41,10 @@
   text-underline-offset: 0.22em;
 }
 
-.breadcrumbCurrent {
+.breadcrumbs [data-slot='breadcrumb-page'] {
   max-width: 42ch;
-  overflow: hidden;
   color: var(--knowledge-ink-muted);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .authorCard,

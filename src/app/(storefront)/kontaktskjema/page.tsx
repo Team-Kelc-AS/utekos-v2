@@ -31,7 +31,7 @@ export default function ContactPage() {
         <div className={styles.layout}>
           <section aria-labelledby="contact-form-heading" className={styles.formPanel}>
             <h2 id="contact-form-heading">Send oss en melding</h2>
-            <p className={styles.formIntro}>Navn, e-post og melding er påkrevd. Ordrenummer hjelper oss å finne bestillingen din.</p>
+            <p className={styles.formIntro}>Navn, e-post, telefonnummer og melding er påkrevd. Ordrenummer hjelper oss å finne bestillingen din.</p>
             <ContactFormSection />
           </section>
 

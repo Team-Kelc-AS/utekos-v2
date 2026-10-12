@@ -11,7 +11,7 @@ export const singleLine = (max: number) => z.string().trim().max(max, {
 export const contactSchema = z.object({
   name: singleLine(100).min(2, { error: "Skriv navnet ditt, minst 2 tegn." }),
   email: singleLine(254).pipe(z.email({ error: "Skriv en gyldig e-postadresse." })),
-  phone: singleLine(40),
+  phone: singleLine(40).min(1, { error: "Skriv telefonnummeret ditt." }),
   orderNumber: singleLine(80),
   message: z.string().trim().min(10, { error: "Skriv minst 10 tegn om hva du trenger hjelp med." })
     .max(5000, { error: "Meldingen kan være maksimalt 5000 tegn." }),
@@ -40,7 +40,7 @@ export async function sendContactEmail(submission: z.infer<typeof contactSchema>
     text: [
       `Navn: ${submission.name}`,
       `E-post: ${submission.email}`,
-      `Telefon: ${submission.phone || "Ikke oppgitt"}`,
+      `Telefon: ${submission.phone}`,
       `Ordrenummer: ${submission.orderNumber || "Ikke oppgitt"}`,
       "Personvernerklæring: bekreftet lest",
       "",

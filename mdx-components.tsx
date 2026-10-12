@@ -66,6 +66,7 @@ function MdxLink({
     download == null
   ) {
     return (
+      // MDX literals are checked against generated routes by build and typecheck.
       <Link {...shared} href={href as Route} prefetch={false}>
         {children}
       </Link>
@@ -506,18 +507,18 @@ function formatDate(value: string) {
   }
   return (dateOnly ? dateOnlyFormatter : timestampFormatter).format(date);
 }
-export type ArticleMetaProps = {
-  author: { name: string; href?: string };
+export type ArticleMetaProps<T extends string = string> = {
+  author: { name: string; href?: Route<T> };
   publishedAt: string;
   updatedAt?: string;
   readingMinutes?: number;
 };
-export function ArticleMeta({
+export function ArticleMeta<T extends string>({
   author,
   publishedAt,
   updatedAt,
   readingMinutes,
-}: ArticleMetaProps) {
+}: ArticleMetaProps<T>) {
   if (
     readingMinutes != null &&
     (!Number.isFinite(readingMinutes) || readingMinutes <= 0)

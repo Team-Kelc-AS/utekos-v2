@@ -48,7 +48,7 @@ export function variantHref(handle: string, variant: ProductVariant, siblings?: 
   if (!params.size || unsupported || !resolvesExactly || (matches && (matches.length !== 1 || matches[0].id !== variant.id))) {
     params.set('variant', variant.id.split('/').at(-1)!);
   }
-  return `/produkter/${handle}?${params}`;
+  return `/produkter/${handle}?${params}` as const;
 }
 export function variantOptions(product: ShopifyProduct, selected: ProductVariant) {
   const variants = publicVariants(product);

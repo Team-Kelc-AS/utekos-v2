@@ -1,12 +1,14 @@
+import type { Route } from 'next';
+
 export type SupportPageKey = 'about' | 'contact' | 'sizeGuide' | 'maintenance' | 'shippingReturns';
 
 type SupportPage = {
-  path: string;
+  path: Route;
   title: string;
   description: string;
   pageType: 'AboutPage' | 'ContactPage' | 'WebPage';
   socialType: 'website' | 'article';
-  breadcrumbs: readonly { label: string; href?: string }[];
+  breadcrumbs: readonly { label: string; href?: Route }[];
   dateModified?: string;
   article?: { headline: string; section: string; dateModified: string };
 };
@@ -64,4 +66,4 @@ export const supportProductFamilies = [
   { name: 'Utekos Dun™', path: '/produkter/utekos-dun' },
   { name: 'Utekos Mikrofiber™', path: '/produkter/utekos-mikrofiber' },
   { name: 'Comfyrobe™', path: '/produkter/comfyrobe' },
-] as const;
+] as const satisfies readonly { name: string; path: Route<`/produkter/${string}`> }[];

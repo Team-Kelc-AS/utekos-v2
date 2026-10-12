@@ -7,7 +7,7 @@ const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
 const initial = { status: 'idle', message: '', values: {}, attempt: 0 };
 function submission(files = []) {
   const data = new FormData();
-  for (const [name, value] of Object.entries({ name: 'Testperson', email: 'test@example.com', message: 'Dette er en testhenvendelse.', privacy: 'on' })) data.set(name, value);
+  for (const [name, value] of Object.entries({ name: 'Testperson', email: 'test@example.com', phone: '+47 999 99 999', message: 'Dette er en testhenvendelse.', privacy: 'on' })) data.set(name, value);
   for (const file of files) data.append('attachments', file);
   return data;
 }
@@ -103,4 +103,27 @@ test('invalid text and honeypot submissions never reach the email provider', asy
   assert.equal((await submit(bot)).status, 'error');
   assert.equal(calls.length, 0);
   assert.equal(tracking.length, 0);
+});
+
+test('missing, empty and whitespace-only phone numbers are rejected before delivery or accepted-form tracking', async () => {
+  const { submit, calls, tracking } = setup();
+  for (const phone of [undefined, '', '   ']) {
+    const data = submission();
+    if (phone === undefined) data.delete('phone');
+    else data.set('phone', phone);
+    const result = await submit(data);
+    assert.equal(result.status, 'error');
+    assert.deepEqual(Array.from(result.errors.phone), ['Skriv telefonnummeret ditt.']);
+    assert.equal(result.values.message, 'Dette er en testhenvendelse.');
+  }
+  assert.equal(calls.length, 0);
+  assert.equal(tracking.length, 0);
+});
+
+test('a required phone number is trimmed and included in the delivered message', async () => {
+  const { submit, calls } = setup();
+  const data = submission();
+  data.set('phone', '  +47 999 99 999  ');
+  assert.equal((await submit(data)).status, 'success');
+  assert.match(calls[0].payload.text, /\nTelefon: \+47 999 99 999\n/);
 });

@@ -1,8 +1,9 @@
 import "server-only";
 
+import type { Route } from "next";
 import { categories, listingPath, type CategorySlug } from "@/lib/catalog/categories";
 
-type NavigationLink = Readonly<{ label: string; href: string }>;
+type NavigationLink = Readonly<{ label: string; href: Route }>;
 
 const categoryOrder = [
   "varmeplagg",

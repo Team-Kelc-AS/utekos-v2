@@ -11,6 +11,7 @@ import { initialModelChoice, isSizeOption, modelOptions, modelOptionAvailable, s
 import { formatMoney } from '@/lib/products/money';
 import { dunSelection } from '@/lib/reservations/dun';
 import type { CanonicalCommerceValue } from '@/lib/analytics/canonicalCommerceItem';
+import type { variantHref } from '@/lib/products/variants';
 import { emitStorefrontAction } from '@/lib/tracking/browser-events';
 import { DeferredModelKlarna } from './DeferredModelKlarna';
 import styles from './camping.module.css';
@@ -18,7 +19,7 @@ import styles from './camping.module.css';
 type Props = {
   product: ModelPurchase;
   waitlist: boolean;
-  tracking: { previewVariantId: string; variants: Record<string, { href: string; commerce: CanonicalCommerceValue }> };
+  tracking: { previewVariantId: string; variants: Record<string, { href: ReturnType<typeof variantHref>; commerce: CanonicalCommerceValue }> };
   initialImage: ReactNode;
   initialPrice: ReactNode;
   reviews: ReactNode;

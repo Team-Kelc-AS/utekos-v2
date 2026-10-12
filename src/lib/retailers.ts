@@ -60,7 +60,7 @@ export const retailers: readonly Retailer[] = [
 ];
 
 export function retailerPath(retailer: Retailer) {
-  return `/forhandlere/${retailer.slug}`;
+  return `/forhandlere/${retailer.slug}` as const;
 }
 
 export function getRetailer(slug: string) {

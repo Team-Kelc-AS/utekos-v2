@@ -1,5 +1,4 @@
 import type { KnowledgeArticle } from "@/lib/knowledge/knowledgeArticles";
-import Link from "next/link";
 import styles from "./knowledgeChrome.module.css";
 export function KnowledgeSources({
   article,
@@ -23,9 +22,9 @@ export function KnowledgeSources({
             >
               <span>{reference.attribution}. </span>
               {reference.url && !reference.linkLabel ? (
-                <Link href={reference.url} rel="noopener noreferrer">
+                <a href={reference.url} rel="noopener noreferrer">
                   <cite className={styles.sourcesTitle}>{reference.title}</cite>
-                </Link>
+                </a>
               ) : (
                 <cite className={styles.sourcesTitle}>{reference.title}</cite>
               )}
@@ -33,9 +32,9 @@ export function KnowledgeSources({
               {reference.url && reference.linkLabel ? (
                 <>
                   {" "}
-                  <Link href={reference.url} rel="noopener noreferrer">
+                  <a href={reference.url} rel="noopener noreferrer">
                     {reference.linkLabel}
-                  </Link>
+                  </a>
                 </>
               ) : null}
               {reference.additionalLinks?.map((link) => (

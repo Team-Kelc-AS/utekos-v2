@@ -2,7 +2,6 @@ import 'server-only'
 
 import Image from 'next/image'
 import Link from 'next/link'
-import type { Route } from 'next'
 import { cn } from 'cn'
 import {
   knowledgeArticleList,
@@ -106,7 +105,7 @@ function KnowledgeArticleCard({
     <article className={cn(styles.articleCard, featured && styles.featuredCard, className)}>
       <Link
         prefetch={false}
-        href={article.path as Route}
+        href={article.path}
         className="group flex h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-4"
       >
         <Card className="relative flex w-full flex-col overflow-hidden border border-[#f0eee930] bg-[#012622] pt-0 text-[#f0eee9] transition-colors duration-200 group-hover:border-[#b44701] motion-reduce:transition-none">

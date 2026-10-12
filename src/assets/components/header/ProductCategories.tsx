@@ -1,11 +1,12 @@
 "use client";
 
 import { lazy, Suspense, useId, useState, type ReactNode } from "react";
+import type { Route } from "next";
 import styles from "./Header.module.css";
 
 const CategoryCombobox = lazy(() => import("./CategoryCombobox"));
 
-type Props = { items: readonly Readonly<{ label: string; href: string }>[]; icon: ReactNode };
+type Props = { items: readonly Readonly<{ label: string; href: Route }>[]; icon: ReactNode };
 
 export function ProductCategories(props: Props) {
   const [activated, setActivated] = useState(false);

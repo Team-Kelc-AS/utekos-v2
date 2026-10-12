@@ -15,10 +15,10 @@ export const knowledgeImages = {
         "height": 1024
       },
       {
-        "src": "/images/kunnskap/juvelert-egg-og-myk-ullgenser.webp",
+        "src": "/images/kunnskap/juvelert-egg-myk-ullgenser.webp",
         "alt": "Visuell sammenligning av en overfladisk luksusgave og et praktisk nyttemiddel, som forklarer konstruksjonsnivåteorien og dødvektstap.",
-        "width": 1254,
-        "height": 1254
+        "width": 1672,
+        "height": 941
       },
       {
         "src": "/images/kunnskap/vinterhygge-ved-fjorden.webp",

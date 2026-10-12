@@ -46,8 +46,10 @@ export async function getSearchIndex(): Promise<SearchIndex> {
     { title: knowledgeOverview.title, href: knowledgeOverview.path, keywords: [knowledgeOverview.description] },
     ...knowledgeArticleList.map((article) => ({ title: article.title, href: article.path, keywords: [article.description, ...article.topics] })),
   ];
-  return searchIndexSchema.parse({ groups: [
+  const index: SearchIndex = { groups: [
     { label: "Produkter", items: products.map((product) => ({ title: productTitle(product), href: productPath(product.handle), keywords: [product.title, product.description] })) },
     { label: "Sider", items: [...new Map(pages.map((item) => [item.href, item])).values()] },
-  ] });
+  ] };
+  searchIndexSchema.parse(index);
+  return index;
 }

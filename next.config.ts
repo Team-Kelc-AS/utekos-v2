@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import createMDX from "@next/mdx";
 
 const nextConfig: NextConfig = {
+  typedRoutes: true,
   cacheComponents: true,
   // Next 16.3.8: retain typed entry points while tree-shaking the ESM cache
   // implementation. Recheck cache scope and bundle output when upgrading Next.

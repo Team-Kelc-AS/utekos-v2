@@ -1,3 +1,5 @@
+import type { listingPath } from "./categories";
+
 export type SearchParams = Record<string, string | string[] | undefined>;
 
 export const PAGE_SIZE = 24;
@@ -16,7 +18,7 @@ function isUnusedListingParam(key: string): boolean {
 // Listings only implement pagination. Remove misleading filter/variant URLs
 // while retaining campaign attribution, click IDs and Next's internal params.
 // Product-detail routes never use this policy: their option URLs stay crawlable.
-export function listingRedirectPath(path: string, params: SearchParams): string | null {
+export function listingRedirectPath(path: ReturnType<typeof listingPath>, params: SearchParams) {
   if (parsePage(params.page) === null) return null;
   const removeFirstPage = params.page === "1";
   if (!removeFirstPage && !Object.keys(params).some(isUnusedListingParam)) return null;
@@ -26,5 +28,5 @@ export function listingRedirectPath(path: string, params: SearchParams): string 
     if (isUnusedListingParam(key) || (key === "page" && removeFirstPage) || value === undefined) continue;
     for (const item of Array.isArray(value) ? value : [value]) query.append(key, item);
   }
-  return query.size ? `${path}?${query}` : path;
+  return query.size ? `${path}?${query}` as const : path;
 }

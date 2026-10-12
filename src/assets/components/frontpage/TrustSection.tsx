@@ -12,6 +12,7 @@ import {
 import { Bubble, BubbleContent, BubbleReactions } from '@/components/ui/bubble'
 import { Message, MessageContent, MessageFooter } from '@/components/ui/message'
 import { googleSansFlex } from '@/lib/fonts'
+import { siteIdentity } from '@/lib/seo/siteIdentity'
 import styles from './TrustSection.module.css'
 
 function WindowDots() {
@@ -76,10 +77,9 @@ export function TrustSection() {
               </CardHeader>
               <CardContent className={styles.logoContainer}>
                 <Image
-                  src='/icon.png'
+                  {...siteIdentity.logo}
                   alt='Utekos'
-                  width={48}
-                  height={48}
+                  sizes='48px'
                   className={styles.logo}
                 />
               </CardContent>

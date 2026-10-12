@@ -103,7 +103,7 @@ export default function BecomeDealerPage() {
                 PDF-en automatisk til Erling Holthe.
               </p>
               <div className={styles.actions}>
-                <a
+                <Link
                   className={styles.primaryLink}
                   href="/bli-forhandler/pdf"
                   data-tracking-cta="dealer_pdf_open"
@@ -112,7 +112,7 @@ export default function BecomeDealerPage() {
                 >
                   Åpne og fyll ut PDF
                   <span className="sr-only"> (åpnes i ny fane)</span>
-                </a>
+                </Link>
                 <a
                   className={styles.secondaryLink}
                   href="/images/kunnskap/forhandler-utfyllbar.pdf"

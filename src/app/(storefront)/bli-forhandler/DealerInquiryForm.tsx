@@ -1,13 +1,17 @@
 "use client";
 
+import type { Route } from "next";
+import Link from "next/link";
 import { useActionState, useEffect, useRef } from "react";
 import { emitStorefrontAction } from "@/lib/tracking/browser-events";
 import { submitDealerInquiry } from "./actions";
 import { initialDealerInquiryState, type DealerInquiryValues } from "./form-state";
 import styles from "../kontaktskjema/contact.module.css";
 
+const dealerPath = "/bli-forhandler" satisfies Route;
+
 export default function DealerInquiryForm() {
-  const [state, formAction, pending] = useActionState(submitDealerInquiry, initialDealerInquiryState, "/bli-forhandler");
+  const [state, formAction, pending] = useActionState(submitDealerInquiry, initialDealerInquiryState, dealerPath);
   const formRef = useRef<HTMLFormElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
 
@@ -35,7 +39,7 @@ export default function DealerInquiryForm() {
     <>
       <div ref={statusRef} tabIndex={-1} role="status" className={state.message ? styles.status : undefined}>
         {state.message}
-        {state.status === "success" && <p><a href="/bli-forhandler">Send en ny henvendelse</a></p>}
+        {state.status === "success" && <p><a href={dealerPath}>Send en ny henvendelse</a></p>}
       </div>
       {state.status !== "success" && (
         <form ref={formRef} action={formAction} data-tracking-form="dealer_inquiry" data-tracking-form-name="Forhandlersamarbeid" noValidate aria-busy={pending} className={styles.form}>
@@ -83,7 +87,7 @@ export default function DealerInquiryForm() {
             <div>
               <label className={styles.checkbox}>
                 <input {...fieldProps("privacy")} type="checkbox" required defaultChecked={state.values.privacy} />
-                <span>Jeg har lest <a href="/personvern" target="_blank" rel="noopener">personvernerklæringen (åpnes i ny fane)</a>. Opplysningene brukes til å behandle henvendelsen.</span>
+                <span>Jeg har lest <Link href="/personvern" target="_blank" rel="noopener">personvernerklæringen (åpnes i ny fane)</Link>. Opplysningene brukes til å behandle henvendelsen.</span>
               </label>
               {fieldError("privacy")}
             </div>

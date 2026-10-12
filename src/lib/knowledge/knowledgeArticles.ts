@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import { knowledgeImages } from "./knowledgeImages";
 import { validateKnowledgeArticles } from "./validateKnowledgeArticles";
 import { glampingReferences } from "./glampingReferences";
@@ -28,7 +29,7 @@ export type KnowledgeImage = {
 
 export type KnowledgeArticle = {
   slug: string;
-  path: `/uteguiden/${string}`;
+  path: Extract<Route, `/uteguiden/${string}`>;
   title: string;
   metaTitle: string;
   metaDescription: string;
@@ -119,7 +120,7 @@ const articleContent = {
     title: "Jakten på julegaven til den som har alt",
     metaTitle: "Jakten på julegaven til den som har alt | Utekos",
     description:
-      "Julegavehandelen utgjør et intenst, årlig stressmoment fordi vi febrilsk forsøker å materialisere dyp omtanke for en partner som tilsynelatende allerede besitter alt hun trenger for en komfortabel hverdag. Selv om desember ideelt sett skal være en måned fylt med tradisjoner, hvile og forventninger, fører fraværet av konkrete ønskelister til at selve gavejakten overskygges av usikkerhet og prestasjonsangst. I et desperat forsøk på å bevise kjærlighet gjennom det perfekte kjøpet, tvinges vi ofte til å ta forhastede og irrasjonelle beslutninger i butikken som vi senere angrer på. Denne panikkdrevne tilnærmingen danner selve utgangspunktet for hvorfor intensjonen om å glede så lett ender opp som en overfladisk gave som fullstendig mangler langsiktig verdi for mottakeren.",
+      "Julegavehandelen utgjør et intenst, årlig stressmoment fordi vi forsøker å materialisere dyp omtanke for en partner som tilsynelatende allerede besitter alt som trengs for en komfortabel hverdag. Selv om desember ideelt sett skal være en måned fylt med tradisjoner, hvile og forventninger, fører fraværet av konkrete ønskelister til at selve gavejakten overskygges av usikkerhet og prestasjonsangst. I et desperat forsøk på å bevise kjærlighet gjennom det perfekte kjøpet, tvinges vi ofte til å ta forhastede og irrasjonelle beslutninger i butikken som vi senere angrer på. Denne panikkdrevne tilnærmingen danner selve utgangspunktet for hvorfor intensjonen om å glede så lett ender opp som en overfladisk gave som fullstendig mangler langsiktig verdi for mottakeren.",
     articleSection: "Julegaver",
     publishedAt: "2026-10-06",
     updatedAt: "2026-10-06",
@@ -273,7 +274,7 @@ const articleContent = {
   terrace: {
     slug: "hvordan-forlenge-terassesesongen",
     path: "/uteguiden/hvordan-forlenge-terassesesongen",
-    title: "Hvordan forlenge terrasse- og balkongsesongen?",
+    title: "Hvordan forlenge terrassesesongen?",
     metaTitle: "Hvordan forlenge terrasse- og balkongsesongen? | Utekos",
     description:
       "En innglasset balkong eller terrasse kan fungere som et skjermet oppholdsrom langt utover høsten. Ved å sette seg inn i byggetekniske krav, riktig fuktsikring og moderne varmeteknologi, oppnår man et lunt uterom som tåler røft norsk klima.",
@@ -889,10 +890,9 @@ const articleContent = {
   glamping: {
     slug: "hva-er-glamping",
     path: "/uteguiden/hva-er-glamping",
-    title:
-      ": En dybdeanalyse av etymologi, historie, økonomi og sosiokulturelle normer i moderne Turisme",
+    title: "Fenomenet glamping",
     metaTitle:
-      ": En dybdeanalyse av etymologi, historie, økonomi og sosiokulturelle normer i moderne Turisme | Utekos",
+      "En dybdeanalyse av etymologi, historie, økonomi og sosiokulturelle normer i moderne turisme | Utekos",
     description: "",
     articleSection: "Glamping",
     topics: ["glamping", "historie", "turisme"],
@@ -903,8 +903,7 @@ const articleContent = {
   glampingNorway: {
     slug: "glamping-i-norge",
     path: "/uteguiden/glamping-i-norge",
-    title:
-      "Glamping i Norge: Dette bør du sjekke før du bestiller – og pakke før du drar",
+    title: "Glamping i Norge",
     metaTitle:
       "Glamping i Norge: Dette bør du sjekke før du bestiller – og pakke før du drar | Utekos",
     description:
@@ -918,7 +917,7 @@ const articleContent = {
   winterStorage: {
     slug: "vinterlagring-av-campingvogn-og-bobil",
     path: "/uteguiden/vinterlagring-av-campingvogn-og-bobil",
-    title: "Vinterlagring av campingvogn og bobil: Sjekkliste før vinteren",
+    title: "Vinterlagring av campingvogn og bobil",
     metaTitle:
       "Vinterlagring av campingvogn og bobil: Sjekkliste før vinteren | Utekos",
     description:

@@ -1,3 +1,5 @@
+import type { Route } from "next";
+
 export const categories = {
   varmeplagg: {
     label: "Varmeplagg",
@@ -5,7 +7,7 @@ export const categories = {
     description:
       "Se varmeplagg fra Utekos. Sammenlign modellene og finn informasjon om passform, materialer og størrelser på produktsidene.",
     intro:
-      "Her finner du varmeplaggene samlet, fra Utekos Dun™ og Utekos Mikrofiber™ til TechDown™, Svale og Comfyrobe™. Åpne produktsidene for å sammenligne materialer, passform og tilgjengelige størrelser.",
+      "Isolasjonsevne og materialvalg avgjør hvor lenge du kan oppholde deg komfortabelt utendørs. Her er alle våre varmeplagg samlet på ett sted. Finn riktig balanse mellom vekt, fukttransport og isolasjon blant linjer som Utekos TechDown™, Utekos Mikrofiber™ og Comfyrobe™.",
     guidanceTitle: "Hva bør du sammenligne?",
     guidance: [
       "Tenk gjennom om plagget først og fremst skal brukes når du sitter i ro eller er i bevegelse.",
@@ -108,6 +110,7 @@ export const categories = {
 
 export type CategorySlug = keyof typeof categories;
 export type ListingKey = CategorySlug | "all";
+type ListingPath = Extract<Route, "/produkter" | `/produkter/${CategorySlug}`>;
 export const categorySlugs = Object.keys(categories) as CategorySlug[];
 
 export const catalogIndex = {
@@ -119,9 +122,9 @@ export const catalogIndex = {
     "Velg mellom varmeplagg og tilbehør, eller se et utvalg til stedet du vil bruke produktene. Her finner du også hele det tilgjengelige sortimentet samlet.",
 };
 
-export function listingPath(key: ListingKey, page = 1): string {
-  const path = key === "all" ? "/produkter" : `/produkter/${key}`;
-  return page === 1 ? path : `${path}?page=${page}`;
+export function listingPath(key: ListingKey, page = 1): ListingPath | `${ListingPath}?page=${number}` {
+  const path = key === "all" ? "/produkter" : `/produkter/${key}` as const;
+  return page === 1 ? path : `${path}?page=${page}` as const;
 }
 
 export function isCategorySlug(handle: string): handle is CategorySlug {

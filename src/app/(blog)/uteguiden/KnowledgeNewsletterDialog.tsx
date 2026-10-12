@@ -6,8 +6,8 @@ import NewsletterForm from '@/components/footer/NewsletterForm';
 
 export default function KnowledgeNewsletterDialog({ onClose }: { onClose: () => void }) {
   return <Dialog title="Meld deg på Utekos sitt nyhetsbrev" onClose={onClose}>
-    <p>Motta våre grundigste veiledere om uterom, bekledning og tekniske løsninger.</p>
-    <p>Du får nyheter og tilbud på e-post og kan melde deg av når som helst. Les vår <Link href="/personvern">personvernerklæring</Link>.</p>
+    <p>Få våre grundigste veiledere om uterom og bekledning, samt tidlig tilgang til tilbud og rabatter.</p>
     <NewsletterForm />
+    <p>Les vår <Link href="/personvern" className="underline underline-offset-4">personvernerklæring</Link></p>
   </Dialog>;
 }

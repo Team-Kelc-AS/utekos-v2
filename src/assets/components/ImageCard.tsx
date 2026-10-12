@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { Route } from "next";
 import Image, { type ImageProps } from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -13,29 +14,32 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export type ImageCardProps = {
-  href: string;
+export type ImageCardProps<T extends string = string> = {
+  href: Route<T>;
   title: string;
   description: string;
-  image: Pick<ImageProps, "src" | "alt" | "width" | "height">;
+  image: Pick<ImageProps, "src" | "alt" | "width" | "height" | "sizes">;
   action: string;
   badge: string;
 };
 
-export function ImageCard({
+export function ImageCard<T extends string>({
   href,
   title,
   description,
   image,
   action,
   badge,
-}: ImageCardProps) {
+}: ImageCardProps<T>) {
   return (
     <Card className="relative mx-auto h-full w-full max-w-sm bg-interstellar pt-0 text-[#f0eee9] border border-primary/82 ring-0">
       <Image
         {...image}
         alt={image.alt}
-        sizes="(max-width: 639px) calc(100vw - 3rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1279px) calc(25vw - 1.875rem), 290px"
+        sizes={
+          image.sizes ??
+          "(max-width: 639px) calc(100vw - 3rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1279px) calc(25vw - 1.875rem), 290px"
+        }
         className="block h-auto w-full"
       />
       <CardHeader className="min-w-0 flex-1 gap-x-3 gap-y-2 has-data-[slot=card-action]:grid-cols-[minmax(0,1fr)_auto]">
@@ -55,7 +59,7 @@ export function ImageCard({
         >
           {title}
         </CardTitle>
-        <CardDescription className="col-span-full line-clamp-2 min-h-10 font-medium leading-5 text-foreground/75">
+        <CardDescription className="col-span-full line-clamp-2 min-h-10 font-medium leading-5 text-[#f0eee9]/75">
           {description}
         </CardDescription>
       </CardHeader>

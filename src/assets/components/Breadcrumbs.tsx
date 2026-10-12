@@ -10,11 +10,12 @@ import {
 } from "@/components/ui/Breadcrumb";
 
 import { Fragment } from "react";
+import type { Route } from "next";
 import Link from "next/link";
 
-type Crumb = { label: string; href?: string };
+type Crumb<T extends string> = { label: string; href?: Route<T> };
 
-export default function Breadcrumbs({ items }: { items: readonly Crumb[] }) {
+export default function Breadcrumbs<T extends string>({ items }: { items: readonly Crumb<T>[] }) {
   return (
     <Breadcrumb aria-label="Brødsmuler">
       <BreadcrumbList>

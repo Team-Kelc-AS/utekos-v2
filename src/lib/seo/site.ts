@@ -5,6 +5,6 @@ export function absoluteUrl(path: string): string {
   return new URL(path, SITE_ORIGIN).href;
 }
 
-export function productPath(handle: string): string {
-  return `/produkter/${encodeURIComponent(handle)}`;
+export function productPath(handle: string) {
+  return `/produkter/${encodeURIComponent(handle)}` as const;
 }

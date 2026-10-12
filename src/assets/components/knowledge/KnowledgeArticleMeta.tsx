@@ -34,9 +34,9 @@ export function KnowledgeArticleMeta({
       <div className={styles.logoFrame}>
         <Image
           className={styles.logo}
-          src={author.avatarImage}
-          width={96}
-          height={96}
+          src={author.avatarImage.src}
+          width={author.avatarImage.width}
+          height={author.avatarImage.height}
           sizes="80px"
           alt="Utekos"
         />
@@ -44,7 +44,7 @@ export function KnowledgeArticleMeta({
       <div>
         <p className={styles.authorName}>
           Av{" "}
-          <Link className={styles.authorLink} href={author.url} rel="author">
+          <Link className={styles.authorLink} href={author.path} rel="author">
             {author.name}
           </Link>
         </p>

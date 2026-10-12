@@ -1,14 +1,32 @@
 import { KnowledgeArticleScaffold } from '@/components/knowledge/KnowledgeArticleScaffold';
 import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles';
+import Image from "next/image";
+import imageStyles from "@/components/knowledge/knowledgeChrome.module.css";
 
 export default function ChristmasGiftPage({ children }) {
-    return (<KnowledgeArticleScaffold article={knowledgeArticles.christmasGift}>
+    return (<KnowledgeArticleScaffold
+      article={knowledgeArticles.christmasGift}
+      heroPlacement="after-title"
+      hero={
+        <figure className={imageStyles.figure}>
+          <span className={imageStyles.figureFrame}>
+            <Image
+              className={imageStyles.figureImage}
+              src="/images/kunnskap/julegavenes_mystiske_spadom.webp"
+              alt="En rådvill julegavehandler søker råd hos en spåkone, omgitt av tankebobler med mulige gaver."
+              width={1260}
+              height={709}
+              sizes="(min-width: 1024px) 816px, (min-width: 832px) 752px, (min-width: 800px) calc(100vw - 80px), (min-width: 400px) 90vw, calc(100vw - 40px)"
+              preload
+            />
+          </span>
+        </figure>
+      }
+    >
       {children}
     </KnowledgeArticleScaffold>);
 }
 
-import Image from "next/image";
-import imageStyles from "@/components/knowledge/knowledgeChrome.module.css";
 import { Cite } from "@/components/knowledge/Cite";
 
 <span id="julehandelen-og-dødvektstapet" />
@@ -105,10 +123,10 @@ Givere velger konsekvent fysiske, materielle gjenstander fordi disse gir en umid
   <span className={imageStyles.figureFrame}>
     <Image
       className={imageStyles.figureImage}
-      src="/images/kunnskap/juvelert-egg-og-myk-ullgenser.webp"
+      src="/images/kunnskap/juvelert-egg-myk-ullgenser.webp"
       alt="Visuell sammenligning av en overfladisk luksusgave og et praktisk nyttemiddel, som forklarer konstruksjonsnivåteorien og dødvektstap."
-      width={1254}
-      height={1254}
+      width={1672}
+      height={941}
       sizes="(min-width: 1024px) 816px, (min-width: 832px) 752px, (min-width: 800px) calc(100vw - 80px), (min-width: 400px) 90vw, calc(100vw - 40px)"
     />
   </span>
@@ -140,15 +158,15 @@ For å oppsummere den akademiske litteraturen omkring gaveasymmetri, kan forskni
 
 | Vitenskapelig dokumentert asymmetri      | Giverens foretrukne optimalisering  | Mottakerens faktiske preferanse   | Sentral akademisk kilde |
 | ---------------------------------------- | ----------------------------------- | --------------------------------- | ----------------------- |
-| **Gavekategori (Lu et al., 2016)**       | Hedoniske luksusprodukter           | Utilitaristiske nyttemidler       |                         |
-| **Materialitet (Chan & Mogilner, 2017)** | Materielle gjenstander              | Opplevelser over tid              |                         |
-| **Initiativ (Gino & Flynn, 2011)**       | Uoppfordrede, overraskende gaver    | Eksplisitt forespurte gaver       |                         |
-| **Helhet (Kupor et al., 2017)**          | Rimelige, komplette sett            | Delbidrag til premium gjenstander |                         |
-| **Spesifisitet (Steffel et al., 2015)**  | Ekstremt spesifikke, unike gaver    | Allsidige gaver (Versatile)       |                         |
-| **Sentimentalitet (Givi & Galak, 2017)** | Preferanse-matchende overflategaver | Sentimentale gaver                |                         |
-| **Gjentakelse (Givi, 2020)**             | Alltid noe nytt og originalt        | Gjentakende gaver av favoritter   |                         |
-| **Format (Ellingsen et al., 2011)**      | Fysiske produkter/gavekort          | Digitale/kontant-løsninger        |                         |
-| **Prioritet (Baskin et al., 2014)**      | Ønskelighet (Desirability / Luksus) | Anvendelighet (Feasibility)       |                         |
+| **Gavekategori**   | Hedoniske luksusprodukter           | Utilitaristiske nyttemidler       | Lu et al. (2016)          |
+| **Materialitet**   | Materielle gjenstander              | Opplevelser over tid              | Chan & Mogilner (2017)    |
+| **Initiativ**      | Uoppfordrede, overraskende gaver    | Eksplisitt forespurte gaver       | Gino & Flynn (2011)       |
+| **Helhet**         | Rimelige, komplette sett            | Delbidrag til premium gjenstander | Kupor et al. (2017)       |
+| **Spesifisitet**   | Ekstremt spesifikke, unike gaver    | Allsidige gaver (Versatile)       | Steffel et al. (2015)     |
+| **Sentimentalitet** | Preferanse-matchende overflategaver | Sentimentale gaver                | Givi & Galak (2017)       |
+| **Gjentakelse**    | Alltid noe nytt og originalt        | Gjentakende gaver av favoritter   | Givi (2020)               |
+| **Format**        | Fysiske produkter/gavekort          | Digitale/kontant-løsninger        | Ellingsen et al. (2011)   |
+| **Prioritet**     | Ønskelighet (Desirability / Luksus) | Anvendelighet (Feasibility)       | Baskin et al. (2014)      |
 
  
 
