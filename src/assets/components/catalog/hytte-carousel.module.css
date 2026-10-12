@@ -1,0 +1,118 @@
+.carousel {
+  margin-inline: -1rem;
+  padding: 2rem 1rem 0;
+  background: #f0eee9;
+  color: #012622;
+}
+.header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.heading {
+  font-size: 1.875rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+.intro {
+  margin-top: 0.5rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+.controls {
+  display: none;
+  flex-shrink: 0;
+  gap: 0.75rem;
+}
+.controls button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: #012622;
+  color: #f0eee9;
+  box-shadow: 0 4px 6px #010b0a1a;
+  cursor: pointer;
+  transition: background-color 200ms;
+}
+.controls button:hover:not(:disabled) {
+  background: #b44701;
+}
+.controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.carousel :is(button, a):focus-visible {
+  outline-color: #b44701;
+}
+.viewport {
+  position: relative;
+}
+.gallery {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0.5rem;
+  scrollbar-width: none;
+  margin: 0;
+  padding: 1rem 0.5rem 2rem;
+  list-style: none;
+}
+.gallery::-webkit-scrollbar {
+  display: none;
+}
+.gallery:focus-visible {
+  outline: 2px solid #b44701;
+  outline-offset: 2px;
+}
+.gallery > li {
+  flex: 0 0 85vw;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+@media (min-width: 640px) {
+  .controls:not([hidden]) {
+    display: flex;
+  }
+  .gallery > li {
+    flex-basis: 320px;
+  }
+}
+@media (min-width: 768px) {
+  .viewport::before,
+  .viewport::after {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    width: 2rem;
+    content: '';
+    pointer-events: none;
+    opacity: 0;
+  }
+  .viewport::before {
+    left: 0;
+    background: linear-gradient(to right, #f0eee9, transparent);
+  }
+  .viewport::after {
+    right: 0;
+    background: linear-gradient(to left, #f0eee9, transparent);
+  }
+  .viewport[data-previous='true']::before,
+  .viewport[data-next='true']::after {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .controls button {
+    transition: none;
+  }
+}

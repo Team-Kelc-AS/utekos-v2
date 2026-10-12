@@ -182,7 +182,8 @@ export default function DunReservationDialog({
             <p>
               Velg størrelse og farge. Vi reserverer det kostnadsfritt for deg,
               og sender en trygg og uforpliktende betalingslenke på SMS og
-              e-post så snart plagget ankommer vårt lager.
+              e-post så snart plagget ankommer vårt lager. Forventet på lager i
+              uke 47.
             </p>
             <Questionnaire
               ref={formRef}

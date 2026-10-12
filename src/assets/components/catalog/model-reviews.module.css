@@ -1,0 +1,22 @@
+.trigger {
+  gap: 0.5rem;
+  padding: 0;
+}
+.stars {
+  position: relative;
+  color: #f0eee94d;
+  font-size: 1rem;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  overflow: hidden;
+  color: #b44701;
+}
+.count {
+  color: #f0eee9b3;
+  font-size: 0.75rem;
+}

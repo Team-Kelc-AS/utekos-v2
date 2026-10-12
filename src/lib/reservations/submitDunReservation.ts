@@ -96,6 +96,7 @@ export async function submitDunReservation(
       idempotencyPrefix: "dun-reservation",
       text: [
         "Reservasjon av én Utekos Dun™. Oppfølging: hold av jakken og send uforpliktende betalingslenke på både SMS og e-post når den er på lager.",
+        "Forventet på lager i uke 47.",
         `Farge: ${color}`,
         `Størrelse: ${size}`,
         `Variant: ${matches[0].id}`,

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import styles from './camping.module.css';
+import styles from './model-purchase.module.css';
 
 const Klarna = dynamic(() => import('@/components/klarna/KlarnaProductExpressCheckout').then(module => module.KlarnaProductExpressCheckout), { ssr: false });
 

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hello-world",
+  "type": "registry:block",
+  "title": "Hello World",
+  "description": "A simple hello world component.",
+  "registryDependencies": [
+    "button",
+    "@acme/input-form",
+    "https://example.com/r/foo"
+  ],
+  "dependencies": ["is-even@3.0.0", "motion"],
+  "devDependencies": ["tw-animate-css"],
+  "files": [
+    {
+      "path": "registry/new-york/hello-world/hello-world.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "registry/new-york/hello-world/use-hello-world.ts",
+      "type": "registry:hook"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "font-heading": "Google Sans Flex, sans-serif"
+    },
+    "light": {
+      "brand": "oklch(0.545648 0.161164 43.1534)"
+    },
+    "dark": {
+      "brand": "oklch(0.2419 0.0418 184.31)"
+    }
+  }
+}

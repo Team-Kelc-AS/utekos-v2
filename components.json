@@ -1,5 +1,8 @@
 {
-  "$schema": "https://ui.shadcn.com/schema.json",
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "utekos-v2",
+  "homepage": "https://utekos.no",
+  "include": ["components/ui/registry.json", "hooks/registry.json"],
   "style": "base-nova",
   "rsc": true,
   "tsx": true,
@@ -21,5 +24,7 @@
   },
   "menuColor": "default",
   "menuAccent": "subtle",
-  "registries": {}
+  "registries": {
+    "@shadcnblocks": "https://www.shadcnblocks.com/r/{style}/{name}"
+  }
 }

@@ -50,7 +50,7 @@ test('confirmed reservation carries exact size, color, Shopify ID, identity and 
   const payload = JSON.parse(api.sends[0].body);
   assert.deepEqual(payload.to, ['service@example.com']);
   assert.equal(payload.reply_to, 'fixture@example.com');
-  for (const value of ['Farge: Fjellblå', 'Størrelse: Large', 'Variant: gid://shopify/ProductVariant/4', 'Fornavn: Test', 'Etternavn: Person', 'Samtykke:', 'SMS og e-post', 'uke 43']) assert.ok(payload.text.includes(value), value);
+  for (const value of ['Farge: Fjellblå', 'Størrelse: Large', 'Variant: gid://shopify/ProductVariant/4', 'Fornavn: Test', 'Etternavn: Person', 'Samtykke:', 'SMS og e-post', 'uke 47']) assert.ok(payload.text.includes(value), value);
   assert.deepEqual(api.tracking, [['product_reservation_utekos_dun', 'submission-receipt-fixture']]);
   assert.deepEqual(JSON.parse(JSON.stringify(api.leads)), [{ receiptId: 'receipt-fixture', email: 'fixture@example.com', phone: '+47 12345678', firstName: 'Test', productId: 'gid://shopify/Product/1', variantId: 'gid://shopify/ProductVariant/4', color: 'Fjellblå', size: 'Large' }]);
 });

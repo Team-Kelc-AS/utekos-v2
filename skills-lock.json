@@ -13,6 +13,12 @@
       "skillPath": ".agents/skills/next-best-practices/SKILL.md",
       "computedHash": "db85045827ebeb83ac8dbc992b69188755eeb74dcf01cbf5e694d58aa494a106"
     },
+    "retrieving-developer-knowledge": {
+      "source": "google/skills",
+      "sourceType": "github",
+      "skillPath": "skills/developers/retrieving-developer-knowledge/SKILL.md",
+      "computedHash": "3461d043788e8057432a8c92e783d3dab9199d5f78f980c35831b8b2afeb69c4"
+    },
     "ucp": {
       "source": "vercel-labs/agentic-commerce-skills",
       "sourceType": "github",

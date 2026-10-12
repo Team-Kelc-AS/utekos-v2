@@ -1,0 +1,7 @@
+name: project/project-d6c56fc9-c574-409f-8fe/policies/iam.managed.disableServiceAccountApiKeyCreation
+spec:
+  rules:
+    - enforce: true
+      parameters:
+        allowedServices:
+          - google-business-profile@project-d6c56fc9-c574-409f-8fe.iam.gserviceaccount.com

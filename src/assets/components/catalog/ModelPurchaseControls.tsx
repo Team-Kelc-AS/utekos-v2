@@ -21,7 +21,7 @@ import type { CanonicalCommerceValue } from "@/lib/analytics/canonicalCommerceIt
 import type { variantHref } from "@/lib/products/variants";
 import { emitStorefrontAction } from "@/lib/tracking/browser-events";
 import { DeferredModelKlarna } from "./DeferredModelKlarna";
-import styles from "./camping.module.css";
+import styles from "./model-purchase.module.css";
 
 type Props = {
   product: ModelPurchase;
@@ -37,6 +37,7 @@ type Props = {
   initialPrice: ReactNode;
   reviews: ReactNode;
   children: ReactNode;
+  imageSizes?: string;
 };
 
 /** Server-rendered content slots surround the small, explicit variant selector. */
@@ -48,6 +49,7 @@ export function ModelPurchaseControls({
   initialPrice,
   reviews,
   children,
+  imageSizes = "(min-width: 1200px) 560px, (min-width: 760px) 46vw, 94vw",
 }: Props) {
   const [choice, setChoice] = useState(() =>
     initialModelChoice(product.variants),
@@ -56,6 +58,7 @@ export function ModelPurchaseControls({
   const selected = selectedModelVariant(product.variants, choice);
   const options = modelOptions(product.variants);
   const available = selected?.available === true;
+  const showWaitlist = waitlist && (selected ? !available : !product.variants.some(variant => variant.available));
   const presentation =
     tracking.variants[selected?.id ?? tracking.previewVariantId];
   const previousVariant = useRef(selected?.id);
@@ -79,7 +82,7 @@ export function ModelPurchaseControls({
       data-product-card={selected?.id ?? tracking.previewVariantId}
       data-tracking-commerce={JSON.stringify(presentation.commerce)}
     >
-      {(selected?.image || initialImage) && (
+      {(selected ? selected.image : initialImage) ? (
         <Link
           href={presentation.href}
           prefetch={false}
@@ -95,14 +98,14 @@ export function ModelPurchaseControls({
               }
               width={selected.image.width}
               height={selected.image.height}
-              sizes="(min-width: 1200px) 560px, (min-width: 760px) 46vw, 94vw"
+              sizes={imageSizes}
               className={styles.productImage}
             />
           ) : (
             initialImage
           )}
         </Link>
-      )}
+      ) : <p className={styles.missingImage}>Bilde er ikke tilgjengelig for valgt variant.</p>}
       <div className={styles.modelHeader}>
         <CardTitle>
           <h3>
@@ -177,14 +180,14 @@ export function ModelPurchaseControls({
             aria-atomic="true"
           >
             {selected
-              ? waitlist
+              ? showWaitlist
                 ? "Snart tilbake"
                 : available
                   ? "På lager"
                   : "Utsolgt i valgt størrelse og farge"
               : `Velg størrelse${options.some((option) => option.values.length > 1 && !isSizeOption(option.name)) ? " og farge" : ""}.`}
           </p>
-          {waitlist ? (
+          {showWaitlist ? (
             selected ? (
               <DunReservationButton
                 key={selected.id}

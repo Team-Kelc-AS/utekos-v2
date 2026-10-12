@@ -8,7 +8,7 @@ const ts = require('typescript');
 const { loadTypeScript } = require('./load-typescript.cjs');
 
 // Execute the real component and committed effects. No runtime/provider requests.
-function harness() {
+function harness({ waitlist = false, handle = 'test' } = {}) {
   const actions = [], states = [], refs = [], effectSlots = [];
   let stateIndex, refIndex, effectIndex, effects, tree;
   const react = {
@@ -56,7 +56,7 @@ function harness() {
     '@/lib/reservations/dun': { dunSelection: variant => ({ variantId: variant.id }) },
     '@/lib/tracking/browser-events': { emitStorefrontAction: (name, detail) => actions.push({ name, detail }) },
     './DeferredModelKlarna': { DeferredModelKlarna: 'DeferredModelKlarna' },
-    './camping.module.css': { default: {} },
+    './model-purchase.module.css': { default: {} },
   };
   const source = fs.readFileSync('src/assets/components/catalog/ModelPurchaseControls.tsx', 'utf8');
   const code = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText;
@@ -67,7 +67,7 @@ function harness() {
   } }));
   function render() {
     stateIndex = refIndex = effectIndex = 0; effects = [];
-    tree = exports.ModelPurchaseControls({ product: { handle: 'test', title: 'Test product', variants }, waitlist: false, tracking,
+    tree = exports.ModelPurchaseControls({ product: { handle, title: 'Test product', variants }, waitlist, tracking,
       initialImage: { type: 'Image', props: { src: '/preview.webp' } }, initialPrice: '1990 – 2290', reviews: null, children: null });
     // Replay committed effects as Strict Mode does, retaining hook state/refs.
     effects.forEach(callback => { callback(); callback(); });
@@ -118,11 +118,24 @@ test('subsequent choices keep missing-image links correct and report each new av
   assert.equal(h.actions[1].detail.variant_id, h.variants[2].id);
   assert.notEqual(h.actions[0].detail.interaction_id, h.actions[1].detail.interaction_id);
   assert.ok(h.nodes().filter(node => node.type === 'Link').every(node => node.props.href === '/produkter/test?variant=3'));
-  assert.equal(h.nodes().find(node => node.type === 'Image').props.src, '/preview.webp', 'missing image keeps the factual preview');
+  assert.equal(h.nodes().find(node => node.type === 'Image'), undefined, 'a missing selected image must not show a different variant');
   h.choose('Grønn');
   assert.equal(h.actions.length, 3);
   assert.equal(h.actions[2].detail.variant_id, h.variants[0].id);
   assert.equal(h.actions[2].detail.availability, 'unavailable');
   assert.equal(h.nodes().find(node => node.type === 'AddToCart').props.available, false);
   assert.equal(h.nodes().find(node => node.type === 'DeferredModelKlarna').props.disabled, true);
+});
+
+test('Dun reserves only an unavailable exact selection and sells available variants normally', () => {
+  const h = harness({ waitlist: true, handle: 'utekos-dun' });
+  assert.equal(h.nodes().find(node => node.type === 'AddToCart').props.available, false);
+  assert.equal(h.nodes().find(node => node.type === 'DunReservationButton'), undefined);
+  h.choose('Small'); h.choose('Grønn');
+  assert.equal(h.nodes().find(node => node.type === 'DunReservationButton').props.selection.variantId, h.variants[0].id);
+  assert.equal(h.nodes().find(node => node.type === 'AddToCart'), undefined);
+  h.choose('Large');
+  assert.equal(h.nodes().find(node => node.type === 'DunReservationButton'), undefined);
+  assert.equal(h.nodes().find(node => node.type === 'AddToCart').props.variantId, h.variants[1].id);
+  assert.equal(h.nodes().find(node => node.type === 'AddToCart').props.available, true);
 });
