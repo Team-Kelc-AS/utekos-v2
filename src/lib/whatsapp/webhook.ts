@@ -11,6 +11,9 @@ export type WhatsAppReceipt = {
 };
 type Config = { verifyToken?: string; appSecret?: string };
 type Store = (receipts: WhatsAppReceipt[]) => Promise<void>;
+class StorageError extends Error {
+  constructor(public reason: string, public status?: number, public providerCode?: string) { super(reason); }
+}
 const object = (value: unknown): value is JsonObject =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 const text = (value: unknown): value is string => typeof value === 'string' && value.length > 0;
@@ -114,19 +117,32 @@ export async function receiveWhatsAppWebhook(request: Request, config: Config, s
   try { receipts = whatsappReceipts(JSON.parse(raw.toString('utf8'))); }
   catch { return response(400, 'invalid_payload'); }
   try { await store(receipts); }
-  catch { return response(503, 'storage_unavailable'); }
+  catch (error) {
+    // Only bounded machine codes; never log credentials, request URLs or payloads.
+    console.error('whatsapp_webhook_storage_failed', error instanceof StorageError
+      ? { reason: error.reason, status: error.status, providerCode: error.providerCode }
+      : { reason: 'storage_request_failed', errorType: error instanceof Error ? error.name : 'unknown' });
+    return response(503, 'storage_unavailable');
+  }
   return response(200, 'EVENT_RECEIVED');
 }
 
 export async function storeWhatsAppReceipts(receipts: WhatsAppReceipt[], fetcher = fetch) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error('storage_not_configured');
-  const result = await fetcher(new URL('/rest/v1/whatsapp_webhook_receipts?on_conflict=event_key', url), {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  if (!url || !key) throw new StorageError('storage_not_configured');
+  let endpoint: URL;
+  try { endpoint = new URL('/rest/v1/whatsapp_webhook_receipts?on_conflict=event_key', url); }
+  catch { throw new StorageError('invalid_storage_url'); }
+  const result = await fetcher(endpoint, {
     method: 'POST', cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(8000),
     headers: { 'Content-Type': 'application/json', apikey: key, Authorization: `Bearer ${key}`,
       Prefer: 'resolution=ignore-duplicates,return=minimal' },
     body: JSON.stringify(receipts),
   });
-  if (!result.ok) throw new Error('storage_failed');
+  if (!result.ok) {
+    const failure = await result.json().catch(() => null);
+    const code = typeof failure?.code === 'string' && /^[A-Z0-9_]{1,32}$/.test(failure.code) ? failure.code : undefined;
+    throw new StorageError('storage_rejected', result.status, code);
+  }
 }
