@@ -1,6 +1,6 @@
 # WhatsApp webhooks
 
-App: Utekos App Master (`1154247890253046`). Intended production callback:
+App: Utekos App Master (`1154247890253046`). Verified production callback:
 `https://utekos.no/api/whatsapp/webhook`.
 
 The GET handler compares `hub.verify_token` with `WHATSAPP_WEBHOOK_VERIFY_TOKEN`
@@ -38,8 +38,7 @@ migration and update the sensitive Vercel variable together.
 Deploy only through the project's `pnpm run sync` workflow. That command stages
 all changes, so review the entire dirty tree before invoking it.
 
-After production readback verifies the route and storage, register the callback
-under `whatsapp_business_account` with these fields:
+The callback is registered under `whatsapp_business_account` with these fields:
 
 - `messages`
 - `account_alerts`, `account_review_update`, `account_update`
@@ -48,23 +47,31 @@ under `whatsapp_business_account` with these fields:
 - `phone_number_name_update`, `phone_number_quality_update`
 - `security`, `user_preferences`
 
-Then verify the app's subscription to the intended WABA (not only the app-level
-webhook configuration). Confirm any WABA/phone-level callback overrides. Use
-Meta's webhook test and check a durable synthetic receipt without exposing its
-payload. Natural message receipt is a separate final verification.
+The app is subscribed to the production Utekos WABA `1439253294827744` and phone
+`1396752930182618`. Phone configuration readback shows only the application
+callback above, with no WABA or phone override. The separate test WABA was not
+subscribed. Natural customer message receipt is a separate final verification.
 
 ## Verification
 
 ### Setup readback, 2026-10-12
 
 - Local implementation: nine tests, lint, typecheck and production build passed.
-- Vercel: both dedicated variables saved and read back as sensitive, production-only.
-- Supabase project `hkoawfbomhnzupcsdggb`: both migrations applied; RLS and
-  service-role-only SELECT/INSERT/DELETE verified. A synthetic duplicate insert
-  produced one row in a rolled-back transaction.
-- Deployment pending: public callback returned 404. App-level WhatsApp fields,
-  WABA subscription, live REST storage and Meta test delivery remain unverified.
-- `pnpm run sync` would also publish unrelated existing worktree changes.
+- Vercel: all five dedicated variables saved as sensitive, production-only.
+- Runtime implementation deployed from `992b51b8ee2751c308c249be9abe21293fda5105`
+  in `dpl_78VKhrHGfvu4JcudVdNA9Jfz6NVZ`, READY. Public verification returned
+  the exact challenge with HTTP 200. Unsigned POST returned 401.
+- Supabase project `hkoawfbomhnzupcsdggb`: all three migrations applied; RLS and
+  service-role-only direct SELECT/INSERT/DELETE verified. Anonymous reads and
+  RPC calls with the wrong ingestion token returned 401. The valid RPC inserted
+  one row, then zero on duplicate delivery.
+- Two identical signed production POSTs returned 200 and produced one receipt.
+  These setup fixtures were subsequently removed.
+- Meta accepted the callback and 12 fields. Subscription and production phone
+  callback were read back. Native Meta tests for `messages` and
+  `message_template_status_update` were captured as durable WABA `0` receipts.
+- Remaining unverified: receipt of a natural customer message. No customer
+  messages were sent, and no background jobs or automatic replies were enabled.
 
 `NODE_OPTIONS='--conditions=react-server' pnpm exec tsx --test tests/whatsapp-webhook.test.ts`
 
@@ -77,4 +84,6 @@ production deployment, WABA subscription or natural delivery.
 - https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/overview/
 - https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/create-webhook-endpoint/
 - https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/messages
+- https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/override/
 - https://supabase.com/docs/guides/database/secure-data
+- https://supabase.com/docs/guides/database/functions
