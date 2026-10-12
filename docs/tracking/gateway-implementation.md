@@ -11,7 +11,10 @@ Eksakte kildefiler, SHA-256 og tilpasningsmarkører finnes i
 - `/__sgtm/[[...path]]` → fast `https://edge.utekos.no`, direkte fra v2.
   Next.js-mappen heter `%5F_sgtm`: en vanlig `__sgtm`-mappe ville blitt privat og ikke eksponert en rute.
 - GET, HEAD, POST og OPTIONS beholder metode, query, status, strømmet respons og separate Set-Cookie-headere.
-- Request/response bruker `no-store`; CDN og Vercel CDN får også eksplisitt `no-store`.
+- Upstream-request og CDN/Vercel CDN bruker `no-store`. Fra den lokale rettingen
+  12. oktober bevares tidsbegrenset privat nettlesercache for vellykkede
+  Google-JavaScript-svar uten cookie-skriving; øvrige svar bruker `no-store`.
+  Se [avgrensning og verifikasjon](../performance/google-tag-cache.md).
 - Alle provider-utsendelser, køer og gjenforsøk tilhører headless. V2s kopierte køtrigger og cron-import er fjernet fra `vercel.ts`.
 - Vercel Analytics og Speed Insights bruker de fem eksisterende `/telemetry/v1/*`-adressene, omskrevet til de faste `/_vercel`-endepunktene. Ukjente telemetry-ruter avvises.
 

@@ -68,6 +68,11 @@ avspillingskontroller eller tidsviser. Native `loop` starter filmen på nytt
 umiddelbart ved slutten. Ved redusert
 bevegelse, blokkert autoplay eller deaktivert JavaScript vises posteren.
 
+Oppdatert 2026-10-12: Posteren aktiveres nå innenfor 200 px av synsfeltet,
+kun for den rendrende viewportvarianten. Uten JavaScript velger en
+`noscript`-picture riktig originalposter. Skjulte produktvideopostere venter
+til avspillingsklikk. Se [plan og verifisering](performance/deferred-video-posters.md).
+
 Nettlesertester bekreftet riktige poster-/videopar, ingen MP4-forespørsler før
 scrolling, kun riktig variants film under avspilling, pause utenfor
 synsfeltet. Autoplay-blokkering er simulert og gir

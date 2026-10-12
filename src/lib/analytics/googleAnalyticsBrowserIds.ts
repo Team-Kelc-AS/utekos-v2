@@ -2,7 +2,10 @@ import { GA_MEASUREMENT_ID } from '../../api/constants/monitoring'
 import type { CanonicalViewItem } from './viewItemEvent'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 
-const GOOGLE_TAG_TIMEOUT_MS = 500
+// Cold Stape -> web GTM -> Google tag initialization can exceed 500 ms.
+// Wait for the documented get callbacks, with a finite failure/exit boundary.
+const GOOGLE_TAG_TIMEOUT_MS = 5000
+const GOOGLE_TAG_RETRY_MS = 250
 
 export type GoogleAnalyticsField = 'client_id' | 'session_id'
 
@@ -19,6 +22,8 @@ export type GoogleAnalyticsBrowserIdDependencies = {
     timeoutMs: number
   ) => ReturnType<typeof setTimeout>
   timeoutMs: number
+  retryMs?: number
+  onPageExit?: (callback: () => void) => () => void
 }
 
 type GoogleTagWindow = Window & { dataLayer?: unknown[] }
@@ -68,7 +73,12 @@ const defaultDependencies: GoogleAnalyticsBrowserIdDependencies =
     getGoogleTagValue,
     setTimer: (callback, timeoutMs) =>
       setTimeout(callback, timeoutMs),
-    timeoutMs: GOOGLE_TAG_TIMEOUT_MS
+    timeoutMs: GOOGLE_TAG_TIMEOUT_MS,
+    retryMs: GOOGLE_TAG_RETRY_MS,
+    onPageExit: callback => {
+      window.addEventListener('pagehide', callback, { once: true })
+      return () => window.removeEventListener('pagehide', callback)
+    }
   }
 
 function normalizeGoogleTagValue(
@@ -92,12 +102,15 @@ function readGoogleTagValue(
 ): Promise<string | undefined> {
   return new Promise(resolve => {
     let settled = false
+    let retry: ReturnType<typeof setTimeout> | undefined
 
     const finish = (value?: string) => {
       if (settled) return
 
       settled = true
       dependencies.clearTimer(timer)
+      if (retry !== undefined) dependencies.clearTimer(retry)
+      stopExit?.()
       resolve(value)
     }
 
@@ -106,14 +119,37 @@ function readGoogleTagValue(
       dependencies.timeoutMs
     )
 
-    try {
-      dependencies.getGoogleTagValue(field, value => {
-        finish(normalizeGoogleTagValue(value))
-      })
-    } catch {
-      finish()
+    const stopExit = dependencies.onPageExit?.(() => finish())
+
+    const attempt = () => {
+      if (settled) return
+      try {
+        dependencies.getGoogleTagValue(field, value => {
+          const normalized = normalizeGoogleTagValue(value)
+          // A get queued before GTM's config can return undefined. Retry after
+          // initialization instead of treating that as a permanent absence.
+          if (normalized) finish(normalized)
+        })
+      } catch { /* A blocked/unavailable tag must not discard the event. */ }
+      if (!settled) {
+        retry = dependencies.setTimer(attempt, dependencies.retryMs ?? GOOGLE_TAG_RETRY_MS)
+      }
     }
+    attempt()
   })
+}
+
+const pendingReads = new WeakMap<GoogleAnalyticsBrowserIdDependencies, Promise<(string | undefined)[]>>()
+
+function readGoogleAnalyticsIds(dependencies: GoogleAnalyticsBrowserIdDependencies) {
+  const pending = pendingReads.get(dependencies)
+  if (pending) return pending
+  const work = Promise.all([
+    readGoogleTagValue('client_id', dependencies),
+    readGoogleTagValue('session_id', dependencies)
+  ]).finally(() => pendingReads.delete(dependencies))
+  pendingReads.set(dependencies, work)
+  return work
 }
 
 export async function enrichCanonicalEventWithGoogleAnalyticsIds<
@@ -126,11 +162,10 @@ export async function enrichCanonicalEventWithGoogleAnalyticsIds<
   dependencies: GoogleAnalyticsBrowserIdDependencies = defaultDependencies
 ): Promise<E> {
   if (event.consent.analytics !== 'granted') return event
+  if (event.browser_id?.ga_client_id && event.browser_id?.ga_session_id) return event
+  if (dependencies === defaultDependencies && typeof window === 'undefined') return event
 
-  const [clientId, sessionId] = await Promise.all([
-    readGoogleTagValue('client_id', dependencies),
-    readGoogleTagValue('session_id', dependencies)
-  ])
+  const [clientId, sessionId] = await readGoogleAnalyticsIds(dependencies)
 
   if (!clientId && !sessionId) return event
 

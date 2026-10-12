@@ -125,20 +125,22 @@ async function prepareEvent(event: StorefrontEvent) {
     1500,
   );
 }
+function googleIds(event: { browser_id?: Record<string, string> }) {
+  const ids = event.browser_id;
+  return {
+    ...(ids?.ga_client_id ? { ga_client_id: ids.ga_client_id } : {}),
+    ...(ids?.ga_session_id ? { ga_session_id: ids.ga_session_id } : {}),
+  };
+}
 export async function dispatchEvent(event: StorefrontEvent, prepared = false) {
   if (!browserTrackingEnabled()) return event;
   const key = `${event.event_name}:${event.event_id}`;
   const existing = deliveries.get(key);
   if (existing) return existing;
   const work = (async () => {
+    // Start Google readiness alongside Meta enrichment, not 1.5 s after it.
+    const google = prepared ? Promise.resolve(event) : enrichCanonicalEventWithGoogleAnalyticsIds(event);
     let enriched = prepared ? event : await prepareEvent(event);
-    const google = prepared
-      ? Promise.resolve(enriched)
-      : boundedEnrichment(
-          enrichCanonicalEventWithGoogleAnalyticsIds(enriched),
-          enriched,
-          500,
-        );
     // Pinned sender synchronously dispatches Pixel before its bounded GA wait.
     const browser = sendCanonicalGTMEvent(
       buildDataLayer(enriched),
@@ -149,9 +151,9 @@ export async function dispatchEvent(event: StorefrontEvent, prepared = false) {
         },
       >(
         current: E,
-      ): Promise<E> => ({ ...current, browser_id: (await google).browser_id }),
+      ): Promise<E> => ({ ...current, browser_id: { ...current.browser_id, ...googleIds(await google) } }),
     );
-    enriched = await google;
+    enriched = { ...enriched, browser_id: { ...enriched.browser_id, ...googleIds(await google) } };
     await browser;
     if (enriched.event_name === "page_view") {
       if (enriched.external_id)
@@ -270,12 +272,13 @@ export async function prepareCanonicalCheckout(
         method === "klarna" ? "klarna_express" : "shopify_checkout",
     },
   );
+  const identityDeadline = performance.now() + 2000;
+  const google = enrichCanonicalEventWithGoogleAnalyticsIds(event);
   const enriched = await prepareEvent(event);
-  return (await boundedEnrichment(
-    enrichCanonicalEventWithGoogleAnalyticsIds(enriched),
-    enriched,
-    500,
-  )) as CanonicalBeginCheckout;
+  // Preserve the existing total 1.5 s Meta + 0.5 s Google budget, but let
+  // Google use the time Meta did not need. A blocked tag cannot hold checkout.
+  const identified = await boundedEnrichment(google, event, Math.max(0, identityDeadline - performance.now()));
+  return { ...enriched, browser_id: { ...enriched.browser_id, ...googleIds(identified) } } as CanonicalBeginCheckout;
 }
 export async function confirmCheckoutTracking(event: CanonicalBeginCheckout) {
   return dispatchEvent(event, true);

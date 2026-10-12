@@ -171,7 +171,7 @@ export default function DunReservationDialog({
             <h3>Din Utekos er reservert.</h3>
             <p>
               Vi har holdt av en Utekos Dun™ til deg. Du hører fra oss med en
-              betalingslenke i uke 43.
+              betalingslenke når produktet ankommer hos oss.
             </p>
             <button type="button" className={styles.primary} onClick={onClose}>
               Lukk
@@ -182,7 +182,7 @@ export default function DunReservationDialog({
             <p>
               Velg størrelse og farge. Vi reserverer det kostnadsfritt for deg,
               og sender en trygg og uforpliktende betalingslenke på SMS og
-              e-post så snart plagget ankommer vårt lager i uke 43.
+              e-post så snart plagget ankommer vårt lager.
             </p>
             <Questionnaire
               ref={formRef}

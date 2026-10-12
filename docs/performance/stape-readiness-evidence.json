@@ -1,0 +1,278 @@
+{
+  "date": "2026-10-12",
+  "status": "locally_implemented_not_deployed",
+  "providerReadback": {
+    "webGtmVersion": "175",
+    "serverGtmVersion": "44",
+    "stapeContainer": "gqnrnczg",
+    "containerStatus": "running",
+    "domainStatus": "ready",
+    "customLoaderEnabled": true,
+    "cookieKeeperEnabled": true,
+    "enhancedProtectionEnabled": true,
+    "requestDelayEnabled": false,
+    "warnings": [],
+    "generatedLoaderMatches": true,
+    "generatedLoaderBytes": 1377,
+    "generatedLoaderSha256": "36b5d2c49a90978e4f510de60225d7ffcfbc857e49e5ff740ad0559e87653450"
+  },
+  "fixtureBoundary": "Actual source runtime and published vendor scripts; synthetic master ID; provider events and collector calls intercepted locally. Does not establish production delivery or long-term Safari restoration.",
+  "browserFixture": [
+    {
+      "engine": "chromium",
+      "scriptResponses": [
+        {
+          "url": "https://utekos.no/readiness-harness.js",
+          "status": 200,
+          "type": "application/javascript",
+          "queryKeys": []
+        },
+        {
+          "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+          "status": 200,
+          "cache": "public, max-age=60",
+          "type": "application/javascript; charset=UTF-8",
+          "queryKeys": [
+            "ds4bay5"
+          ]
+        },
+        {
+          "url": "https://bat.bing.com/bat.js",
+          "status": 200,
+          "type": "application/javascript",
+          "queryKeys": []
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtm.js",
+          "status": 200,
+          "cache": "private, max-age=900",
+          "type": "application/javascript; charset=UTF-8",
+          "queryKeys": [
+            "id",
+            "gtg_health"
+          ]
+        },
+        {
+          "url": "https://utekos.no/__sgtm/fps/aWQ9R1RNLTVUV01KUUZQJmRuPXV0ZWtvcy5ubyZzb3A9L19fc2d0bQ/071DHkcmD8Rrin8-_Vmh6trbA9BK9AMk978BuCx7h70H5oo",
+          "status": 200,
+          "cache": "no-store, max-age=0",
+          "type": "application/javascript; charset=UTF-8",
+          "queryKeys": []
+        },
+        {
+          "url": "https://stapecdn.com/dtag/v9.js",
+          "status": 200,
+          "cache": "public, max-age=3600",
+          "type": "application/x-javascript",
+          "queryKeys": []
+        }
+      ],
+      "containers": [
+        "GTM-5TWMJQFP",
+        "GT-MKRLF5WK"
+      ],
+      "cookieNames": [
+        "user_id",
+        "utekos_external_id",
+        "_fbp",
+        "_fbi",
+        "_gcl_au",
+        "_ga_FCES3L0M9M",
+        "_ga"
+      ],
+      "gets": 10,
+      "canonical": {
+        "clientPresent": true,
+        "sessionPresent": true
+      },
+      "collectorCount": 1,
+      "collectorMatches": true,
+      "data": [
+        {
+          "path": "/__sgtm/apgqnrnczg",
+          "bodyKeys": [
+            "page_location",
+            "page_hostname",
+            "page_title",
+            "page_encoding",
+            "screen_resolution",
+            "viewport_size",
+            "consent_state",
+            "event_name",
+            "v",
+            "event_id",
+            "event_time",
+            "page_view_id",
+            "event_source",
+            "client_id",
+            "session_id",
+            "_dcid_temp",
+            "x-ga-measurement_id",
+            "x-ga-page_id",
+            "x-ga-mp2-richsstsse",
+            "x-ga-mp2-seg",
+            "x-ga-request_count",
+            "x-ga-protocol_version"
+          ],
+          "clientMatches": true,
+          "sessionMatches": true,
+          "eventIdMatches": true,
+          "eventTimeMatches": true
+        }
+      ],
+      "transportPaths": [
+        "/__sgtm/apgqnrnczg",
+        "/__sgtm/_/service_worker/6a60/sw_iframe.html"
+      ]
+    },
+    {
+      "engine": "webkit",
+      "scriptResponses": [
+        {
+          "url": "https://utekos.no/readiness-harness.js",
+          "status": 200,
+          "type": "application/javascript",
+          "queryKeys": []
+        },
+        {
+          "url": "https://utekos.no/__sgtm/apkpgqnrnczg.js",
+          "status": 200,
+          "cache": "no-store, max-age=0",
+          "type": "application/javascript; charset=utf-8",
+          "queryKeys": [
+            "ds4bay5",
+            "bi"
+          ]
+        },
+        {
+          "url": "https://bat.bing.com/bat.js",
+          "status": 200,
+          "type": "application/javascript",
+          "queryKeys": []
+        },
+        {
+          "url": "https://utekos.no/__sgtm/gtag/js",
+          "status": 200,
+          "cache": "no-store, max-age=0",
+          "type": "application/javascript; charset=UTF-8",
+          "queryKeys": [
+            "id",
+            "cx",
+            "gtm"
+          ]
+        },
+        {
+          "url": "https://stapecdn.com/dtag/v9.js",
+          "status": 200,
+          "cache": "public, max-age=3600",
+          "type": "application/x-javascript",
+          "queryKeys": []
+        }
+      ],
+      "containers": [
+        "GTM-5TWMJQFP",
+        "GT-MKRLF5WK"
+      ],
+      "cookieNames": [
+        "_ga",
+        "_ga_FCES3L0M9M",
+        "_gcl_au",
+        "_fbi",
+        "_fbp",
+        "utekos_external_id",
+        "user_id"
+      ],
+      "gets": 6,
+      "canonical": {
+        "clientPresent": true,
+        "sessionPresent": true
+      },
+      "collectorCount": 1,
+      "collectorMatches": true,
+      "data": [
+        {
+          "path": "/__sgtm/data",
+          "bodyKeys": [
+            "page_location",
+            "page_hostname",
+            "page_title",
+            "page_encoding",
+            "screen_resolution",
+            "viewport_size",
+            "consent_state",
+            "event_name",
+            "v",
+            "event_id",
+            "event_time",
+            "page_view_id",
+            "event_source",
+            "client_id",
+            "session_id",
+            "_dcid_temp",
+            "x-ga-measurement_id",
+            "x-ga-page_id",
+            "x-ga-mp2-richsstsse",
+            "x-ga-mp2-seg",
+            "x-ga-request_count",
+            "x-ga-protocol_version"
+          ],
+          "clientMatches": true,
+          "sessionMatches": true,
+          "eventIdMatches": true,
+          "eventTimeMatches": true
+        }
+      ],
+      "transportPaths": [
+        "/__sgtm/g/collect",
+        "/__sgtm/_/service_worker/6a60/sw_iframe.html",
+        "/__sgtm/data"
+      ]
+    }
+  ],
+  "safariPathCacheFixture": [
+    {
+      "engine": "chromium",
+      "scenario": "before",
+      "firstCalls": 1,
+      "callsAfterReload": 2
+    },
+    {
+      "engine": "chromium",
+      "scenario": "private",
+      "firstCalls": 1,
+      "callsAfterReload": 1
+    },
+    {
+      "engine": "chromium",
+      "scenario": "cookies",
+      "firstCalls": 1,
+      "callsAfterReload": 2
+    },
+    {
+      "engine": "webkit",
+      "scenario": "before",
+      "firstCalls": 1,
+      "callsAfterReload": 2
+    },
+    {
+      "engine": "webkit",
+      "scenario": "private",
+      "firstCalls": 1,
+      "callsAfterReload": 1
+    },
+    {
+      "engine": "webkit",
+      "scenario": "cookies",
+      "firstCalls": 1,
+      "callsAfterReload": 2
+    }
+  ],
+  "validation": {
+    "focusedTestsPassed": 68,
+    "gatewayTestsPassed": 13,
+    "contractFilesVerified": 117,
+    "eslint": "passed",
+    "productionBuild": "passed",
+    "fullSuite": "297 of 298 passed before final checkout-budget adjustment; separate pre-existing Dun week-43 assertion failed; final tracking checks passed independently"
+  }
+}

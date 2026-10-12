@@ -9,6 +9,7 @@ import { NBCC_PATH } from '@/lib/nbcc/content';
 import { getProduct } from '@/lib/shopify/getProduct';
 import { readCategoryListing, type CategoryPageProps } from './CategoryPage';
 import { InfoDialogButton } from './InfoDialogButton';
+import { ProductCarousel } from '@/components/ProductCard/ProductCarousel';
 import { ModelProductCard } from './ModelProductCard';
 import { CategoryNavigation } from './CategoryNavigation';
 import styles from './camping.module.css';
@@ -35,7 +36,7 @@ export async function CampingPage({ searchParams }: CategoryPageProps) {
             <Link href="/frakt-og-retur" prefetch={false}>Les fullstendige vilkår for frakt og retur →</Link>
           </div></InfoDialogButton>
         </div>
-        {models.some(Boolean) ? <ul className={styles.models}>{models.map(product => product && <li key={product.handle}><ModelProductCard product={product} /></li>)}</ul> : <p>Ingen produkter er tilgjengelige i denne kategorien akkurat nå. <Link href="/produkter" prefetch={false}>Se alle produkter</Link>.</p>}
+        {models.some(Boolean) ? <ProductCarousel label="Varmeplagg til camping og bobil">{models.filter(product => product !== null).map(product => <ModelProductCard key={product.handle} product={product} />)}</ProductCarousel> : <p>Ingen produkter er tilgjengelige i denne kategorien akkurat nå. <Link href="/produkter" prefetch={false}>Se alle produkter</Link>.</p>}
         {(page > 1 || hasNextPage) && <nav aria-label="Sider i produktoversikten" className={styles.pagination}>
           {page > 1 && <><Link href={listingPath(categoryKey)} prefetch={false}>Første side</Link><Link href={listingPath(categoryKey, page - 1)} prefetch={false}>Forrige side</Link></>}
           <span aria-current="page">Side {page}</span>

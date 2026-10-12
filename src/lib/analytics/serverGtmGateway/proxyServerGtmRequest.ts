@@ -55,7 +55,12 @@ export async function proxyServerGtmRequest(
         status: upstreamResponse.status,
         statusText: upstreamResponse.statusText,
         headers: buildServerGtmResponseHeaders(
-          upstreamResponse.headers
+          upstreamResponse.headers,
+          {
+            method: request.method,
+            pathname: upstreamUrl.pathname,
+            status: upstreamResponse.status
+          }
         )
       }
     )

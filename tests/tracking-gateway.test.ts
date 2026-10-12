@@ -75,6 +75,78 @@ test('invalid Stape paths fail without fetch; provider errors have no private de
   assert.equal(failed.headers.get('cache-control'), 'no-store, max-age=0')
 })
 
+const googleScriptPath = ['fps', 'encoded-container', 'opaqueGoogleScript0123456789']
+
+test('Google tag scripts retain bounded private browser caching without server/CDN caching', async () => {
+  for (const path of [googleScriptPath, ['gtag', 'js']]) {
+  for (const method of ['GET', 'HEAD']) {
+    const response = await proxyServerGtmRequest(
+      new Request(`https://utekos.no/__sgtm/${path.join('/')}`, { method }),
+      { params: Promise.resolve({ path }) },
+      async (_url, init) => {
+        assert.equal(init?.cache, 'no-store')
+        return new Response('window.fixtureGoogleTag = true', {
+          headers: {
+            'Content-Type': 'application/javascript; charset=UTF-8',
+            'Cache-Control': 'private, max-age=900',
+            'Vary': 'Accept-Encoding, Cookie',
+            'ETag': '"fixture-version"',
+          },
+        })
+      }
+    )
+    assert.equal(response.headers.get('cache-control'), 'private, max-age=900')
+    assert.equal(response.headers.get('cdn-cache-control'), 'no-store')
+    assert.equal(response.headers.get('vercel-cdn-cache-control'), 'no-store')
+    assert.equal(response.headers.get('vary'), 'Accept-Encoding, Cookie')
+    assert.equal(response.headers.get('etag'), '"fixture-version"')
+    assert.equal(await response.text(), method === 'HEAD' ? '' : 'window.fixtureGoogleTag = true')
+  }
+  }
+})
+
+test('event, Cookie Keeper, unknown and unsafe responses remain no-store', async () => {
+  const cases: Array<{
+    name: string; method?: string; path?: string[]; status?: number; headers?: HeadersInit
+  }> = [
+    { name: 'POST', method: 'POST' },
+    { name: 'event transport', path: ['fps', 'encoded-container', 'a'] },
+    { name: 'Data Tag', path: ['data'] },
+    { name: 'Cookie Keeper', path: ['apkpgqnrnczg.js'] },
+    { name: 'unknown script', path: ['unknown.js'] },
+    { name: 'unknown Google path', path: ['gtag', 'unknown'] },
+    { name: 'error', status: 500 },
+    { name: 'partial response', status: 206 },
+    { name: 'HTML', headers: { 'Content-Type': 'text/html' } },
+    { name: 'cookie write', headers: { 'Set-Cookie': 'user_id=fixture; Path=/; Secure' } },
+    { name: 'public cache', headers: { 'Cache-Control': 'public, max-age=900' } },
+    { name: 'explicit no-store', headers: { 'Cache-Control': 'private, max-age=900, no-store' } },
+    { name: 'explicit revalidation', headers: { 'Cache-Control': 'private, max-age=900, no-cache' } },
+    { name: 'unbounded age', headers: { 'Cache-Control': 'private' } },
+    { name: 'zero age', headers: { 'Cache-Control': 'private, max-age=0' } },
+    { name: 'excessive age', headers: { 'Cache-Control': 'private, max-age=901' } },
+    { name: 'invalid age', headers: { 'Cache-Control': 'private, max-age=bad' } },
+    { name: 'conflicting age', headers: { 'Cache-Control': 'private, max-age=900, max-age=1' } },
+    { name: 'Vary wildcard', headers: { 'Vary': '*' } },
+  ]
+  for (const scriptPath of [googleScriptPath, ['gtag', 'js']]) {
+  for (const fixture of cases) {
+    const path = fixture.path ?? scriptPath
+    const headers = new Headers({ 'Content-Type': 'application/javascript', 'Cache-Control': 'private, max-age=900' })
+    new Headers(fixture.headers).forEach((value, key) => headers.set(key, value))
+    const response = await proxyServerGtmRequest(
+      new Request(`https://utekos.no/__sgtm/${path.join('/')}`, { method: fixture.method ?? 'GET' }),
+      { params: Promise.resolve({ path }) },
+      async () => new Response('fixture', { status: fixture.status ?? 200, headers })
+    )
+    assert.equal(response.headers.get('cache-control'), 'no-store, max-age=0', fixture.name)
+    assert.equal(response.headers.get('cdn-cache-control'), 'no-store', fixture.name)
+    assert.equal(response.headers.get('vercel-cdn-cache-control'), 'no-store', fixture.name)
+    assert.deepEqual(response.headers.getSetCookie(), headers.getSetCookie(), fixture.name)
+  }
+  }
+})
+
 test('Cookie Keeper retains valid identity and sets 400-day server cookie with no-store', () => {
   const id = '0123456789abcdef0123456789abcdef'
   const response = applyCookieKeeperUserIdCookie(NextResponse.next(), new NextRequest('https://www.utekos.no/produkter', {
@@ -161,7 +233,7 @@ test('generated loader and reviewed contracts match their recorded provenance', 
   for (const file of manifest.files as { target: string; sourceSha256: string; adapted: boolean; reviewedTargetSha256?: string; generatedScriptSha256?: string; reason?: string }[]) {
     if (file.adapted) continue
     const data = readFileSync(new URL(`../${file.target}`, import.meta.url))
-    if (file.reviewedTargetSha256) assert.ok(file.reason, 'reviewed formatting requires an explanation')
+    if (file.reviewedTargetSha256) assert.ok(file.reason, 'reviewed target changes require an explanation')
     assert.equal(createHash('sha256').update(data).digest('hex'), file.reviewedTargetSha256 ?? file.sourceSha256, file.target)
     if (file.target === 'src/lib/tracking/stapeCustomLoader.ts') {
       assert.equal(createHash('sha256').update(STAPE_CUSTOM_LOADER).digest('hex'), file.generatedScriptSha256, 'generated executable Stape loader')

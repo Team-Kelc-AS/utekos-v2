@@ -11,7 +11,9 @@
       "source": "src/lib/analytics/serverGtmGateway/buildServerGtmResponseHeaders.ts",
       "target": "src/lib/analytics/serverGtmGateway/buildServerGtmResponseHeaders.ts",
       "sourceSha256": "bf1b46dcab0b05553084c59ada852d598d2c6b5d4be56d4f39b55c67087806f5",
-      "adapted": false
+      "adapted": false,
+      "reviewedTargetSha256": "3021531345ef38c6c11ec4d18de5d561955c5c1db28c3ae50ad8b3d3a73cd832",
+      "reason": "Reviewed 2026-10-12: preserve bounded private browser caching for successful Google-tag scripts on both opaque Chromium /fps paths and Safari /gtag/js. CDN, event transport, Cookie Keeper, errors and unknown responses remain no-store. Original source hash retained; see docs/performance/google-tag-cache.md and stape-readiness.md."
     },
     {
       "source": "src/lib/analytics/serverGtmGateway/buildServerGtmUpstreamUrl.ts",

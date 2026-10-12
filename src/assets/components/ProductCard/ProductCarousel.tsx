@@ -4,13 +4,13 @@ import { Children, useId, type ReactNode } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import styles from './ProductCarousel.module.css';
 
-export function ProductCarousel({ children }: { children: ReactNode }) {
+export function ProductCarousel({ children, label = "Produktvarianter på lager" }: { children: ReactNode; label?: string }) {
   const id = useId();
   const count = Children.count(children);
 
   return <Carousel
     className={styles.carousel}
-    aria-label="Produktvarianter på lager"
+    aria-label={label}
     tabIndex={0}
     opts={{ align: 'start', loop: false, watchDrag: (_api, event) => !(event.target instanceof Element && event.target.closest('video')), breakpoints: { '(prefers-reduced-motion: reduce)': { duration: 0 } } }}
   >

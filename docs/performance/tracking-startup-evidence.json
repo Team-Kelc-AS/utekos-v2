@@ -1,0 +1,3000 @@
+{
+  "browserRuns": [
+    {
+      "name": "home-cold",
+      "route": "/",
+      "status": 200,
+      "javascriptTransferredBytes": 1057976,
+      "fourTransferredBytes": 642827,
+      "fourDecodedBytes": 2124903,
+      "scripts": [
+        {
+          "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+          "transferBytes": 5287,
+          "decodedBytes": 16475,
+          "startMs": 339.21500004362315,
+          "sha256": "6e8b1ed24eed5895a38d45531b399c6c9c7dffaf2c675ef142dbb4701e40fc42",
+          "initiator": {
+            "type": "parser",
+            "url": "https://utekos.no/"
+          },
+          "headers": null
+        },
+        {
+          "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+          "transferBytes": 150484,
+          "decodedBytes": 468242,
+          "startMs": 519.858000043314,
+          "sha256": "7979c23fc56c6df78188eccb0591ba9c01b621e917ba1febded8d5e2a4e2e30d",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "",
+                "line": 0
+              },
+              {
+                "function": "h",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://connect.facebook.net/en_US/fbevents.js",
+          "transferBytes": 117017,
+          "decodedBytes": 433365,
+          "startMs": 540.6160000129603,
+          "sha256": "9e4b581a7483e88873ad835a840ffaaff1c85b3be28951e12e8207a318e7776b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "installPixel",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 173
+              },
+              {
+                "function": "run",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 591
+              },
+              {
+                "function": "retry",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 569
+              },
+              {
+                "function": "scheduleConsentRetry",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 575
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 614
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 618
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/d83cd4b17c2e47da/script.js",
+          "transferBytes": 2237,
+          "decodedBytes": 4550,
+          "startMs": 545.2580000273883,
+          "sha256": "b1fa9fc8104da15958badc63bbebe46eeea4d9ce88e587d7732b2c4f4238d8af",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/561871d5b41fdaa9/script.js",
+          "transferBytes": 5014,
+          "decodedBytes": 12567,
+          "startMs": 545.5090000177734,
+          "sha256": "c703720710415599d2f0b3f31fbfda63e34d6d19e730bada78b9b92197564f5b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://connect.facebook.net/signals/config/1092362672918571",
+          "transferBytes": 166877,
+          "decodedBytes": 593101,
+          "startMs": 809.471000044141,
+          "sha256": "3ece7e094d31e86c1becf9e612f91e91809544ee336238b52658a37e5a96c9ee",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "u",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 195
+              },
+              {
+                "function": "ee",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 141
+              },
+              {
+                "function": "value",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 141
+              },
+              {
+                "function": "ze",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              },
+              {
+                "function": "Ve",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              },
+              {
+                "function": "at",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/__sgtm/fps/aWQ9R1RNLTVUV01KUUZQJmRuPXV0ZWtvcy5ubyZzb3A9L19fc2d0bQ/071DHkcmD8Rrin8-_Vmh6trbA9BK9AMk978BuCx7h70H5oo",
+          "transferBytes": 208449,
+          "decodedBytes": 630195,
+          "startMs": 842.417000036221,
+          "sha256": "19bbd3eac7d2a5b5d289e4e51f30c8f4b2123e7d2c5f922f626af9c200fe750b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "Wl",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 472
+              },
+              {
+                "function": "MA",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 689
+              },
+              {
+                "function": "fI",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 810
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtm.js",
+          "transferBytes": 385,
+          "decodedBytes": 216,
+          "startMs": 842.9950000136159,
+          "sha256": "e5482421d6b3abd68b9ca563da4e92a2c05663bf9c8cfe0d518218315677c046",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "UB",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 714
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 714
+              },
+              {
+                "function": "DB",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 705
+              },
+              {
+                "function": "GB",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 708
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://bat.bing.com/bat.js",
+          "transferBytes": 15934,
+          "decodedBytes": 55631,
+          "startMs": 844.3630000110716,
+          "sha256": "4bebc12694755bc5edf1d849783992c7d470db7ede2b9cc74fa2dfd246c20aa1",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "vT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 881
+              },
+              {
+                "function": "xT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 883
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              },
+              {
+                "function": "m.apply",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 332
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://bat.bing.com/p/action/97247724.js",
+          "transferBytes": 2106,
+          "decodedBytes": 5251,
+          "startMs": 939.0150000108406,
+          "sha256": "a6d7603264aad03adc3dfff3f075a310220349836f114f60fb9f5f84d06c125a",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "UET.loadConfig",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "UET",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "UET_init",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 897
+              },
+              {
+                "function": "sI",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 812
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://www.clarity.ms/tag/uet/97247724",
+          "transferBytes": 1386,
+          "decodedBytes": 1113,
+          "startMs": 985.0870000082068,
+          "sha256": "e60fa84f8384dd8b0fe09b80e326953c554fa00c832c6716c7ad03f1e2b71936",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://bat.bing.com/p/action/97247724.js",
+                "line": 58
+              },
+              {
+                "function": "",
+                "url": "https://bat.bing.com/p/action/97247724.js",
+                "line": 102
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://scripts.clarity.ms/0.8.72/clarity.js",
+          "transferBytes": 25560,
+          "decodedBytes": 73523,
+          "startMs": 1117.6270000287332,
+          "sha256": "981a3eecbb175c0b72d65f75035c98ceb8f2a1a324532c7184c0890dd37a92e6",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://www.clarity.ms/tag/uet/97247724",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://www.clarity.ms/tag/uet/97247724",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://stapecdn.com/dtag/v9.js",
+          "transferBytes": 9507,
+          "decodedBytes": 23235,
+          "startMs": 1323.266000021249,
+          "sha256": "ea3de40e2b9433de502e4bc89a9d1201888160e4fd45225ea8489a955b15f3b4",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "vT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 881
+              },
+              {
+                "function": "xT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 883
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              },
+              {
+                "function": "m.apply",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 332
+              }
+            ]
+          },
+          "headers": null
+        }
+      ],
+      "pageView": [
+        {
+          "time": 1320.5,
+          "event": "page_view",
+          "source": "operator_policy",
+          "gaClient": false,
+          "gaSession": false
+        }
+      ],
+      "activeContainers": [
+        "GTM-5TWMJQFP",
+        "GT-MKRLF5WK"
+      ],
+      "collector": [
+        {
+          "url": "https://utekos.no/api/events/page-view",
+          "status": 204,
+          "failure": "net::ERR_ABORTED",
+          "headers": null
+        }
+      ]
+    },
+    {
+      "name": "home-warm",
+      "route": "/",
+      "status": 200,
+      "javascriptTransferredBytes": 209515,
+      "fourTransferredBytes": 208341,
+      "fourDecodedBytes": 2124903,
+      "scripts": [
+        {
+          "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+          "transferBytes": 80,
+          "decodedBytes": 16475,
+          "startMs": 150.80300002591684,
+          "sha256": "6e8b1ed24eed5895a38d45531b399c6c9c7dffaf2c675ef142dbb4701e40fc42",
+          "initiator": {
+            "type": "parser",
+            "url": "https://utekos.no/"
+          },
+          "headers": null
+        },
+        {
+          "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+          "transferBytes": 0,
+          "decodedBytes": 468242,
+          "startMs": 193.33400001050904,
+          "sha256": "7979c23fc56c6df78188eccb0591ba9c01b621e917ba1febded8d5e2a4e2e30d",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "",
+                "line": 0
+              },
+              {
+                "function": "h",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://connect.facebook.net/en_US/fbevents.js",
+          "transferBytes": 0,
+          "decodedBytes": 433365,
+          "startMs": 211.0230000107549,
+          "sha256": "9e4b581a7483e88873ad835a840ffaaff1c85b3be28951e12e8207a318e7776b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "installPixel",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 173
+              },
+              {
+                "function": "run",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 591
+              },
+              {
+                "function": "retry",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 569
+              },
+              {
+                "function": "scheduleConsentRetry",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 575
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 614
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 618
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://connect.facebook.net/signals/config/1092362672918571",
+          "transferBytes": 0,
+          "decodedBytes": 593101,
+          "startMs": 230.84999999264255,
+          "sha256": "3ece7e094d31e86c1becf9e612f91e91809544ee336238b52658a37e5a96c9ee",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "u",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 195
+              },
+              {
+                "function": "ee",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 141
+              },
+              {
+                "function": "value",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 141
+              },
+              {
+                "function": "ze",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              },
+              {
+                "function": "Ve",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              },
+              {
+                "function": "at",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/__sgtm/fps/aWQ9R1RNLTVUV01KUUZQJmRuPXV0ZWtvcy5ubyZzb3A9L19fc2d0bQ/071DHkcmD8Rrin8-_Vmh6trbA9BK9AMk978BuCx7h70H5oo",
+          "transferBytes": 208341,
+          "decodedBytes": 630195,
+          "startMs": 264.9770000134595,
+          "sha256": "19bbd3eac7d2a5b5d289e4e51f30c8f4b2123e7d2c5f922f626af9c200fe750b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "Wl",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 472
+              },
+              {
+                "function": "MA",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 689
+              },
+              {
+                "function": "fI",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 810
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://bat.bing.com/bat.js",
+          "transferBytes": 0,
+          "decodedBytes": 55631,
+          "startMs": 265.76600002590567,
+          "sha256": "4bebc12694755bc5edf1d849783992c7d470db7ede2b9cc74fa2dfd246c20aa1",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "vT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 881
+              },
+              {
+                "function": "xT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 883
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              },
+              {
+                "function": "m.apply",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 332
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://bat.bing.com/p/action/97247724.js",
+          "transferBytes": 0,
+          "decodedBytes": 5251,
+          "startMs": 266.81900001131,
+          "sha256": "a6d7603264aad03adc3dfff3f075a310220349836f114f60fb9f5f84d06c125a",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "UET.loadConfig",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "UET",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "UET_init",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 897
+              },
+              {
+                "function": "sI",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 812
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://www.clarity.ms/tag/uet/97247724",
+          "transferBytes": 1094,
+          "decodedBytes": 822,
+          "startMs": 267.03200000338256,
+          "sha256": "98310b274ebbed747284d76a762522c06793b5445e6232b9c21623d565c472db",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://bat.bing.com/p/action/97247724.js",
+                "line": 58
+              },
+              {
+                "function": "",
+                "url": "https://bat.bing.com/p/action/97247724.js",
+                "line": 102
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/d83cd4b17c2e47da/script.js",
+          "transferBytes": 0,
+          "decodedBytes": 4550,
+          "startMs": 306.66499998187646,
+          "sha256": "b1fa9fc8104da15958badc63bbebe46eeea4d9ce88e587d7732b2c4f4238d8af",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/561871d5b41fdaa9/script.js",
+          "transferBytes": 0,
+          "decodedBytes": 12567,
+          "startMs": 306.84800003655255,
+          "sha256": "c703720710415599d2f0b3f31fbfda63e34d6d19e730bada78b9b92197564f5b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://scripts.clarity.ms/0.8.72/clarity.js",
+          "transferBytes": 0,
+          "decodedBytes": 73523,
+          "startMs": 475.44700000435114,
+          "sha256": "981a3eecbb175c0b72d65f75035c98ceb8f2a1a324532c7184c0890dd37a92e6",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://www.clarity.ms/tag/uet/97247724",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://www.clarity.ms/tag/uet/97247724",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://stapecdn.com/dtag/v9.js",
+          "transferBytes": 0,
+          "decodedBytes": 23235,
+          "startMs": 1057.4210000340827,
+          "sha256": "ea3de40e2b9433de502e4bc89a9d1201888160e4fd45225ea8489a955b15f3b4",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "vT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 881
+              },
+              {
+                "function": "xT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 883
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              },
+              {
+                "function": "m.apply",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 332
+              }
+            ]
+          },
+          "headers": null
+        }
+      ],
+      "pageView": [
+        {
+          "time": 1055.3999999761581,
+          "event": "page_view",
+          "source": "operator_policy",
+          "gaClient": true,
+          "gaSession": true
+        }
+      ],
+      "activeContainers": [
+        "GTM-5TWMJQFP",
+        "GT-MKRLF5WK"
+      ],
+      "collector": [
+        {
+          "url": "https://utekos.no/api/events/page-view",
+          "status": 204,
+          "failure": "net::ERR_ABORTED",
+          "headers": null
+        }
+      ]
+    },
+    {
+      "name": "techdown",
+      "route": "/produkter/techdown",
+      "status": 200,
+      "javascriptTransferredBytes": 377240,
+      "fourTransferredBytes": 358364,
+      "fourDecodedBytes": 2124903,
+      "scripts": [
+        {
+          "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+          "transferBytes": 81,
+          "decodedBytes": 16475,
+          "startMs": 248.4000000404194,
+          "sha256": "6e8b1ed24eed5895a38d45531b399c6c9c7dffaf2c675ef142dbb4701e40fc42",
+          "initiator": {
+            "type": "parser",
+            "url": "https://utekos.no/produkter/utekos-techdown"
+          },
+          "headers": null
+        },
+        {
+          "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+          "transferBytes": 150109,
+          "decodedBytes": 468242,
+          "startMs": 285.42800003197044,
+          "sha256": "7979c23fc56c6df78188eccb0591ba9c01b621e917ba1febded8d5e2a4e2e30d",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "",
+                "line": 0
+              },
+              {
+                "function": "h",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://connect.facebook.net/en_US/fbevents.js",
+          "transferBytes": 0,
+          "decodedBytes": 433365,
+          "startMs": 287.8309999941848,
+          "sha256": "9e4b581a7483e88873ad835a840ffaaff1c85b3be28951e12e8207a318e7776b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "installPixel",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 173
+              },
+              {
+                "function": "run",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 591
+              },
+              {
+                "function": "retry",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 569
+              },
+              {
+                "function": "scheduleConsentRetry",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 575
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 614
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 618
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/d83cd4b17c2e47da/script.js",
+          "transferBytes": 0,
+          "decodedBytes": 4550,
+          "startMs": 297.3869999987073,
+          "sha256": "b1fa9fc8104da15958badc63bbebe46eeea4d9ce88e587d7732b2c4f4238d8af",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/561871d5b41fdaa9/script.js",
+          "transferBytes": 0,
+          "decodedBytes": 12567,
+          "startMs": 297.582000028342,
+          "sha256": "c703720710415599d2f0b3f31fbfda63e34d6d19e730bada78b9b92197564f5b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://connect.facebook.net/signals/config/1092362672918571",
+          "transferBytes": 0,
+          "decodedBytes": 593101,
+          "startMs": 323.92300001811236,
+          "sha256": "3ece7e094d31e86c1becf9e612f91e91809544ee336238b52658a37e5a96c9ee",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "u",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 195
+              },
+              {
+                "function": "ee",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 141
+              },
+              {
+                "function": "value",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 141
+              },
+              {
+                "function": "ze",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              },
+              {
+                "function": "Ve",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              },
+              {
+                "function": "at",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/__sgtm/fps/aWQ9R1RNLTVUV01KUUZQJmRuPXV0ZWtvcy5ubyZzb3A9L19fc2d0bQ/071DHkcmD8Rrin8-_Vmh6trbA9BK9AMk978BuCx7h70H5oo",
+          "transferBytes": 208255,
+          "decodedBytes": 630195,
+          "startMs": 569.3029999965802,
+          "sha256": "19bbd3eac7d2a5b5d289e4e51f30c8f4b2123e7d2c5f922f626af9c200fe750b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "Wl",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 472
+              },
+              {
+                "function": "MA",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 689
+              },
+              {
+                "function": "fI",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 810
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://bat.bing.com/bat.js",
+          "transferBytes": 0,
+          "decodedBytes": 55631,
+          "startMs": 570.2190000447445,
+          "sha256": "4bebc12694755bc5edf1d849783992c7d470db7ede2b9cc74fa2dfd246c20aa1",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "vT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 881
+              },
+              {
+                "function": "xT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 883
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              },
+              {
+                "function": "m.apply",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 332
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://bat.bing.com/p/action/97247724.js",
+          "transferBytes": 0,
+          "decodedBytes": 5251,
+          "startMs": 584.8120000446215,
+          "sha256": "a6d7603264aad03adc3dfff3f075a310220349836f114f60fb9f5f84d06c125a",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "UET.loadConfig",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "UET",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "UET_init",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 897
+              },
+              {
+                "function": "sI",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 812
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://www.clarity.ms/tag/uet/97247724",
+          "transferBytes": 1094,
+          "decodedBytes": 822,
+          "startMs": 585.1740000071004,
+          "sha256": "f1b3bf1c8f3ea32e9e916c2627dd4483de01a278e07adb5cfe443e5687117489",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://bat.bing.com/p/action/97247724.js",
+                "line": 58
+              },
+              {
+                "function": "",
+                "url": "https://bat.bing.com/p/action/97247724.js",
+                "line": 102
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://scripts.clarity.ms/0.8.72/clarity.js",
+          "transferBytes": 0,
+          "decodedBytes": 73523,
+          "startMs": 702.5680000078864,
+          "sha256": "981a3eecbb175c0b72d65f75035c98ceb8f2a1a324532c7184c0890dd37a92e6",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://www.clarity.ms/tag/uet/97247724",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://www.clarity.ms/tag/uet/97247724",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://stapecdn.com/dtag/v9.js",
+          "transferBytes": 0,
+          "decodedBytes": 23235,
+          "startMs": 906.0119999921881,
+          "sha256": "ea3de40e2b9433de502e4bc89a9d1201888160e4fd45225ea8489a955b15f3b4",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "vT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 881
+              },
+              {
+                "function": "xT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 883
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              },
+              {
+                "function": "m.apply",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 332
+              }
+            ]
+          },
+          "headers": null
+        }
+      ],
+      "pageView": [
+        {
+          "time": 900.8000000119209,
+          "event": "page_view",
+          "source": "operator_policy",
+          "gaClient": false,
+          "gaSession": false
+        }
+      ],
+      "activeContainers": [
+        "GTM-5TWMJQFP",
+        "GT-MKRLF5WK"
+      ],
+      "collector": [
+        {
+          "url": "https://utekos.no/api/events/page-view",
+          "status": 204,
+          "failure": "net::ERR_ABORTED",
+          "headers": null
+        }
+      ]
+    },
+    {
+      "name": "camping",
+      "route": "/produkter/camping-og-bobil",
+      "status": 200,
+      "javascriptTransferredBytes": 215290,
+      "fourTransferredBytes": 208191,
+      "fourDecodedBytes": 2124903,
+      "scripts": [
+        {
+          "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+          "transferBytes": 81,
+          "decodedBytes": 16475,
+          "startMs": 430.7949999929406,
+          "sha256": "6e8b1ed24eed5895a38d45531b399c6c9c7dffaf2c675ef142dbb4701e40fc42",
+          "initiator": {
+            "type": "parser",
+            "url": "https://utekos.no/produkter/camping-og-bobil"
+          },
+          "headers": null
+        },
+        {
+          "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+          "transferBytes": 0,
+          "decodedBytes": 468242,
+          "startMs": 483.5999999777414,
+          "sha256": "7979c23fc56c6df78188eccb0591ba9c01b621e917ba1febded8d5e2a4e2e30d",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "",
+                "line": 0
+              },
+              {
+                "function": "h",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://connect.facebook.net/en_US/fbevents.js",
+          "transferBytes": 0,
+          "decodedBytes": 433365,
+          "startMs": 492.11799999466166,
+          "sha256": "9e4b581a7483e88873ad835a840ffaaff1c85b3be28951e12e8207a318e7776b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "installPixel",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 173
+              },
+              {
+                "function": "run",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 591
+              },
+              {
+                "function": "retry",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 569
+              },
+              {
+                "function": "scheduleConsentRetry",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 575
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 614
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 618
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/d83cd4b17c2e47da/script.js",
+          "transferBytes": 0,
+          "decodedBytes": 4550,
+          "startMs": 502.80799996107817,
+          "sha256": "b1fa9fc8104da15958badc63bbebe46eeea4d9ce88e587d7732b2c4f4238d8af",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/561871d5b41fdaa9/script.js",
+          "transferBytes": 0,
+          "decodedBytes": 12567,
+          "startMs": 503.0269999988377,
+          "sha256": "c703720710415599d2f0b3f31fbfda63e34d6d19e730bada78b9b92197564f5b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://connect.facebook.net/signals/config/1092362672918571",
+          "transferBytes": 0,
+          "decodedBytes": 593101,
+          "startMs": 533.4429999929853,
+          "sha256": "3ece7e094d31e86c1becf9e612f91e91809544ee336238b52658a37e5a96c9ee",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "u",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 195
+              },
+              {
+                "function": "ee",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 141
+              },
+              {
+                "function": "value",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 141
+              },
+              {
+                "function": "ze",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              },
+              {
+                "function": "Ve",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              },
+              {
+                "function": "at",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://utekos.no/__sgtm/fps/aWQ9R1RNLTVUV01KUUZQJmRuPXV0ZWtvcy5ubyZzb3A9L19fc2d0bQ/071DHkcmD8Rrin8-_Vmh6trbA9BK9AMk978BuCx7h70H5oo",
+          "transferBytes": 208191,
+          "decodedBytes": 630195,
+          "startMs": 540.9339999896474,
+          "sha256": "19bbd3eac7d2a5b5d289e4e51f30c8f4b2123e7d2c5f922f626af9c200fe750b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "Wl",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 472
+              },
+              {
+                "function": "MA",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 689
+              },
+              {
+                "function": "fI",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 810
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://bat.bing.com/bat.js",
+          "transferBytes": 0,
+          "decodedBytes": 55631,
+          "startMs": 542.2639999887906,
+          "sha256": "4bebc12694755bc5edf1d849783992c7d470db7ede2b9cc74fa2dfd246c20aa1",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "vT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 881
+              },
+              {
+                "function": "xT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 883
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              },
+              {
+                "function": "m.apply",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 332
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://bat.bing.com/p/action/97247724.js",
+          "transferBytes": 0,
+          "decodedBytes": 5251,
+          "startMs": 563.1439999560826,
+          "sha256": "a6d7603264aad03adc3dfff3f075a310220349836f114f60fb9f5f84d06c125a",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "UET.loadConfig",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "UET",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "UET_init",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 897
+              },
+              {
+                "function": "sI",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 812
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://www.clarity.ms/tag/uet/97247724",
+          "transferBytes": 1094,
+          "decodedBytes": 822,
+          "startMs": 566.473999992013,
+          "sha256": "82aa2e3d8a4306cf4201f109e19d49d50c3d4e9068f291924c8544240f1d538b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://bat.bing.com/p/action/97247724.js",
+                "line": 58
+              },
+              {
+                "function": "",
+                "url": "https://bat.bing.com/p/action/97247724.js",
+                "line": 102
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://scripts.clarity.ms/0.8.72/clarity.js",
+          "transferBytes": 0,
+          "decodedBytes": 73523,
+          "startMs": 683.4419999504462,
+          "sha256": "981a3eecbb175c0b72d65f75035c98ceb8f2a1a324532c7184c0890dd37a92e6",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://www.clarity.ms/tag/uet/97247724",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://www.clarity.ms/tag/uet/97247724",
+                "line": 0
+              }
+            ]
+          },
+          "headers": null
+        },
+        {
+          "url": "https://stapecdn.com/dtag/v9.js",
+          "transferBytes": 0,
+          "decodedBytes": 23235,
+          "startMs": 952.9869999969378,
+          "sha256": "ea3de40e2b9433de502e4bc89a9d1201888160e4fd45225ea8489a955b15f3b4",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "vT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 881
+              },
+              {
+                "function": "xT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 883
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              },
+              {
+                "function": "m.apply",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 332
+              }
+            ]
+          },
+          "headers": null
+        }
+      ],
+      "pageView": [
+        {
+          "time": 951.2000000476837,
+          "event": "page_view",
+          "source": "operator_policy",
+          "gaClient": true,
+          "gaSession": true
+        }
+      ],
+      "activeContainers": [
+        "GTM-5TWMJQFP",
+        "GT-MKRLF5WK"
+      ],
+      "collector": [
+        {
+          "url": "https://utekos.no/api/events/page-view",
+          "status": 204,
+          "failure": "net::ERR_ABORTED",
+          "headers": null
+        }
+      ]
+    },
+    {
+      "name": "home-confirm",
+      "route": "/",
+      "status": 200,
+      "javascriptTransferredBytes": 1057836,
+      "fourTransferredBytes": 642546,
+      "fourDecodedBytes": 2124903,
+      "scripts": [
+        {
+          "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+          "transferBytes": 5297,
+          "decodedBytes": 16475,
+          "startMs": 274.63599998736754,
+          "sha256": "6e8b1ed24eed5895a38d45531b399c6c9c7dffaf2c675ef142dbb4701e40fc42",
+          "initiator": {
+            "type": "parser",
+            "url": "https://utekos.no/"
+          },
+          "headers": {
+            "cache-control": "public, max-age=0, must-revalidate",
+            "content-type": "application/javascript; charset=utf-8"
+          }
+        },
+        {
+          "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+          "transferBytes": 150487,
+          "decodedBytes": 468242,
+          "startMs": 470.2099999994971,
+          "sha256": "7979c23fc56c6df78188eccb0591ba9c01b621e917ba1febded8d5e2a4e2e30d",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "",
+                "line": 0
+              },
+              {
+                "function": "h",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": {
+            "content-type": "application/javascript; charset=UTF-8",
+            "cache-control": "public, max-age=60"
+          }
+        },
+        {
+          "url": "https://connect.facebook.net/en_US/fbevents.js",
+          "transferBytes": 117019,
+          "decodedBytes": 433365,
+          "startMs": 494.02799998642877,
+          "sha256": "9e4b581a7483e88873ad835a840ffaaff1c85b3be28951e12e8207a318e7776b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "installPixel",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 173
+              },
+              {
+                "function": "run",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 591
+              },
+              {
+                "function": "retry",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 569
+              },
+              {
+                "function": "scheduleConsentRetry",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 575
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 614
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/analytics/meta-pixel-canonical-v1.js",
+                "line": 618
+              }
+            ]
+          },
+          "headers": {
+            "content-type": "application/x-javascript; charset=utf-8",
+            "cache-control": "public, max-age=1200"
+          }
+        },
+        {
+          "url": "https://utekos.no/d83cd4b17c2e47da/script.js",
+          "transferBytes": 2347,
+          "decodedBytes": 4550,
+          "startMs": 501.3339999713935,
+          "sha256": "b1fa9fc8104da15958badc63bbebe46eeea4d9ce88e587d7732b2c4f4238d8af",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": {
+            "cache-control": "public, max-age=2678400",
+            "content-type": "application/javascript; charset=utf-8"
+          }
+        },
+        {
+          "url": "https://utekos.no/561871d5b41fdaa9/script.js",
+          "transferBytes": 4904,
+          "decodedBytes": 12567,
+          "startMs": 501.6649999888614,
+          "sha256": "c703720710415599d2f0b3f31fbfda63e34d6d19e730bada78b9b92197564f5b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://utekos.no/_next/static/immutable/chunks/36255pgcys7mi.js",
+                "line": 0
+              },
+              {
+                "function": "iw",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "e",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              },
+              {
+                "function": "ug",
+                "url": "https://utekos.no/_next/static/immutable/chunks/072fxs1fhm21h.js",
+                "line": 0
+              }
+            ]
+          },
+          "headers": {
+            "cache-control": "public, max-age=2678400",
+            "content-type": "application/javascript; charset=utf-8"
+          }
+        },
+        {
+          "url": "https://connect.facebook.net/signals/config/1092362672918571",
+          "transferBytes": 166753,
+          "decodedBytes": 593101,
+          "startMs": 662.2489999863319,
+          "sha256": "3ece7e094d31e86c1becf9e612f91e91809544ee336238b52658a37e5a96c9ee",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "u",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 195
+              },
+              {
+                "function": "ee",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 141
+              },
+              {
+                "function": "value",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 141
+              },
+              {
+                "function": "ze",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              },
+              {
+                "function": "Ve",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              },
+              {
+                "function": "at",
+                "url": "https://connect.facebook.net/en_US/fbevents.js",
+                "line": 474
+              }
+            ]
+          },
+          "headers": {
+            "content-type": "application/x-javascript; charset=utf-8",
+            "cache-control": "public, max-age=1200"
+          }
+        },
+        {
+          "url": "https://utekos.no/__sgtm/fps/aWQ9R1RNLTVUV01KUUZQJmRuPXV0ZWtvcy5ubyZzb3A9L19fc2d0bQ/071DHkcmD8Rrin8-_Vmh6trbA9BK9AMk978BuCx7h70H5oo",
+          "transferBytes": 208287,
+          "decodedBytes": 630195,
+          "startMs": 881.2059999909252,
+          "sha256": "19bbd3eac7d2a5b5d289e4e51f30c8f4b2123e7d2c5f922f626af9c200fe750b",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "Wl",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 472
+              },
+              {
+                "function": "MA",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 689
+              },
+              {
+                "function": "fI",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 810
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              }
+            ]
+          },
+          "headers": {
+            "content-type": "application/javascript; charset=UTF-8",
+            "cache-control": "no-store, max-age=0"
+          }
+        },
+        {
+          "url": "https://www.googletagmanager.com/gtm.js",
+          "transferBytes": 385,
+          "decodedBytes": 216,
+          "startMs": 881.8459999747574,
+          "sha256": "e5482421d6b3abd68b9ca563da4e92a2c05663bf9c8cfe0d518218315677c046",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "UB",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 714
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 714
+              },
+              {
+                "function": "DB",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 705
+              },
+              {
+                "function": "GB",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 708
+              }
+            ]
+          },
+          "headers": {
+            "cache-control": "private, max-age=900",
+            "content-type": "application/javascript; charset=UTF-8"
+          }
+        },
+        {
+          "url": "https://bat.bing.com/bat.js",
+          "transferBytes": 15933,
+          "decodedBytes": 55631,
+          "startMs": 883.3579999627545,
+          "sha256": "4bebc12694755bc5edf1d849783992c7d470db7ede2b9cc74fa2dfd246c20aa1",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "vT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 881
+              },
+              {
+                "function": "xT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 883
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              },
+              {
+                "function": "m.apply",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 332
+              }
+            ]
+          },
+          "headers": {
+            "cache-control": "private,max-age=1800",
+            "content-type": "application/javascript"
+          }
+        },
+        {
+          "url": "https://bat.bing.com/p/action/97247724.js",
+          "transferBytes": 2098,
+          "decodedBytes": 5251,
+          "startMs": 977.1049999981187,
+          "sha256": "a6d7603264aad03adc3dfff3f075a310220349836f114f60fb9f5f84d06c125a",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "UET.loadConfig",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "UET",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "UET_init",
+                "url": "https://bat.bing.com/bat.js",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 897
+              },
+              {
+                "function": "sI",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 812
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              }
+            ]
+          },
+          "headers": {
+            "cache-control": "private,max-age=60",
+            "content-type": "application/javascript; charset=utf-8"
+          }
+        },
+        {
+          "url": "https://www.clarity.ms/tag/uet/97247724",
+          "transferBytes": 1386,
+          "decodedBytes": 1113,
+          "startMs": 1017.4779999651946,
+          "sha256": "5bbbe50b15fba43b272310eb61ef29b43fcba0ec67f619ee04840e3ac5bdd29c",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://bat.bing.com/p/action/97247724.js",
+                "line": 58
+              },
+              {
+                "function": "",
+                "url": "https://bat.bing.com/p/action/97247724.js",
+                "line": 102
+              }
+            ]
+          },
+          "headers": {
+            "Cache-Control": "no-cache, no-store",
+            "Content-Type": "application/x-javascript"
+          }
+        },
+        {
+          "url": "https://scripts.clarity.ms/0.8.72/clarity.js",
+          "transferBytes": 25561,
+          "decodedBytes": 73523,
+          "startMs": 1146.7289999709465,
+          "sha256": "981a3eecbb175c0b72d65f75035c98ceb8f2a1a324532c7184c0890dd37a92e6",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "",
+                "url": "https://www.clarity.ms/tag/uet/97247724",
+                "line": 0
+              },
+              {
+                "function": "",
+                "url": "https://www.clarity.ms/tag/uet/97247724",
+                "line": 0
+              }
+            ]
+          },
+          "headers": {
+            "cache-control": "public, max-age=86400",
+            "content-type": "application/javascript;charset=utf-8"
+          }
+        },
+        {
+          "url": "https://stapecdn.com/dtag/v9.js",
+          "transferBytes": 9512,
+          "decodedBytes": 23235,
+          "startMs": 1249.761999992188,
+          "sha256": "ea3de40e2b9433de502e4bc89a9d1201888160e4fd45225ea8489a955b15f3b4",
+          "initiator": {
+            "type": "script",
+            "url": "",
+            "frames": [
+              {
+                "function": "jt",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 327
+              },
+              {
+                "function": "gd",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 316
+              },
+              {
+                "function": "vT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 881
+              },
+              {
+                "function": "xT",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 883
+              },
+              {
+                "function": "",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 412
+              },
+              {
+                "function": "m.apply",
+                "url": "https://load.edge.utekos.no/apgqnrnczg.js",
+                "line": 332
+              }
+            ]
+          },
+          "headers": {
+            "content-type": "application/x-javascript",
+            "cache-control": "public, max-age=3600"
+          }
+        }
+      ],
+      "pageView": [
+        {
+          "time": 1243.8999999761581,
+          "event": "page_view",
+          "source": "operator_policy",
+          "gaClient": false,
+          "gaSession": false
+        }
+      ],
+      "activeContainers": [
+        "GTM-5TWMJQFP",
+        "GT-MKRLF5WK"
+      ],
+      "collector": [
+        {
+          "url": "https://utekos.no/api/events/page-view",
+          "status": 204,
+          "failure": "net::ERR_ABORTED",
+          "headers": {
+            "x-utekos-traffic-classification": "automated_bot",
+            "x-utekos-backend-deploy-sha": "ce19a0b39613b0a95dfbe439da87453b42d903ae",
+            "cache-control": "private, no-store",
+            "x-utekos-storefront-deploy-sha": "00dadf80e8bad9f155edc5a1c27a4f51ac49212c"
+          }
+        }
+      ]
+    }
+  ],
+  "observedAt": "2026-10-12T13:58:43.742Z",
+  "webGtm": {
+    "publicId": "GTM-5TWMJQFP",
+    "version": "175",
+    "tags": [
+      {
+        "id": "109",
+        "name": "Canonical Google tag - GT-MKRLF5WK",
+        "type": "googtag",
+        "paused": false,
+        "triggerIds": [
+          "2147479573"
+        ]
+      },
+      {
+        "id": "118",
+        "name": "GA4 – Canonical ecommerce events",
+        "type": "gaawe",
+        "paused": true,
+        "triggerIds": [
+          "146"
+        ]
+      },
+      {
+        "id": "126",
+        "name": "Cookiebot CMP",
+        "type": "cvt_57SF4",
+        "paused": true,
+        "triggerIds": [
+          "2147479572"
+        ]
+      },
+      {
+        "id": "130",
+        "name": "Base Tag(UET 97247724)",
+        "type": "baut",
+        "paused": false,
+        "triggerIds": [
+          "2147479553"
+        ]
+      },
+      {
+        "id": "131",
+        "name": "Microsoft UET – Canonical business events",
+        "type": "baut",
+        "paused": false,
+        "triggerIds": [
+          "122"
+        ]
+      },
+      {
+        "id": "148",
+        "name": "GA4 – Canonical page_view",
+        "type": "gaawe",
+        "paused": true,
+        "triggerIds": [
+          "145"
+        ]
+      },
+      {
+        "id": "149",
+        "name": "GA4 – Canonical non-commerce events",
+        "type": "gaawe",
+        "paused": true,
+        "triggerIds": [
+          "147"
+        ]
+      },
+      {
+        "id": "153",
+        "name": "Meta – Pixel – Canonical browser parity",
+        "type": "html",
+        "paused": true,
+        "triggerIds": [
+          "2147479553",
+          "152",
+          "128"
+        ]
+      },
+      {
+        "id": "160",
+        "name": "Microsoft UET – Client ID Sync",
+        "type": "img",
+        "paused": false,
+        "triggerIds": [
+          "158"
+        ]
+      },
+      {
+        "id": "170",
+        "name": "Meta Pixel ID 868548201601695",
+        "type": "html",
+        "paused": true,
+        "triggerIds": [
+          "2147479553"
+        ]
+      },
+      {
+        "id": "171",
+        "name": "Signals Gateway – Canonical cbq bridge v1.0.0",
+        "type": "html",
+        "paused": true,
+        "triggerIds": [
+          "2147479553"
+        ]
+      },
+      {
+        "id": "172",
+        "name": "GA4 – Canonical ecommerce events(Microsoft UET)",
+        "type": "baut",
+        "paused": true,
+        "triggerIds": [
+          "146"
+        ]
+      },
+      {
+        "id": "173",
+        "name": "GA4 – Canonical page_view(Microsoft UET)",
+        "type": "baut",
+        "paused": true,
+        "triggerIds": [
+          "145"
+        ]
+      },
+      {
+        "id": "174",
+        "name": "GA4 – Canonical non-commerce events(Microsoft UET)",
+        "type": "baut",
+        "paused": true,
+        "triggerIds": [
+          "147"
+        ]
+      },
+      {
+        "id": "182",
+        "name": "Data Tag",
+        "type": "cvt_MBTSV",
+        "paused": false,
+        "triggerIds": [
+          "183"
+        ]
+      }
+    ]
+  },
+  "stape": {
+    "identifier": "gqnrnczg",
+    "name": "Utekos sGTM Container",
+    "customLoaderEnabled": true,
+    "cookieKeeperEnabled": true,
+    "cookieKeeperOptions": {
+      "standard": {
+        "ga": true,
+        "gads": false,
+        "stape": true,
+        "tikTok": false,
+        "klaviyo": false,
+        "facebook": true,
+        "linkedin": false,
+        "snapchat": true,
+        "pinterest": false,
+        "affiliates": false,
+        "microsoft_bing": true,
+        "google_d_and_v_360": false
+      },
+      "custom": [],
+      "bannerDismissed": false
+    },
+    "delayEnabled": false,
+    "fileProxyEnabled": false,
+    "adBlockerEnabled": true
+  },
+  "serverGtm": {
+    "publicId": "GTM-M8GT97CV",
+    "version": "44",
+    "tags": [
+      {
+        "name": "GA4",
+        "type": "sgtmgaaw",
+        "paused": false
+      }
+    ]
+  },
+  "measurement": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "mobileCpuThrottling": false,
+    "mobileNetworkThrottling": false,
+    "durationAfterDOMContentLoadedMs": 8000,
+    "rawEvidenceDirectory": "/tmp/utekos-tracking-startup",
+    "providerMutations": false,
+    "sourceTrackingChanges": false
+  },
+  "cacheHeaderComparison": {
+    "gateway": {
+      "status": 200,
+      "cacheControl": "no-store, max-age=0",
+      "cdnCacheControl": "no-store",
+      "setsCookie": false
+    },
+    "upstream": {
+      "status": 200,
+      "cacheControl": "private, max-age=900",
+      "setsCookie": false
+    },
+    "warmReloadGoogleTransferredBytes": 208341
+  },
+  "compiledWebContainer": {
+    "resourceVersion": "175",
+    "tags": [
+      {
+        "id": 109,
+        "function": "__googtag"
+      },
+      {
+        "id": 118,
+        "function": "__paused"
+      },
+      {
+        "id": 126,
+        "function": "__paused"
+      },
+      {
+        "id": 130,
+        "function": "__baut"
+      },
+      {
+        "id": 131,
+        "function": "__baut"
+      },
+      {
+        "id": 148,
+        "function": "__paused"
+      },
+      {
+        "id": 149,
+        "function": "__paused"
+      },
+      {
+        "id": 153,
+        "function": "__paused"
+      },
+      {
+        "id": 160,
+        "function": "__img"
+      },
+      {
+        "id": 170,
+        "function": "__paused"
+      },
+      {
+        "id": 171,
+        "function": "__paused"
+      },
+      {
+        "id": 172,
+        "function": "__paused"
+      },
+      {
+        "id": 173,
+        "function": "__paused"
+      },
+      {
+        "id": 174,
+        "function": "__paused"
+      },
+      {
+        "id": 182,
+        "function": "__cvt_MBTSV"
+      }
+    ]
+  },
+  "compiledGoogleTag": {
+    "resourceVersion": "23",
+    "tags": [
+      {
+        "id": 22,
+        "function": "__ogt_cross_domain"
+      },
+      {
+        "id": 28,
+        "function": "__ogt_auto_events",
+        "vtp_enableOutboundClick": true,
+        "vtp_enableScroll": true,
+        "vtp_enableDownload": true,
+        "vtp_enableHistoryEvents": true,
+        "vtp_enableForm": true,
+        "vtp_enableVideo": true,
+        "vtp_enablePageView": true,
+        "vtp_enableInPageEventsHidden": false
+      },
+      {
+        "id": 24,
+        "function": "__ogt_1p_data_v2"
+      },
+      {
+        "id": 25,
+        "function": "__ogt_dtc"
+      },
+      {
+        "id": 27,
+        "function": "__ogt_dma"
+      },
+      {
+        "id": 45,
+        "function": "__ccd_ga_first"
+      },
+      {
+        "id": 44,
+        "function": "__set_product_settings"
+      },
+      {
+        "id": 43,
+        "function": "__ogt_google_signals"
+      },
+      {
+        "id": 42,
+        "function": "__ccd_ga_regscope"
+      },
+      {
+        "id": 41,
+        "function": "__ccd_add_ecs"
+      },
+      {
+        "id": 40,
+        "function": "__ccd_em_download"
+      },
+      {
+        "id": 39,
+        "function": "__ccd_em_form"
+      },
+      {
+        "id": 38,
+        "function": "__ccd_em_outbound_click"
+      },
+      {
+        "id": 37,
+        "function": "__ccd_em_scroll"
+      },
+      {
+        "id": 36,
+        "function": "__ccd_em_site_search"
+      },
+      {
+        "id": 35,
+        "function": "__ccd_em_video"
+      },
+      {
+        "id": 34,
+        "function": "__ccd_conversion_marking"
+      },
+      {
+        "id": 33,
+        "function": "__ogt_event_create"
+      },
+      {
+        "id": 50,
+        "function": "__ccd_ads_first"
+      },
+      {
+        "id": 32,
+        "function": "__ccd_add_1p_data"
+      },
+      {
+        "id": 49,
+        "function": "__ccd_em_form"
+      },
+      {
+        "id": 31,
+        "function": "__ccd_add_1p_data"
+      },
+      {
+        "id": 48,
+        "function": "__ccd_enable_cm"
+      },
+      {
+        "id": 30,
+        "function": "__ccd_auto_redact"
+      },
+      {
+        "id": 47,
+        "function": "__ccd_add_1p_data"
+      },
+      {
+        "id": 8,
+        "function": "__dest_ga",
+        "vtp_enableVariablesInDestinationId": false
+      },
+      {
+        "id": 11,
+        "function": "__dest_aw",
+        "vtp_enableVariablesInDestinationId": false
+      },
+      {
+        "id": 12,
+        "function": "__gct"
+      },
+      {
+        "id": 14,
+        "function": "__rep"
+      },
+      {
+        "id": 29,
+        "function": "__ccd_ga_last"
+      },
+      {
+        "id": 46,
+        "function": "__ccd_ads_last"
+      }
+    ]
+  },
+  "webkit": {
+    "route": "/",
+    "status": 200,
+    "activeContainers": [
+      "GTM-5TWMJQFP",
+      "GT-MKRLF5WK"
+    ],
+    "pageView": [
+      {
+        "time": 1484,
+        "event": "page_view",
+        "source": "operator_policy",
+        "gaClient": true,
+        "gaSession": true
+      }
+    ]
+  }
+}

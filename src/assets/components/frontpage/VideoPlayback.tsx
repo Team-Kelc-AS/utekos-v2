@@ -7,7 +7,19 @@ export function VideoPlayback({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const videos = Array.from(ref.current?.querySelectorAll("video") ?? []);
-    if (!videos.length || !("IntersectionObserver" in window)) return;
+    if (!videos.length) return;
+
+    function preparePoster(video: HTMLVideoElement) {
+      const poster = video.dataset.deferredPoster;
+      if (poster && !video.hasAttribute("poster")) video.poster = poster;
+    }
+
+    if (!("IntersectionObserver" in window)) {
+      for (const video of videos) {
+        if (video.getClientRects().length) preparePoster(video);
+      }
+      return;
+    }
 
     const visible = new Set<HTMLVideoElement>();
     const blocked = new Set<HTMLVideoElement>();
@@ -21,6 +33,7 @@ export function VideoPlayback({ children }: { children: ReactNode }) {
           if (!video.paused) video.pause();
           continue;
         }
+        preparePoster(video);
         if (blocked.has(video)) continue;
         if (reducedMotion.matches) {
           if (!video.paused) video.pause();
@@ -56,8 +69,20 @@ export function VideoPlayback({ children }: { children: ReactNode }) {
       updatePlayback();
     }, { threshold: [0, 0.25] });
 
+    // CSS-hidden viewport variants have no rendered box and must not fetch a poster.
+    // Keep observing them so a later viewport change can activate the right one.
+    const posterObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting || !entry.boundingClientRect.width || !entry.boundingClientRect.height) continue;
+        const video = entry.target as HTMLVideoElement;
+        preparePoster(video);
+        posterObserver.unobserve(video);
+      }
+    }, { rootMargin: "200px 0px" });
+
     for (const video of videos) {
       observer.observe(video);
+      posterObserver.observe(video);
     }
     if (!hasScrolled) window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("visibilitychange", updatePlayback);
@@ -66,6 +91,7 @@ export function VideoPlayback({ children }: { children: ReactNode }) {
     return () => {
       disposed = true;
       observer.disconnect();
+      posterObserver.disconnect();
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", updatePlayback);
       reducedMotion.removeEventListener("change", updatePlayback);

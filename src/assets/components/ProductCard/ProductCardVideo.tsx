@@ -44,8 +44,11 @@ export function ProductCardVideo({ src, width, height, poster, label, children, 
 
   function play() {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || (desktopOnly && !matchMedia('(min-width: 768px)').matches)) return;
     const currentAttempt = ++attempt.current.generation;
+    // A poster on a hidden video is still downloaded, even with preload="none".
+    // Activate it synchronously with play so it can cover the first-frame wait.
+    video.poster = poster;
     setError('');
     setPlaying(true);
     onPlayingChange?.(true);
@@ -66,7 +69,7 @@ export function ProductCardVideo({ src, width, height, poster, label, children, 
         <Play aria-hidden="true" fill="currentColor" />
       </button>
     </div>
-    <video ref={videoRef} src={src} poster={poster} hidden={!playing} className={styles.video} width={width} height={height}
+    <video ref={videoRef} src={src} hidden={!playing} className={styles.video} width={width} height={height}
       playsInline preload="none" tabIndex={0} aria-label={`Produktvideo: ${label}`}
       onEnded={showImage} onError={() => { if (playing) playbackFailed(); }}
       onKeyDown={event => { if (event.key === 'Escape') { event.preventDefault(); showImage(); } }}>

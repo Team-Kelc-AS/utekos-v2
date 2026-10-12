@@ -6,10 +6,10 @@ import styles from './camping.module.css';
 
 const Dialog = dynamic(() => import('@/components/commerce/Dialog'), { ssr: false });
 
-export function InfoDialogButton({ title, children }: { title: string; children: ReactNode }) {
+export function InfoDialogButton({ title, trigger, className, children }: { title: string; trigger?: ReactNode; className?: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
   return <>
-    <button type="button" className={styles.textButton} aria-haspopup="dialog" onClick={() => setOpen(true)}>{title} <span aria-hidden="true">↗</span></button>
+    <button type="button" className={className ?? styles.textButton} aria-haspopup="dialog" onClick={() => setOpen(true)}>{trigger ?? <>{title} <span aria-hidden="true">↗</span></>}</button>
     {open && <Dialog title={title} onClose={() => setOpen(false)}>{children}</Dialog>}
   </>;
 }

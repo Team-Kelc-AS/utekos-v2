@@ -7,10 +7,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
-const { chromium } = require('playwright');
+const { chromium, webkit } = require('playwright');
 const esbuild = require('esbuild');
 const pixel = fs.readFileSync(path.join(root, 'public/analytics/meta-pixel-canonical-v1.js'), 'utf8');
-let browser, bundle, previewBundle;
+let browser, safari, bundle, previewBundle;
 
 async function buildHarness(environment) {
   const result = await esbuild.build({
@@ -28,8 +28,9 @@ test.before(async () => {
   bundle = await buildHarness('production');
   previewBundle = await buildHarness('preview');
   browser = await chromium.launch({ headless: true });
+  safari = await webkit.launch({ headless: true });
 });
-test.after(async () => { await browser?.close(); });
+test.after(async () => { await browser?.close(); await safari?.close(); });
 
 test('accepted Dun reservation projects one rich unvalued Pixel Lead with the server ID', async t => {
   const api = await fixture(t, 'https://utekos.no/produkter/utekos-dun');
@@ -88,8 +89,8 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false } = {}) {
-  const context = await browser.newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block' });
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false } = {}) {
+  const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block' });
   t.after(() => context.close());
   const requests = [], forbidden = [], errors = [];
   t.after(() => { assert.deepEqual(forbidden, [], 'every external request must have an explicit offline fixture'); assert.deepEqual(errors, [], 'no uncaught browser errors'); });
@@ -98,7 +99,8 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
     const body = request.postData();
     if (url.origin === 'https://utekos.no' && request.isNavigationRequest()) return route.fulfill({ contentType: 'text/html', body: `<!doctype html><html><head><title>Tracking fixture</title><script>
       window.__pixelCalls=[];window.__canonicalBrowser=[];window.dataLayer=[];
-      dataLayer.push=function(...entries){for(const entry of entries){if(entry?.[0]==='get'&&typeof entry[3]==='function')entry[3](entry[2]==='client_id'?'123.456':'789');}return Array.prototype.push.apply(this,entries)};
+      window.__gaReadyAt=performance.now()+${gaDelay};window.__gaGetCount=0;
+      dataLayer.push=function(...entries){for(const entry of entries){if(entry?.[0]==='get'&&typeof entry[3]==='function'){window.__gaGetCount++;if(!${gaBlocked})entry[3](performance.now()>=window.__gaReadyAt?(entry[2]==='client_id'?'123.456':'789'):undefined);}}return Array.prototype.push.apply(this,entries)};
       addEventListener('utekos:meta-canonical-browser-event',event=>window.__canonicalBrowser.push(event.detail));
       </script>${preview ? '' : '<script src="/analytics/meta-pixel-canonical-v1.js"></script>'}</head><body>${content(url, { longJourney })}<script src="/tracking-browser-fixture.js"></script><script>
       UtekosTrackingHarness.reportNavigation();${deferCommerce ? '' : 'UtekosTrackingHarness.attachCommerceTracking();'}
@@ -186,6 +188,91 @@ test('Pixel browser signal and collector retain identical canonical identity wit
   assert.equal(pages[0].consent.source, 'operator_policy');
   assert.equal(pages[0].browser_id.ga_client_id, '123.456');
 });
+
+for (const safariMode of [false, true]) {
+  const engine = safariMode ? 'WebKit' : 'Chromium';
+  test(`${engine}: cold Google initialization after 500 ms enriches first events without delaying Pixel`, async t => {
+    const api = await fixture(t, undefined, { gaDelay: 1250, safariMode });
+    await api.page.waitForFunction(() => window.__canonicalBrowser.some(entry => entry.event === 'page_view'));
+    assert.equal(api.events('page_view').length, 0, 'collector waits while Google is not ready');
+    const early = await api.page.evaluate(() => ({
+      event: window.__canonicalBrowser.find(entry => entry.event === 'page_view').canonical_event,
+      time: performance.now(), readyAt: window.__gaReadyAt,
+    }));
+    assert.ok(early.time < early.readyAt, 'Pixel dispatch precedes Google readiness');
+    await api.waitFor('page_view'); await api.waitFor('view_item');
+    for (const name of ['page_view', 'view_item']) {
+      const events = api.events(name);
+      assert.equal(events.length, 1);
+      assert.equal(events[0].browser_id.ga_client_id, '123.456');
+      assert.equal(events[0].browser_id.ga_session_id, '789');
+      const dataLayer = await api.page.evaluate(name => window.dataLayer.find(entry => entry.event === name).canonical_event, name);
+      assert.equal(dataLayer.browser_id.ga_client_id, events[0].browser_id.ga_client_id);
+      assert.equal(dataLayer.browser_id.ga_session_id, events[0].browser_id.ga_session_id);
+      assert.equal(dataLayer.event_id, events[0].event_id);
+    }
+    assert.equal(api.events('page_view')[0].event_id, early.event.event_id);
+    assert.equal(api.events('page_view')[0].event_time, early.event.event_time);
+    assert.ok(early.event.browser_id.fbp);
+    assert.equal(api.events('page_view')[0].browser_id.fbp, early.event.browser_id.fbp, 'Google enrichment preserves Meta IDs');
+    const gets = await api.page.evaluate(() => window.__gaGetCount);
+    assert.ok(gets <= 14, `first page/product share one readiness attempt (${gets} get commands)`);
+    await api.page.waitForTimeout(300);
+    assert.equal(await api.page.evaluate(() => window.__gaGetCount), gets, 'retry timers stop after success');
+  });
+
+  test(`${engine}: pagehide flushes a blocked Google wait once with original identity`, async t => {
+    const api = await fixture(t, undefined, { gaBlocked: true, safariMode });
+    await api.page.waitForFunction(() => window.__canonicalBrowser.some(entry => entry.event === 'page_view'));
+    const early = await api.page.evaluate(() => {
+      const event = window.__canonicalBrowser.find(entry => entry.event === 'page_view').canonical_event;
+      dispatchEvent(new PageTransitionEvent('pagehide'));
+      return event;
+    });
+    await api.waitFor('page_view');
+    const event = api.events('page_view')[0];
+    assert.equal(event.event_id, early.event_id);
+    assert.equal(event.event_time, early.event_time);
+    assert.equal(event.browser_id.ga_client_id, undefined);
+    assert.equal(event.browser_id.ga_session_id, undefined);
+    await api.page.waitForTimeout(300);
+    assert.equal(api.events('page_view').length, 1);
+  });
+}
+
+test('blocked Google readiness times out without inventing IDs or stopping delivery', async t => {
+  const api = await fixture(t, undefined, { gaBlocked: true });
+  await api.waitFor('page_view'); await api.waitFor('view_item');
+  assert.equal(api.events('page_view').length, 1);
+  assert.equal(api.events('page_view')[0].browser_id.ga_client_id, undefined);
+  assert.equal(api.events('page_view')[0].browser_id.ga_session_id, undefined);
+  const gets = await api.page.evaluate(() => window.__gaGetCount);
+  await api.page.waitForTimeout(300);
+  assert.equal(await api.page.evaluate(() => window.__gaGetCount), gets);
+});
+
+for (const gaBlocked of [false, true]) {
+test(`checkout preparation uses the identity budget and remains bounded (blocked=${gaBlocked})`, async t => {
+  const api = await fixture(t, undefined, { gaBlocked, gaDelay: 1250 });
+  const result = await api.page.evaluate(async commerce => {
+    const start = performance.now();
+    const event = await UtekosTrackingHarness.prepareCanonicalCheckout({
+      id: 'gid://shopify/Cart/fixture', commerce,
+      checkout: { checkout_id: 'fixture-checkout', creation_revision: 'fixture-revision' },
+    }, 'shopify');
+    const preparedMs = performance.now() - start;
+    await UtekosTrackingHarness.confirmCheckoutTracking(event);
+    return { event, preparedMs, totalMs: performance.now() - start };
+  }, commerce());
+  assert.ok(result.preparedMs < 2600, `preparation: ${result.preparedMs} ms`);
+  assert.ok(result.totalMs < 3100, `confirmation: ${result.totalMs} ms`);
+  await api.waitFor('begin_checkout');
+  assert.equal(api.events('begin_checkout').length, 1);
+  assert.equal(api.events('begin_checkout')[0].event_id, result.event.event_id);
+  assert.equal(api.events('begin_checkout')[0].event_time, result.event.event_time);
+  assert.equal(api.events('begin_checkout')[0].browser_id.ga_client_id, gaBlocked ? undefined : '123.456');
+});
+}
 
 test('list visibility requires 50 percent and a continuous second, then deduplicates repeated observation', async t => {
   const api = await fixture(t, 'https://utekos.no/produkter');

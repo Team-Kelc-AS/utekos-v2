@@ -92,6 +92,13 @@
       "reason": "Whitelisted product, variant, color and size custom properties for confirmed unvalued Dun reservation Lead. Same server/browser event ID and single browser replay tested in offline Chromium; other event mappings unchanged.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "public/analytics/meta-pixel-canonical-v1.js"
+    },
+    "src/lib/analytics/googleAnalyticsBrowserIds.ts": {
+      "baseSha256": "62a43992872c8f2b8938b427de930c23acf8d2bb1c073be86d2702bb08fb5727",
+      "sha256": "69afeecb0b8355f49c42c007bfbbf7da9a30e14429da8c36aedcfa6bad243da6",
+      "reason": "Reviewed 2026-10-12: bounded shared Google get readiness with retries after initialization, pagehide fallback, consent guard and existing-ID preservation. Chromium/WebKit delayed/blocked integration and identity tests; see docs/performance/stape-readiness.md.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/googleAnalyticsBrowserIds.ts"
     }
   }
 }
