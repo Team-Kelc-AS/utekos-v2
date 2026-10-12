@@ -24,7 +24,7 @@ function loadTypeScript(entry, { mocks = {}, env = {}, fetch, globals = {} } = {
     const localRequire = (specifier) => {
       if (Object.hasOwn(mocks, specifier)) return mocks[specifier];
       if (specifier === 'server-only') return {};
-      if (specifier === 'zod' || specifier === 'node:crypto' || specifier === 'node:buffer') return require(specifier);
+      if (['zod', 'zod/mini', 'zod/v4/locales/en.js', 'node:crypto', 'node:buffer'].includes(specifier)) return require(specifier);
       const resolved = specifier.startsWith('@/')
         ? path.resolve(sourceRoot, specifier.slice(2))
         : specifier.startsWith('.') ? path.resolve(path.dirname(filename), specifier) : null;

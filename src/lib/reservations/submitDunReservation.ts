@@ -1,24 +1,30 @@
 'use server';
 
-import { z } from 'zod';
-import { singleLine, sendContactMessage } from '@/lib/contact';
+import * as z from '@/lib/validation/zodMini';
+import { sendContactMessage } from '@/lib/contact-delivery';
 import { getProduct } from '@/lib/shopify/getProduct';
 import { optionParam } from '@/lib/products/variants';
 import { recordAcceptedDunReservation, recordAcceptedForm, submissionIdFromReceipt } from '@/lib/tracking/server-forms';
 import { dunColors, dunSizes, dunReservationConsent, type DunReservationState } from './dun';
 
+const singleLine = (max: number) => z.string().check(
+  z.trim(),
+  z.maxLength(max, { error: `Bruk maksimalt ${max} tegn.` }),
+  z.refine((value) => !/[\r\n\u0000]/u.test(value), { error: 'Bruk én linje i dette feltet.' }),
+);
+
 const schema = z.object({
   color: z.enum(dunColors),
   size: z.enum(dunSizes),
-  firstName: singleLine(100).min(1, 'Skriv fornavnet ditt.'),
-  lastName: singleLine(100).min(1, 'Skriv etternavnet ditt.'),
-  email: singleLine(254).pipe(z.email('Skriv en gyldig e-postadresse.')),
-  phone: singleLine(40).regex(/^\+?[\d ()-]+$/, 'Skriv et gyldig telefonnummer.').refine(value => {
+  firstName: singleLine(100).check(z.minLength(1, 'Skriv fornavnet ditt.')),
+  lastName: singleLine(100).check(z.minLength(1, 'Skriv etternavnet ditt.')),
+  email: z.pipe(singleLine(254), z.email('Skriv en gyldig e-postadresse.')),
+  phone: singleLine(40).check(z.regex(/^\+?[\d ()-]+$/, 'Skriv et gyldig telefonnummer.'), z.refine(value => {
     const digits = value.replace(/\D/g, '').length;
     return digits >= 8 && digits <= 15;
-  }, 'Skriv et gyldig telefonnummer.'),
+  }, 'Skriv et gyldig telefonnummer.')),
   consent: z.literal('yes', { error: 'Bekreft at vi kan holde av jakken og sende betalingslenken.' }),
-  website: z.string().max(200),
+  website: z.string().check(z.maxLength(200)),
 });
 
 export async function submitDunReservation(data: FormData): Promise<DunReservationState> {

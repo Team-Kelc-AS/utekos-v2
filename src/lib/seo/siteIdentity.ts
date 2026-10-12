@@ -27,7 +27,7 @@ export const siteIdentity = {
 } as const;
 
 export const SITE_DESCRIPTION =
-  "Utekos er en merkevare som designer yttertøy som kan justeres og formes etter behov. Opplev ompromissløs komfort og overlegen allsidighet. Perfekt for hytte, bobil, camping og terrasseliv.";
+  "Utekos er en merkevare som designer yttertøy som kan justeres og formes etter behov. Opplev kompromissløs komfort og overlegen allsidighet. Perfekt for hytte, bobil, camping og terrasseliv.";
 
 // Existing original composition, inspected at its native 1200 × 630 dimensions.
 export const siteSocialImage = {
