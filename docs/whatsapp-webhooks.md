@@ -14,19 +14,27 @@ Messages/statuses are split into individual receipts. Database primary-key
 uniqueness deduplicates concurrent retries and changed batching. Sent, delivered
 and read statuses are separate receipts. Other fields retain their full change
 payload. Payloads are customer data: RLS is enabled with no browser policies;
-only the service role has inbox privileges. Tokens and payloads are never logged.
+only the service role has direct inbox privileges. The insert-only RPC requires
+a dedicated secret header and validates its SHA-256 hash before inserting.
+It exposes no read or update operation. Tokens and payloads are never logged.
 There are no automatic replies, outgoing messages, cron jobs or background jobs.
 Retention/deletion is manual; no automated expiry is configured.
 
 ## Configuration
 
 Production needs `WHATSAPP_WEBHOOK_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET`,
-`NEXT_PUBLIC_SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY`. The first two are
-dedicated sensitive Vercel variables. The app secret is from Utekos App Master;
+`WHATSAPP_SUPABASE_URL`, `WHATSAPP_SUPABASE_PUBLISHABLE_KEY` and
+`WHATSAPP_WEBHOOK_INGEST_TOKEN`. These are dedicated production Vercel variables.
+The existing shared service-role key returned 401, and the Supabase API readback
+showed the legacy anon key disabled. WhatsApp therefore uses an enabled modern
+publishable key plus its own insert-only secret-authenticated RPC.
+The app secret is from Utekos App Master;
 the verify token is an independently generated 256-bit random value. Never put
 either value in Git or this document. Local copies are in ignored `.env.local`.
 
-Apply both `2026101222*_whatsapp_webhook_*.sql` migrations in order once.
+Apply all `2026101222*_whatsapp_webhook_*.sql` migrations in order once. To rotate
+the ingestion token, replace the expected SHA-256 hash in the RPC through a new
+migration and update the sensitive Vercel variable together.
 Deploy only through the project's `pnpm run sync` workflow. That command stages
 all changes, so review the entire dirty tree before invoking it.
 

@@ -128,17 +128,17 @@ export async function receiveWhatsAppWebhook(request: Request, config: Config, s
 }
 
 export async function storeWhatsAppReceipts(receipts: WhatsAppReceipt[], fetcher = fetch) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
-  if (!url || !key) throw new StorageError('storage_not_configured');
+  const url = process.env.WHATSAPP_SUPABASE_URL?.trim();
+  const key = process.env.WHATSAPP_SUPABASE_PUBLISHABLE_KEY?.trim();
+  const token = process.env.WHATSAPP_WEBHOOK_INGEST_TOKEN?.trim();
+  if (!url || !key || !token) throw new StorageError('storage_not_configured');
   let endpoint: URL;
-  try { endpoint = new URL('/rest/v1/whatsapp_webhook_receipts?on_conflict=event_key', url); }
+  try { endpoint = new URL('/rest/v1/rpc/ingest_whatsapp_webhook_receipts', url); }
   catch { throw new StorageError('invalid_storage_url'); }
   const result = await fetcher(endpoint, {
     method: 'POST', cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(8000),
-    headers: { 'Content-Type': 'application/json', apikey: key, Authorization: `Bearer ${key}`,
-      Prefer: 'resolution=ignore-duplicates,return=minimal' },
-    body: JSON.stringify(receipts),
+    headers: { 'Content-Type': 'application/json', apikey: key, 'x-utekos-whatsapp-token': token },
+    body: JSON.stringify({ p_receipts: receipts }),
   });
   if (!result.ok) {
     const failure = await result.json().catch(() => null);

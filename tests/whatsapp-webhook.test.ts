@@ -79,23 +79,25 @@ test('account/template fields and error webhooks are retained and deduplicated',
   assert.equal(whatsappReceipts(payload({ errors: [{ code: 123, title: 'synthetic' }] })).length, 1);
 });
 
-test('REST receipt insertion requests database uniqueness and propagates database failure', async () => {
-  const oldUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const oldKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://synthetic.supabase.co';
-  process.env.SUPABASE_SERVICE_ROLE_KEY = 'synthetic-key';
+test('receipt RPC uses dedicated credentials and propagates database failure', async () => {
+  const names = ['WHATSAPP_SUPABASE_URL', 'WHATSAPP_SUPABASE_PUBLISHABLE_KEY', 'WHATSAPP_WEBHOOK_INGEST_TOKEN'] as const;
+  const previous = names.map(name => process.env[name]);
+  process.env.WHATSAPP_SUPABASE_URL = 'https://synthetic.supabase.co';
+  process.env.WHATSAPP_SUPABASE_PUBLISHABLE_KEY = 'synthetic-key';
+  process.env.WHATSAPP_WEBHOOK_INGEST_TOKEN = 'synthetic-ingest-token';
   try {
     const receipts = whatsappReceipts(payload({ messages: [message('one')] }));
     await storeWhatsAppReceipts(receipts, async (url, init) => {
-      assert.equal(String(url), 'https://synthetic.supabase.co/rest/v1/whatsapp_webhook_receipts?on_conflict=event_key');
-      assert.equal(new Headers(init?.headers).get('prefer'), 'resolution=ignore-duplicates,return=minimal');
-      assert.equal(init?.body, JSON.stringify(receipts));
+      assert.equal(String(url), 'https://synthetic.supabase.co/rest/v1/rpc/ingest_whatsapp_webhook_receipts');
+      assert.equal(new Headers(init?.headers).get('x-utekos-whatsapp-token'), 'synthetic-ingest-token');
+      assert.equal(new Headers(init?.headers).get('apikey'), 'synthetic-key');
+      assert.equal(new Headers(init?.headers).get('authorization'), null);
+      assert.equal(init?.body, JSON.stringify({ p_receipts: receipts }));
       assert.equal(init?.cache, 'no-store');
       return new Response(null, { status: 201 });
     });
     await assert.rejects(storeWhatsAppReceipts(receipts, async () => new Response(null, { status: 500 })));
   } finally {
-    if (oldUrl === undefined) delete process.env.NEXT_PUBLIC_SUPABASE_URL; else process.env.NEXT_PUBLIC_SUPABASE_URL = oldUrl;
-    if (oldKey === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY; else process.env.SUPABASE_SERVICE_ROLE_KEY = oldKey;
+    names.forEach((name, i) => { if (previous[i] === undefined) delete process.env[name]; else process.env[name] = previous[i]; });
   }
 });
