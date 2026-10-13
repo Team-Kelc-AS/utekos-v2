@@ -52,6 +52,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/skreddersy-varmen",
+        destination: "/produkter/utekos-techdown",
+        permanent: true,
+      },
+      {
         source: "/produkter/techdown",
         destination: "/produkter/utekos-techdown",
         permanent: true,

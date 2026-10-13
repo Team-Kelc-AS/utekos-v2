@@ -22,7 +22,7 @@ The repeated production probe passed: public page/image 200, eight crawler
 collectors 204, normal missing-Origin 403, normal invalid event 400, and no
 browser tracking, identity or React errors.
 
-## Original JSON incidents: fixes verified locally, release pending
+## Original JSON incidents: deployed and verified
 
 The original export was named
 `utekos-headless-log-export-2026-10-13T21-43-17.json`. Its previously supplied
@@ -67,23 +67,114 @@ tests and two HTTP probes. All 15 gateway tests, scoped lint, typecheck, contrac
 validation and the final production build passed. The rebuilt runtime passed
 all 36 HTTP checks, three client navigations and both hydrated form validations.
 The server log contained zero PPR replay errors and zero unhandled-error markers.
-Production release and readback are the remaining gate. The verification
-payloads cannot subscribe a customer or send a contact message.
+The verification payloads cannot subscribe a customer or send a contact message.
 
-## Additional excerpts queued for review
+Release `c90da81406a0741c7845cc939a46f6f358db8235` was deployed through
+`pnpm run sync`. Vercel deployment `dpl_FnFqShSpwMJttaqCHGaQYsm94VM1` reached
+READY with the `utekos.no`, `www.utekos.no` and `feed.utekos.no` aliases.
+Production verification after 01:05 passed:
 
-- 00:42:20, `POST /gtm.start`, 404: Nutch-1.23-SNAPSHOT crawler, firewall allowed,
-  not-found prerender, no outgoing API requests. Determine why the caller treats
-  this event name as a URL; do not invent a successful endpoint to hide the 404.
-- 00:50:39, `POST /cart.js`, 404: Facebook iOS in-app browser, product-page
-  referrer (Fjellblå, Large). This is not the `meta-externalads` user agent and must
-  not be excluded as that crawler. Identify the script/caller and verify the
-  headless cart contract before changing anything. Advertising query identifiers
-  are intentionally omitted from this record.
-- 00:50:41, `GET /discount/NBCC128`, 404: same supplied Facebook iOS user agent
-  and product referrer as the cart.js excerpt. Review these together for a
-  Shopify theme/Ajax API assumption in a caller versus an actual headless
-  discount-link integration gap. The excerpt alone does not prove the caller.
+- All 36 HTTP probes, including the two formerly failing PPR request shapes.
+- An additional 40-character unknown multipart action matching the initial
+  500 reproduction returned a small plain-text 400 instead of 500.
+- Three client navigations and both hydrated contact/newsletter validation
+  submissions returned 200 with no browser errors. The harness waits for visible
+  streamed content rather than assuming the first `main` is already populated.
+- The complete crawler probe passed again: public content available, no tracking,
+  no identity cookies and no React hydration errors; normal Origin checks retained.
+- Native Vercel runtime logs for this deployment after the probes contained no
+  error-level records at the first readback. This is a bounded verification
+  window, not a claim that future unrelated requests can never fail.
+
+Reproduce the HTTP gate explicitly with
+`node scripts/tracking/verify-server-action-runtime.mjs https://utekos.no`.
+Malformed/unknown action probes deliberately produce controlled 400/409 responses;
+Next may warn about rejected action references. Those are not HTTP500 failures.
+
+## Follow-up runtime excerpts: investigated
+
+The user clarified that queued excerpts must be investigated immediately after
+finishing the current fix. All six paths below were reviewed in this pass.
+Timestamps are 14 October, Europe/Oslo. User-supplied request data is evidence,
+not proof of the code or service that initiated a request.
+
+### Missing storefront destinations: corrected
+
+- `GET /skreddersy-varmen?card=feed-4`, 00:49:00, 404: the old headless
+  implementation explicitly resolves `utekos-techdown`; v2 had neither this
+  page nor a redirect. Added a permanent 308 to `/produkter/utekos-techdown` and
+  updated the knowledge article's direct link. Local HTTP verification confirms
+  that `card` and attribution query parameters survive the redirect. The old
+  landing page is not restored. The supplied `meta-externalads` request reached
+  the app; this was a missing destination, not crawler blocking.
+- `GET /discount/NBCC128`, 00:50:41, 404: Shopify Admin confirmed that this
+  discount is active, but v2 had no shareable-discount route. Added server-only
+  `/discount/[code]` support using the existing Storefront cart and cookie. It
+  merges existing codes, retains cart lines and lets Shopify calculate
+  eligibility and prices. Without a cart it creates an empty anonymous cart
+  carrying the code for subsequent additions. Redirects stay on the same origin
+  and retain attribution parameters; responses are private and uncached.
+  HEAD, prefetch and Meta ads-crawler checks do not mutate carts.
+
+Local production-build verification used isolated Shopify carts, with analytics
+collectors intercepted and no checkout, payment, order or customer submission.
+Both sequences passed: discount link then product; product then discount link.
+Fjellblå/Large changed from NOK 1,790 to NOK 1,690 and Shopify reported the code
+applicable. The cart subtotal and total agreed with Shopify. Quantity changes
+from one to two retained the code; test lines were removed afterward. Browser
+errors: zero. No `/cart.js` requests occurred in either flow.
+
+### Requests outside the app's implemented contracts: reviewed
+
+- `POST /cart.js`, 00:50:39, 404: Shopify documents its Ajax API for hosted
+  themes, while this storefront uses `/api/cart` and the Storefront GraphQL API.
+  The documented cart read uses GET, whereas the supplied request used POST.
+  No caller was found in v2 or the reference storefront. The actual add/update/
+  remove flow passed against Shopify. Production browser traces with the normal
+  desktop UA and the supplied Facebook iOS UA, including vendor scripts, did
+  not reproduce this request. A Chromium UA simulation cannot reproduce native
+  Facebook-app injected code. The historical caller/body remains unknown; an
+  external theme/coupon probe is only a hypothesis. No incompatible Ajax
+  endpoint or fake successful cart response was added.
+- `POST /gtm.start`, 00:42:20, 404: this string occurs as a dataLayer property in
+  the unchanged Stape loader, not as a fetch target. Vercel metrics showed one
+  Nutch request in the supplied window. The same production traces loaded GTM,
+  Stape and Meta scripts without requesting this path. A crawler interpreting
+  a script property as a URL is plausible but unproven. The path remains absent.
+- `GET` and `POST /meta.json`, 00:51:40 and 00:56:35, 404: no app caller or
+  documented Meta requirement for this path was found. Vercel request metrics
+  showed 12 requests with `facebookexternalhit`, verified-bot status `pass`,
+  category `preview`, in the inspected window. Meta's documented preview
+  contract reads Open Graph from HTML. Under that UA and its Range header,
+  Mikrofiber and TechDown returned 200; `og:title`, `og:description`, `og:image`
+  and `og:url` were present within the first megabyte, and both images returned
+  200. This verifies public preview inputs, not Meta's eventual rendered ad.
+  No invented JSON schema was added. The internal reason Meta probes this
+  additional path is unknown.
+- `GET /.well-known/vercel/flags`, 00:54:35, 404: Vercel's optional Flags
+  Explorer discovery endpoint. The app has no Flags SDK or flag consumers.
+  Provider readback found two old flags, `marketing-banner` and
+  `skreddersy-varmen-layout-v1`, inactive in every environment. No storefront
+  feature depends on this missing integration. The old flags were neither
+  activated nor deleted, and no new SDK or public discovery endpoint was added.
+
+The four paths above intentionally still return 404 because no supported app
+resource exists there. They are not unresolved rendering exceptions. Unknown
+historical initiators are stated explicitly rather than presented as proven
+root causes. Tracking consent, Origin validation and Facebook customer access
+remain unchanged.
+
+### Verification and release boundary
+
+- `pnpm run build` and `pnpm run typecheck`: passed; 27 MDX links validated.
+- `pnpm run test:tracking`: 346 CommonJS tests and 15 gateway tests passed,
+  including six new discount-link regressions.
+- `pnpm run tracking:contracts`: 117 vendor-contract checks passed.
+- Scoped ESLint, `git diff --check`, Shopify GraphQL validation: passed.
+- Production preview/trace evidence: `/tmp/utekos-probe-trace.json`.
+- Local live-cart evidence: `/tmp/utekos-discount-browser-local.json`.
+- Release status at this checkpoint: implemented and locally verified;
+  production deployment and readback are the next operation.
 
 ## Documentation consulted
 
@@ -98,6 +189,13 @@ payloads cannot subscribe a customer or send a contact message.
   Server Actions guide and Proxy guide; current Proxy guidance via Context7.
   Context7 has no 16.4.0 version entry, so exact behavior was verified against
   the installed published package rather than assuming its generic examples apply.
+
+- [Shopify shareable discount links](https://help.shopify.com/en/manual/discounts/managing-discounts)
+- [Shopify Ajax API scope](https://shopify.dev/docs/api/ajax)
+- [Shopify Ajax cart API](https://shopify.dev/docs/api/ajax/reference/cart)
+- [Storefront cartDiscountCodesUpdate, 2026-10](https://shopify.dev/docs/api/storefront/2026-10/mutations/cartDiscountCodesUpdate)
+- [Vercel Flags Explorer reference](https://vercel.com/docs/flags/flags-explorer/reference)
+- Installed Next.js 16.4.0 redirects and Route Handler guides.
 
 Do not weaken Origin validation, classify Facebook customers as crawlers, or
 disable rendering features without confirming the failure mechanism.

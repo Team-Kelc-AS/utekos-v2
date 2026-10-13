@@ -222,7 +222,7 @@ const articleContent = {
       {
         title: "Utekos TechDown™ – Skreddersy varmen",
         attribution: "Utekos",
-        url: "https://utekos.no/skreddersy-varmen",
+        url: "https://utekos.no/produkter/utekos-techdown",
       },
       {
         title:
