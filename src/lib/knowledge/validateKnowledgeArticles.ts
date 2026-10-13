@@ -1,27 +1,27 @@
-import { z } from 'zod';
+import * as z from '@/lib/validation/zodMini';
 
 const editorialDate = z.union([z.iso.date(), z.iso.datetime({ offset: true })]);
 const image = z.object({
-  src: z.string().min(1).refine(value => value.startsWith('/') && !value.startsWith('//') && !/[?#]/.test(value), 'Expected an original local image path'),
-  width: z.number().int().positive(),
-  height: z.number().int().positive(),
-  alt: z.string().trim().min(1),
+  src: z.string().check(z.minLength(1), z.refine(value => value.startsWith('/') && !value.startsWith('//') && !/[?#]/.test(value), 'Expected an original local image path')),
+  width: z.number().check(z.int(), z.gt(0)),
+  height: z.number().check(z.int(), z.gt(0)),
+  alt: z.string().check(z.trim(), z.minLength(1)),
 });
 const reference = z.object({
-  title: z.string(), attribution: z.string(), url: z.httpUrl().optional(),
-  additionalLinks: z.array(z.object({ url: z.httpUrl(), label: z.string().min(1) })).optional(),
+  title: z.string(), attribution: z.string(), url: z.optional(z.httpUrl()),
+  additionalLinks: z.optional(z.array(z.object({ url: z.httpUrl(), label: z.string().check(z.minLength(1)) }))),
 });
 const article = z.object({
-  slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-  path: z.string().startsWith('/uteguiden/'),
-  title: z.string().trim().min(1), metaTitle: z.string().trim().min(1),
-  metaDescription: z.string().trim().min(1), authorId: z.literal('utekos'),
-  articleSection: z.string().trim().min(1), topics: z.array(z.string().min(1)),
-  publishedAt: editorialDate.optional(), updatedAt: editorialDate.optional(),
-  readingMinutes: z.number().int().positive().optional(),
-  images: z.array(image).min(1), cardImage: image, socialImage: image,
+  slug: z.string().check(z.regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)),
+  path: z.string().check(z.startsWith('/uteguiden/')),
+  title: z.string().check(z.trim(), z.minLength(1)), metaTitle: z.string().check(z.trim(), z.minLength(1)),
+  metaDescription: z.string().check(z.trim(), z.minLength(1)), authorId: z.literal('utekos'),
+  articleSection: z.string().check(z.trim(), z.minLength(1)), topics: z.array(z.string().check(z.minLength(1))),
+  publishedAt: z.optional(editorialDate), updatedAt: z.optional(editorialDate),
+  readingMinutes: z.optional(z.number().check(z.int(), z.gt(0))),
+  images: z.array(image).check(z.minLength(1)), cardImage: image, socialImage: image,
   references: z.array(reference),
-}).superRefine((value, ctx) => {
+}).check(z.superRefine((value, ctx) => {
   if (value.path !== `/uteguiden/${value.slug}`) ctx.addIssue({ code: 'custom', path: ['path'], message: 'Path must match slug' });
   if (value.publishedAt && value.updatedAt && Date.parse(value.updatedAt) < Date.parse(value.publishedAt)) {
     ctx.addIssue({ code: 'custom', path: ['updatedAt'], message: 'Update precedes publication' });
@@ -29,10 +29,10 @@ const article = z.object({
   if (value.socialImage.width !== 1200 || value.socialImage.height !== 630) {
     ctx.addIssue({ code: 'custom', path: ['socialImage'], message: 'Share images must be composed at 1200 × 630' });
   }
-});
+}));
 
 export function validateKnowledgeArticles(values: readonly unknown[]): void {
-  z.array(article).superRefine((articles, ctx) => {
+  z.array(article).check(z.superRefine((articles, ctx) => {
     for (const field of ['slug', 'path'] as const) {
       const seen = new Set<string>();
       articles.forEach((entry, index) => {
@@ -40,5 +40,5 @@ export function validateKnowledgeArticles(values: readonly unknown[]): void {
         seen.add(entry[field]);
       });
     }
-  }).parse(values);
+  })).parse(values);
 }

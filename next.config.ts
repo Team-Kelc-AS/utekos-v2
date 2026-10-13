@@ -4,12 +4,12 @@ import createMDX from "@next/mdx";
 const nextConfig: NextConfig = {
   typedRoutes: true,
   cacheComponents: true,
-  // Next 16.3.8: retain typed entry points while tree-shaking the ESM cache
-  // implementation. Recheck cache scope and bundle output when upgrading Next.
   turbopack: {
     resolveAlias: {
-      "next/dist/server/use-cache/cache-tag": "next/dist/esm/server/use-cache/cache-tag.js",
-      "next/dist/server/use-cache/cache-life": "next/dist/esm/server/use-cache/cache-life.js",
+      "next/dist/server/use-cache/cache-tag":
+        "next/dist/esm/server/use-cache/cache-tag.js",
+      "next/dist/server/use-cache/cache-life":
+        "next/dist/esm/server/use-cache/cache-life.js",
     },
   },
   reactCompiler: true,
@@ -18,37 +18,72 @@ const nextConfig: NextConfig = {
   // return HTTP 404 instead of a streamed 200 containing a not-found screen.
   htmlLimitedBots: /.*/,
   // 4 MB of contact images, with room for form fields and multipart headers.
-  experimental: { serverActions: { bodySizeLimit: "4.25mb" } },
-  images: { remotePatterns: [{ protocol: "https", hostname: "cdn.shopify.com", pathname: "/s/files/1/0634/2154/6744/**" }] },
+  experimental: {
+    serverActions: { bodySizeLimit: "4.25mb" },
+    cssChunking: "graph",
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.shopify.com",
+        pathname: "/s/files/1/0634/2154/6744/**",
+      },
+    ],
+  },
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   async rewrites() {
     return {
-      beforeFiles: [{
-        source: '/', has: [{ type: 'host', value: 'feed\\.utekos\\.no' }],
-        destination: 'https://backend.utekos.no/klarna-feed.xml',
-      }],
-      afterFiles: ['/klarna-feed.xml', '/api/feeds/microsoft-merchant'].map(source => ({
-        source, destination: `https://backend.utekos.no${source}`,
-      })),
+      beforeFiles: [
+        {
+          source: "/",
+          has: [{ type: "host", value: "feed\\.utekos\\.no" }],
+          destination: "https://backend.utekos.no/klarna-feed.xml",
+        },
+      ],
+      afterFiles: ["/klarna-feed.xml", "/api/feeds/microsoft-merchant"].map(
+        (source) => ({
+          source,
+          destination: `https://backend.utekos.no${source}`,
+        }),
+      ),
     };
   },
   async redirects() {
     return [
-      { source: "/produkter/techdown", destination: "/produkter/utekos-techdown", permanent: true },
+      {
+        source: "/produkter/techdown",
+        destination: "/produkter/utekos-techdown",
+        permanent: true,
+      },
       { source: "/contact", destination: "/kontaktskjema", permanent: true },
-      { source: "/pages/contact", destination: "/kontaktskjema", permanent: true },
-      { source: "/pages/kundeservice", destination: "/kontaktskjema", permanent: true },
-      { source: "/nbcc", destination: "/produkter/camping-og-bobil/nbcc", permanent: true },
+      {
+        source: "/pages/contact",
+        destination: "/kontaktskjema",
+        permanent: true,
+      },
+      {
+        source: "/pages/kundeservice",
+        destination: "/kontaktskjema",
+        permanent: true,
+      },
+      {
+        source: "/nbcc",
+        destination: "/produkter/camping-og-bobil/nbcc",
+        permanent: true,
+      },
       { source: "/kunnskap", destination: "/uteguiden", permanent: true },
-      { source: "/kunnskap/:path*", destination: "/uteguiden/:path*", permanent: true },
+      {
+        source: "/kunnskap/:path*",
+        destination: "/uteguiden/:path*",
+        permanent: true,
+      },
     ];
   },
 };
 
 const withMDX = createMDX({
-  // Serializable plugin names are required by Turbopack. TOC links need heading IDs.
   options: { remarkPlugins: ["remark-gfm"], rehypePlugins: ["rehype-slug"] },
 });
 
-// Merge MDX config with Next.js config
 export default withMDX(nextConfig);

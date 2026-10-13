@@ -1,15 +1,17 @@
-import { KnowledgeArticleScaffold } from '@/components/knowledge/KnowledgeArticleScaffold';
-import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles';
+import { KnowledgeArticleScaffold } from "@/components/knowledge/KnowledgeArticleScaffold";
+import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
 
 export default function WhyColdPage({ children }) {
-    return (<KnowledgeArticleScaffold article={knowledgeArticles.cold}>
+  return (
+    <KnowledgeArticleScaffold article={knowledgeArticles.cold}>
       {children}
-    </KnowledgeArticleScaffold>);
+    </KnowledgeArticleScaffold>
+  );
 }
 
-import { ArticleImage } from '@/components/knowledge/ArticleImage'
-import { Cite } from '@/components/knowledge/Cite'
-import { KnowledgeCallout } from '@/components/knowledge/KnowledgeCallout'
+import { ArticleImage } from "@/components/knowledge/ArticleImage";
+import { Cite } from "@/components/knowledge/Cite";
+import { KnowledgeCallout } from "@/components/knowledge/KnowledgeCallout";
 
 Det er en klassisk vintermorgen. To personer står og venter på bussen. Den ene tripper urolig, hakker tenner og har trukket skuldrene helt opp til ørene i et forsøk på å bevare varmen. Den andre står rolig og avslappet, tilsynelatende upåvirket av de bitende minusgradene. Hvordan kan to mennesker oppleve nøyaktig samme miljø så forskjellig? Og hva betyr det egentlig når vi sier at vi «fryser»?
 
@@ -21,12 +23,11 @@ Når du har lest artikkelen, vet du hva som skjer når gradestokken kryper, hvor
   src="/images/kunnskap/hvorfor-blir-man-kald-16x9.jpg"
   alt="To personer på en snødekt bussholdeplass i skumringen – én som hutrer med armene i kors, én som står rolig i vinterjakke."
   aspect="16/9"
-  prompt="Fotorealistisk bilde av to personer på en snødekt bussholdeplass i norsk vintermørke: én ung person som hutrer med armene i kors, én rolig person i vinterjakke, lue og skjerf. Buss med tente lys nærmer seg, snødekte hus i bakgrunnen, dempet blå kveldsstemning. Ingen tekst eller logoer."
 />
 
 ## Balansen mellom varmeproduksjon og varmeavgivelse
 
-Mennesket er av natur et tropisk pattedyr, en såkalt *homeoterm* organisme – det vil si at vi er programmert til å holde en stabil kjernetemperatur på rundt 37 °C uavhengig av miljøet. Redskapet er termoregulering: balansen mellom varmen vi produserer (varmeproduksjon) og varmen vi mister til omgivelsene (varmeavgivelse). I faglitteraturen kalles dette kroppens varmebalanseligning: er netto varmetap lik netto varmeproduksjon, holder temperaturen seg stabil; mister vi mer enn vi produserer, synker den<Cite ids={[1]} />.
+Mennesket er av natur et tropisk pattedyr, en såkalt _homeoterm_ organisme – det vil si at vi er programmert til å holde en stabil kjernetemperatur på rundt 37 °C uavhengig av miljøet. Redskapet er termoregulering: balansen mellom varmen vi produserer (varmeproduksjon) og varmen vi mister til omgivelsene (varmeavgivelse). I faglitteraturen kalles dette kroppens varmebalanseligning: er netto varmetap lik netto varmeproduksjon, holder temperaturen seg stabil; mister vi mer enn vi produserer, synker den<Cite ids={[1]} />.
 
 ### Varmeproduksjon: Den indre ovnen
 
@@ -34,10 +35,10 @@ Den menneskelige metabolismen (stoffskiftet) er kroppens motor. Levende celler t
 
 Selv i full ro produserer kroppen omtrent 100 watt (basalmetabolisme), men produksjonen varierer:
 
-*   **Fysisk aktivitet:** Muskelarbeid er den mest effektive måten å skape varme på. Under hard trening kan varmeproduksjonen tidobles<Cite ids={[1]} />.
-*   **Matfordøyelse:** Et måltid øker forbrenningen midlertidig med opptil 20 prosent<Cite ids={[1]} />.
-*   **Skjelving:** Merker kroppen at den mister for mye varme, starter ufrivillige muskelsammentrekninger som øker varmeproduksjonen betraktelig – men til høy energikostnad<Cite ids={[1]} />.
-*   **Brunt fett:** Kroppen kan også produsere varme uten å skjelve ved å forbrenne brunt fett, et vev som har som eneste oppgave å holde kjernetemperaturen oppe<Cite ids={[1]} />.
+- **Fysisk aktivitet:** Muskelarbeid er den mest effektive måten å skape varme på. Under hard trening kan varmeproduksjonen tidobles<Cite ids={[1]} />.
+- **Matfordøyelse:** Et måltid øker forbrenningen midlertidig med opptil 20 prosent<Cite ids={[1]} />.
+- **Skjelving:** Merker kroppen at den mister for mye varme, starter ufrivillige muskelsammentrekninger som øker varmeproduksjonen betraktelig – men til høy energikostnad<Cite ids={[1]} />.
+- **Brunt fett:** Kroppen kan også produsere varme uten å skjelve ved å forbrenne brunt fett, et vev som har som eneste oppgave å holde kjernetemperaturen oppe<Cite ids={[1]} />.
 
 ### Varmeavgivelse: Slik stjeler omgivelsene energien din
 
@@ -56,7 +57,7 @@ Ubehag i kulda forklares derfor aldri med lufttemperatur alene. Det er summen av
 
 Når varmetapet overstiger varmeproduksjonen, går alarmen. Systemet styres av hypothalamus, en struktur dypt i hjernen som fungerer som kroppens termostat. Den mottar signaler fra kulde- og varmesensorer (blant annet TRPM8-ionekanaler) i hud og kroppskjerne<Cite ids={[1]} />.
 
-Synker hudtemperaturen nedover fra behagelige 33–34 °C, setter hypothalamus inn et todelt forsvar: *fysiologisk* termoregulering (det kroppen gjør automatisk) og *atferdsmessig* termoregulering (det du velger å gjøre, som å lukke jakken)<Cite ids={[1]} />.
+Synker hudtemperaturen nedover fra behagelige 33–34 °C, setter hypothalamus inn et todelt forsvar: _fysiologisk_ termoregulering (det kroppen gjør automatisk) og _atferdsmessig_ termoregulering (det du velger å gjøre, som å lukke jakken)<Cite ids={[1]} />.
 
 ### Blodårene trekker seg sammen (Vasokonstriksjon)
 
@@ -76,7 +77,7 @@ Det er viktig å skille ubehag fra livsfare. Mange kaller all kuldefølelse hypo
 
 ### 1. Å kjenne seg kald (Termisk ubehag)
 
-Å «fryse» er i stor grad en subjektiv opplevelse utløst av sensorsignaler, lenge før kjernetemperaturen har sunket. Eksponeres huden for kald trekk, synker den lokale hudtemperaturen og kuldereseptorene sender kraftige signaler til hjernen, som tolker dem som *termisk ubehag* – bevissthetens måte å drive *atferdsmessig termoregulering* på: «ta på deg en genser før dette blir et reelt problem»<Cite ids={[1]} />.
+Å «fryse» er i stor grad en subjektiv opplevelse utløst av sensorsignaler, lenge før kjernetemperaturen har sunket. Eksponeres huden for kald trekk, synker den lokale hudtemperaturen og kuldereseptorene sender kraftige signaler til hjernen, som tolker dem som _termisk ubehag_ – bevissthetens måte å drive _atferdsmessig termoregulering_ på: «ta på deg en genser før dette blir et reelt problem»<Cite ids={[1]} />.
 
 Hutrer du på bussholdeplassen, er kjernen fremdeles 37 °C. Ubehaget er ekte, men uten fysiologisk fare. Termisk følsomhet er ujevnt fordelt: ansikt og mage er svært følsomme, og hjernen baserer ofte totalopplevelsen på signalene derfra<Cite ids={[1]} />.
 
@@ -92,16 +93,15 @@ Kalde kroppsdeler gir konkrete utfordringer. Faller muskel- og nervetemperaturen
   src="/images/kunnskap/hvorfor-blir-man-kald-4x3.jpg"
   alt="Nærbilde av de to på bussholdeplassen – den ene hutrer med hendene under armene, den andre står rolig mens bussen kommer."
   aspect="4/3"
-  prompt="Fotorealistisk vinterbilde av to personer på en snødekt bussholdeplass i dempet kveldslys: én som hutrer og gnir hendene mot kulda, én avslappet i lue og vinterjakke. Snøtunge trær, gatelys og busslys i bakgrunnen, norsk vintervirkelighet. Ingen tekst eller logoer."
 />
 
 ### 3. Betydelig nedkjøling av kroppen (Hypotermi)
 
-Først når varmetapet over tid har overgått varmeproduksjonen så mye at kjernetemperaturen faller under 35 °C, oppstår *aksidentell hypotermi* – en kritisk medisinsk tilstand, noe helt annet enn å «kjenne seg kald»<Cite ids={[1, 6]} />:
+Først når varmetapet over tid har overgått varmeproduksjonen så mye at kjernetemperaturen faller under 35 °C, oppstår _aksidentell hypotermi_ – en kritisk medisinsk tilstand, noe helt annet enn å «kjenne seg kald»<Cite ids={[1, 6]} />:
 
-*   **Mild hypotermi (32–35 °C):** Kroppen kjemper imot. Skjelvingen er maksimal, puls og pust øker, og man blir ofte apatisk med svekket dømmekraft<Cite ids={[1, 6]} />.
-*   **Moderat hypotermi (28–32 °C):** Kroppen gir opp skjelvingen av energimangel eller for kalde muskler. Tapt skjelverefleks er et farlig tegn. Hjerterytmen svekkes, personen blir forvirret og talen svikter<Cite ids={[1, 6]} />.
-*   **Alvorlig hypotermi (under 28 °C):** Bevissthetstap, svak puls og pust, betydelig fare for hjertestans og død<Cite ids={[6]} />.
+- **Mild hypotermi (32–35 °C):** Kroppen kjemper imot. Skjelvingen er maksimal, puls og pust øker, og man blir ofte apatisk med svekket dømmekraft<Cite ids={[1, 6]} />.
+- **Moderat hypotermi (28–32 °C):** Kroppen gir opp skjelvingen av energimangel eller for kalde muskler. Tapt skjelverefleks er et farlig tegn. Hjerterytmen svekkes, personen blir forvirret og talen svikter<Cite ids={[1, 6]} />.
+- **Alvorlig hypotermi (under 28 °C):** Bevissthetstap, svak puls og pust, betydelig fare for hjertestans og død<Cite ids={[6]} />.
 
 Behandlingen av «bare kald på huden» og moderat hypotermi er helt forskjellig. En lett frossen person bør bevege seg for å øke forbrenningen. Ved dyp hypotermi er hjertemuskulaturen så kald og skjør at røff håndtering eller brå oppvarming av ekstremitetene kan sende iskaldt blod tilbake til hjertet (afterdrop) og utløse hjerteflimmer<Cite ids={[6]} />.
 
@@ -119,9 +119,9 @@ Med alderen svekkes den termiske følsomheten – vi merker kulden dårligere, n
 
 ### Tilvenning (Akklimatisering)
 
-Mennesker tilpasser seg kulde. Den vanligste formen hos moderne mennesker er *habituering* (tilvenning): ved jevnlig, moderat kuldeeksponering uten dyp nedkjøling lærer kroppen at situasjonen ikke er livstruende. Skjelverefleksen slår inn senere, stressresponsen dempes og ubehaget reduseres kraftig<Cite ids={[1]} />.
+Mennesker tilpasser seg kulde. Den vanligste formen hos moderne mennesker er _habituering_ (tilvenning): ved jevnlig, moderat kuldeeksponering uten dyp nedkjøling lærer kroppen at situasjonen ikke er livstruende. Skjelverefleksen slår inn senere, stressresponsen dempes og ubehaget reduseres kraftig<Cite ids={[1]} />.
 
-Ved langvarig liv ute i ekstrem kulde er også *insulativ akklimatisering* (kaldere, mer isolerende hud) og *metabolsk akklimatisering* (høyere grunnforbrenning) dokumentert. Vinterbadere som bader ukentlig, tåler isvannet bedre i mars enn i november fordi alarmresponsen er dempet<Cite ids={[1]} />.
+Ved langvarig liv ute i ekstrem kulde er også _insulativ akklimatisering_ (kaldere, mer isolerende hud) og _metabolsk akklimatisering_ (høyere grunnforbrenning) dokumentert. Vinterbadere som bader ukentlig, tåler isvannet bedre i mars enn i november fordi alarmresponsen er dempet<Cite ids={[1]} />.
 
 ## Myter, farer og helseeffekter av kulde
 
@@ -129,7 +129,7 @@ Forskningen gir gode svar på hva som er farlig og ikke. Kuldeforskningen har av
 
 ### Myte 1: Du mister mesteparten av varmen ut gjennom hodet
 
-Dette er feil. Varmetap handler om isolasjon, og hud taper varme jevnt – at hodet *virket* verst i tidlige forsøk, skyldes at det var den eneste kroppsdelen testpersonene ikke hadde pakket inn<Cite ids={[4, 5]} />. Men ansikt, hode og nakke er tette med termoreseptorer: blir du kald her, melder hjernen at hele du er kald. En lue hjelper godt fordi den stopper varmetapet på et svært følsomt område – ikke fordi hodet stråler mer varme enn leggene<Cite ids={[1, 5]} />.
+Dette er feil. Varmetap handler om isolasjon, og hud taper varme jevnt – at hodet _virket_ verst i tidlige forsøk, skyldes at det var den eneste kroppsdelen testpersonene ikke hadde pakket inn<Cite ids={[4, 5]} />. Men ansikt, hode og nakke er tette med termoreseptorer: blir du kald her, melder hjernen at hele du er kald. En lue hjelper godt fordi den stopper varmetapet på et svært følsomt område – ikke fordi hodet stråler mer varme enn leggene<Cite ids={[1, 5]} />.
 
 Motsatt har lår og legger færre sensorer, så mange tror tynne jeans er greit med dunjakke over. Realiteten er at beina da kan stå for over halvparten av kroppens totale varmetap og trekker store mengder energi fra kjernen. En stillongs lønner seg ofte mer enn en ekstra genser<Cite ids={[5]} />.
 
@@ -149,20 +149,22 @@ For å unngå å fryse må du vippe varmebalansen i din favør. Siden kjernetemp
 
 Målet med klær er å fange stillestående luft – verdens letteste isolator. Klær varmer ikke; de bevarer varmen du selv produserer<Cite ids={[5]} />.
 
-*   **Flerlagsprinsippet:** Flere tynne lag slår én tykk jakke. Luftlagene mellom plaggene fanger varmen, og du kan drive *atferdsmessig termoregulering* ved å ta av et plagg når du svetter<Cite ids={[5]} />.
-*   **Materialvalg:** Fuktighet er hovedfienden i kulda. Ull beholder mye av isolasjonsevnen også i fuktig tilstand, mens syntetisk tøy flytter svette raskt vekk – styrker og svakheter ved hvert materiale forklarer vi i [artikkelen om innerlag](/uteguiden/hva-skal-man-ha-innerst)<Cite ids={[5]} />.
-*   **Hold føttene tørre og isolert:** Skotøyet må være romslig. Trange sko klemmer luftlommene i sokkene flate og struper blodsirkulasjonen. Et gammelt triks som fortsatt virker: såler av avispapir under ullsålen suger fukt og isolerer mot kald bakke<Cite ids={[5]} />.
+- **Flerlagsprinsippet:** Flere tynne lag slår én tykk jakke. Luftlagene mellom plaggene fanger varmen, og du kan drive _atferdsmessig termoregulering_ ved å ta av et plagg når du svetter<Cite ids={[5]} />.
+- **Materialvalg:** Fuktighet er hovedfienden i kulda. Ull beholder mye av isolasjonsevnen også i fuktig tilstand, mens syntetisk tøy flytter svette raskt vekk – styrker og svakheter ved hvert materiale forklarer vi i [artikkelen om innerlag](/uteguiden/hva-skal-man-ha-innerst)<Cite ids={[5]} />.
+- **Hold føttene tørre og isolert:** Skotøyet må være romslig. Trange sko klemmer luftlommene i sokkene flate og struper blodsirkulasjonen. Et gammelt triks som fortsatt virker: såler av avispapir under ullsålen suger fukt og isolerer mot kald bakke<Cite ids={[5]} />.
 
 <KnowledgeCallout title="Tommelregel: kle deg for farten, ikke for pausen">
-Du skal være litt småkald når turen starter. Blir du god og varm før du har begynt å gå, overopphetes du, svetter ut klærne – og fryser i første pause<Cite ids={[4, 5]} />.
+  Du skal være litt småkald når turen starter. Blir du god og varm før du har
+  begynt å gå, overopphetes du, svetter ut klærne – og fryser i første pause
+  <Cite ids={[4, 5]} />.
 </KnowledgeCallout>
 
 ### 2. Øk varmeproduksjonen
 
 Er huden kald til tross for klærne, finnes bare én utvei: øk motorens turtall<Cite ids={[1]} />.
 
-*   **Fysisk aktivitet:** Fryser du på post eller holdeplass, ta spensthopp, kneløft eller raske knebøy. Muskelkontraksjoner genererer varme umiddelbart og tvinger sirkulasjonen opp. Kroppen trenger drivstoff – mat, særlig karbohydrater og fett – for å produsere varme, så en sjokoladebit eller varm, søt drikke hjelper ovnen<Cite ids={[1, 4]} />.
-*   **Slik redder du neglespretten:** Iskalde fingre på skitur skyldes at kroppen har strupt blodtilførselen (vasokonstriksjon) for å prioritere kjernen. Gå deg varm, og *stopp så opp*. Når arbeidet stanser mens kjernen fortsatt er litt forhøyet, sender kroppen overskuddsvarme ut i huden. La armene henge slapt og sving dem i store sirkler – sentrifugalkraften presser varmt blod helt ut i fingertuppene. Det gjør vondt i noen sekunder når varmen treffer iskalde nerver, men fingrene reddes<Cite ids={[2, 4]} />.
+- **Fysisk aktivitet:** Fryser du på post eller holdeplass, ta spensthopp, kneløft eller raske knebøy. Muskelkontraksjoner genererer varme umiddelbart og tvinger sirkulasjonen opp. Kroppen trenger drivstoff – mat, særlig karbohydrater og fett – for å produsere varme, så en sjokoladebit eller varm, søt drikke hjelper ovnen<Cite ids={[1, 4]} />.
+- **Slik redder du neglespretten:** Iskalde fingre på skitur skyldes at kroppen har strupt blodtilførselen (vasokonstriksjon) for å prioritere kjernen. Gå deg varm, og _stopp så opp_. Når arbeidet stanser mens kjernen fortsatt er litt forhøyet, sender kroppen overskuddsvarme ut i huden. La armene henge slapt og sving dem i store sirkler – sentrifugalkraften presser varmt blod helt ut i fingertuppene. Det gjør vondt i noen sekunder når varmen treffer iskalde nerver, men fingrene reddes<Cite ids={[2, 4]} />.
 
 ### 3. Mat og drikke
 
