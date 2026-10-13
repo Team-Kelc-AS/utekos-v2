@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import vm from 'node:vm'
 import { NextRequest, NextResponse } from 'next/server'
+import { unstable_doesMiddlewareMatch } from 'next/experimental/testing/server'
 import { buildServerGtmUpstreamUrl } from '../src/lib/analytics/serverGtmGateway/buildServerGtmUpstreamUrl'
 import { proxyServerGtmRequest } from '../src/lib/analytics/serverGtmGateway/proxyServerGtmRequest'
 import { applyCookieKeeperUserIdCookie } from '../src/lib/analytics/server/stapeCookieKeeperUserId'
@@ -16,8 +17,44 @@ import { transformSync } from 'esbuild'
 import * as jsxRuntime from 'react/jsx-runtime'
 import * as metaAdsCrawler from '../src/lib/tracking/metaAdsCrawler'
 import { telemetryRewriteUrl } from '../src/lib/tracking/telemetryRoutes'
-import { proxy } from '../src/proxy'
+import { config as proxyConfig, proxy } from '../src/proxy'
 import { POST as gatewayPOST } from '../src/app/%5F_sgtm/[[...path]]/route'
+
+test('unsupported URL-encoded fetch actions stop before PPR rendering and identity writes', async () => {
+  for (const contentType of ['application/x-www-form-urlencoded', 'application/x-www-form-urlencoded; charset=UTF-8']) {
+    const request = new NextRequest('https://utekos.no/', {
+      method: 'POST', headers: { 'next-action': 'fixture', 'content-type': contentType }, body: 'fixture=invalid',
+    })
+    const response = proxy(request)
+    assert.equal(response.status, 400)
+    assert.equal(await response.text(), 'Invalid Server Actions request.')
+    assert.equal(response.headers.get('x-nextjs-action-not-found'), '1')
+    assert.match(response.headers.get('cache-control') ?? '', /no-store/)
+    assert.deepEqual(response.headers.getSetCookie(), [])
+    assert.equal(request.bodyUsed, false)
+  }
+  const supportedHeaders: HeadersInit[] = [
+    { 'content-type': 'application/x-www-form-urlencoded' },
+    { 'next-action': 'fixture', 'content-type': 'text/plain;charset=UTF-8' },
+    { 'next-action': 'fixture', 'content-type': 'multipart/form-data; boundary=fixture' },
+  ]
+  for (const headers of supportedHeaders) {
+    const request = new NextRequest('https://utekos.no/', { method: 'POST', headers, body: 'fixture' })
+    assert.equal(proxy(request).headers.get('x-middleware-next'), '1')
+    assert.equal(request.bodyUsed, false)
+  }
+})
+
+test('action protocol checks cannot be skipped with prefetch or RSC headers', () => {
+  const headers = { 'next-action': 'fixture', rsc: '1', 'next-router-prefetch': '1', purpose: 'prefetch' }
+  for (const url of ['/', '/kontaktskjema', '/produkter/comfyrobe']) {
+    assert.equal(unstable_doesMiddlewareMatch({ config: proxyConfig, nextConfig: {}, url, headers }), true)
+  }
+  for (const url of ['/api/cart', '/__sgtm/data', '/_next/static/chunk.js']) {
+    assert.equal(unstable_doesMiddlewareMatch({ config: proxyConfig, nextConfig: {}, url, headers }), false)
+  }
+  assert.equal(unstable_doesMiddlewareMatch({ config: proxyConfig, nextConfig: {}, url: '/', headers: { rsc: '1' } }), false)
+})
 
 test('Stape gateway preserves the body, query, visitor headers and independent cookies', async () => {
   let calls = 0

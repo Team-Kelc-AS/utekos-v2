@@ -30,6 +30,25 @@ export function proxy(request: NextRequest) {
     );
   }
 
+  // Next 16.4 does not support URL-encoded fetch actions. Its not-found
+  // fallback replays the page's PPR tree against a different 404 tree.
+  // Reject only this invalid protocol combination before rendering; ordinary
+  // forms (no Next-Action header) and supported action bodies pass through.
+  if (
+    request.method === "POST" &&
+    request.headers.has("next-action") &&
+    request.headers.get("content-type")?.split(";", 1)[0]?.trim().toLowerCase() ===
+      "application/x-www-form-urlencoded"
+  ) {
+    return noStore(new NextResponse("Invalid Server Actions request.", {
+      status: 400,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "x-nextjs-action-not-found": "1",
+      },
+    }));
+  }
+
   if (!enabled || !isDocumentNavigation(request) || isMetaAdsCrawler(request.headers.get('user-agent'))) return NextResponse.next();
 
   const metaCookies = captureProxyMetaCookies(request);
@@ -50,6 +69,11 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/telemetry/v1/:path*",
+    {
+      source:
+        "/((?!api(?:/|$)|__sgtm(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|analytics(?:/|$)|telemetry(?:/|$)|.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)",
+      has: [{ type: "header", key: "next-action" }],
+    },
     {
       source:
         "/((?!api(?:/|$)|__sgtm(?:/|$)|_next(?:/|$)|_vercel(?:/|$)|analytics(?:/|$)|telemetry(?:/|$)|.*\\.(?:avif|bmp|css|csv|gif|ico|jpe?g|js|json|map|mp3|mp4|pdf|png|svg|txt|webmanifest|webp|woff2?|xml)$).*)",
