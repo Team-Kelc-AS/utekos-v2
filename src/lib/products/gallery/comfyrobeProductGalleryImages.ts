@@ -1,45 +1,22 @@
 import { productImage } from '@/lib/products/productImage'
 import type { ProductImage as Image } from '@/lib/shopify/product-types'
-import comfyrobeDesktop002 from '@/assets/products/comfyrobe/Comfyrobe-002.webp'
-import comfyrobeDesktop0003 from '@/assets/products/comfyrobe/Comfyrobe-0003.webp'
-import comfyrobeDesktop004 from '@/assets/products/comfyrobe/Comfyrobe-004.webp'
-import comfyrobeSherpa from '@/assets/products/comfyrobe/Sherpa.webp'
-
-const COMFYROBE_DESKTOP_STILL_WIDTH = 1400
-const COMFYROBE_DESKTOP_STILL_HEIGHT = 1800
-const COMFYROBE_SHERPA_STILL_WIDTH = 1666
-const COMFYROBE_SHERPA_STILL_HEIGHT = 2142
 const COMFYROBE_MOBILE_STILL_WIDTH = 1000
 const COMFYROBE_MOBILE_STILL_HEIGHT = 1500
 
 export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
   productImage(
-    'comfyrobe-desktop-still-002',
-    comfyrobeDesktop002,
-    'Marineblå Comfyrobe i full lengde forfra med hette.',
-    COMFYROBE_DESKTOP_STILL_WIDTH,
-    COMFYROBE_DESKTOP_STILL_HEIGHT
+    'comfyrobe-desktop-145-2222',
+    '/images/kunnskap/Comfyrobe_145_2222.webp',
+    'Marineblå Comfyrobe forfra mot mørk bakgrunn, med Comfyrobe- og Utekos-logo.',
+    1350,
+    1688
   ),
   productImage(
-    'comfyrobe-desktop-still-0003',
-    comfyrobeDesktop0003,
-    'Marineblå Comfyrobe i full lengde forfra med synlig merkelapp.',
-    COMFYROBE_DESKTOP_STILL_WIDTH,
-    COMFYROBE_DESKTOP_STILL_HEIGHT
-  ),
-  productImage(
-    'comfyrobe-desktop-still-004',
-    comfyrobeDesktop004,
-    'Marineblå Comfyrobe i full lengde bakfra.',
-    COMFYROBE_DESKTOP_STILL_WIDTH,
-    COMFYROBE_DESKTOP_STILL_HEIGHT
-  ),
-  productImage(
-    'comfyrobe-desktop-still-sherpa',
-    comfyrobeSherpa,
-    'Kremfarget sherpa-fôr mot mørk bakgrunn.',
-    COMFYROBE_SHERPA_STILL_WIDTH,
-    COMFYROBE_SHERPA_STILL_HEIGHT
+    'comfyrobe-desktop-1440x1800-2',
+    '/images/kunnskap/Comfyrobe_1440x1800-2.webp',
+    'Kvinne i marineblå Comfyrobe med hetten oppe og hendene i lommene.',
+    720,
+    900
   )
 ]
 
@@ -51,6 +28,27 @@ export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
     'Kvinne i marineblå Comfyrobe foran mørkegrønne vegger.',
     COMFYROBE_MOBILE_STILL_WIDTH,
     COMFYROBE_MOBILE_STILL_HEIGHT
+  ),
+  productImage(
+    'comfyrobe-mobile-1000x1500-22',
+    '/images/kunnskap/Comfyrobe_1000x1500_22.webp',
+    'Marineblå Comfyrobe i full lengde forfra mot mørk bakgrunn.',
+    500,
+    750
+  ),
+  productImage(
+    'comfyrobe-mobile-1000x1500-2-webp',
+    '/images/kunnskap/Comfyrobe_1000x1500_2.webp',
+    'Marineblå Comfyrobe forfra med åpen hette og synlig lyst sherpa-fôr.',
+    500,
+    750
+  ),
+  productImage(
+    'comfyrobe-mobile-11000x1500',
+    '/images/kunnskap/Comfyrobe_11000x1500.webp',
+    'Kvinne i marineblå Comfyrobe sett fra siden mot mørk bakgrunn.',
+    500,
+    750
   ),
   productImage(
     'comfyrobe-mobile-1000x1500-1',
