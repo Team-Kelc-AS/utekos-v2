@@ -4,6 +4,10 @@ Meta's documented `meta-externalads` crawler must retain access to public produc
 pages, images and metadata without becoming a customer visit or conversion.
 Source: https://developers.facebook.com/documentation/sharing/webmasters/web-crawlers
 
+Client tracking components use a stable empty server/hydration snapshot, then
+check browser eligibility before mounting. This avoids a hydration mismatch when
+the server cannot know the browser UA during static rendering.
+
 The browser production gate, standalone Pixel script and Stape script wrappers
 exclude this user-agent token. The document proxy skips identity cookies. For
 older clients that still send requests, allowlisted browser telemetry POSTs

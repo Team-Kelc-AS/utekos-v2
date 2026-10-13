@@ -18,7 +18,21 @@ async function buildHarness(environment) {
       export {observeStorefront,observeTrackedPage} from './src/lib/tracking/dom-observers';
       export {emitStorefrontAction} from './src/lib/tracking/browser-events';
       export {createCanonicalGenerateLead,buildGenerateLeadDataLayerEvent} from './src/lib/analytics/generateLeadEvent';
-      export {recordVariantIntent} from './src/lib/tracking/variant-selection';`, resolveDir: root, loader: 'ts' },
+      export {recordVariantIntent} from './src/lib/tracking/variant-selection';
+      import {createElement,useEffect} from 'react';
+      import {hydrateRoot} from 'react-dom/client';
+      import {useBrowserTrackingEnabled} from './src/lib/tracking/useBrowserTrackingEnabled';
+      export function hydrateTrackingGate() {
+        const container=document.createElement('div');container.id='hydrated-tracking-gate';document.body.append(container);
+        window.__gateHydrationErrors=[];
+        function Gate() {
+          const enabled=useBrowserTrackingEnabled();
+          useEffect(()=>{window.__gateReady=true},[]);
+          return enabled?createElement('span',null,'enabled'):null;
+        }
+        // SSR intentionally produces empty markup because browser eligibility is unknown.
+        hydrateRoot(container,createElement(Gate),{onRecoverableError(error){window.__gateHydrationErrors.push(error.message)}});
+      }`, resolveDir: root, loader: 'ts' },
     absWorkingDir: root, bundle: true, format: 'iife', globalName: 'UtekosTrackingHarness', platform: 'browser', target: 'chrome120', write: false,
     define: { 'process.env.NEXT_PUBLIC_TRACKING_ENABLED': '"true"', 'process.env.NEXT_PUBLIC_VERCEL_ENV': JSON.stringify(environment), 'process.env.VERCEL_ENV': JSON.stringify(environment), 'process.env.NODE_ENV': '"production"', 'process.env': '{}' },
   });
@@ -155,6 +169,15 @@ test('Meta ads crawler can read products without Pixel, customer events, identit
   }));
   assert.deepEqual(api.requests, []);
   assert.deepEqual(state, { events: [], pixel: [], canonical: [], fbq: 'undefined', cookies: '', local: 0, session: 0 });
+});
+
+for (const crawler of [false, true]) test(`tracking hydration is stable and only enables ordinary visitors (crawler=${crawler})`, async t => {
+  const api = await fixture(t, undefined, { userAgent: crawler ? 'meta-externalads/1.1' : 'Fixture browser' });
+  await api.page.evaluate(() => UtekosTrackingHarness.hydrateTrackingGate());
+  await api.page.waitForFunction(() => window.__gateReady);
+  if (!crawler) await api.page.waitForFunction(() => document.getElementById('hydrated-tracking-gate').textContent === 'enabled');
+  assert.equal(await api.page.locator('#hydrated-tracking-gate').textContent(), crawler ? '' : 'enabled');
+  assert.deepEqual(await api.page.evaluate(() => window.__gateHydrationErrors), []);
 });
 
 test('size guide dialog reports each opening without counting closing or other dialogs as accordion interactions', async t => {
