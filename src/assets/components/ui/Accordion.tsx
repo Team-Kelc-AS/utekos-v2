@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
  *
  * Støtter to distinkte varianter:
  * - 'flush': Minimalistisk skillelinjestil for ProductDetails (tekniske spesifikasjoner, materialer)
- * - 'card': Frittstående paneler med subtil kantlinje og glassaktig bakgrunn for FAQ & veiledning
+ * - 'card': Frittstående paneler med subtil kantlinje og glassaktig bakgrunn for FAQ
  */
 
 interface AccordionProps extends React.ComponentPropsWithoutRef<
@@ -23,7 +23,7 @@ interface AccordionProps extends React.ComponentPropsWithoutRef<
 }
 
 const Accordion = React.forwardRef<
-  React.ElementRef<typeof BaseAccordion.Root>,
+  React.ComponentRef<typeof BaseAccordion.Root>,
   AccordionProps
 >(({ className, ...props }, ref) => (
   <BaseAccordion.Root
@@ -41,7 +41,7 @@ interface AccordionItemProps extends React.ComponentPropsWithoutRef<
 }
 
 const AccordionItem = React.forwardRef<
-  React.ElementRef<typeof BaseAccordion.Item>,
+  React.ComponentRef<typeof BaseAccordion.Item>,
   AccordionItemProps
 >(({ className, variant = "flush", ...props }, ref) => (
   <BaseAccordion.Item
@@ -68,42 +68,57 @@ interface AccordionTriggerProps extends React.ComponentPropsWithoutRef<
 }
 
 const AccordionTrigger = React.forwardRef<
-  React.ElementRef<typeof BaseAccordion.Trigger>,
+  React.ComponentRef<typeof BaseAccordion.Trigger>,
   AccordionTriggerProps
->(({ className, children, iconStyle = "chevron", badge, headingLevel = 3, ...props }, ref) => (
-  <BaseAccordion.Header render={React.createElement(`h${headingLevel}`)} className="flex m-0">
-    <BaseAccordion.Trigger
-      ref={ref}
-      className={cn(
-        "group flex flex-1 items-center justify-between py-5 font-semibold text-[#f0eee9] text-left transition-all hover:text-[#f0eee9]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001715] disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
-        className,
-      )}
-      {...props}
+>(
+  (
+    {
+      className,
+      children,
+      iconStyle = "chevron",
+      badge,
+      headingLevel = 3,
+      ...props
+    },
+    ref,
+  ) => (
+    <BaseAccordion.Header
+      render={React.createElement(`h${headingLevel}`)}
+      className="flex m-0"
     >
-      <div className="flex items-center gap-3 pr-4">
-        <span className="text-lg md:text-xl font-bold tracking-tight text-[#f0eee9] group-hover:text-white transition-colors duration-200">
-          {children}
-        </span>
-        {badge && (
-          <span className="inline-flex items-center rounded-full bg-[#b44701]/20 px-2.5 py-0.5 text-xs font-medium text-[#f0eee9] border border-[#b44701]/40">
-            {badge}
+      <BaseAccordion.Trigger
+        ref={ref}
+        className={cn(
+          "group flex flex-1 items-center justify-between py-5 font-semibold text-[#f0eee9] text-left transition-all hover:text-[#f0eee9]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001715] disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+          className,
+        )}
+        {...props}
+      >
+        <div className="flex items-center gap-3 pr-4">
+          <span className="text-lg md:text-xl font-bold tracking-tight text-[#f0eee9] group-hover:text-white transition-colors duration-200">
+            {children}
+          </span>
+          {badge && (
+            <span className="inline-flex items-center rounded-full bg-[#b44701]/20 px-2.5 py-0.5 text-xs font-medium text-[#f0eee9] border border-[#b44701]/40">
+              {badge}
+            </span>
+          )}
+        </div>
+
+        {iconStyle === "chevron" ? (
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f0eee9]/15 bg-[#01201d]/60 text-[#f0eee9]/80 transition-all duration-300 group-hover:border-[#b44701]/40 group-hover:text-white group-data-panel-open:rotate-180 group-data-panel-open:bg-[#b44701] group-data-panel-open:border-[#b44701] group-data-panel-open:text-white">
+            <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-300" />
+          </span>
+        ) : (
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f0eee9]/15 bg-[#01201d]/60 text-[#f0eee9]/80 transition-all duration-300 group-hover:border-[#b44701]/40 group-data-panel-open:border-[#b44701] group-data-panel-open:bg-[#b44701] group-data-panel-open:text-white">
+            <Plus className="h-4 w-4 shrink-0 transition-transform duration-300 group-data-panel-open:hidden" />
+            <Minus className="hidden h-4 w-4 shrink-0 transition-transform duration-300 group-data-panel-open:block" />
           </span>
         )}
-      </div>
-
-      {iconStyle === "chevron" ? (
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f0eee9]/15 bg-[#01201d]/60 text-[#f0eee9]/80 transition-all duration-300 group-hover:border-[#b44701]/40 group-hover:text-white group-data-panel-open:rotate-180 group-data-panel-open:bg-[#b44701] group-data-panel-open:border-[#b44701] group-data-panel-open:text-white">
-          <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-300" />
-        </span>
-      ) : (
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#f0eee9]/15 bg-[#01201d]/60 text-[#f0eee9]/80 transition-all duration-300 group-hover:border-[#b44701]/40 group-data-panel-open:border-[#b44701] group-data-panel-open:bg-[#b44701] group-data-panel-open:text-white">
-          <Plus className="h-4 w-4 shrink-0 transition-transform duration-300 group-data-panel-open:hidden" />
-          <Minus className="hidden h-4 w-4 shrink-0 transition-transform duration-300 group-data-panel-open:block" />
-        </span>
-      )}
-    </BaseAccordion.Trigger>
-  </BaseAccordion.Header>
-));
+      </BaseAccordion.Trigger>
+    </BaseAccordion.Header>
+  ),
+);
 AccordionTrigger.displayName = "AccordionTrigger";
 
 interface AccordionContentProps extends React.ComponentPropsWithoutRef<
@@ -113,7 +128,7 @@ interface AccordionContentProps extends React.ComponentPropsWithoutRef<
 }
 
 const AccordionContent = React.forwardRef<
-  React.ElementRef<typeof BaseAccordion.Panel>,
+  React.ComponentRef<typeof BaseAccordion.Panel>,
   AccordionContentProps
 >(({ className, children, ...props }, ref) => (
   <BaseAccordion.Panel

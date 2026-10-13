@@ -1,8 +1,5 @@
 {
-  "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "utekos-v2",
-  "homepage": "https://utekos.no",
-  "include": ["components/ui/registry.json", "hooks/registry.json"],
+  "$schema": "https://ui.shadcn.com/schema.json",
   "style": "base-nova",
   "rsc": true,
   "tsx": true,

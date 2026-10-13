@@ -1,12 +1,4 @@
-import { KnowledgeArticleScaffold } from '@/components/knowledge/KnowledgeArticleScaffold';
-import { BaseLayerHero } from './BaseLayerHero';
-import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles';
-
-export default function BaseLayerPage({ children }) {
-    return (<KnowledgeArticleScaffold article={knowledgeArticles.baseLayer} hero={<BaseLayerHero />}>
-      {children}
-    </KnowledgeArticleScaffold>);
-}
+export { BaseLayerArticleLayout as default } from "./BaseLayerArticleLayout";
 
 import { Cite } from '@/components/knowledge/Cite'
 import { KnowledgeCallout } from '@/components/knowledge/KnowledgeCallout'

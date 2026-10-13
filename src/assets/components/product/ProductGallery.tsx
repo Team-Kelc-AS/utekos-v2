@@ -7,7 +7,7 @@ import { DesktopProductVideo } from './DesktopProductVideo';
 import styles from './product.module.css';
 export function ProductGallery({ desktop, mobile, title, video, videoLabel, showMobileControls = true }: { desktop: ProductImage[]; mobile: ProductImage[]; title: string; video?: ProductVideoSource; videoLabel?: string; showMobileControls?: boolean }) {
   if (!desktop.length && !mobile.length) return <div className={styles.missingImage}>Produktbilde er ikke tilgjengelig for denne varianten.</div>;
-  const desktopImages = desktop.length ? desktop : mobile;
+  const desktopImages = desktop;
   const mobileImages = mobile;
   // One picture per slide: the browser requests only the source for its viewport.
   // Extra slides belong only to the viewport with that many original images.

@@ -1,27 +1,41 @@
 import { productImage } from '@/lib/products/productImage'
 import type { ProductImage as Image } from '@/lib/shopify/product-types'
 import mikrofiberMobileStill16 from '@/assets/products/mikrofiber/16.webp'
-import mikrofiberDesktopStill1 from '@/assets/products/mikrofiber/1.webp'
-import mikrofiberDesktopStill2 from '@/assets/products/mikrofiber/2.webp'
-import mikrofiberDesktopStill3 from '@/assets/products/mikrofiber/3.webp'
-import mikrofiberDesktopStill4 from '@/assets/products/mikrofiber/4.webp'
-import mikrofiberDesktopStill5 from '@/assets/products/mikrofiber/5.webp'
-import mikrofiberDesktopStill6 from '@/assets/products/mikrofiber/6.webp'
-import mikrofiberDesktopStill7 from '@/assets/products/mikrofiber/7.webp'
-import mikrofiberDesktopStill8 from '@/assets/products/mikrofiber/8.webp'
-import mikrofiberDesktopStill9 from '@/assets/products/mikrofiber/9.webp'
-import mikrofiberDesktopStill10 from '@/assets/products/mikrofiber/10.webp'
-
-const MICROFIBER_DESKTOP_STILL_NARROW_WIDTH = 1024
-const MICROFIBER_DESKTOP_STILL_NARROW_HEIGHT = 1317
-const MICROFIBER_DESKTOP_STILL_WIDE_WIDTH = 2048
-const MICROFIBER_DESKTOP_STILL_WIDE_HEIGHT = 2633
-const MICROFIBER_DESKTOP_STILL_4_WIDTH = 1048
-const MICROFIBER_DESKTOP_STILL_4_HEIGHT = 1347
 const MICROFIBER_MOBILE_STILL_16_WIDTH = 800
 const MICROFIBER_MOBILE_STILL_16_HEIGHT = 1200
 const MICROFIBER_MOBILE_STILL_WIDTH = 1000
 const MICROFIBER_MOBILE_STILL_HEIGHT = 1500
+
+export const MICROFIBER_VARGNATT_DESKTOP_GALLERY_IMAGES: Image[] = [
+  productImage(
+    'utekos-mikrofiber-vargnatt-desktop-jarle-2',
+    '/images/kunnskap/mikrofiber_vargnatt_45_jarle_2.webp',
+    'Mann i Utekos Mikrofiber™ Vargnatt sitter på en terrasse med utsikt over fjord og snødekte fjell.',
+    603,
+    754
+  ),
+  productImage(
+    'utekos-mikrofiber-vargnatt-desktop-2',
+    '/images/kunnskap/mikrofiber_vargnatt_45_2.webp',
+    'Kvinne i Utekos Mikrofiber™ Vargnatt sitter med en kopp ved bobilen med utsikt over fjorden.',
+    603,
+    754
+  ),
+  productImage(
+    'utekos-mikrofiber-vargnatt-desktop-3',
+    '/images/kunnskap/mikrofiber_vargnatt_45_3.webp',
+    'Kvinne i Utekos Mikrofiber™ Vargnatt i kort lengde går ved en hytte med hodetelefoner og telefon.',
+    603,
+    754
+  ),
+  productImage(
+    'utekos-mikrofiber-vargnatt-desktop-4',
+    '/images/kunnskap/mikrofiber_vargnatt_45_4.webp',
+    'Kvinne i Utekos Mikrofiber™ Vargnatt i full lengde står utenfor en hytte.',
+    603,
+    754
+  )
+]
 
 export const MICROFIBER_MOBILE_GALLERY_IMAGES: Image[] = [
   productImage(
@@ -30,6 +44,20 @@ export const MICROFIBER_MOBILE_GALLERY_IMAGES: Image[] = [
     'To kvinner i Utekos Mikrofiber sitter på en stein i skogen.',
     MICROFIBER_MOBILE_STILL_16_WIDTH,
     MICROFIBER_MOBILE_STILL_16_HEIGHT
+  ),
+  productImage(
+    'utekos-mikrofiber-fjellbla-morgenro',
+    '/images/kunnskap/morgenro_340x513.jpg',
+    'Kvinne i fjellblå Utekos Mikrofiber™ sitter med en kopp ved bobilen med utsikt over fjorden.',
+    340,
+    510
+  ),
+  productImage(
+    'utekos-mikrofiber-fjellbla-1000x1500-3',
+    '/images/kunnskap/mikrofiber_fjellbla_1000x1500_3.webp',
+    'Kvinne i fjellblå Utekos Mikrofiber™ står med en kopp ved bobilen med fjord og fjell i bakgrunnen.',
+    MICROFIBER_MOBILE_STILL_WIDTH,
+    MICROFIBER_MOBILE_STILL_HEIGHT
   ),
   productImage(
     'utekos-mikrofiber-mobile-1000x1500-2',
@@ -68,75 +96,13 @@ export const MICROFIBER_MOBILE_GALLERY_IMAGES: Image[] = [
   )
 ]
 
+// Verified 4:5 original from this Shopify product; the old stills were not 4:5.
 export const MICROFIBER_PRODUCT_GALLERY_IMAGES: Image[] = [
   productImage(
-    'utekos-mikrofiber-desktop-still-1',
-    mikrofiberDesktopStill1,
-    'To kvinner i Utekos Mikrofiber sitter på en stein i skogen.',
-    MICROFIBER_DESKTOP_STILL_NARROW_WIDTH,
-    MICROFIBER_DESKTOP_STILL_NARROW_HEIGHT
-  ),
-  productImage(
-    'utekos-mikrofiber-desktop-still-2',
-    mikrofiberDesktopStill2,
-    'Fjellblå Utekos Mikrofiber i full lengde forfra.',
-    MICROFIBER_DESKTOP_STILL_WIDE_WIDTH,
-    MICROFIBER_DESKTOP_STILL_WIDE_HEIGHT
-  ),
-  productImage(
-    'utekos-mikrofiber-desktop-still-3',
-    mikrofiberDesktopStill3,
-    'Fjellblå Utekos Mikrofiber i full lengde forfra med hette.',
-    MICROFIBER_DESKTOP_STILL_WIDE_WIDTH,
-    MICROFIBER_DESKTOP_STILL_WIDE_HEIGHT
-  ),
-  productImage(
-    'utekos-mikrofiber-desktop-still-4',
-    mikrofiberDesktopStill4,
-    'Fjellblå Utekos Mikrofiber i full lengde bakfra.',
-    MICROFIBER_DESKTOP_STILL_4_WIDTH,
-    MICROFIBER_DESKTOP_STILL_4_HEIGHT
-  ),
-  productImage(
-    'utekos-mikrofiber-desktop-still-5',
-    mikrofiberDesktopStill5,
-    'Fjellblå Utekos Mikrofiber i parkaslengde forfra.',
-    MICROFIBER_DESKTOP_STILL_WIDE_WIDTH,
-    MICROFIBER_DESKTOP_STILL_WIDE_HEIGHT
-  ),
-  productImage(
-    'utekos-mikrofiber-desktop-still-6',
-    mikrofiberDesktopStill6,
-    'Fjellblå Utekos Mikrofiber i halvfigur forfra.',
-    MICROFIBER_DESKTOP_STILL_WIDE_WIDTH,
-    MICROFIBER_DESKTOP_STILL_WIDE_HEIGHT
-  ),
-  productImage(
-    'utekos-mikrofiber-desktop-still-7',
-    mikrofiberDesktopStill7,
-    'Nedre del av fjellblå Utekos Mikrofiber med strammesnor.',
-    MICROFIBER_DESKTOP_STILL_WIDE_WIDTH,
-    MICROFIBER_DESKTOP_STILL_WIDE_HEIGHT
-  ),
-  productImage(
-    'utekos-mikrofiber-desktop-still-8',
-    mikrofiberDesktopStill8,
-    'Nærbilde av erme og glidelås på fjellblå Utekos Mikrofiber.',
-    MICROFIBER_DESKTOP_STILL_WIDE_WIDTH,
-    MICROFIBER_DESKTOP_STILL_WIDE_HEIGHT
-  ),
-  productImage(
-    'utekos-mikrofiber-desktop-still-9',
-    mikrofiberDesktopStill9,
-    'Nærbilde av lomme og glidelås på fjellblå Utekos Mikrofiber.',
-    MICROFIBER_DESKTOP_STILL_WIDE_WIDTH,
-    MICROFIBER_DESKTOP_STILL_WIDE_HEIGHT
-  ),
-  productImage(
-    'utekos-mikrofiber-desktop-still-10',
-    mikrofiberDesktopStill10,
-    'Nærbilde av glidelås og sidelomme på fjellblå Utekos Mikrofiber.',
-    MICROFIBER_DESKTOP_STILL_NARROW_WIDTH,
-    MICROFIBER_DESKTOP_STILL_NARROW_HEIGHT
+    'utekos-mikrofiber-desktop-still-44',
+    'https://cdn.shopify.com/s/files/1/0634/2154/6744/files/Mikrofiber_44.webp?v=1791293769',
+    'To kvinner i Utekos Mikrofiber™ sitter på en stein i skogen.',
+    1440,
+    1800
   )
 ]

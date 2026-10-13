@@ -3,12 +3,14 @@
 import {
   addWishlistItem,
   hasWishlistVariant,
+  removeWishlistItem,
 } from "@/lib/wishlist/wishlistStore";
 import { lazy, Suspense, useState, useSyncExternalStore } from "react";
 
 import { HeartIcon } from "@/components/utekos-icons/HeartIcon";
 import { HeartOutlineIcon } from "@/components/utekos-icons/HeartOutlineIcon";
 import { emitStorefrontAction } from "@/lib/tracking/browser-events";
+import { Toggle } from "@/components/ui/toggle";
 import styles from "@/components/commerce/commerce.module.css";
 import wishlistStyles from "./WishlistButton.module.css";
 import WishlistHoverCard from "./WishlistHoverCard";
@@ -49,25 +51,39 @@ export function WishlistButton({
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const button = (
-    <button
+    <Toggle
       type="button"
+      size="touch"
       className={`${styles.iconButton} ${showHoverCard ? wishlistStyles.cardWishlist : ""} ${className}`}
-      aria-label={`${wished ? "Åpne ønskeliste for" : "Legg til i ønskelisten:"} ${title}`}
-      aria-pressed={wished}
-      aria-haspopup="dialog"
-      onClick={(event) => {
+      aria-label={`Ønskeliste: ${title}`}
+      pressed={wished}
+      aria-haspopup={wished ? undefined : "dialog"}
+      onPressedChange={(pressed, details) => {
+        if (!pressed) {
+          if (!removeWishlistItem({ variantId })) {
+            details.cancel();
+            setError("Kunne ikke lagre ønskelisten på denne enheten.");
+            return;
+          }
+          setError("");
+          window.dispatchEvent(new Event("utekos:wishlist"));
+          setOpen(false);
+          return;
+        }
         const saved = addWishlistItem({
           productId,
           productHandle: handle,
           variantId,
         });
         if (!saved) {
+          details.cancel();
           setError("Kunne ikke lagre ønskelisten på denne enheten.");
           return;
         }
         if (saved.added) {
-          const raw = event.currentTarget
-            .closest("[data-tracking-commerce]")
+          const target = details.event.target;
+          const raw = (target instanceof Element ? target : null)
+            ?.closest("[data-tracking-commerce]")
             ?.getAttribute("data-tracking-commerce");
           if (raw) {
             try {
@@ -95,11 +111,17 @@ export function WishlistButton({
       ) : (
         <HeartOutlineIcon tone="orange" />
       )}
-    </button>
+    </Toggle>
   );
   return (
     <div>
-      {showHoverCard ? <WishlistHoverCard button={button} dialogOpen={open} /> : button}
+      {showHoverCard ? (
+        <WishlistHoverCard
+          button={button}
+          dialogOpen={open}
+          label={wished ? "Fjern fra ønskeliste" : "Legg i ønskeliste"}
+        />
+      ) : button}
       {error && <p role="alert">{error}</p>}
       {open && (
         <Suspense fallback={null}>

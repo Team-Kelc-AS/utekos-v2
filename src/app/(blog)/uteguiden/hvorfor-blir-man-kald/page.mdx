@@ -1,13 +1,4 @@
-import { KnowledgeArticleScaffold } from "@/components/knowledge/KnowledgeArticleScaffold";
-import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
-
-export default function WhyColdPage({ children }) {
-  return (
-    <KnowledgeArticleScaffold article={knowledgeArticles.cold}>
-      {children}
-    </KnowledgeArticleScaffold>
-  );
-}
+export { WhyColdArticleLayout as default } from "./WhyColdArticleLayout";
 
 import { ArticleImage } from "@/components/knowledge/ArticleImage";
 import { Cite } from "@/components/knowledge/Cite";

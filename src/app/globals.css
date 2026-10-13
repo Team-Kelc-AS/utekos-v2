@@ -19,6 +19,7 @@
   --color-eucalyptus: oklch(0.6038 0.0377 187.03);
   --color-bulbasaur: oklch(0.4619 0.0509 184.63);
   --color-pine: oklch(0.4646 0.0825 183.46);
+  --color-foreground: oklch(0.9493 0.007 88.64);
   --color-crocodile: oklch(0.350674 0.062274 183.5177);
   --color-darkteal: oklch(0.350674 0.062274 183.5177);
   --color-moss: oklch(0.2963 0.051 184.6);
@@ -77,6 +78,7 @@
   --color-black: #000;
   --color-transparent: transparent;
   --color-current: currentColor;
+  --color-foreground: oklch(0.9493 0.007 88.64);
   --color-brightteal: oklch(0.8276 0.0965 188.82);
   --color-moonstruck: oklch(0.8025 0.012 84.58);
   --color-mist: oklch(0.8993 0.01 181.38);

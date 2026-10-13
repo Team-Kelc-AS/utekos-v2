@@ -3,19 +3,33 @@ import type { ShopifyProduct, ProductVariant, ProductImage } from '@/lib/shopify
 import { PRODUCT_GALLERY_IMAGE_OVERRIDES } from './gallery/productGalleryImageOverrides';
 import { COMFYROBE_MOBILE_GALLERY_IMAGES } from './gallery/comfyrobeProductGalleryImages';
 import { TECHDOWN_MOBILE_GALLERY_IMAGES } from './gallery/techdown/productGalleryImages';
-import { MICROFIBER_MOBILE_GALLERY_IMAGES } from './gallery/mikrofiber/mikrofiberProductGalleryImages';
+import { MICROFIBER_MOBILE_GALLERY_IMAGES, MICROFIBER_VARGNATT_DESKTOP_GALLERY_IMAGES } from './gallery/mikrofiber/mikrofiberProductGalleryImages';
 import { SVALE_MOBILE_GALLERY_IMAGES } from './gallery/svale/svaleProductGalleryImages';
-function mobileImages(images: ProductImage[]) {
-  // Preserve original formats: mobile accepts 2:3 sources only.
-  return images.filter(image => image.width > 0 && image.height > 0 && Number.isFinite(image.width) && Number.isFinite(image.height) && image.width * 3 === image.height * 2);
+const ASPECT_RATIO_TOLERANCE = 0.015;
+const reportedImages = new Set<string>();
+function originalImages(images: ProductImage[], viewport: 'desktop' | 'mobile', handle: string) {
+  const [width, height] = viewport === 'mobile' ? [2, 3] : [4, 5];
+  // Allow 1.5% relative ratio deviation; preserve the original dimensions.
+  return images.filter(image => {
+    const valid = image.width > 0 && image.height > 0 && Number.isFinite(image.width) && Number.isFinite(image.height) && Math.abs(image.width * height - image.height * width) <= image.height * width * ASPECT_RATIO_TOLERANCE;
+    if (!valid && process.env.NODE_ENV !== 'production') {
+      const message = `[ProductGallery] ${handle}: ${image.url.split('?')[0]} (${image.width} × ${image.height}) er utelatt på ${viewport}. Originalbildet må være ${width}:${height} (±1,5 %).`;
+      if (!reportedImages.has(message)) {
+        reportedImages.add(message);
+        console.warn(message);
+      }
+    }
+    return valid;
+  });
 }
 export function productGallery(product: ShopifyProduct, variant: ProductVariant) {
   const color = variant.selectedOptions.find(o => ['Farge', 'Color'].includes(o.name))?.value;
   if (['utekos-dun', 'utekos-mikrofiber'].includes(product.handle) && color !== 'Fjellblå') {
     const images = variant.image ? [variant.image] : [];
-    return { desktop: images, mobile: mobileImages(images) };
+    const desktop = product.handle === 'utekos-mikrofiber' && color === 'Vargnatt' ? MICROFIBER_VARGNATT_DESKTOP_GALLERY_IMAGES : images;
+    return { desktop: originalImages(desktop, 'desktop', product.handle), mobile: originalImages(images, 'mobile', product.handle) };
   }
   const desktop = PRODUCT_GALLERY_IMAGE_OVERRIDES[product.handle] ?? product.images.nodes;
   const mobile = ({ comfyrobe: COMFYROBE_MOBILE_GALLERY_IMAGES, 'utekos-techdown': TECHDOWN_MOBILE_GALLERY_IMAGES, 'utekos-mikrofiber': MICROFIBER_MOBILE_GALLERY_IMAGES, 'utekos-svale': SVALE_MOBILE_GALLERY_IMAGES })[product.handle] ?? desktop;
-  return { desktop, mobile: mobileImages(mobile) };
+  return { desktop: originalImages(desktop, 'desktop', product.handle), mobile: originalImages(mobile, 'mobile', product.handle) };
 }

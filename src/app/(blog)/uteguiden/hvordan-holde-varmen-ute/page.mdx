@@ -1,12 +1,4 @@
-import { KnowledgeArticleScaffold } from '@/components/knowledge/KnowledgeArticleScaffold';
-import { KeepWarmHero } from './KeepWarmHero';
-import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles';
-
-export default function KeepWarmPage({ children }) {
-    return (<KnowledgeArticleScaffold article={knowledgeArticles.keepWarm} hero={<KeepWarmHero />} heroPlacement='after-title'>
-      {children}
-    </KnowledgeArticleScaffold>);
-}
+export { KeepWarmArticleLayout as default } from "./KeepWarmArticleLayout";
 
 import { Cite } from '@/components/knowledge/Cite'
 import { KnowledgeCallout } from '@/components/knowledge/KnowledgeCallout'

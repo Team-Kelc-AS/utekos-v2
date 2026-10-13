@@ -3,8 +3,9 @@ import type { ProductCardData } from '@/lib/shopify/getProductCards';
 const handles = ['utekos-svale', 'utekos-techdown', 'utekos-mikrofiber', 'comfyrobe'];
 const sizes = ['Middels', 'Stor', 'Større'];
 
-export function homeProducts(cards: ProductCardData[], excludeProductHandle?: string): ProductCardData[] {
-  return handles.filter(handle => handle !== excludeProductHandle).flatMap(handle => {
+export function homeProducts(cards: ProductCardData[], excludeProductHandle?: string, includeStapper = false): ProductCardData[] {
+  const productHandles = includeStapper ? [...handles, 'utekos-stapper'] : handles;
+  return productHandles.filter(handle => handle !== excludeProductHandle).flatMap(handle => {
     const products = cards.filter(card => card.product.handle === handle);
     if (handle !== 'utekos-svale' && handle !== 'utekos-techdown') return products;
     const sizeIndex = (card: ProductCardData) => {

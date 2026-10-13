@@ -1,11 +1,6 @@
-import { KnowledgeArticleScaffold } from '@/components/knowledge/KnowledgeArticleScaffold';
-import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles';
+export { CloudWeaveArticleLayout as default } from "./CloudWeaveArticleLayout";
 
-export default function CloudWeavePage({ children }) {
-    return (<KnowledgeArticleScaffold article={knowledgeArticles.cloudweave}>
-      {children}
-    </KnowledgeArticleScaffold>);
-}
+import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles';
 
 import { KnowledgeRegisteredImage } from "@/components/knowledge/KnowledgeRegisteredImage";
 import { Cite } from '@/components/knowledge/Cite'

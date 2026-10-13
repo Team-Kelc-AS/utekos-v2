@@ -45,6 +45,8 @@ export function GalleryControls({ children, desktopCount, mobileCount, showMobil
   }
   const controlsViewport = !showMobileControls || mobileCount <= 1 ? 'desktop' : desktopCount <= 1 ? 'mobile' : undefined;
   return <div className={styles.gallery}>
+    {!desktopCount && <div className={styles.missingImage} data-gallery-viewport="desktop">Produktbilde er ikke tilgjengelig for denne varianten.</div>}
+    {!mobileCount && <div className={styles.missingImage} data-gallery-viewport="mobile">Produktbilde er ikke tilgjengelig for denne varianten.</div>}
     <div id={railId} ref={ref} className={styles.slides} role="region" aria-roledescription="bildekarusell" aria-label="Produktbilder" tabIndex={count > 1 ? 0 : undefined}
       onKeyDown={e => {
         if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); move(e.key === 'ArrowRight' ? 1 : -1); }

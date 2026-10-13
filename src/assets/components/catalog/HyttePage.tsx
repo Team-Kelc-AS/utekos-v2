@@ -19,11 +19,15 @@ import { buildHytteJsonLd } from "@/lib/seo/JSON-LD/buildHytteJsonLd";
 import { serializeJsonLd } from "@/lib/seo/JSON-LD/serializeJsonLd";
 import { getProduct } from "@/lib/shopify/getProduct";
 import dunFjellbla from "../../../../public/images/kunnskap/dun_1440_1800.webp";
+import mikrofiberBobilMedium from "../../../../public/images/kunnskap/original_bobil_1440x1800.webp";
+import mikrofiberBobilLarge from "../../../../public/images/kunnskap/original_bobil_1440x1800_2.webp";
+import stapperHytte from "../../../../public/images/kunnskap/stapper_45.webp";
 import { readCategoryListing, type CategoryPageProps } from "./CategoryPage";
 import { CategoryNavigation } from "./CategoryNavigation";
 import { HytteProductCard } from "./HytteProductCard";
 import { HytteProductCarousel } from "./HytteProductCarousel";
 import styles from "./hytte.module.css";
+import SmartAlternativeSection from "./SmartAlternativeSelection";
 
 // Existing originals, visually checked against Dun's Fjellblå and Vargnatt variants.
 const dunImages = {
@@ -41,6 +45,29 @@ const dunImages = {
   },
 };
 
+const mikrofiberImages = {
+  Medium: {
+    url: mikrofiberBobilMedium.src,
+    width: mikrofiberBobilMedium.width,
+    height: mikrofiberBobilMedium.height,
+    altText:
+      "Kvinne i fjellblå Utekos Mikrofiber™ med en kopp ved siden av en bobil",
+  },
+  Large: {
+    url: mikrofiberBobilLarge.src,
+    width: mikrofiberBobilLarge.width,
+    height: mikrofiberBobilLarge.height,
+    altText: "Kvinne i fjellblå Utekos Mikrofiber™ sittende ved en bobil",
+  },
+};
+
+const stapperImage = {
+  url: stapperHytte.src,
+  width: stapperHytte.width,
+  height: stapperHytte.height,
+  altText: "Svart Utekos Stapper™ kompresjonsbag ved en hytte om vinteren",
+};
+
 const readHytte = cache(
   async (searchParams: CategoryPageProps["searchParams"]) => {
     const listing = await readCategoryListing("hytte", searchParams);
@@ -49,7 +76,9 @@ const readHytte = cache(
         listing.products.map((product) => getProduct(product.handle)),
       )
     )
-      .map((product) => prepareHytteProduct(product, dunImages))
+      .map((product) =>
+        prepareHytteProduct(product, dunImages, mikrofiberImages, stapperImage),
+      )
       .filter((product) => product !== null);
     return { ...listing, products, cards: hytteVariantCards(products) };
   },
@@ -170,40 +199,13 @@ export async function HyttePage({ searchParams }: CategoryPageProps) {
             </nav>
           )}
         </section>
+      </div>
+      <SmartAlternativeSection />
+      <div className={styles.container}>
         <article
           className={styles.editorial}
-          aria-labelledby="hytte-varmedress"
+          aria-labelledby="hytte-faq-heading"
         >
-          <h2 id="hytte-varmedress">
-            Et smartere alternativ til en tradisjonell varmedress for voksne
-          </h2>
-          <p>
-            Når kulden setter seg i treverket på hytta, tyr mange til en
-            tradisjonell varmedress. Ønsker du å regulere temperaturen når du
-            går fra dyp avslapning til aktivitet, er fleksibilitet viktig.{" "}
-            <Link href="/produkter/utekos-techdown" prefetch={false}>
-              Utekos TechDown™
-            </Link>{" "}
-            er designet som et fleksibelt alternativ. Med vår unike
-            3-i-1-funksjonalitet kan du pakke deg inn i en fulldekkende kokong
-            foran bålpannen, eller bruke de smarte YKK®-glidelåsene for å
-            transformere plagget til en elegant parkas når du skal hente mer
-            ved.
-          </p>
-          <h3>Den ultimate pakkelisten for hyttetur</h3>
-          <p>
-            Å pakke for fjellet eller kysthytta handler om å spare plass uten å
-            ofre komfort. Neste gang du skriver din pakkeliste for hyttetur, kan
-            du spare plass med et plagg som dekker flere bruksområder. Tilpass
-            øvrige klær og lag etter vær og aktivitet. Med Utekos TechDown™ for
-            kveldene rundt bålet – takket være det gnist- og slitesterke
-            Luméa™-ytterstoffet – og vår myke{" "}
-            <Link href="/produkter/comfyrobe" prefetch={false}>
-              Comfyrobe™
-            </Link>{" "}
-            for raske turer ut på trappen, har du alt du trenger for å fjerne
-            kulden som en bekymring.
-          </p>
           <section
             id="faq"
             className={styles.faq}

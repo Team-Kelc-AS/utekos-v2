@@ -67,7 +67,13 @@ export const categories = {
     ],
     source: {
       kind: "selection",
-      handles: ["utekos-techdown", "utekos-dun", "comfyrobe"],
+      handles: [
+        "utekos-techdown",
+        "utekos-mikrofiber",
+        "utekos-dun",
+        "comfyrobe",
+        "utekos-stapper",
+      ],
     },
   },
   terrasse: {

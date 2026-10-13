@@ -1,11 +1,4 @@
-import { KnowledgeArticleScaffold } from '@/components/knowledge/KnowledgeArticleScaffold';
-import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles';
-
-export default function YkkPage({ children }) {
-    return (<KnowledgeArticleScaffold article={knowledgeArticles.ykk}>
-      {children}
-    </KnowledgeArticleScaffold>);
-}
+export { YkkArticleLayout as default } from "./YkkArticleLayout";
 
 import { ArticleImage } from '@/components/knowledge/ArticleImage'
 import { Cite } from '@/components/knowledge/Cite'

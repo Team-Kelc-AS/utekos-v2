@@ -6,9 +6,10 @@ import styles from "./WishlistButton.module.css";
 
 // This is a text tooltip, not an interactive preview. Keep its dependency
 // limited to React; a portal preserves visibility outside overflow-hidden cards.
-export default function WishlistHoverCard({ button, dialogOpen }: {
+export default function WishlistHoverCard({ button, dialogOpen, label }: {
   button: ReactElement<ButtonHTMLAttributes<HTMLButtonElement> & RefAttributes<HTMLButtonElement>>;
   dialogOpen: boolean;
+  label: string;
 }) {
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
@@ -66,7 +67,7 @@ export default function WishlistHoverCard({ button, dialogOpen }: {
     {visible && createPortal(
       <div ref={popup} id={id} role="tooltip" className={`${styles.hoverCard} fixed z-50 rounded-lg text-sm shadow-md`}
         onPointerEnter={cancelTimer} onPointerLeave={leave}>
-        Legg i ønskeliste
+        {label}
       </div>, document.body,
     )}
   </>;

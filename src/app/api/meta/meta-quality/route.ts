@@ -3,13 +3,15 @@ import {
   readMetaDatasetQualityConfig,
 } from "@/lib/meta-insights/fetchMetaDatasetQuality";
 
-import { NextResponse } from "next/server";
+import { connection, NextResponse } from "next/server";
 
 const noStore = {
   "Cache-Control": "no-store, max-age=0",
 } as const;
 
 export async function GET() {
+  // Query current quality data only for an incoming request, never during build.
+  await connection();
   try {
     const config = readMetaDatasetQualityConfig();
     const data = await fetchMetaDatasetQuality(config);

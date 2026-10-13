@@ -1,31 +1,7 @@
-import { KnowledgeArticleScaffold } from '@/components/knowledge/KnowledgeArticleScaffold';
-import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles';
+export { ChristmasGiftArticleLayout as default } from "./ChristmasGiftArticleLayout";
+
 import Image from "next/image";
 import imageStyles from "@/components/knowledge/knowledgeChrome.module.css";
-
-export default function ChristmasGiftPage({ children }) {
-    return (<KnowledgeArticleScaffold
-      article={knowledgeArticles.christmasGift}
-      heroPlacement="after-title"
-      hero={
-        <figure className={imageStyles.figure}>
-          <span className={imageStyles.figureFrame}>
-            <Image
-              className={imageStyles.figureImage}
-              src="/images/kunnskap/julegavenes_mystiske_spadom.webp"
-              alt="En rådvill julegavehandler søker råd hos en spåkone, omgitt av tankebobler med mulige gaver."
-              width={1260}
-              height={709}
-              sizes="(min-width: 1024px) 816px, (min-width: 832px) 752px, (min-width: 800px) calc(100vw - 80px), (min-width: 400px) 90vw, calc(100vw - 40px)"
-              preload
-            />
-          </span>
-        </figure>
-      }
-    >
-      {children}
-    </KnowledgeArticleScaffold>);
-}
 
 import { Cite } from "@/components/knowledge/Cite";
 

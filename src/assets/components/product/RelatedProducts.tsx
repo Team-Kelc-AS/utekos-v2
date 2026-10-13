@@ -8,5 +8,6 @@ export function RelatedProducts({ handle }: { handle: string }) {
     listId="related-products"
     route={`/produkter/${handle}`}
     excludeProductHandle={handle}
+    includeStapper
   />;
 }

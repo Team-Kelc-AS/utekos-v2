@@ -25,7 +25,7 @@ const { encodeSitemapEntry } = loadTypeScript('lib/seo/sitemapXml.ts');
 test('product sitemap includes responsive galleries and exact color-specific images', () => {
   const variants = [{ selectedOptions: [{ name: 'Farge', value: 'Fjellblå' }] }, {
     selectedOptions: [{ name: 'Farge', value: 'Vargnatt' }],
-    image: { url: 'https://cdn.shopify.com/verified-vargnatt.jpg' },
+    image: { url: 'https://cdn.shopify.com/verified-vargnatt.jpg', width: 1440, height: 1800 },
   }];
   const dunImages = productSitemapImages({ handle: 'utekos-dun', variants: { nodes: variants }, images: { nodes: [{ url: '/unused.jpg' }] } });
   assert.ok(dunImages.includes('https://cdn.shopify.com/verified-vargnatt.jpg'));

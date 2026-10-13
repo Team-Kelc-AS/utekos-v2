@@ -87,16 +87,18 @@ test('homepage starts with Svale Middels, Stor, Større, then TechDown, Mikrofib
   assert.deepEqual(cards, before);
 });
 
-test('related carousel excludes every variant of the current product and preserves homepage order', () => {
+test('related carousel appends Stapper when enabled and excludes every variant of the current product', () => {
   const { homeProducts } = loadTypeScript('lib/catalog/homeProducts.ts');
-  const cards = ['comfyrobe', 'utekos-techdown', 'utekos-svale', 'utekos-mikrofiber'].flatMap((handle, index) =>
+  const cards = ['comfyrobe', 'utekos-techdown', 'utekos-svale', 'utekos-mikrofiber', 'utekos-stapper'].flatMap((handle, index) =>
     ['Stor', 'Middels', 'Større'].map((size, sizeIndex) => ({
       product: { handle }, variant: variant(index * 3 + sizeIndex, { selectedOptions: [{ name: 'Størrelse', value: size }] }),
     })));
   const before = cards.slice();
   const homepage = Array.from(homeProducts(cards));
+  const related = [...homepage, ...cards.filter(card => card.product.handle === 'utekos-stapper')];
   for (const handle of [...new Set(cards.map(card => card.product.handle)), 'utekos-stapper']) {
     assert.deepEqual(Array.from(homeProducts(cards, handle)), homepage.filter(card => card.product.handle !== handle));
+    assert.deepEqual(Array.from(homeProducts(cards, handle, true)), related.filter(card => card.product.handle !== handle));
   }
   assert.equal(homeProducts(cards.filter(card => card.product.handle === 'utekos-techdown'), 'utekos-techdown').length, 0);
   assert.deepEqual(cards, before);

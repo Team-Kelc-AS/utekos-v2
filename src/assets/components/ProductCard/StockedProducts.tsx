@@ -10,6 +10,7 @@ import { getProductCards, type ProductCardData } from '@/lib/shopify/getProductC
 import { googleSansFlex } from '@/lib/fonts';
 import { homeProducts } from '@/lib/catalog/homeProducts';
 import { productVariantVideo } from '@/lib/products/variantVideos';
+import stapperImage from '../../../../public/images/kunnskap/stapper_45.webp';
 import styles from '@/components/ProductCard/ProductCarousel.module.css';
 
 const sectionClassName = `${googleSansFlex.variable} ${styles.section} font-sans`;
@@ -20,16 +21,21 @@ type StockedProductsProps = {
   listId: string;
   route: string;
   excludeProductHandle?: string;
+  includeStapper?: boolean;
   introduction?: ReactNode;
 };
 
-export async function StockedProducts({ title, headingId, listId, route, excludeProductHandle, introduction }: StockedProductsProps) {
+export async function StockedProducts({ title, headingId, listId, route, excludeProductHandle, includeStapper = false, introduction }: StockedProductsProps) {
   // The seconds cache is request-time content. Make that boundary explicit to
   // avoid Next 16.3.8's cache-warming miss during the final prerender pass.
   // io() preserves prefetching and does not change inventory cache lifetimes.
   await io();
   let cards: ProductCardData[];
-  try { cards = homeProducts(await getProductCards(), excludeProductHandle); }
+  try {
+    cards = homeProducts(await getProductCards(), excludeProductHandle, includeStapper).map(card => card.product.handle === 'utekos-stapper'
+      ? { ...card, variant: { ...card.variant, image: { url: stapperImage.src, width: stapperImage.width, height: stapperImage.height, altText: 'Svart Utekos Stapper™ kompresjonsbag ved en hytte om vinteren' } } }
+      : card);
+  }
   catch (error) {
     unstable_rethrow(error);
     console.error('Product cards unavailable', error);

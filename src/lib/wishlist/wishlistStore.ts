@@ -167,4 +167,23 @@ export function addWishlistItem(
   }
 }
 
+/** Remove only this variant; confirm persistence before changing the UI. */
+export function removeWishlistItem(input: {
+  variantId: string
+  storage?: StorageLike
+  now?: () => string
+}): boolean {
+  const storage = input.storage ?? getDefaultStorage()
+  if (!storage) return false
+
+  const state = readWishlistState(storage)
+  const entries = state.entries.filter(entry => entry.variantId !== input.variantId)
+  if (entries.length === state.entries.length) return true
+
+  return writeWishlistState({
+    entries,
+    updatedAt: (input.now ?? (() => new Date().toISOString()))()
+  }, storage)
+}
+
 export { WISHLIST_STORAGE_KEY }

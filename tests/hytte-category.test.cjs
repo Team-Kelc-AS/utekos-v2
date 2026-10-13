@@ -15,8 +15,8 @@ const variant = (id, color, size, availableForSale, currentlyNotInStock) => ({
   selectedOptions: [{ name: 'Farge', value: color }, { name: 'Størrelse', value: size }], availableForSale, currentlyNotInStock,
 });
 
-test('hytte retains its three models in order and omits products without variants', () => {
-  assert.deepEqual(plain(categories.hytte.source.handles), ['utekos-techdown', 'utekos-dun', 'comfyrobe']);
+test('hytte retains its five models in order and omits products without variants', () => {
+  assert.deepEqual(plain(categories.hytte.source.handles), ['utekos-techdown', 'utekos-mikrofiber', 'utekos-dun', 'comfyrobe', 'utekos-stapper']);
   assert.equal(prepareHytteProduct(null, {}), null);
   assert.equal(prepareHytteProduct({ variants: { nodes: [] } }, {}), null);
   const product = { handle: 'utekos-techdown', variants: { nodes: [variant('1', 'Havdyp', 'Middels', true, false)] } };
@@ -39,6 +39,36 @@ test('Dun imagery follows color without changing IDs, money or fail-closed inven
   const publicVariants = modelVariants(mapped);
   assert.equal(publicVariants.find(v => v.id === '3').available, false);
   assert.equal(selectedModelVariant(publicVariants, initialModelChoice(publicVariants)), undefined);
+});
+
+test('Mikrofiber variants use their verified Hytte images without changing purchase data', () => {
+  const medium = variant('medium', 'Fjellblå', 'Medium', true, false);
+  const large = variant('large', 'Fjellblå', 'Large', true, false);
+  const product = { handle: 'utekos-mikrofiber', variants: { nodes: [medium, large] } };
+  const mapped = prepareHytteProduct(product, {}, {
+    Medium: image('bobil-medium'),
+    Large: image('bobil-large'),
+  });
+
+  assert.equal(mapped.variants.nodes[0].id, medium.id);
+  assert.equal(mapped.variants.nodes[0].image.url, '/bobil-medium.webp');
+  assert.equal(mapped.variants.nodes[1].id, large.id);
+  assert.equal(mapped.variants.nodes[1].image.url, '/bobil-large.webp');
+  assert.equal(medium.image.url, '/unverified-combination.webp', 'source product remains unchanged');
+  assert.equal(large.image.url, '/unverified-combination.webp', 'source product remains unchanged');
+});
+
+test('Stapper uses its verified final-card image without changing purchase data', () => {
+  const oneSize = variant('stapper', 'Vargnatt', 'OneSize', true, false);
+  const product = { handle: 'utekos-stapper', variants: { nodes: [oneSize] } };
+  const mapped = prepareHytteProduct(product, {}, {}, image('stapper-hytte'));
+
+  assert.equal(mapped.variants.nodes[0].id, oneSize.id);
+  assert.equal(mapped.variants.nodes[0].price, oneSize.price);
+  assert.equal(mapped.variants.nodes[0].availableForSale, true);
+  assert.equal(mapped.variants.nodes[0].currentlyNotInStock, false);
+  assert.equal(mapped.variants.nodes[0].image.url, '/stapper-hytte.webp');
+  assert.equal(oneSize.image.url, '/unverified-combination.webp', 'source product remains unchanged');
 });
 
 test('category graph references only rendered products, canonical PDPs and existing site identities', () => {

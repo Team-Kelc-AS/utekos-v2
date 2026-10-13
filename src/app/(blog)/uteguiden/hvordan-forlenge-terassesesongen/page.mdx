@@ -1,13 +1,4 @@
-import { KnowledgeArticleScaffold } from "@/components/knowledge/KnowledgeArticleScaffold";
-import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
-
-export default function TerraceArticlePage({ children }) {
-  return (
-    <KnowledgeArticleScaffold article={knowledgeArticles.terrace}>
-      {children}
-    </KnowledgeArticleScaffold>
-  );
-}
+export { TerraceArticleLayout as default } from "./TerraceArticleLayout";
 
 import Image from "next/image";
 import imageStyles from "@/components/knowledge/knowledgeChrome.module.css";
