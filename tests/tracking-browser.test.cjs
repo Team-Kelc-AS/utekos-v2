@@ -89,8 +89,8 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false } = {}) {
-  const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block' });
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent } = {}) {
+  const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block', userAgent });
   t.after(() => context.close());
   const requests = [], forbidden = [], errors = [];
   t.after(() => { assert.deepEqual(forbidden, [], 'every external request must have an explicit offline fixture'); assert.deepEqual(errors, [], 'no uncaught browser errors'); });
@@ -138,6 +138,24 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
   }
   return { page, requests, events, journey, waitFor, waitForJourney };
 }
+
+test('Meta ads crawler can read products without Pixel, customer events, identity or collector requests', async t => {
+  const api = await fixture(t, undefined, { userAgent: 'Mozilla/5.0 Chrome/131.0 Safari/537.36 meta-externalads/1.1' });
+  assert.equal(await api.page.locator('h1').textContent(), 'Fixture product 1');
+  await api.page.evaluate(() => {
+    UtekosTrackingHarness.reportNavigation();
+    UtekosTrackingHarness.emitStorefrontAction('utekos:select-item', { fixture: true });
+    dispatchEvent(new PageTransitionEvent('pagehide'));
+  });
+  await api.page.waitForTimeout(600);
+  const state = await api.page.evaluate(() => ({
+    events: dataLayer, pixel: window.__pixelCalls, canonical: window.__canonicalBrowser,
+    fbq: typeof window.fbq, cookies: document.cookie,
+    local: localStorage.length, session: sessionStorage.length,
+  }));
+  assert.deepEqual(api.requests, []);
+  assert.deepEqual(state, { events: [], pixel: [], canonical: [], fbq: 'undefined', cookies: '', local: 0, session: 0 });
+});
 
 test('size guide dialog reports each opening without counting closing or other dialogs as accordion interactions', async t => {
   const api = await fixture(t);

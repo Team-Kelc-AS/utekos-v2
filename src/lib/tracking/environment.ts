@@ -1,3 +1,5 @@
+import { isMetaAdsCrawler } from './metaAdsCrawler'
+
 type TrackingEnvironment = {
   NEXT_PUBLIC_TRACKING_ENABLED?: string
   NEXT_PUBLIC_VERCEL_ENV?: string
@@ -17,6 +19,7 @@ export function trackingEnvironmentAllowsProduction(
 }
 
 export function productionTrackingEnabled(): boolean {
+  if (typeof window !== 'undefined' && isMetaAdsCrawler(window.navigator?.userAgent)) return false
   // Keep public lookups literal so Next.js can inline them in browser bundles.
   return trackingEnvironmentAllowsProduction(
     {

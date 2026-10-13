@@ -88,8 +88,8 @@
     },
     "public/analytics/meta-pixel-canonical-v1.js": {
       "baseSha256": "194a9fedfcf335a4a5203aaa7cdc10f1faece1b9b92a07e130265a8a271fe273",
-      "sha256": "6e8b1ed24eed5895a38d45531b399c6c9c7dffaf2c675ef142dbb4701e40fc42",
-      "reason": "Whitelisted product, variant, color and size custom properties for confirmed unvalued Dun reservation Lead. Same server/browser event ID and single browser replay tested in offline Chromium; other event mappings unchanged.",
+      "sha256": "6c35c1c9d24534a7875edfd8d000d7766373c3590acdf7f7ecb38faad59fdbab",
+      "reason": "Whitelisted product, variant, color and size custom properties for confirmed unvalued Dun reservation Lead. Same server/browser event ID and single browser replay tested in offline Chromium; other event mappings unchanged. Reviewed 2026-10-14: meta-externalads opts out before Pixel initialization; offline Chromium verifies no Pixel, collector events or browser identity while public product content remains readable.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "public/analytics/meta-pixel-canonical-v1.js"
     },

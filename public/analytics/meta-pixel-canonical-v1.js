@@ -1,6 +1,9 @@
 ;(function (w, d) {
   'use strict'
 
+  // Telemetry opt-out only; public content remains available to Meta's crawler.
+  if (/(?:^|[\s;(])meta-externalads\/\d+(?:\.\d+)*(?=$|[\s;)])/i.test(w.navigator && w.navigator.userAgent || '')) return
+
   w.dataLayer = w.dataLayer || []
 
   var PIXEL_ID = '1092362672918571'

@@ -12,6 +12,9 @@ import { isDocumentNavigation } from '../src/lib/tracking/documentRequest'
 import { isTrackingOrigin, trackingEnvironmentAllowsProduction } from '../src/lib/tracking/environment'
 import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from '../src/lib/tracking/googleTagManagerBootstrap'
 import { STAPE_CUSTOM_LOADER } from '../src/lib/tracking/stapeCustomLoader'
+import { transformSync } from 'esbuild'
+import * as jsxRuntime from 'react/jsx-runtime'
+import * as metaAdsCrawler from '../src/lib/tracking/metaAdsCrawler'
 import { telemetryRewriteUrl } from '../src/lib/tracking/telemetryRoutes'
 import { proxy } from '../src/proxy'
 import { POST as gatewayPOST } from '../src/app/%5F_sgtm/[[...path]]/route'
@@ -278,6 +281,37 @@ test('production document proxy captures genuine URL click once and retains brow
     process.env.NEXT_PUBLIC_TRACKING_ENABLED = 'true'
     process.env.NEXT_PUBLIC_VERCEL_ENV = 'production'
     process.env.VERCEL_ENV = 'production'
+    const crawler = proxy(new NextRequest('https://utekos.no/produkter/comfyrobe?fbclid=fixture', {
+      headers: { accept: 'text/html', 'user-agent': 'Mozilla/5.0 meta-externalads/1.1' },
+    }))
+    assert.equal(crawler.status, 200)
+    assert.equal(crawler.headers.get('x-middleware-next'), '1')
+    assert.deepEqual(crawler.headers.getSetCookie(), [])
+    // Execute the actual wrappers rendered by the server, not just the vendor loader.
+    // Stub Next Script: its client React context cannot run under react-server conditions.
+    const source = readFileSync(new URL('../src/lib/tracking/StapeScripts.tsx', import.meta.url), 'utf8')
+    const scriptModule = { exports: {} as { StapeScripts: () => { props: { children: { props: { dangerouslySetInnerHTML: { __html: string } } }[] } } } }
+    const dependencies: Record<string, unknown> = {
+      'server-only': {}, 'next/script': () => null, 'react/jsx-runtime': jsxRuntime,
+      './environment': { productionTrackingEnabled: () => true }, './metaAdsCrawler': metaAdsCrawler,
+      './googleTagManagerBootstrap': { GOOGLE_TAG_MANAGER_BOOTSTRAP }, './stapeCustomLoader': { STAPE_CUSTOM_LOADER },
+    }
+    vm.runInNewContext(transformSync(source, { loader: 'tsx', format: 'cjs', jsx: 'automatic' }).code, {
+      module: scriptModule, exports: scriptModule.exports, require: (name: string) => {
+        assert.ok(Object.hasOwn(dependencies, name), name)
+        return dependencies[name]
+      },
+    })
+    for (const userAgent of ['Mozilla/5.0 meta-externalads/1.1', 'Fixture browser']) {
+      const scripts: string[] = []
+      const window = { location: { origin: 'https://utekos.no', href: 'https://utekos.no/produkter' }, dataLayer: [] }
+      const context = vm.createContext({ window, URL, navigator: { userAgent }, console,
+        document: { cookie: '', getElementsByTagName: () => [{ parentNode: { insertBefore: (element: { src: string }) => scripts.push(element.src) } }], createElement: () => ({ src: '', async: false }) },
+      })
+      for (const child of scriptModule.exports.StapeScripts().props.children) vm.runInContext(child.props.dangerouslySetInnerHTML.__html, context)
+      assert.equal(scripts.length, userAgent.includes('meta-externalads') ? 0 : 1)
+      assert.equal(window.dataLayer.length > 0, !userAgent.includes('meta-externalads'))
+    }
     const response = proxy(new NextRequest('https://utekos.no/?fbclid=fixture-click-id', { headers: { accept: 'text/html' } }))
     const fbc = response.cookies.get('_fbc')?.value
     const fbp = response.cookies.get('_fbp')?.value

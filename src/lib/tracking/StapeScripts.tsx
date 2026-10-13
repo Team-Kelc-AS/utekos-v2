@@ -6,11 +6,12 @@ import Script from 'next/script'
 import { productionTrackingEnabled } from './environment'
 import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from './googleTagManagerBootstrap'
 import { STAPE_CUSTOM_LOADER } from './stapeCustomLoader'
+import { META_ADS_CRAWLER_PATTERN } from './metaAdsCrawler'
 
 // A production artifact can also be opened through a preview/deployment alias.
 // Guard the untouched, generated loader before it can use its absolute URLs.
 const PRODUCTION_ORIGIN_GUARD =
-  "window.location.origin==='https://utekos.no'||window.location.origin==='https://www.utekos.no'"
+  `(window.location.origin==='https://utekos.no'||window.location.origin==='https://www.utekos.no')&&!${META_ADS_CRAWLER_PATTERN}.test(navigator.userAgent)`
 
 export function StapeScripts() {
   if (!productionTrackingEnabled()) return null

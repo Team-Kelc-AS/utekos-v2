@@ -82,6 +82,62 @@ test('browser collectors fail closed outside production, with switch off, wrong 
   }
 });
 
+test('Meta ads crawler telemetry is discarded before reading bodies, identity, OIDC or forwarding', async () => {
+  const { BRIDGE_OPERATIONS } = loadTypeScript('lib/tracking/bridge-contract.ts');
+  const paths = BRIDGE_OPERATIONS.filter(path => /^\/api\/(events|observability|meta)\//.test(path) || path === '/api/log');
+  for (const userAgent of ['meta-externalads/1.1', 'Mozilla/5.0 Chrome/131.0 Safari/537.36 Meta-ExternalAds/1.1']) {
+    const api = harness({ tokenFailure: true });
+    for (const path of paths) {
+      for (const origin of [null, 'null', 'https://foreign.test', ORIGIN]) {
+        const req = request(path, { body: 'not JSON', headers: { 'user-agent': userAgent, cookie: 'utekos_v2_fb_session=verified-fixture-session' } });
+        if (origin === null) req.headers.delete('origin'); else req.headers.set('origin', origin);
+        Object.defineProperty(req, 'body', { get: () => { throw new Error('Crawler body must never be read'); } });
+        const response = await api.forwardTrackingRequest(req);
+        assert.equal(response.status, 204, path);
+        assert.equal(await response.text(), '');
+        assert.deepEqual(response.headers.getSetCookie(), []);
+        assert.equal(response.headers.get('x-utekos-traffic-classification'), 'automated_bot');
+        assert.match(response.headers.get('cache-control'), /no-store/);
+      }
+    }
+    for (const effects of [api.sends, api.audiences, api.sessions, api.errors]) assert.deepEqual(effects, []);
+  }
+});
+
+test('crawler opt-out never grants access or suppresses callbacks, payments or real Facebook browsers', async () => {
+  const ua = { 'user-agent': 'meta-externalads/1.1' };
+  for (const [req, status] of [
+    [request('/api/events/unknown', { headers: ua }), 404],
+    [request('/api/events/page-view', { headers: ua, method: 'OPTIONS' }), 405],
+    [request('/api/klarna/orders', { headers: { ...ua, origin: 'https://foreign.test' } }), 403],
+    [request('/api/events/page-view', { origin: 'https://preview.test', headers: ua }), 403],
+  ]) {
+    const api = harness();
+    assert.equal((await api.forwardTrackingRequest(req)).status, status);
+    assert.deepEqual(api.sends, []);
+  }
+  for (const env of [{ VERCEL_ENV: 'preview' }, { NEXT_PUBLIC_TRACKING_ENABLED: 'false' }]) {
+    const api = harness({ env });
+    assert.equal((await api.forwardTrackingRequest(request(undefined, { headers: ua }))).status, 403);
+    assert.deepEqual(api.sends, []);
+  }
+  const callback = harness();
+  assert.equal((await callback.forwardTrackingRequest(request('/api/shopify/webhooks/orders-paid', {
+    headers: { ...ua, origin: 'https://checkout.shopify.com', 'x-shopify-hmac-sha256': 'fixture-signature' },
+  }))).status, 202);
+  assert.equal(callback.sends[0].envelope.headers['x-shopify-hmac-sha256'], 'fixture-signature');
+  for (const userAgent of ['Fixture browser', 'Mozilla/5.0 [FBAN/FB4A;FBAV/500.0]', 'Mozilla/5.0 Instagram 350.0', 'not-meta-externalads/1.1']) {
+    const api = harness();
+    const req = request(undefined, { headers: { 'user-agent': userAgent } });
+    req.headers.delete('origin');
+    assert.equal((await api.forwardTrackingRequest(req)).status, 403);
+    assert.deepEqual(api.sends, []);
+    req.headers.set('origin', ORIGIN);
+    assert.equal((await api.forwardTrackingRequest(req)).status, 202);
+    assert.equal(api.sends.length, 1);
+  }
+});
+
 test('authenticated collector forwards exact bytes and verified context, excluding private/spoofed cookies and headers', async () => {
   const raw = '{ "event_name": "page_view", "fixture": "æøå" }\r\n';
   const api = harness();

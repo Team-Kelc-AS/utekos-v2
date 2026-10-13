@@ -6,6 +6,7 @@ import type { NextRequest } from 'next/server';
 import { FACEBOOK_SESSION_COOKIE, readSession } from '@/lib/facebook-login/session';
 import { BRIDGE_URL, isBridgeOperation, isCallbackOperation } from './bridge-contract';
 import { productionTrackingEnabled, isTrackingOrigin } from './environment';
+import { isMetaAdsCrawler, isBrowserTelemetryOperation } from './metaAdsCrawler';
 
 const REQUEST_HEADERS = [
   'origin', 'referer', 'content-type', 'authorization', 'sec-fetch-site',
@@ -64,6 +65,16 @@ export async function forwardTrackingRequest(request: NextRequest) {
   // Payment/webhook continuity is independent of the browser marketing switch.
   const enabled = callback ? process.env.VERCEL_ENV === 'production' : productionTrackingEnabled();
   if (!enabled || !isTrackingOrigin(origin)) return failure(403, 'tracking_environment_disabled', requestId);
+  // Discard crawler telemetry before reading bodies, identity or obtaining OIDC.
+  // This is not an authorization bypass: callbacks and commerce APIs remain unchanged.
+  if (request.method === 'POST' && isBrowserTelemetryOperation(operation) && isMetaAdsCrawler(request.headers.get('user-agent'))) {
+    return new Response(null, { status: 204, headers: {
+      'Cache-Control': 'private, no-store',
+      'x-utekos-storefront-request-id': requestId,
+      'x-utekos-traffic-classification': 'automated_bot',
+      'x-utekos-rejection': 'meta_externalads',
+    } });
+  }
   if (!callback && request.headers.get('origin') !== origin) return failure(403, 'origin_mismatch', requestId);
   if (request.method !== 'POST' && !(request.method === 'OPTIONS' && ['/api/shopify/checkout-observations', '/api/shopify/checkout-recovery-evidence'].includes(operation))) {
     return failure(405, 'method_not_allowed', requestId);
