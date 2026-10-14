@@ -49,13 +49,6 @@ export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
     3000
   ),
   productImage(
-    'comfyrobe-mobile-navy-back-2',
-    '/images/kunnskap/Jakke Navy_2.webp',
-    'Marineblå Comfyrobe sett bakfra med hetten nede og avrundet nederkant.',
-    2000,
-    3000
-  ),
-  productImage(
     'comfyrobe-mobile-navy-back-3',
     '/images/kunnskap/Jakke Navy_3.webp',
     'Marineblå Comfyrobe sett bakfra med hetten nede og avrundet nederkant.',
