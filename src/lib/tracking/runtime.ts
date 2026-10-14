@@ -119,11 +119,9 @@ async function boundedEnrichment<T>(
 }
 async function prepareEvent(event: StorefrontEvent) {
   const journey = enrichCanonicalBrowserJourneyContext(event);
-  return boundedEnrichment(
-    enrichCanonicalEventWithMetaAttribution(journey),
-    journey,
-    1500,
-  );
+  // The SDK owns collection readiness, timeout and page-exit fallback. Racing
+  // it here discarded in-app click IDs before the first PageView and checkout.
+  return enrichCanonicalEventWithMetaAttribution(journey);
 }
 function googleIds(event: { browser_id?: Record<string, string> }) {
   const ids = event.browser_id;
@@ -138,7 +136,7 @@ export async function dispatchEvent(event: StorefrontEvent, prepared = false) {
   const existing = deliveries.get(key);
   if (existing) return existing;
   const work = (async () => {
-    // Start Google readiness alongside Meta enrichment, not 1.5 s after it.
+    // Start Google readiness alongside Meta enrichment.
     const google = prepared ? Promise.resolve(event) : enrichCanonicalEventWithGoogleAnalyticsIds(event);
     let enriched = prepared ? event : await prepareEvent(event);
     // Pinned sender synchronously dispatches Pixel before its bounded GA wait.
@@ -275,8 +273,8 @@ export async function prepareCanonicalCheckout(
   const identityDeadline = performance.now() + 2000;
   const google = enrichCanonicalEventWithGoogleAnalyticsIds(event);
   const enriched = await prepareEvent(event);
-  // Preserve the existing total 1.5 s Meta + 0.5 s Google budget, but let
-  // Google use the time Meta did not need. A blocked tag cannot hold checkout.
+  // Google gets the remaining two-second budget. Meta has its own shared
+  // collection boundary and must finish before the checkout snapshot is made.
   const identified = await boundedEnrichment(google, event, Math.max(0, identityDeadline - performance.now()));
   return { ...enriched, browser_id: { ...enriched.browser_id, ...googleIds(identified) } } as CanonicalBeginCheckout;
 }

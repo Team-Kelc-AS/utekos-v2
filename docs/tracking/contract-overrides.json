@@ -99,6 +99,13 @@
       "reason": "Reviewed 2026-10-12: bounded shared Google get readiness with retries after initialization, pagehide fallback, consent guard and existing-ID preservation. Chromium/WebKit delayed/blocked integration and identity tests; see docs/performance/stape-readiness.md.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "src/lib/analytics/googleAnalyticsBrowserIds.ts"
+    },
+    "src/lib/analytics/metaClientParameterBuilder.ts": {
+      "baseSha256": "d0fa890b605c7b29bb3274838046864dcd5c10bf3030764dd4d877a22190db9a",
+      "sha256": "fe6c888f5855d01b2231903ab932f8ebc849941b79a433c8f4735afb2275c5a5",
+      "reason": "Await one shared Meta SDK collection before first PageView and checkout; preserve delayed in-app fbc and its timestamp. Bound an unavailable native bridge to five seconds or pagehide, read live cookies at fallback, retain late results without replay or overlapping SDK calls. Offline Chromium/WebKit regressions cover delayed recovery, immediate checkout, IP latency, timeout and pagehide. The five-second bound is application policy, not a Meta guarantee.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/metaClientParameterBuilder.ts"
     }
   }
 }

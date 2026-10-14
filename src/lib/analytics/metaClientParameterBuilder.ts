@@ -6,14 +6,24 @@ import { mapMetaClientParameterContext } from './mapMetaClientParameterContext'
 import { metaClientIpResponseSchema } from './metaClientIpContract'
 import { shouldCollectMetaClientIp } from './shouldCollectMetaClientIp'
 import { extractFbclidFromFbc } from './extractFbclidFromFbc'
+import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 
 function marketingAllowed() {
   return typeof window !== 'undefined'
 }
 const META_CLIENT_IP_TIMEOUT_MS = 2500
+// Application liveness bound, not a Meta latency guarantee. The native in-app
+// bridge has no SDK timeout. Keep one collection alive after this boundary so
+// later events can use its result without starting overlapping collections.
+const META_COLLECTION_TIMEOUT_MS = 5000
 let completedPageUrl: string | undefined
-let contextSequence: Promise<void> = Promise.resolve()
 let hasCollectedClientIpForDocument = false
+type Collection = {
+  pageUrl: string
+  pending: boolean
+  ready: Promise<MetaClientParameterContext>
+}
+let collection: Collection | undefined
 
 type EnsureMetaClientParameterContextInput = {
   consent: ConsentSnapshot
@@ -24,15 +34,6 @@ export type MetaClientParameterContext = {
   clientIpAddress?: string | undefined
   fbc?: string | undefined
   fbp?: string | undefined
-}
-
-function enqueueContextRequest<T>(task: () => Promise<T>) {
-  const result = contextSequence.then(task)
-  contextSequence = result.then(
-    () => undefined,
-    () => undefined
-  )
-  return result
 }
 
 async function loadClientParamBuilder(): Promise<ClientParamBuilder> {
@@ -71,18 +72,65 @@ async function getConsentedClientIpAddress(
   }
 }
 
-function readIdentifiers(
-  builder: ClientParamBuilder
-): MetaClientParameterContext {
-  const clientIpAddress = builder.getClientIpAddress()
-  const fbc = builder.getFbc()
-  const fbp = builder.getFbp()
-
-  return {
-    ...(clientIpAddress ? { clientIpAddress } : {}),
-    ...(fbc ? { fbc } : {}),
-    ...(fbp ? { fbp } : {})
+function readPersistedIdentifiers(): MetaClientParameterContext {
+  const cookies: Record<string, string> = {}
+  for (const entry of document.cookie.split(/;\s*/)) {
+    const separator = entry.indexOf('=')
+    if (separator < 0) continue
+    const name = entry.slice(0, separator)
+    if (!['_fbc', '_fbp', '_fbi'].includes(name)) continue
+    try {
+      cookies[name] = decodeURIComponent(entry.slice(separator + 1))
+    } catch { /* Ignore malformed cookies; never synthesize an identifier. */ }
   }
+  return mapMetaClientParameterContext(cookies)
+}
+
+function startCollection(input: EnsureMetaClientParameterContextInput): Collection {
+  const active: Collection = {
+    pageUrl: input.pageUrl,
+    pending: true,
+    ready: Promise.resolve({})
+  }
+  active.ready = new Promise((resolve, reject) => {
+    let released = false
+    const release = (value: MetaClientParameterContext, error?: unknown) => {
+      if (released) return
+      released = true
+      clearTimeout(timer)
+      window.removeEventListener('pagehide', leave)
+      if (error) reject(error)
+      else resolve(value)
+    }
+    const leave = () => release(readPersistedIdentifiers())
+    const timer = setTimeout(() => {
+      reportClientCaughtError(
+        new Error('meta_parameter_collection_timeout'),
+        'meta.parameter_context'
+      )
+      release(readPersistedIdentifiers())
+    }, META_COLLECTION_TIMEOUT_MS)
+    window.addEventListener('pagehide', leave, { once: true })
+
+    void (async () => {
+      const builder = await loadClientParamBuilder()
+      const shouldCollectClientIp =
+        !hasCollectedClientIpForDocument &&
+        shouldCollectMetaClientIp(input.pageUrl, process.env.NODE_ENV)
+      // Await the SDK result once. In-app click recovery precedes IP collection.
+      const parameters = await builder.processAndCollectAllParams(
+        input.pageUrl,
+        shouldCollectClientIp ? () => getConsentedClientIpAddress(input.consent) : undefined
+      )
+      if (parameters._fbi) hasCollectedClientIpForDocument = true
+      completedPageUrl = input.pageUrl
+      return mapMetaClientParameterContext(parameters)
+    })().then(
+      value => { active.pending = false; release(value) },
+      error => { active.pending = false; release({}, error) }
+    )
+  })
+  return active
 }
 
 export async function ensureMetaClientParameterContext(
@@ -96,40 +144,24 @@ export async function ensureMetaClientParameterContext(
     return {}
   }
 
-  return enqueueContextRequest(async () => {
-    if (!marketingAllowed()) return {}
-    const builder = await loadClientParamBuilder()
-    if (!marketingAllowed()) return {}
+  if (collection?.pending) {
+    const active = collection
+    const identifiers = await active.ready
+    // A timed-out native bridge remains in flight, but cannot hold subsequent
+    // events or checkout hostage. Read cookies again, not the earlier fallback.
+    if (active.pending) return readPersistedIdentifiers()
+    if (active.pageUrl === input.pageUrl) return identifiers
+    return ensureMetaClientParameterContext(input)
+  }
 
-    const currentIdentifiers = readIdentifiers(builder)
-    const urlFbclid = new URL(input.pageUrl).searchParams.get('fbclid')
-    if (
-      completedPageUrl === input.pageUrl &&
-      currentIdentifiers.fbp &&
-      currentIdentifiers.fbc &&
-      (!urlFbclid ||
-        urlFbclid === extractFbclidFromFbc(currentIdentifiers.fbc))
-    ) {
-      return currentIdentifiers
-    }
+  const currentIdentifiers = readPersistedIdentifiers()
+  const urlFbclid = new URL(input.pageUrl).searchParams.get('fbclid')
+  if (
+    completedPageUrl === input.pageUrl &&
+    currentIdentifiers.fbp &&
+    (!urlFbclid || urlFbclid === extractFbclidFromFbc(currentIdentifiers.fbc))
+  ) return currentIdentifiers
 
-    const shouldCollectClientIp =
-      !hasCollectedClientIpForDocument &&
-      shouldCollectMetaClientIp(
-        input.pageUrl,
-        process.env.NODE_ENV
-      )
-
-    const parameters = await builder.processAndCollectAllParams(
-      input.pageUrl,
-      shouldCollectClientIp ?
-        () => getConsentedClientIpAddress(input.consent)
-      : undefined
-    )
-    if (!marketingAllowed()) return {}
-    if (parameters._fbi) hasCollectedClientIpForDocument = true
-    completedPageUrl = input.pageUrl
-
-    return mapMetaClientParameterContext(parameters)
-  })
+  collection = startCollection(input)
+  return collection.ready
 }

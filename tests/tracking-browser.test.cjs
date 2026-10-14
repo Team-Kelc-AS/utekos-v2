@@ -111,7 +111,7 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent } = {}) {
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaIpDelay = 0 } = {}) {
   const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block', userAgent });
   t.after(() => context.close());
   const requests = [], forbidden = [], errors = [];
@@ -121,6 +121,11 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
     const body = request.postData();
     if (url.origin === 'https://utekos.no' && request.isNavigationRequest()) return route.fulfill({ contentType: 'text/html; charset=utf-8', body: `<!doctype html><html><head><meta charset="utf-8"><title>Tracking fixture</title><script>
       window.__pixelCalls=[];window.__canonicalBrowser=[];window.dataLayer=[];
+      window.__metaBackupCalls=0;window.__pixelIdentity=[];
+      if (${metaBackupDelay}>0 || ${metaBackupBlocked}) window.webkit={messageHandlers:{browserProperties:{postMessage(name){
+        window.__metaBackupCalls++;
+        return new Promise(resolve=>{if(!${metaBackupBlocked})setTimeout(()=>resolve(name==='clickID'?'OfflineBackupClick':''),${metaBackupDelay})});
+      }}}};
       window.__gaReadyAt=performance.now()+${gaDelay};window.__gaGetCount=0;
       dataLayer.push=function(...entries){for(const entry of entries){if(entry?.[0]==='get'&&typeof entry[3]==='function'){window.__gaGetCount++;if(!${gaBlocked})entry[3](performance.now()>=window.__gaReadyAt?(entry[2]==='client_id'?'123.456':'789'):undefined);}}return Array.prototype.push.apply(this,entries)};
       addEventListener('utekos:meta-canonical-browser-event',event=>window.__canonicalBrowser.push(event.detail));
@@ -131,11 +136,14 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
       </script></body></html>` });
     if (url.origin === 'https://utekos.no' && url.pathname === '/tracking-browser-fixture.js') return route.fulfill({ contentType: 'application/javascript', body: preview ? previewBundle : bundle });
     if (url.origin === 'https://utekos.no' && url.pathname === '/analytics/meta-pixel-canonical-v1.js') return route.fulfill({ contentType: 'application/javascript', body: pixel });
-    if (url.href === 'https://connect.facebook.net/en_US/fbevents.js') return route.fulfill({ contentType: 'application/javascript', body: `var f=window.fbq;f.callMethod=function(){window.__pixelCalls.push(Array.from(arguments))};for(var a of f.queue.splice(0))f.callMethod.apply(null,a);` });
+    if (url.href === 'https://connect.facebook.net/en_US/fbevents.js') return route.fulfill({ contentType: 'application/javascript', body: `var f=window.fbq;f.callMethod=function(){window.__pixelCalls.push(Array.from(arguments));window.__pixelIdentity.push({name:arguments[2],id:arguments[4]?.eventID,cookie:document.cookie})};for(var a of f.queue.splice(0))f.callMethod.apply(null,a);` });
     if (url.origin === 'https://utekos.no' && url.pathname.startsWith('/api/')) {
       let json; try { json = JSON.parse(body); } catch { json = body; }
       requests.push({ path: url.pathname, body: json });
-      if (url.pathname === '/api/meta/client-ip') return route.fulfill({ json: { client_ip_address: '192.0.2.1' } });
+      if (url.pathname === '/api/meta/client-ip') {
+        if (metaIpDelay) await new Promise(resolve => setTimeout(resolve, metaIpDelay));
+        return route.fulfill({ json: { client_ip_address: '192.0.2.1' } });
+      }
       if (url.pathname === '/api/meta/parameter-context') return route.fulfill({ json: { fbp: 'fb.1.1700000000000.123456789' } });
       return route.fulfill({ status: 202, json: { status: 'accepted' } });
     }
@@ -357,6 +365,95 @@ test(`checkout preparation uses the identity budget and remains bounded (blocked
 });
 }
 
+for (const safariMode of [false, true]) {
+test(`Meta first dispatch and immediate checkout retain a delayed in-app click (webkit=${safariMode})`, async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', { metaBackupDelay: 1900, safariMode });
+  // Start checkout while the first PageView's native SDK collection is pending.
+  const checkout = await api.page.evaluate(async commerce => {
+    const event = await UtekosTrackingHarness.prepareCanonicalCheckout({
+      id: 'gid://shopify/Cart/fixture', commerce,
+      checkout: { checkout_id: 'fixture-checkout', creation_revision: 'fixture-revision' },
+    }, 'shopify');
+    await UtekosTrackingHarness.confirmCheckoutTracking(event);
+    return event;
+  }, commerce());
+  await api.waitFor('page_view'); await api.waitFor('view_item'); await api.waitFor('begin_checkout');
+  const state = await api.page.evaluate(() => ({
+    calls: __pixelIdentity, canonical: __canonicalBrowser, backupCalls: __metaBackupCalls,
+  }));
+  const first = api.events('page_view')[0];
+  assert.match(first.browser_id.fbc, /^fb\.\d+\.\d+\.OfflineBackupClick\./);
+  assert.equal(checkout.browser_id.fbc, first.browser_id.fbc, 'checkout preserves complete fbc including timestamp');
+  for (const [eventName, pixelName] of [['page_view', 'PageView'], ['view_item', 'ViewContent'], ['begin_checkout', 'InitiateCheckout']]) {
+    const sent = api.events(eventName);
+    assert.equal(sent.length, 1);
+    assert.equal(sent[0].browser_id.fbc, first.browser_id.fbc);
+    const browserEvent = state.canonical.find(entry => entry.event === eventName).canonical_event;
+    assert.equal(browserEvent.browser_id.fbc, first.browser_id.fbc);
+    assert.equal(browserEvent.event_id, sent[0].event_id);
+    const pixels = state.calls.filter(call => call.name === pixelName);
+    assert.equal(pixels.length, 1);
+    assert.equal(pixels[0].id, sent[0].event_id);
+    assert.ok(pixels[0].cookie.includes(first.browser_id.fbc));
+  }
+  assert.equal(state.backupCalls, 1, 'concurrent events share one SDK collection');
+  assert.equal(api.requests.filter(r => r.path === '/api/meta/client-ip').length, 1);
+});
+}
+
+test('Meta first dispatch keeps URL click and collected IP when IP takes longer than 1.5 seconds', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineUrlClick', { metaIpDelay: 1900 });
+  await api.waitFor('page_view'); await api.waitFor('view_item');
+  const first = api.events('page_view')[0];
+  assert.match(first.browser_id.fbc, /\.OfflineUrlClick\./);
+  const state = await api.page.evaluate(() => ({ cookie: document.cookie, calls: __pixelIdentity, backupCalls: __metaBackupCalls }));
+  assert.match(state.cookie, /_fbi=192\.0\.2\.1/);
+  assert.equal(state.backupCalls, 0);
+  assert.ok(state.calls.find(call => call.name === 'PageView').cookie.includes('_fbi='));
+  assert.equal(api.requests.filter(r => r.path === '/api/meta/client-ip').length, 1);
+});
+
+test('Meta unavailable native bridge releases checkout once and does not queue repeated collection timeouts', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', { metaBackupBlocked: true });
+  const result = await api.page.evaluate(async commerce => {
+    const start = performance.now();
+    const event = await UtekosTrackingHarness.prepareCanonicalCheckout({
+      id: 'gid://shopify/Cart/fixture', commerce,
+      checkout: { checkout_id: 'fixture-checkout', creation_revision: 'fixture-revision' },
+    }, 'shopify');
+    await UtekosTrackingHarness.confirmCheckoutTracking(event);
+    return { event, elapsed: performance.now() - start };
+  }, commerce());
+  assert.ok(result.elapsed < 6000, `checkout must settle: ${result.elapsed} ms`);
+  assert.equal(result.event.browser_id.fbc, undefined);
+  assert.ok(result.event.browser_id.fbp);
+  await api.waitFor('page_view'); await api.waitFor('begin_checkout');
+  await api.page.evaluate(() => { history.pushState({}, '', '/produkter/test-product?variant=2'); dispatchEvent(new PopStateEvent('popstate')); });
+  await api.waitFor('page_view', 2);
+  assert.equal(await api.page.evaluate(() => __metaBackupCalls), 1);
+  assert.equal(api.events('begin_checkout').length, 1);
+});
+
+for (const safariMode of [false, true]) {
+test(`Meta pagehide releases pending identity once and a late result cannot replay PageView (webkit=${safariMode})`, async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', { metaBackupDelay: 1900, safariMode });
+  await api.page.waitForFunction(() => __metaBackupCalls === 1);
+  await api.page.evaluate(() => { dispatchEvent(new PageTransitionEvent('pagehide')); dispatchEvent(new PageTransitionEvent('pagehide')); });
+  await api.waitFor('page_view');
+  const first = api.events('page_view')[0];
+  assert.equal(first.browser_id.fbc, undefined, 'an unavailable click is never invented');
+  assert.ok(first.browser_id.fbp, 'read cookies at exit, not the original empty event');
+  await api.page.waitForFunction(() => document.cookie.includes('OfflineBackupClick'));
+  assert.equal(api.events('page_view').length, 1);
+  assert.equal(await api.page.evaluate(() => __pixelCalls.filter(call => call[2] === 'PageView').length), 1);
+  // A subsequent route can use the late result without replaying the old ID.
+  await api.page.evaluate(() => { history.pushState({}, '', '/produkter/test-product?variant=2'); dispatchEvent(new PopStateEvent('popstate')); });
+  await api.waitFor('page_view', 2);
+  assert.match(api.events('page_view')[1].browser_id.fbc, /\.OfflineBackupClick\./);
+  assert.notEqual(api.events('page_view')[1].event_id, first.event_id);
+});
+}
+
 test('list visibility requires 50 percent and a continuous second, then deduplicates repeated observation', async t => {
   const api = await fixture(t, 'https://utekos.no/produkter');
   await api.waitFor('page_view');
@@ -377,6 +474,26 @@ test('list visibility requires 50 percent and a continuous second, then deduplic
   await api.page.waitForTimeout(1400);
   assert.equal(api.events('view_item_list').length, 1);
 });
+
+for (const safariMode of [false, true]) {
+test(`Meta pending first PageView survives actual document navigation once (webkit=${safariMode})`, async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?variant=1', { metaBackupBlocked: true, safariMode });
+  await api.page.waitForFunction(() => __metaBackupCalls === 1);
+  await api.page.goto('https://utekos.no/produkter/test-product?variant=2');
+  const deadline = Date.now() + 3000;
+  while (!api.events('page_view').some(event => event.page_url.endsWith('variant=1')) && Date.now() < deadline) {
+    await new Promise(resolve => setTimeout(resolve, 20));
+  }
+  const original = api.events('page_view').filter(event => event.page_url.endsWith('variant=1'));
+  // Navigation can lose the first HTTP response. The existing delivery layer
+  // may retry once, but must preserve the complete event for server idempotency.
+  assert.ok(original.length >= 1 && original.length <= 2);
+  for (const attempt of original) assert.deepEqual(attempt, original[0]);
+  assert.equal(new Set(original.map(event => event.event_id)).size, 1, 'one logical event, including transport retries');
+  assert.ok(original[0].browser_id.fbp);
+  assert.equal(original[0].browser_id.fbc, undefined);
+});
+}
 
 test('delayed RSC variant commits only the selected merchandise after navigation', async t => {
   const api = await fixture(t);
