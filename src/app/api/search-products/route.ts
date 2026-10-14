@@ -1,6 +1,11 @@
-import { chat, chatParamsFromRequest, toServerSentEventsResponse } from "@tanstack/ai";
-import { searchProducts } from "@/assets/components/chat/serverToolDefinition";
+import {
+  chat,
+  chatParamsFromRequest,
+  toServerSentEventsResponse,
+} from "@tanstack/ai";
+
 import { openaiText } from "@tanstack/ai-openai";
+import { searchProducts } from "@/assets/components/chat/serverToolDefinition";
 
 export async function POST(request: Request) {
   let params;
@@ -12,7 +17,10 @@ export async function POST(request: Request) {
   }
 
   if (!process.env.OPENAI_API_KEY) {
-    return Response.json({ error: "Produktsøket er midlertidig utilgjengelig." }, { status: 503 });
+    return Response.json(
+      { error: "Produktsøket er midlertidig utilgjengelig." },
+      { status: 503 },
+    );
   }
 
   const abortController = new AbortController();

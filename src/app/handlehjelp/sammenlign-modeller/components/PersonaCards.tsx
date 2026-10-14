@@ -1,12 +1,12 @@
-import type { Route } from 'next'
-import Link from 'next/link'
-import { modelRecommendations } from '../utils/comparisonData'
-import styles from '../comparisonGuide.module.css'
+import Link from "next/link";
+import type { Route } from "next";
+import { modelRecommendations } from "../utils/comparisonData";
+import styles from "../comparisonGuide.module.css";
 
 export function PersonaCards() {
   return (
     <ul className={styles.cards}>
-      {modelRecommendations.map(model => (
+      {modelRecommendations.map((model) => (
         <li key={model.key}>
           <section
             aria-labelledby={`${model.key}-title`}
@@ -19,19 +19,16 @@ export function PersonaCards() {
             </p>
             <p>{model.description}</p>
             <ul className={styles.points}>
-              {model.proofPoints.map(point => (
+              {model.proofPoints.map((point) => (
                 <li key={point}>{point}</li>
               ))}
             </ul>
-            <Link
-              href={model.href as Route}
-              className={styles.button}
-            >
+            <Link href={model.href as Route} className={styles.button}>
               {model.cta}
             </Link>
           </section>
         </li>
       ))}
     </ul>
-  )
+  );
 }

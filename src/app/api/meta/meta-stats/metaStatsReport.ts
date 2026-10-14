@@ -260,9 +260,6 @@ export function buildMetaEventMetrics(
   hourlyBuckets: MetaStatsBucket[],
   now: Date,
 ): MetaEventMetric[] {
-  // Meta defines event_total_counts as the total for the whole requested
-  // interval. Cursor pages can repeat that aggregate as decreasing suffix
-  // totals, so summing pages inflates the result.
   const counts = countRows(spanTotalBucket(countBuckets));
   const nowMs = now.getTime();
   const latestByEvent = latestEventBuckets(hourlyBuckets, nowMs);

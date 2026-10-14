@@ -87,9 +87,9 @@ export function CategoryPage({
   return (
     <main
       data-tracking-route={listingPath(categoryKey)}
-      className="flex-1 bg-night px-6 py-10 text-primary-foreground"
+      className={`flex-1 bg-night px-6 py-10 text-primary-foreground${categoryKey === "varmeplagg" ? " lg:px-4" : ""}`}
     >
-      <div className="mx-auto max-w-6xl space-y-10">
+      <div className={`mx-auto space-y-10 ${categoryKey === "varmeplagg" ? "max-w-[100rem]" : "max-w-6xl"}`}>
         <Breadcrumbs
           items={[
             { label: "Forsiden", href: "/" },
@@ -196,7 +196,7 @@ async function ProductList({
           .
         </p>
       ) : (
-        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className={`grid gap-6 sm:grid-cols-2 ${categoryKey === "varmeplagg" ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
           {products.map((product) => {
             const image =
               categoryKey === "varmeplagg"
@@ -210,7 +210,7 @@ async function ProductList({
                   description={product.description}
                   image={{
                     ...image,
-                    sizes: "(max-width: 639px) calc(100vw - 3rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1199px) calc(33.333vw - 2rem), 368px",
+                    sizes: "(max-width: 639px) calc(100vw - 3rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1631px) calc(25vw - 1.625rem), 382px",
                   }}
                   badge="Varmeplagg"
                   action="Se produktet"

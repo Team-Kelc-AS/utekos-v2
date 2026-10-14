@@ -1,11 +1,8 @@
-import {
-  chat,
-  toServerSentEventsResponse,
-  toolDefinition,
-} from "@tanstack/ai";
+import { chat, toServerSentEventsResponse, toolDefinition } from "@tanstack/ai";
+
 import { openaiText } from "@tanstack/ai-openai";
-import { z } from "zod";
 import { weatherFirst } from "@/assets/components/chat/weatherFirst";
+import { z } from "zod";
 
 const getWeather = toolDefinition({
   name: "get_weather",

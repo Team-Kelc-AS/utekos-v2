@@ -1,15 +1,5 @@
-export function TableCellContent({
-  value
-}: {
-  value: string | boolean
-}) {
+export function TableCellContent({ value }: { value: string | boolean }) {
   return (
-    <span>
-      {typeof value === 'boolean' ?
-        value ?
-          'Ja'
-        : 'Nei'
-      : value}
-    </span>
-  )
+    <span>{typeof value === "boolean" ? (value ? "Ja" : "Nei") : value}</span>
+  );
 }

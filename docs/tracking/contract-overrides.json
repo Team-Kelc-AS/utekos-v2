@@ -106,6 +106,13 @@
       "reason": "Await one shared Meta SDK collection before first PageView and checkout; preserve delayed in-app fbc and its timestamp. Bound an unavailable native bridge to five seconds or pagehide, read live cookies at fallback, retain late results without replay or overlapping SDK calls. Offline Chromium/WebKit regressions cover delayed recovery, immediate checkout, IP latency, timeout and pagehide. The five-second bound is application policy, not a Meta guarantee.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "src/lib/analytics/metaClientParameterBuilder.ts"
+    },
+    "src/lib/analytics/enrichCanonicalEventWithMetaAttribution.ts": {
+      "baseSha256": "a7a23089813850e759931a0005c347b503309cff0d62ba9d49d00c19af0eecda",
+      "sha256": "227bf4e443868a9bd5bbc5c214dcf12e47806ceb364b495f0e27c2ffe8efe9a9",
+      "reason": "Align canonical fbclid and durable click cache with the actual SDK fbc, preserve the complete fbc timestamp and other provider IDs, and retain explicit URL click precedence. Same-page/live-cookie guards prevent late events from rolling back a newer navigation cache. Server fallback receives only a currently observed URL click, never remints an expired stored raw click, and conflicting fallback fbc is omitted. Offline Chromium/WebKit regressions cover recovery, checkout, restored cookies, navigation ordering and unavailable-cookie fallbacks.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/enrichCanonicalEventWithMetaAttribution.ts"
     }
   }
 }

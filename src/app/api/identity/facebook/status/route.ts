@@ -6,6 +6,7 @@ import {
 import { NextRequest } from "next/dist/server/web/spec-extension/request";
 import { NextResponse } from "next/dist/server/web/spec-extension/response";
 import { privateHeaders } from "@/lib/cart/request";
+
 export async function GET(request: NextRequest) {
   return NextResponse.json(
     {

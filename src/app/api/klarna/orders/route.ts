@@ -1,30 +1,78 @@
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/dist/server/web/spec-extension/response';
-import { CART_COOKIE, cartIdentity } from '@/lib/cart/identity';
-import { sameOrigin, buyerIp, privateHeaders } from '@/lib/cart/request';
-import { readKlarnaOrderAttribution } from '@/lib/klarna/attribution';
-import { createOrderSchema } from '@/lib/klarna/contracts';
-import { forwardOrder, headlessOrigin, KlarnaBridgeError } from '@/lib/klarna/server';
+import { CART_COOKIE, cartIdentity } from "@/lib/cart/identity";
+import {
+  KlarnaBridgeError,
+  forwardOrder,
+  headlessOrigin,
+} from "@/lib/klarna/server";
+import { buyerIp, privateHeaders, sameOrigin } from "@/lib/cart/request";
+
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/dist/server/web/spec-extension/response";
+import { createOrderSchema } from "@/lib/klarna/contracts";
+import { readKlarnaOrderAttribution } from "@/lib/klarna/attribution";
 
 export async function POST(request: NextRequest) {
-  if (!sameOrigin(request)) return NextResponse.json({ error: 'Ugyldig forespørsel.', paymentStatus: 'not_submitted' }, { status: 403, headers: privateHeaders });
+  if (!sameOrigin(request))
+    return NextResponse.json(
+      { error: "Ugyldig forespørsel.", paymentStatus: "not_submitted" },
+      { status: 403, headers: privateHeaders },
+    );
   const identity = cartIdentity(request.cookies.get(CART_COOKIE)?.value);
-  if (!identity) return NextResponse.json({ error: 'Handlekurven kunne ikke bekreftes.', paymentStatus: 'not_submitted' }, { status: 403, headers: privateHeaders });
-  const parsed = createOrderSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: 'Ugyldig betalingsinformasjon.', paymentStatus: 'not_submitted' }, { status: 400, headers: privateHeaders });
+  if (!identity)
+    return NextResponse.json(
+      {
+        error: "Handlekurven kunne ikke bekreftes.",
+        paymentStatus: "not_submitted",
+      },
+      { status: 403, headers: privateHeaders },
+    );
+  const parsed = createOrderSchema.safeParse(
+    await request.json().catch(() => null),
+  );
+  if (!parsed.success)
+    return NextResponse.json(
+      {
+        error: "Ugyldig betalingsinformasjon.",
+        paymentStatus: "not_submitted",
+      },
+      { status: 400, headers: privateHeaders },
+    );
   try {
-    const attribution = await readKlarnaOrderAttribution(identity.fullId, buyerIp(request)).catch(error => {
+    const attribution = await readKlarnaOrderAttribution(
+      identity.fullId,
+      buyerIp(request),
+    ).catch((error) => {
       if (error instanceof KlarnaBridgeError) throw error;
-      throw new KlarnaBridgeError('Kassen kunne ikke bekreftes. Ingen betaling er sendt.', 502);
+      throw new KlarnaBridgeError(
+        "Kassen kunne ikke bekreftes. Ingen betaling er sendt.",
+        502,
+      );
     });
-    const result = await forwardOrder(parsed.data, identity.fullId, headlessOrigin(request.nextUrl.origin), buyerIp(request), attribution, request);
+    const result = await forwardOrder(
+      parsed.data,
+      identity.fullId,
+      headlessOrigin(request.nextUrl.origin),
+      buyerIp(request),
+      attribution,
+      request,
+    );
     const response = NextResponse.json(result, { headers: privateHeaders });
     response.cookies.delete(CART_COOKIE);
     return response;
   } catch (error) {
-    return NextResponse.json({
-      error: error instanceof KlarnaBridgeError ? error.message : 'Betalingsstatus kunne ikke bekreftes. Kontroller hos Klarna før du prøver igjen.',
-      paymentStatus: error instanceof KlarnaBridgeError ? error.paymentStatus : 'unknown',
-    }, { status: error instanceof KlarnaBridgeError ? error.status : 502, headers: privateHeaders });
+    return NextResponse.json(
+      {
+        error:
+          error instanceof KlarnaBridgeError
+            ? error.message
+            : "Betalingsstatus kunne ikke bekreftes. Kontroller hos Klarna før du prøver igjen.",
+        paymentStatus:
+          error instanceof KlarnaBridgeError ? error.paymentStatus : "unknown",
+      },
+      {
+        status: error instanceof KlarnaBridgeError ? error.status : 502,
+        headers: privateHeaders,
+      },
+    );
   }
 }

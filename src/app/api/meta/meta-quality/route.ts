@@ -1,9 +1,8 @@
+import { NextResponse, connection } from "next/server";
 import {
   fetchMetaDatasetQuality,
   readMetaDatasetQualityConfig,
 } from "@/lib/meta-insights/fetchMetaDatasetQuality";
-
-import { connection, NextResponse } from "next/server";
 
 const noStore = {
   "Cache-Control": "no-store, max-age=0",

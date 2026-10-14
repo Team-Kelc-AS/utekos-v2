@@ -126,6 +126,19 @@ errors: zero. No `/cart.js` requests occurred in either flow.
 
 ### Requests outside the app's implemented contracts: reviewed
 
+- `GET /Version/(%5B0-9._%5D+)(.*Mobile)`, 01:42:44, Nutch UA,
+  deployment `dpl_EbBCxzNaCBByAHq1KGoQLYfrcCcV`: the decoded path and
+  `.*Safari.*` query match the literal `Version/([0-9._]+)(.*Mobile)?.*Safari.*`
+  in `src/lib/tracking/stapeCustomLoader.ts`. The code applies this expression
+  to `navigator.userAgent`; it does not request that URL. Resolving the literal
+  as a relative URL reproduces the supplied path/query split exactly (apart
+  from bracket percent-encoding). A fresh production browser trace loaded
+  Stape, GTM and the script gateway with GET 200, with no `/Version/` request
+  or browser exception. Analytics collectors were intercepted. Evidence:
+  `/tmp/utekos-nutch-regex-check.json`. The crawler's internal extraction
+  mechanism remains an inference, but this is not a missing storefront page
+  or a failing script URL. No route, redirect or broader crawler block added.
+
 - `POST /cart.js`, 00:50:39, 404: Shopify documents its Ajax API for hosted
   themes, while this storefront uses `/api/cart` and the Storefront GraphQL API.
   The documented cart read uses GET, whereas the supplied request used POST.
@@ -141,7 +154,18 @@ errors: zero. No `/cart.js` requests occurred in either flow.
   Nutch request in the supplied window. The same production traces loaded GTM,
   Stape and Meta scripts without requesting this path. A crawler interpreting
   a script property as a URL is plausible but unproven. The path remains absent.
-- `GET` and `POST /meta.json`, 00:51:40 and 00:56:35, 404: no app caller or
+- `POST /gtm.js`, 01:22:54, 404, deployment `dpl_FnFqShSpwMJttaqCHGaQYsm94VM1`:
+  the supplied UA has the same Nutch signature as the earlier `/gtm.start`
+  request. Fresh production browser verification found GET 200 JavaScript
+  responses from the Stape loader, Google Tag Manager and the `/__sgtm/`
+  gateway, with no request to the root `/gtm.js` or `/gtm.start` and no browser
+  exceptions. Google documents `gtm.js` as both a dataLayer event name and the
+  script filename on its own host; this does not define a root POST endpoint
+  on the merchant site. A direct empty POST reproduced the expected 404.
+  No source caller was found for that POST. The crawler's extraction behavior
+  remains an inference; this is not evidence of a GTM script-load failure.
+  Trace: `/tmp/utekos-gtm-js-check.json`; telemetry collectors were intercepted.
+- `GET` and `POST /meta.json`, 00:51:40, 00:56:35 and 01:24:05, 404: no app caller or
   documented Meta requirement for this path was found. Vercel request metrics
   showed 12 requests with `facebookexternalhit`, verified-bot status `pass`,
   category `preview`, in the inspected window. Meta's documented preview
@@ -150,7 +174,11 @@ errors: zero. No `/cart.js` requests occurred in either flow.
   and `og:url` were present within the first megabyte, and both images returned
   200. This verifies public preview inputs, not Meta's eventual rendered ad.
   No invented JSON schema was added. The internal reason Meta probes this
-  additional path is unknown.
+  additional path is unknown. The 01:24:05 POST on `dpl_FnFqShSpwMJttaqCHGaQYsm94VM1`
+  repeats the same missing-path response: firewall allowed, no outgoing API and
+  no exception shown. Fresh crawler-UA/Range checks after this excerpt again
+  confirmed both product pages and their OG images return 200. Production
+  readback still points to READY `dpl_EbBCxzNaCBByAHq1KGoQLYfrcCcV`.
 - `GET /.well-known/vercel/flags`, 00:54:35, 404: Vercel's optional Flags
   Explorer discovery endpoint. The app has no Flags SDK or flag consumers.
   Provider readback found two old flags, `marketing-banner` and
@@ -195,6 +223,7 @@ remain unchanged.
 - [Shopify Ajax cart API](https://shopify.dev/docs/api/ajax/reference/cart)
 - [Storefront cartDiscountCodesUpdate, 2026-10](https://shopify.dev/docs/api/storefront/2026-10/mutations/cartDiscountCodesUpdate)
 - [Vercel Flags Explorer reference](https://vercel.com/docs/flags/flags-explorer/reference)
+- [Google Tag Manager web installation](https://support.google.com/tagmanager/answer/14847097)
 - Installed Next.js 16.4.0 redirects and Route Handler guides.
 
 Do not weaken Origin validation, classify Facebook customers as crawlers, or

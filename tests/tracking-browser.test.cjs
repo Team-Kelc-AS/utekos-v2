@@ -111,9 +111,14 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaIpDelay = 0 } = {}) {
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaIpDelay = 0, storedClicks, metaCookie, metaCookiesBlocked = false, metaContextFbc } = {}) {
   const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block', userAgent });
   t.after(() => context.close());
+  if (storedClicks) await context.addInitScript(identifiers => {
+    if (!sessionStorage.getItem('utekos_click_ids')) sessionStorage.setItem('utekos_click_ids', JSON.stringify(identifiers));
+  }, storedClicks);
+  if (metaCookie) await context.addCookies([{ name: '_fbc', value: metaCookie, domain: '.utekos.no', path: '/' }]);
+  if (metaCookiesBlocked) await context.addInitScript(() => Object.defineProperty(document, 'cookie', { get: () => '', set: () => {} }));
   const requests = [], forbidden = [], errors = [];
   t.after(() => { assert.deepEqual(forbidden, [], 'every external request must have an explicit offline fixture'); assert.deepEqual(errors, [], 'no uncaught browser errors'); });
   await context.route('**/*', async route => {
@@ -144,7 +149,10 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
         if (metaIpDelay) await new Promise(resolve => setTimeout(resolve, metaIpDelay));
         return route.fulfill({ json: { client_ip_address: '192.0.2.1' } });
       }
-      if (url.pathname === '/api/meta/parameter-context') return route.fulfill({ json: { fbp: 'fb.1.1700000000000.123456789' } });
+      if (url.pathname === '/api/meta/parameter-context') return route.fulfill({
+        headers: metaContextFbc ? { 'Set-Cookie': `_fbc=${metaContextFbc}; Domain=.utekos.no; Path=/` } : {},
+        json: { fbp: 'fb.1.1700000000000.123456789', ...(metaContextFbc ? { fbc: metaContextFbc } : {}) },
+      });
       return route.fulfill({ status: 202, json: { status: 'accepted' } });
     }
     if (url.origin === 'https://utekos.no' && url.pathname === '/favicon.ico') return route.fulfill({ status: 204 });
@@ -412,6 +420,111 @@ test('Meta first dispatch keeps URL click and collected IP when IP takes longer 
   assert.ok(state.calls.find(call => call.name === 'PageView').cookie.includes('_fbi='));
   assert.equal(api.requests.filter(r => r.path === '/api/meta/client-ip').length, 1);
 });
+
+for (const safariMode of [false, true]) {
+test(`Meta recovered click replaces stale raw click through checkout (webkit=${safariMode})`, async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
+    metaBackupDelay: 150, safariMode, storedClicks: { fbclid: 'OfflinePreviousClick', ttclid: 'OfflineTikTokClick' },
+  });
+  await api.waitFor('page_view'); await api.waitFor('view_item');
+  const checkout = await api.page.evaluate(async commerce => UtekosTrackingHarness.prepareCanonicalCheckout({
+    id: 'gid://shopify/Cart/fixture', commerce,
+    checkout: { checkout_id: 'fixture-checkout', creation_revision: 'fixture-revision' },
+  }, 'shopify'), commerce());
+  const first = api.events('page_view')[0];
+  for (const event of [first, api.events('view_item')[0], checkout]) {
+    assert.equal(event.click_id.fbclid, 'OfflineBackupClick');
+    assert.equal(event.click_id.ttclid, 'OfflineTikTokClick');
+    assert.equal(event.browser_id.fbc, first.browser_id.fbc);
+  }
+  const stored = await api.page.evaluate(() => ({
+    session: JSON.parse(sessionStorage.getItem('utekos_click_ids')),
+    local: JSON.parse(localStorage.getItem('utekos_click_ids_v1')).identifiers,
+  }));
+  assert.equal(stored.session.fbclid, 'OfflineBackupClick');
+  assert.equal(stored.local.fbclid, 'OfflineBackupClick');
+  const browserEvent = await api.page.evaluate(() => __canonicalBrowser.find(e => e.event === 'page_view').canonical_event);
+  assert.equal(browserEvent.click_id.fbclid, first.click_id.fbclid);
+  assert.equal(browserEvent.browser_id.fbc, first.browser_id.fbc);
+});
+}
+
+test('Meta restored cookie takes precedence over stale raw storage, while a new URL click wins both', async t => {
+  const cookie = 'fb.1.1700000000000.OfflineRestoredClick';
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
+    metaCookie: cookie, storedClicks: { fbclid: 'OfflinePreviousClick' },
+  });
+  await api.waitFor('page_view');
+  assert.equal(api.events('page_view')[0].click_id.fbclid, 'OfflineRestoredClick');
+  assert.equal(api.events('page_view')[0].browser_id.fbc.split('.')[2], '1700000000000');
+  await api.page.evaluate(() => { history.pushState({}, '', '/produkter/test-product?fbclid=OfflineNewUrlClick'); dispatchEvent(new PopStateEvent('popstate')); });
+  await api.waitFor('page_view', 2);
+  const current = api.events('page_view')[1];
+  assert.equal(current.click_id.fbclid, 'OfflineNewUrlClick');
+  assert.match(current.browser_id.fbc, /\.OfflineNewUrlClick\./);
+  assert.equal(await api.page.evaluate(() => JSON.parse(sessionStorage.getItem('utekos_click_ids')).fbclid), 'OfflineNewUrlClick');
+});
+
+test('Meta late native collection preserves a newer navigation click', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
+    metaBackupDelay: 350, storedClicks: { fbclid: 'OfflinePreviousClick' },
+  });
+  await api.page.waitForFunction(() => __metaBackupCalls === 1);
+  await api.page.evaluate(() => { history.pushState({}, '', '/produkter/test-product?fbclid=OfflineNewUrlClick'); dispatchEvent(new PopStateEvent('popstate')); });
+  await api.waitFor('page_view', 2);
+  const [first, next] = api.events('page_view');
+  assert.equal(first.click_id.fbclid, 'OfflineBackupClick');
+  assert.match(first.browser_id.fbc, /\.OfflineBackupClick\./);
+  assert.equal(next.click_id.fbclid, 'OfflineNewUrlClick');
+  assert.match(next.browser_id.fbc, /\.OfflineNewUrlClick\./);
+  const stored = await api.page.evaluate(() => ({ session: JSON.parse(sessionStorage.getItem('utekos_click_ids')), cookie: document.cookie }));
+  assert.equal(stored.session.fbclid, 'OfflineNewUrlClick');
+  assert.match(stored.cookie, /\.OfflineNewUrlClick\./);
+  const pixels = await api.page.evaluate(() => __pixelIdentity.filter(p => p.name === 'PageView'));
+  assert.equal(pixels.length, 2);
+  for (const event of [first, next]) {
+    assert.ok(pixels.find(p => p.id === event.event_id)?.cookie.includes(event.browser_id.fbc), 'Pixel reads the fbc belonging to this canonical navigation');
+  }
+});
+
+test('Meta cannot remint an expired stored click with a new observation timestamp', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
+    metaCookiesBlocked: true, storedClicks: { fbclid: 'OfflinePreviousClick' },
+  });
+  await api.waitFor('page_view');
+  assert.equal(api.events('page_view')[0].browser_id.fbc, undefined);
+  assert.ok(api.requests.some(r => r.path === '/api/meta/parameter-context'), 'exercise the server fallback with unavailable cookies');
+  assert.equal(api.requests.some(r => r.path === '/api/meta/parameter-context' && r.body.fbclid === 'OfflinePreviousClick'), false);
+});
+
+test('Meta rejects a stale server fallback cookie when the event has a newer URL click', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineNewUrlClick', {
+    metaCookiesBlocked: true, metaContextFbc: 'fb.1.1700000000000.OfflinePreviousClick',
+  });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.click_id.fbclid, 'OfflineNewUrlClick');
+  assert.equal(event.browser_id.fbc, undefined, 'an old click is not substituted for the new URL click');
+  assert.equal(api.requests.find(r => r.path === '/api/meta/parameter-context').body.fbclid, 'OfflineNewUrlClick');
+});
+
+for (const safariMode of [false, true]) {
+test(`Meta late native response preserves the newer server cookie and timestamp (webkit=${safariMode})`, async t => {
+  const fresh = 'fb.1.1791974000000.OfflineNewUrlClick';
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
+    metaBackupDelay: 6500, metaContextFbc: fresh, safariMode,
+  });
+  await api.page.waitForFunction(() => __metaBackupCalls === 1);
+  await api.page.evaluate(() => { history.pushState({}, '', '/produkter/test-product?fbclid=OfflineNewUrlClick'); dispatchEvent(new PopStateEvent('popstate')); });
+  await api.waitFor('page_view', 2);
+  assert.equal(api.events('page_view')[1].browser_id.fbc, fresh);
+  await api.page.waitForTimeout(1800);
+  const current = await api.page.evaluate(() => ({ cookie: document.cookie, click: JSON.parse(sessionStorage.getItem('utekos_click_ids')).fbclid }));
+  assert.ok(current.cookie.includes(fresh), 'late native completion preserves newer click and original timestamp');
+  assert.equal(current.click, 'OfflineNewUrlClick');
+  assert.equal(api.events('page_view').length, 2, 'late result does not replay either navigation');
+});
+}
 
 test('Meta unavailable native bridge releases checkout once and does not queue repeated collection timeouts', async t => {
   const api = await fixture(t, 'https://utekos.no/produkter/test-product', { metaBackupBlocked: true });

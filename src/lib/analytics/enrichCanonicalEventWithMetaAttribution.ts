@@ -4,6 +4,7 @@ import { reportClientCaughtError } from '@/lib/observability/client/reportClient
 import { buildMetaParameterContextRequestUrl } from './buildMetaParameterContextRequestUrl'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import type { CanonicalClickIds } from './canonicalSignalContract'
+import { resolveClickIds } from './clickIdSessionStore'
 import { extractFbclidFromFbc } from './extractFbclidFromFbc'
 import { browserFirstPartyExternalIdStore } from './firstPartyExternalId'
 import { metaParameterContextResponseSchema } from './metaParameterContextContract'
@@ -69,11 +70,11 @@ function readPersistedMetaIdentifiers(
 }
 
 async function fetchMetaParameterContext(
-  event: MetaAttributionEvent
+  event: MetaAttributionEvent,
+  fbclid: string | undefined
 ) {
   if (!marketingAllowed()) throw new Error('consent_required')
   const pageUrl = event.page_url ?? window.location.href
-  const fbclid = event.click_id?.fbclid
 
   const response = await fetch(
     buildMetaParameterContextRequestUrl(fbclid),
@@ -112,9 +113,9 @@ async function fetchMetaParameterContext(
 }
 
 async function requestMetaParameterContext(
-  event: MetaAttributionEvent
+  event: MetaAttributionEvent,
+  fbclid: string | undefined
 ) {
-  const fbclid = event.click_id?.fbclid
   const contextKey = fbclid ? `fbclid:${fbclid}` : 'no-fbclid'
 
   const persisted = readPersistedMetaIdentifiers(fbclid)
@@ -132,7 +133,7 @@ async function requestMetaParameterContext(
     }
 
     try {
-      const identifiers = await fetchMetaParameterContext(event)
+      const identifiers = await fetchMetaParameterContext(event, fbclid)
       completedContextKeys.add(contextKey)
       return identifiers
     } catch (firstError) {
@@ -140,7 +141,7 @@ async function requestMetaParameterContext(
       if (!fbclid) throw firstError
 
       await new Promise(resolve => setTimeout(resolve, 150))
-      const identifiers = await fetchMetaParameterContext(event)
+      const identifiers = await fetchMetaParameterContext(event, fbclid)
       completedContextKeys.add(contextKey)
       return identifiers
     }
@@ -162,31 +163,41 @@ export async function enrichCanonicalEventWithMetaAttribution<
     fbc?: string | undefined
     fbp?: string | undefined
   } = {}
+  const pageUrl = event.page_url ?? window.location.href
+  const urlFbclid = new URL(pageUrl).searchParams.get('fbclid') || undefined
+  // The SDK can recover a new click from an in-app browser after the canonical
+  // event captured an older raw click from storage. Keep both representations
+  // aligned, while an explicit click on this event's URL remains authoritative.
+  const matchingFbc = (value: string | undefined) => {
+    const click = extractFbclidFromFbc(value)
+    return click && (!urlFbclid || click === urlFbclid) ? value : undefined
+  }
 
   try {
     const clientContext = await ensureMetaClientParameterContext(
       {
         consent: event.consent,
-        pageUrl: event.page_url ?? window.location.href
+        pageUrl
       }
     )
     if (!marketingAllowed()) return event
     identifiers = {
-      ...(clientContext.fbc ? { fbc: clientContext.fbc } : {}),
+      ...(matchingFbc(clientContext.fbc) ? { fbc: clientContext.fbc } : {}),
       ...(clientContext.fbp ? { fbp: clientContext.fbp } : {})
     }
-
     if (
       !identifiers.fbp ||
-      (event.click_id?.fbclid && !identifiers.fbc)
+      (urlFbclid && !identifiers.fbc)
     ) {
-      identifiers = await requestMetaParameterContext(event)
+      // Only a click on this URL is a new observation. A historical raw click
+      // without its original fbc timestamp must not be reminted by the server.
+      identifiers = await requestMetaParameterContext(event, urlFbclid)
     }
   } catch (error) {
     reportClientCaughtError(error, 'meta.parameter_context')
 
     try {
-      identifiers = await requestMetaParameterContext(event)
+      identifiers = await requestMetaParameterContext(event, urlFbclid)
     } catch (fallbackError) {
       reportClientCaughtError(
         fallbackError,
@@ -195,23 +206,35 @@ export async function enrichCanonicalEventWithMetaAttribution<
     }
   }
 
-  const fbc = identifiers.fbc ?? readCookie('_fbc')
+  const currentPage = window.location.href === pageUrl
+  const fbc = matchingFbc(identifiers.fbc) ??
+    (currentPage ? matchingFbc(readCookie('_fbc')) : undefined) ??
+    matchingFbc(event.browser_id?.fbc)
   const fbp = identifiers.fbp ?? readCookie('_fbp')
+  const fbclid = extractFbclidFromFbc(fbc)
+  if (fbclid) {
+    // A completed older event must never roll back a newer navigation's cache.
+    // Persist only the SDK value still present on the same current page. URL
+    // precedence and preservation of other providers' click IDs stay centralized.
+    if (currentPage && readCookie('_fbc') === fbc) {
+      resolveClickIds(pageUrl, undefined, undefined, undefined, { fbclid })
+    }
+  }
   const externalId =
     event.external_id ??
     browserFirstPartyExternalIdStore.getOrCreate(event.consent)
+  const browserIds = { ...event.browser_id }
+  // Do not leave a conflicting pre-enrichment cookie behind when recovery of
+  // the URL click fails. Other browser identifiers remain intact.
+  delete browserIds.fbc
+  if (fbc) browserIds.fbc = fbc
+  if (fbp) browserIds.fbp = fbp
+  const selectedClick = urlFbclid ?? fbclid
 
   return {
     ...event,
-    ...(fbc || fbp ?
-      {
-        browser_id: {
-          ...event.browser_id,
-          ...(fbc ? { fbc } : {}),
-          ...(fbp ? { fbp } : {})
-        }
-      }
-    : {}),
+    ...(selectedClick ? { click_id: { ...event.click_id, fbclid: selectedClick } } : {}),
+    browser_id: Object.keys(browserIds).length ? browserIds : undefined,
     ...(externalId ? { external_id: externalId } : {})
   }
 }
