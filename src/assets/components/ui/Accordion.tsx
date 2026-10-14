@@ -46,6 +46,7 @@ const AccordionItem = React.forwardRef<
 >(({ className, variant = "flush", ...props }, ref) => (
   <BaseAccordion.Item
     ref={ref}
+    data-tracking-accordion-item=""
     className={cn(
       "transition-all duration-300 ease-out",
       variant === "flush" &&
@@ -88,6 +89,7 @@ const AccordionTrigger = React.forwardRef<
     >
       <BaseAccordion.Trigger
         ref={ref}
+        data-tracking-accordion-trigger=""
         className={cn(
           "group flex flex-1 items-center justify-between py-5 font-semibold text-[#f0eee9] text-left transition-all hover:text-[#f0eee9]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001715] disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
           className,

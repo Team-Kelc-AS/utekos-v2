@@ -395,10 +395,17 @@ export function observeStorefront() {
           open_sequence: sequence,
         });
       }
-      if (!element.matches('[data-slot="accordion-trigger"]')) continue;
+      if (
+        !element.matches(
+          '[data-tracking-accordion-trigger], [data-slot="accordion-trigger"]',
+        )
+      )
+        continue;
       const value = currentProduct();
       if (!value) continue;
-      const item = element.closest('[data-slot="accordion-item"]');
+      const item = element.closest(
+        '[data-tracking-accordion-item], [data-slot="accordion-item"]',
+      );
       const id = item?.id || element.getAttribute("aria-controls");
       if (!id) continue;
       const sequence = (openCounts.get(element) ?? 0) + 1;

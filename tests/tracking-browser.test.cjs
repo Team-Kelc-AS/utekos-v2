@@ -20,8 +20,16 @@ async function buildHarness(environment) {
       export {createCanonicalGenerateLead,buildGenerateLeadDataLayerEvent} from './src/lib/analytics/generateLeadEvent';
       export {recordVariantIntent} from './src/lib/tracking/variant-selection';
       import {createElement,useEffect} from 'react';
-      import {hydrateRoot} from 'react-dom/client';
+      import {createRoot,hydrateRoot} from 'react-dom/client';
+      import {Accordion,AccordionItem,AccordionTrigger,AccordionContent} from './src/assets/components/ui/Accordion';
       import {useBrowserTrackingEnabled} from './src/lib/tracking/useBrowserTrackingEnabled';
+      export function mountProductAccordion() {
+        const container=document.createElement('div');document.querySelector('[data-tracking-product]').append(container);
+        createRoot(container).render(createElement(Accordion,null,
+          createElement(AccordionItem,{id:'materialer',value:'materialer'},
+            createElement(AccordionTrigger,null,'Materialer'),
+            createElement(AccordionContent,null,'Produktets materialer'))));
+      }
       export function hydrateTrackingGate() {
         const container=document.createElement('div');container.id='hydrated-tracking-gate';document.body.append(container);
         window.__gateHydrationErrors=[];
@@ -111,7 +119,7 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
   await context.route('**/*', async route => {
     const request = route.request(); const url = new URL(request.url());
     const body = request.postData();
-    if (url.origin === 'https://utekos.no' && request.isNavigationRequest()) return route.fulfill({ contentType: 'text/html', body: `<!doctype html><html><head><title>Tracking fixture</title><script>
+    if (url.origin === 'https://utekos.no' && request.isNavigationRequest()) return route.fulfill({ contentType: 'text/html; charset=utf-8', body: `<!doctype html><html><head><meta charset="utf-8"><title>Tracking fixture</title><script>
       window.__pixelCalls=[];window.__canonicalBrowser=[];window.dataLayer=[];
       window.__gaReadyAt=performance.now()+${gaDelay};window.__gaGetCount=0;
       dataLayer.push=function(...entries){for(const entry of entries){if(entry?.[0]==='get'&&typeof entry[3]==='function'){window.__gaGetCount++;if(!${gaBlocked})entry[3](performance.now()>=window.__gaReadyAt?(entry[2]==='client_id'?'123.456':'789'):undefined);}}return Array.prototype.push.apply(this,entries)};
@@ -209,6 +217,40 @@ test('size guide dialog reports each opening without counting closing or other d
   assert.equal(api.events('size_guide_view').length, 2);
   assert.deepEqual(api.events('size_guide_view').map(event => event.custom_data.open_sequence), [1, 2]);
   assert.equal(api.events('interact_with_accordion').length, 0);
+});
+
+for (const safariMode of [false, true]) test(`actual product Accordion reports each opening with commerce and identical Pixel identity (${safariMode ? 'WebKit' : 'Chromium'})`, async t => {
+  const api = await fixture(t, undefined, { safariMode });
+  await api.waitFor('view_item');
+  await api.page.evaluate(() => UtekosTrackingHarness.mountProductAccordion());
+  const trigger = api.page.getByRole('button', { name: 'Materialer', exact: true });
+  await trigger.click();
+  await api.waitFor('interact_with_accordion');
+  await trigger.press('Enter');
+  await trigger.press('Enter');
+  await api.waitFor('interact_with_accordion', 2);
+  const events = api.events('interact_with_accordion');
+  assert.equal(events.length, 2, 'closing is not an opening');
+  assert.deepEqual(events.map(event => event.custom_data.interaction_sequence), [1, 2]);
+  for (const event of events) {
+    assert.equal(event.custom_data.accordion_id, 'materialer');
+    assert.equal(event.custom_data.accordion_title, 'Materialer');
+    assert.equal(event.custom_data.interaction_type, 'open');
+    assert.equal(event.custom_data.currency, 'NOK');
+    assert.equal(event.custom_data.value, 800);
+    assert.deepEqual(event.custom_data.items, commerce().items);
+  }
+  const calls = await api.page.evaluate(() => window.__pixelCalls.filter(call => call[2] === 'InteractWithAccordion'));
+  assert.equal(calls.length, 2);
+  assert.deepEqual(calls.map(call => call[4].eventID), events.map(event => event.event_id));
+  assert.equal(calls[0][3].accordion_id, 'materialer');
+  assert.equal(calls[0][3].accordion_title, 'Materialer');
+  assert.equal(calls[0][3].interaction_type, 'open');
+  assert.equal(calls[0][3].currency, 'NOK');
+  assert.equal(calls[0][3].value, 1000);
+  assert.equal(calls[0][3].net_value, 800);
+  assert.equal(calls[0][3].tax_value, 200);
+  assert.deepEqual(calls[0][3].content_ids, ['1']);
 });
 
 test('Pixel browser signal and collector retain identical canonical identity without hydration duplicates', async t => {
