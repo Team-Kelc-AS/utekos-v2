@@ -11,7 +11,12 @@ function originalImages(images: ProductImage[], viewport: 'desktop' | 'mobile', 
   const [width, height] = viewport === 'mobile' ? [2, 3] : [4, 5];
   // Allow 1.5% relative ratio deviation; preserve the original dimensions.
   return images.filter(image => {
-    const valid = image.width > 0 && image.height > 0 && Number.isFinite(image.width) && Number.isFinite(image.height) && Math.abs(image.width * height - image.height * width) <= image.height * width * ASPECT_RATIO_TOLERANCE;
+    // These explicitly selected desktop originals retain their native proportions.
+    const selectedOriginal = viewport === 'desktop' && (
+      (handle === 'utekos-dun' && image.url === '/images/kunnskap/Fjell-Blue-3000x2000.png') ||
+      (handle === 'comfyrobe' && image.url === '/images/kunnskap/Comfy_Woman_2_2x3.webp')
+    );
+    const valid = image.width > 0 && image.height > 0 && Number.isFinite(image.width) && Number.isFinite(image.height) && (selectedOriginal || Math.abs(image.width * height - image.height * width) <= image.height * width * ASPECT_RATIO_TOLERANCE);
     if (!valid && process.env.NODE_ENV !== 'production') {
       const message = `[ProductGallery] ${handle}: ${image.url.split('?')[0]} (${image.width} × ${image.height}) er utelatt på ${viewport}. Originalbildet må være ${width}:${height} (±1,5 %).`;
       if (!reportedImages.has(message)) {

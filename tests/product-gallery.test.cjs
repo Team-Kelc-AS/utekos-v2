@@ -168,3 +168,44 @@ test('Mikrofiber JSON-LD uses the same Fjellblå gallery and one shared review a
     }
   }
 });
+
+test('requested Dun Fjellblå desktop originals retain dimensions and stay out of mobile and Vargnatt galleries', () => {
+  const { DUN_PRODUCT_GALLERY_IMAGES: originals } = loadTypeScript('lib/products/gallery/dun/dunProductGalleryImages.ts');
+  const { productGallery: getGallery } = loadTypeScript('lib/products/gallery.ts', {
+    globals: { console: { warn() {} } },
+    mocks: {
+      './gallery/productGalleryImageOverrides': { PRODUCT_GALLERY_IMAGE_OVERRIDES: { 'utekos-dun': originals } },
+      './gallery/comfyrobeProductGalleryImages': { COMFYROBE_MOBILE_GALLERY_IMAGES: [] },
+      './gallery/techdown/productGalleryImages': { TECHDOWN_MOBILE_GALLERY_IMAGES: [] },
+      './gallery/mikrofiber/mikrofiberProductGalleryImages': { MICROFIBER_MOBILE_GALLERY_IMAGES: [] },
+      './gallery/svale/svaleProductGalleryImages': { SVALE_MOBILE_GALLERY_IMAGES: [] },
+    },
+  });
+  const gallery = getGallery(product('utekos-dun'), variant('Fjellblå'));
+  assert.equal(gallery.desktop.length, 9);
+  assert.equal(gallery.mobile.length, 0);
+  assert.deepEqual(Array.from(gallery.desktop.slice(-3), image => [image.width, image.height]), [[1440, 1800], [1440, 1800], [1237, 1718]]);
+  const dark = getGallery(product('utekos-dun'), variant('Vargnatt', desktop[0]));
+  assert.deepEqual(Array.from(dark.desktop), desktop);
+  assert.equal(dark.mobile.length, 0);
+});
+
+test('Comfyrobe hood portrait appears on desktop at its native ratio while mobile keeps six images', () => {
+  const comfy = loadTypeScript('lib/products/gallery/comfyrobeProductGalleryImages.ts');
+  const { productGallery: getGallery } = loadTypeScript('lib/products/gallery.ts', {
+    globals: { console: { warn() {} } },
+    mocks: {
+      './gallery/productGalleryImageOverrides': { PRODUCT_GALLERY_IMAGE_OVERRIDES: { comfyrobe: comfy.COMFYROBE_PRODUCT_GALLERY_IMAGES } },
+      './gallery/comfyrobeProductGalleryImages': comfy,
+      './gallery/techdown/productGalleryImages': { TECHDOWN_MOBILE_GALLERY_IMAGES: [] },
+      './gallery/mikrofiber/mikrofiberProductGalleryImages': { MICROFIBER_MOBILE_GALLERY_IMAGES: [] },
+      './gallery/svale/svaleProductGalleryImages': { SVALE_MOBILE_GALLERY_IMAGES: [] },
+    },
+  });
+  const gallery = getGallery(product('comfyrobe'), variant());
+  assert.equal(gallery.desktop.length, 3);
+  assert.equal(gallery.mobile.length, 6);
+  assert.equal(gallery.desktop[2].url, gallery.mobile[1].url);
+  assert.equal(gallery.desktop[2].width, 1024);
+  assert.equal(gallery.desktop[2].height, 1536);
+});

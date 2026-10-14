@@ -15,6 +15,13 @@ export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
     'Kvinne i marineblå Comfyrobe med hetten oppe og hendene i lommene.',
     720,
     900
+  ),
+  productImage(
+    'comfyrobe-desktop-woman-hood',
+    '/images/kunnskap/Comfy_Woman_2_2x3.webp',
+    'Kvinne i marineblå Comfyrobe med hetten oppe og hendene i lommene, sett skrått forfra.',
+    1024,
+    1536
   )
 ]
 
