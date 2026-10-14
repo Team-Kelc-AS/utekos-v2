@@ -612,6 +612,9 @@
 }
 
 @media (max-width: 767px) {
+  .galleryColumn[data-gallery-product='comfyrobe'] .slide {
+    background-color: #012622;
+  }
   .gallery [data-gallery-viewport="desktop"] {
     display: none;
   }

@@ -24,7 +24,7 @@ export function ProductGallery({ desktop, mobile, title, video, videoLabel, show
     const picture = <picture>
         <source media="(max-width: 767px)" srcSet={mobileProps.srcSet} sizes={mobileProps.sizes} width={small.width} height={small.height} />
         {/* getImageProps provides Next's optimized sources without hydrating image markup. */}
-        <img {...desktopProps} alt={alt} className={styles.productImage} />
+        <img {...desktopProps} alt={alt} data-gallery-desktop-alt={large.altText || title} data-gallery-mobile-alt={small.altText || title} className={styles.productImage} />
       </picture>;
     return <figure key={`${large.id ?? large.url}-${small.id ?? small.url}`} className={styles.slide} data-gallery-viewport={viewport} aria-label={`Bilde ${index + 1}`}>
       {index === 0 && video ? <DesktopProductVideo video={video} label={videoLabel ?? title}>{picture}</DesktopProductVideo> : picture}

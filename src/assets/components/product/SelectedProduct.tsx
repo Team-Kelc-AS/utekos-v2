@@ -39,7 +39,7 @@ export async function SelectedProduct({ product, searchParams }: { product: Shop
   const label = variant.selectedOptions.filter(o => o.value !== 'Default Title').map(o => o.value).join(' / ');
   return <>
     <div className={`${styles.grid} ${product.handle === 'utekos-techdown' ? styles.mobileSummaryFirst : ''}`} data-product-variant={variant.id} data-tracking-route={`/produkter/${product.handle}`} data-tracking-product={`/produkter/${product.handle}`} data-tracking-selection={selectionKey(params)} data-tracking-commerce={JSON.stringify(productCommerce(product, variant))}>
-      <div className={styles.galleryColumn}><ProductGallery key={variant.id} {...images} title={title} video={productVariantVideo(product.handle, variant)} videoLabel={`${title} – ${label}`} showMobileControls={product.handle !== 'utekos-techdown'} /></div>
+      <div className={styles.galleryColumn} data-gallery-product={product.handle}><ProductGallery key={variant.id} {...images} title={title} video={productVariantVideo(product.handle, variant)} videoLabel={`${title} – ${label}`} showMobileControls={product.handle !== 'utekos-techdown'} /></div>
       <section className={styles.purchase} aria-labelledby="product-title" data-journey-section="purchase">
         <div className={styles.titleRow}><h1 id="product-title">{title}</h1><WishlistButton productId={product.id} handle={product.handle} variantId={variant.id} title={title} returnTo={variantHref(product.handle, variant, product.variants.nodes)} showLabel className={styles.wishlistButton} /></div>
         <div className={styles.price}><strong>{formatMoney(variant.price)}</strong>{compare && <del>{formatMoney(compare)}</del>}</div>

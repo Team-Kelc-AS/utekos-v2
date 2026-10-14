@@ -21,6 +21,13 @@ export function GalleryControls({ children, desktopCount, mobileCount, showMobil
   const count = desktop ? desktopCount : mobileCount;
 
   useEffect(() => {
+    // A picture has one img alt; keep it aligned with the active source.
+    ref.current?.querySelectorAll<HTMLImageElement>('img[data-gallery-mobile-alt]').forEach(image => {
+      image.alt = (desktop ? image.dataset.galleryDesktopAlt : image.dataset.galleryMobileAlt) ?? '';
+    });
+  }, [desktop, children]);
+
+  useEffect(() => {
     const rail = ref.current;
     if (!rail) return;
     // Keep the same image when the width changes; clamp when switching to a shorter gallery.

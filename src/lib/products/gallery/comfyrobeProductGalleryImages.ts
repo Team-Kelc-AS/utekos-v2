@@ -1,7 +1,5 @@
 import { productImage } from '@/lib/products/productImage'
 import type { ProductImage as Image } from '@/lib/shopify/product-types'
-const COMFYROBE_MOBILE_STILL_WIDTH = 1000
-const COMFYROBE_MOBILE_STILL_HEIGHT = 1500
 
 export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
   productImage(
@@ -20,62 +18,55 @@ export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
   )
 ]
 
-// Mobile gallery uses original 2:3 images only.
+// Preserve each original image's dimensions and the selected mobile order.
 export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
   productImage(
-    'comfyrobe-mobile-1000x1500-mob',
-    '/images/kunnskap/Comfy_1000x1500_Mob.webp',
-    'Kvinne i marineblå Comfyrobe foran mørkegrønne vegger.',
-    COMFYROBE_MOBILE_STILL_WIDTH,
-    COMFYROBE_MOBILE_STILL_HEIGHT
+    'comfyrobe-mobile-male',
+    '/images/kunnskap/Comfy_Male_1200x1800.webp',
+    'Mann i marineblå Comfyrobe sett forfra, med hetten nede og hendene i lommene.',
+    1200,
+    1800
   ),
   productImage(
-    'comfyrobe-mobile-1000x1500-22',
-    '/images/kunnskap/Comfyrobe_1000x1500_22.webp',
-    'Marineblå Comfyrobe i full lengde forfra mot mørk bakgrunn.',
-    500,
-    750
+    'comfyrobe-mobile-woman-2',
+    '/images/kunnskap/Comfy_Woman_2_2x3.webp',
+    'Kvinne i marineblå Comfyrobe med hetten oppe og hendene i lommene, sett skrått forfra.',
+    1024,
+    1536
   ),
   productImage(
-    'comfyrobe-mobile-1000x1500-2-webp',
-    '/images/kunnskap/Comfyrobe_1000x1500_2.webp',
-    'Marineblå Comfyrobe forfra med åpen hette og synlig lyst sherpa-fôr.',
-    500,
-    750
+    'comfyrobe-mobile-woman',
+    '/images/kunnskap/Comfy_Woman_1200x1800.webp',
+    'Kvinne i marineblå Comfyrobe sett fra siden, med hetten nede og synlig splitt nederst.',
+    1120,
+    1680
   ),
   productImage(
-    'comfyrobe-mobile-11000x1500',
-    '/images/kunnskap/Comfyrobe_11000x1500.webp',
-    'Kvinne i marineblå Comfyrobe sett fra siden mot mørk bakgrunn.',
-    500,
-    750
+    'comfyrobe-mobile-navy-front-closed',
+    '/images/kunnskap/Jakke Navy_1.webp',
+    'Marineblå Comfyrobe sett forfra med lukket glidelås og lyst fôr i hetten.',
+    2000,
+    3000
   ),
   productImage(
-    'comfyrobe-mobile-1000x1500-1',
-    '/images/kunnskap/comfyrobe_1000x1500_1.jpg',
-    'Marineblå Comfyrobe i full lengde forfra med hette.',
-    COMFYROBE_MOBILE_STILL_WIDTH,
-    COMFYROBE_MOBILE_STILL_HEIGHT
+    'comfyrobe-mobile-navy-back-2',
+    '/images/kunnskap/Jakke Navy_2.webp',
+    'Marineblå Comfyrobe sett bakfra med hetten nede og avrundet nederkant.',
+    2000,
+    3000
   ),
   productImage(
-    'comfyrobe-mobile-1000x1500-2',
-    '/images/kunnskap/comfyrobe_1000x1500_2.jpg',
-    'Marineblå Comfyrobe forfra med åpen hette og synlig sherpa-fôr.',
-    COMFYROBE_MOBILE_STILL_WIDTH,
-    COMFYROBE_MOBILE_STILL_HEIGHT
+    'comfyrobe-mobile-navy-back-3',
+    '/images/kunnskap/Jakke Navy_3.webp',
+    'Marineblå Comfyrobe sett bakfra med hetten nede og avrundet nederkant.',
+    2000,
+    3000
   ),
   productImage(
-    'comfyrobe-mobile-1000x1500-3',
-    '/images/kunnskap/comfyrobe_1000x1500_3.jpg',
-    'Person i marineblå Comfyrobe sett fra siden på en terrasse i skumringen.',
-    COMFYROBE_MOBILE_STILL_WIDTH,
-    COMFYROBE_MOBILE_STILL_HEIGHT
-  ),
-  productImage(
-    'comfyrobe-mobile-1000x1500-bak-1',
-    '/images/kunnskap/comfyrobe_1000x1500_bak_1.jpg',
-    'Marineblå Comfyrobe i full lengde bakfra.',
-    COMFYROBE_MOBILE_STILL_WIDTH,
-    COMFYROBE_MOBILE_STILL_HEIGHT
+    'comfyrobe-mobile-navy-front-open',
+    '/images/kunnskap/Jakke Navy.webp',
+    'Marineblå Comfyrobe sett forfra med åpen hals, lyst hettefôr og synlig Comfyrobe-merke på innsiden.',
+    2000,
+    3000
   )
 ]
