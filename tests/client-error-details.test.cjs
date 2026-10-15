@@ -101,3 +101,25 @@ test('browser listeners capture ErrorEvent and rejected promise and detach clean
     assert.doesNotMatch(JSON.stringify(results), /private@example|secret/);
   } finally { await browser.close(); }
 });
+
+
+test('known external scripts and inline documents retain source without account IDs', () => {
+  const sources = [
+    ['https://www.googletagmanager.com/gtm.js?id=GTM-PRIVATE', '/:script/google-tag-manager'],
+    ['https://connect.facebook.net/signals/config/123456?secret=1', '/:script/meta'],
+    ['https://x.klarnacdn.net/apf/beta/library/main.js', '/:script/klarna'],
+    ['chrome-extension://private-extension/content.js', '/:script/browser-extension'],
+    ['https://utekos.no/produkter/private-handle?email=private@example.com', '/produkter/:product'],
+    ['https://utekos.no/analytics/meta-pixel-canonical-v1.js', '/analytics/meta-pixel-canonical-v1.js'],
+  ];
+  for (const [url, expected] of sources) {
+    assert.equal(sanitizer.sanitizeClientErrorFilename(url), expected);
+    assert.equal(sanitizer.sanitizeClientErrorFilename(expected), expected);
+    const payload = { event: 'client_error', level: 'error', data: { source: 'window_error', filename: url }, context: { pathname: '/produkter/test' } };
+    const sent = frontend.clientLogPayloadSchema.parse(payload);
+    assert.equal(backend.clientLogPayloadSchema.parse(sent).data.filename, expected);
+  }
+  const stack = sanitizer.sanitizeClientErrorStack('at https://www.googletagmanager.com/gtm.js?id=GTM-PRIVATE:1:11853');
+  assert.equal(stack, '    at /:script/google-tag-manager:1:11853');
+  assert.equal(sanitizer.sanitizeClientErrorStack(stack), stack);
+});
