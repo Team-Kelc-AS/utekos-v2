@@ -75,9 +75,7 @@ async function ProductContent({ params, searchParams }: Props) {
         </div>
         <Suspense
           fallback={
-            <div className={styles.fallback} role="status">
-              Laster produktvalg …
-            </div>
+            <ProductSkeleton />
           }
         >
           <SelectedProduct product={product} searchParams={searchParams} />
@@ -93,13 +91,29 @@ async function ProductContent({ params, searchParams }: Props) {
 
 function ProductFallback() {
   return (
-    <main aria-busy="true" className="min-h-64">
-      <p role="status">Laster produkt …</p>
-      <div aria-hidden="true" className="space-y-4 py-4">
-        <div className="h-8 w-56 max-w-full rounded bg-[#012622]/15 dark:bg-[#f0eee9]/15" />
-        <div className="h-24 max-w-2xl rounded bg-[#012622]/15 dark:bg-[#f0eee9]/15" />
-        <div className="h-16 max-w-sm rounded bg-[#012622]/15 dark:bg-[#f0eee9]/15" />
+    <main aria-busy="true" className={`${googleSansFlex.variable} ${styles.page}`}>
+      <div className={styles.container}>
+        <div className={styles.breadcrumbs} aria-hidden="true">&nbsp;</div>
+        <ProductSkeleton />
       </div>
     </main>
+  );
+}
+
+function ProductSkeleton() {
+  return (
+    <div className={styles.productSkeleton} aria-busy="true">
+      <p role="status" className="sr-only">Laster produkt …</p>
+      <div className={styles.grid} aria-hidden="true">
+        <div className={styles.skeletonImage} />
+        <div className={styles.skeletonPurchase}>
+          <div className={styles.skeletonTitle} />
+          <div className={styles.skeletonPrice} />
+          <div className={styles.skeletonOptions} />
+          <div className={styles.skeletonAction} />
+          <div className={styles.skeletonAction} />
+        </div>
+      </div>
+    </div>
   );
 }

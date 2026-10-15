@@ -4,6 +4,7 @@ import type { Cart, CartOperation, CartResult } from "./types";
 import { persistCheckoutPreparation, reportCartMutation } from "./tracking";
 
 import { useSyncExternalStore } from "react";
+
 type State = {
   cart: Cart | null;
   open: boolean;
@@ -103,6 +104,22 @@ export async function changeCart(operation: CartOperation): Promise<boolean> {
     publish({ pending: false });
   }
 }
+export async function applyCartDiscount(code: string) {
+  if (state.pending) return;
+  publish({ pending: true, error: null, warnings: [] });
+  try {
+    await loading;
+    const result = await responseData(await fetch('/api/cart/discount', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }),
+    }));
+    publish({ cart: result.cart, warnings: result.warnings });
+  } catch (error) {
+    publish({ error: error instanceof Error ? error.message : 'Rabattkoden kunne ikke legges til.' });
+  } finally {
+    publish({ pending: false });
+  }
+}
+
 // Keep the cart fixed from Express preparation until Klarna returns. The same
 // lock is shared by ordinary cart mutations and the standard checkout button.
 export class ExpressPreparationError extends Error {

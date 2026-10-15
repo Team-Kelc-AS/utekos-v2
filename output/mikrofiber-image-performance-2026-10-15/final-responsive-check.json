@@ -1,0 +1,30 @@
+[
+  {
+    "viewport": 390,
+    "sizes": "(min-width: 1280px) 600px, (min-width: 768px) 50vw, calc(100vw - 48px)",
+    "src": "http://localhost:3001/_next/image?url=%2F_next%2Fstatic%2Fmedia%2F16.3j7eu-kn4s_hk.webp&w=750&q=75",
+    "renderedWidth": 342,
+    "renderedHeight": 513
+  },
+  {
+    "viewport": 820,
+    "sizes": "(min-width: 1280px) 600px, (min-width: 768px) 50vw, calc(100vw - 48px)",
+    "src": "http://localhost:3001/_next/image?url=https%3A%2F%2Fcdn.shopify.com%2Fs%2Ffiles%2F1%2F0634%2F2154%2F6744%2Ffiles%2FMikrofiber_44.webp%3Fv%3D1791293769&w=828&q=75",
+    "renderedWidth": 382.890625,
+    "renderedHeight": 478.609375
+  },
+  {
+    "viewport": 1280,
+    "sizes": "(min-width: 1280px) 600px, (min-width: 768px) 50vw, calc(100vw - 48px)",
+    "src": "http://localhost:3001/_next/image?url=https%3A%2F%2Fcdn.shopify.com%2Fs%2Ffiles%2F1%2F0634%2F2154%2F6744%2Ffiles%2FMikrofiber_44.webp%3Fv%3D1791293769&w=1200&q=75",
+    "renderedWidth": 603.421875,
+    "renderedHeight": 754.265625
+  },
+  {
+    "viewport": 1440,
+    "sizes": "(min-width: 1280px) 600px, (min-width: 768px) 50vw, calc(100vw - 48px)",
+    "src": "http://localhost:3001/_next/image?url=https%3A%2F%2Fcdn.shopify.com%2Fs%2Ffiles%2F1%2F0634%2F2154%2F6744%2Ffiles%2FMikrofiber_44.webp%3Fv%3D1791293769&w=1200&q=75",
+    "renderedWidth": 599.234375,
+    "renderedHeight": 749.03125
+  }
+]

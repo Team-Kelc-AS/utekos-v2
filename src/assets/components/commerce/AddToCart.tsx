@@ -3,7 +3,6 @@
 import { changeCart, useCartState } from "@/lib/cart/client";
 
 import styles from "./commerce.module.css";
-
 export function AddToCart({
   handle,
   variantId,

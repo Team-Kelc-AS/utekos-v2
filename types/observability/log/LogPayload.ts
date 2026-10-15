@@ -15,6 +15,8 @@ export type LogPayload =
       data: {
         source: 'window_error'
         message?: string
+        stack?: string
+        operation?: 'window' | 'promise' | 'caught'
         filename?: string
         line?: number
         column?: number

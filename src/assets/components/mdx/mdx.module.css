@@ -1,5 +1,6 @@
 /* Utekos MDX foundation. Existing page/knowledge tokens take precedence.
    No page background, font download, logo recreation or independent theme. */
+
 .content {
   --mdx-ink: var(--knowledge-ink, var(--foreground, #f0eee9));
   --mdx-muted: var(--knowledge-ink-muted, var(--foreground, #f0eee9));
@@ -63,7 +64,7 @@
   line-height: 1.5;
 }
 /* Existing rehype-autolink-headings emits an aria-hidden decorative anchor. */
-.content .heading > a[aria-hidden='true'] {
+.content .heading > a[aria-hidden="true"] {
   display: none;
 }
 .content .paragraph {
@@ -85,7 +86,7 @@
 .content .link:hover {
   text-decoration-thickness: 0.14em;
 }
-.content :where(a, summary, [tabindex='0']):focus-visible {
+.content :where(a, summary, [tabindex="0"]):focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 4px;
   border-radius: 3px;
@@ -129,7 +130,7 @@
 .content :global(.task-list-item) {
   list-style: none;
 }
-.content :global(.task-list-item) > input[type='checkbox'] {
+.content :global(.task-list-item) > input[type="checkbox"] {
   margin-inline-end: 0.6em;
   accent-color: var(--mdx-accent);
 }
@@ -166,8 +167,8 @@
   margin-block-end: 0;
 }
 /* Status is conveyed by the visible label, never colour alone. */
-.content .callout[data-callout='warning'],
-.content .callout[data-callout='caution'] {
+.content .callout[data-callout="warning"],
+.content .callout[data-callout="caution"] {
   border-inline-start-width: 6px;
 }
 /* Size recommendations keep Markdown headings and their generated anchors. */
@@ -223,10 +224,10 @@
   margin-block: 2rem;
   font-size: inherit;
 }
-.content .card [data-slot='card-title'] > .heading {
+.content .card [data-slot="card-title"] > .heading {
   margin: 0;
 }
-.content .card [data-slot='accordion-body'] > :first-child {
+.content .card [data-slot="accordion-body"] > :first-child {
   margin-block-start: 0;
 }
 .content .pre {
@@ -306,13 +307,13 @@
   vertical-align: top;
 }
 /* Preserve GFM's align attribute; don't override authored inline text-align. */
-.content .table [align='left'] {
+.content .table [align="left"] {
   text-align: left;
 }
-.content .table [align='center'] {
+.content .table [align="center"] {
   text-align: center;
 }
-.content .table [align='right'] {
+.content .table [align="right"] {
   text-align: right;
 }
 .content .table th {
@@ -428,7 +429,7 @@
   border-radius: 12px;
   background: var(--mdx-surface);
 }
-.content .toc[data-bordered='false'] {
+.content .toc[data-bordered="false"] {
   border: 0;
 }
 .content .toc .heading,
@@ -549,18 +550,26 @@
 }
 
 /* Adapters for the existing article APIs registered in mdx-components.tsx. */
-.content .toc small { display: block; font-size: .875em; }
-.content ol.references { padding-inline-start: 1.5em; list-style: decimal; }
-.content .section { margin-block: 2em; }
-.content .section[data-tone='contrast'] {
-  --knowledge-ink: #f0eee9;
-  --knowledge-link: #f0eee9;
-  --mdx-ink: #f0eee9;
-  --mdx-muted: #f0eee9;
-  --mdx-surface: #012622;
-  --mdx-border: #f0eee9;
-  background: #012622;
-  color: #f0eee9;
+.content .toc small {
+  display: block;
+  font-size: 0.875em;
+}
+.content ol.references {
+  padding-inline-start: 1.5em;
+  list-style: decimal;
+}
+.content .section {
+  margin-block: 2em;
+}
+.content .section[data-tone="contrast"] {
+  --knowledge-ink: var(--foreground, #f0eee9);
+  --knowledge-link: var(--link, #f0eee9);
+  --mdx-ink: var(--ink, #f0eee9);
+  --mdx-muted: var(--muted, #f0eee9);
+  --mdx-surface: var(--surface, #012622);
+  --mdx-border: var(--border, #f0eee9);
+  background: var(--mdx-surface);
+  color: var(--knowledge-ink);
   padding: 1.25rem;
   border-radius: 12px;
 }

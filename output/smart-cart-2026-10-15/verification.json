@@ -1,0 +1,42 @@
+[
+  {
+    "profile": "mobile",
+    "scenario": "comfy",
+    "passed": true
+  },
+  {
+    "profile": "mobile",
+    "scenario": "upsell",
+    "passed": true
+  },
+  {
+    "profile": "mobile",
+    "scenario": "variant",
+    "passed": true
+  },
+  {
+    "profile": "mobile",
+    "scenario": "failure",
+    "passed": true
+  },
+  {
+    "profile": "desktop",
+    "scenario": "comfy",
+    "passed": true
+  },
+  {
+    "profile": "desktop",
+    "scenario": "upsell",
+    "passed": true
+  },
+  {
+    "profile": "desktop",
+    "scenario": "variant",
+    "passed": true
+  },
+  {
+    "profile": "desktop",
+    "scenario": "failure",
+    "passed": true
+  }
+]

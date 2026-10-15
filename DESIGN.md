@@ -61,76 +61,76 @@ colors:
   signal-destructive: "#ffb4ab"
 typography:
   display:
-    fontFamily: Outfit
+    fontFamily: Google Sans Flex, "sans-serif"
     fontSize: 56px
     fontWeight: "800"
     lineHeight: 64px
     letterSpacing: -0.03em
   display-mobile:
-    fontFamily: Outfit
+    fontFamily: Google Sans Flex
     fontSize: 38px
     fontWeight: "800"
     lineHeight: 44px
     letterSpacing: -0.025em
   headline-xl:
-    fontFamily: Outfit
+    fontFamily: Google Sans Flex
     fontSize: 40px
     fontWeight: "800"
     lineHeight: 48px
     letterSpacing: -0.025em
   headline-xl-mobile:
-    fontFamily: Outfit
+    fontFamily: Google Sans Flex
     fontSize: 30px
     fontWeight: "800"
     lineHeight: 38px
     letterSpacing: -0.02em
   headline-lg:
-    fontFamily: Outfit
+    fontFamily: Google Sans Flex
     fontSize: 32px
     fontWeight: "700"
     lineHeight: 40px
     letterSpacing: -0.02em
   headline-md:
-    fontFamily: Outfit
+    fontFamily: Google Sans Flex
     fontSize: 24px
     fontWeight: "700"
     lineHeight: 32px
     letterSpacing: -0.015em
   headline-sm:
-    fontFamily: Outfit
+    fontFamily: Google Sans Flex
     fontSize: 20px
     fontWeight: "600"
     lineHeight: 28px
     letterSpacing: -0.01em
   body-lead:
-    fontFamily: Inter
+    fontFamily: Google Sans Flex
     fontSize: 18px
     fontWeight: "400"
     lineHeight: 28px
   body-md:
-    fontFamily: Inter
+    fontFamily: Google Sans Flex
     fontSize: 16px
     fontWeight: "400"
     lineHeight: 26px
   body-sm:
-    fontFamily: Inter
+    fontFamily: Google Sans Flex
     fontSize: 14px
     fontWeight: "400"
     lineHeight: 22px
   label-md:
-    fontFamily: Inter
+    fontFamily: Google Sans Flex
     fontSize: 14px
     fontWeight: "600"
     lineHeight: 20px
     letterSpacing: 0.01em
   label-sm:
-    fontFamily: Inter
+    fontFamily: Google Sans Flex
     fontSize: 12px
     fontWeight: "600"
     lineHeight: 16px
     letterSpacing: 0.02em
   caption:
-    fontFamily: Inter
+    fontFamily: Google Sans Flex
     fontSize: 12px
     fontWeight: "400"
     lineHeight: 16px
@@ -175,7 +175,7 @@ mørkt, sobert og autoritativt univers.
   åpenhet om materialenes reelle ytelse under ekstreme
   temperaturer.
 - **Fysisk substans**: Teksturer og overflater henter inspirasjon
-  fra dype arktiske vinternetter, matt ripstop-nylon, gåsedun og
+  fra dype arktiske vGoogle Sans Flexnetter, matt ripstop-nylon, gåsedun og
   solide gummierte merker.
 
 ### Målgruppe og opplevelse
@@ -252,7 +252,7 @@ luftighet som gir hvert element og bilde lov til å puste.
 
 - Seksjonsoverganger benytter `space-2xl` til `space-3xl` for å
   markere temposkifter uten behov for forstyrrende skillelinjer.
-- Komponentintern lufting holdes tett og modulær (`space-sm` til
+- KomponentGoogle Sans Flexn lufting holdes tett og modulær (`space-sm` til
   `space-lg`), mens makronivået holdes ekspansivt.
 
 ## Elevation & Depth
@@ -269,7 +269,7 @@ gjennom kontrollerte lag av mørke toner og ultrafine kantomriss.
    overflate for innholdskort, moduler og produktpaneler. Skilles
    fra bakgrunnen med en 1px subtil border i `#033b37` (eller
    `rgba(240, 238, 233, 0.08)`).
-3. **Tier 2 – Flytende og interaktive paneler (`#02252a`)**:
+3. **Tier 2 – Flytende og Google Sans Flexaktive paneler (`#02252a`)**:
    Menyer, tooltips, flytende «tilbake-til-toppen»-pille og åpne
    modaler.
 
@@ -357,6 +357,6 @@ inspirert av isolerte ytterklær og merkets sirkulære logomerke.
      utgående lenker (DOI/URL) og kildehenvisninger via
      `<Cite />`.
 - **Bildebruk i artikler**: Kun fotorealistiske, autentiske
-  skandinaviske vinterforhold i dempet palett. Ingen unødvendig
+  skandinaviske vGoogle Sans Flexforhold i dempet palett. Ingen unødvendig
   pynt. Hvert bilde krever redaksjonell prompt-dokumentasjon i
   koden.

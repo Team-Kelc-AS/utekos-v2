@@ -1,0 +1,15 @@
+Mode: built-in image_gen
+Actual output: 1024 x 1536 pixels (exact 2:3)
+Requested filename: C_2_2000x3000.png
+
+Final prompt:
+Use case: identity-preserve.
+Asset type: premium commercial garment photograph.
+Edit target: reference 1, C_2_2000x3000.jpg, the full-length frontal portrait of the silver-haired adult male model. Reference 2, Jakke Navy.png, is the authoritative front product construction and material reference. Reference 3, Jakke Navy (1).png, is the authoritative back and hood construction reference. These depict the same navy long hooded garment; do not substitute another product.
+Primary request: elevate the target into an exceptionally high-end, photorealistic commercial fashion photograph that communicates garment quality and quiet exclusivity. Preserve the same man's recognizable face, age, natural skin, hair, body proportions, frontal stance, hands in pockets, black trousers and shoes. Preserve the entire head-to-toe composition, garment length and generous fit.
+Scene: retain the clean warm gray studio seamless backdrop and floor, with beautifully controlled soft dimensional studio lighting, gentle edge separation, natural grounded shadow and rich but realistic tonal depth. Premium medium-format editorial photograph, precise focus, natural skin pores, visible subtle fine fabric texture, refined tonal transitions. The garment must remain deep navy, not black, with an understated matte woven shell rather than glossy plastic, leather, velvet or wool.
+Product invariants: match original navy color, long unquilted front panels, authentic shoulder seams, long sleeves, adjustable cuff tabs, discreet slanted side pockets, cream textured hood lining, attached hood resting behind the neck, subtle original upper-arm patch and original zipper hardware. Match the actual references; do not redesign or invent extra badges, stitching, zips, toggles, pockets, storm flaps or branding.
+CRITICAL ZIPPER REQUIREMENT: main front zipper is FULLY ZIPPED all the way to the top of the collar just below the chin. Pull the upper slider completely to the highest fastening point, with the two collar edges meeting at the neck, no V-shaped unzipped gap or open chest. Lower slider stays fully lowered in the closed position, preserving the actual hem construction. No open zipper section.
+Composition/output: one single finished vertical image, exact aspect ratio 2:3, ideally 2000 x 3000 pixels at highest available detail. Retain full head and both feet with the same balanced margins as the target. Compose natively at 2:3; no cropping, padding, stretching or zooming to force an aspect ratio. Opaque photographic background.
+No added text, price, advertising graphic, watermark or invented logo. Preserve original product marks without introducing new ones. Avoid CGI appearance, plastic skin, exaggerated HDR, sharpening halos, excessive wrinkles and loss of navy fabric detail. Only refine the photograph and fully close the zipper; keep the model, product identity and pose faithful.
+

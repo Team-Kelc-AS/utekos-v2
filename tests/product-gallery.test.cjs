@@ -5,6 +5,7 @@ const { loadTypeScript } = require('./load-typescript.cjs');
 
 const image = (id, width, height) => ({ id, url: `/${id}.webp`, altText: id, width, height });
 const portrait = image('portrait', 1000, 1500);
+const requestedVargnattImage = '/images/kunnskap/Black_Mikrofiber_Full.webp';
 const otherFormats = [image('square', 1000, 1000), image('tall', 887, 1774), image('desktop', 1440, 1800)];
 const desktop = [otherFormats[2]];
 const warnings = [];
@@ -16,6 +17,7 @@ const { productGallery } = loadTypeScript('lib/products/gallery.ts', {
     './gallery/techdown/productGalleryImages': { TECHDOWN_MOBILE_GALLERY_IMAGES: [] },
     './gallery/mikrofiber/mikrofiberProductGalleryImages': { MICROFIBER_MOBILE_GALLERY_IMAGES: [] },
     './gallery/svale/svaleProductGalleryImages': { SVALE_MOBILE_GALLERY_IMAGES: [] },
+    './gallery/stapper/stapperDesktopImages': { STAPPER_MOBILE_GALLERY_IMAGES: [otherFormats[0]] },
   },
 });
 const product = (handle, images = []) => ({ handle, images: { nodes: images } });
@@ -36,17 +38,20 @@ test('galleries remain empty when no original matches the viewport ratio', () =>
   assert.equal(stapper.desktop.length, 0);
 });
 
-test('Dun variant-specific galleries preserve the exact color only at the required original ratio', () => {
+test('Dun Vargnatt starts with the requested full image and filters remaining originals by viewport', () => {
   for (const handle of ['utekos-dun']) {
     const mobile = productGallery(product(handle), variant('Vargnatt', portrait));
-    assert.deepEqual(Array.from(mobile.mobile), [portrait]);
-    assert.equal(mobile.desktop.length, 0);
+    assert.equal(mobile.mobile[0].url, requestedVargnattImage);
+    assert.equal(mobile.desktop[0].url, requestedVargnattImage);
+    assert.deepEqual([mobile.desktop[0].width, mobile.desktop[0].height], [2000, 3000]);
+    assert.deepEqual(Array.from(mobile.mobile.slice(1)), [portrait]);
+    assert.equal(mobile.desktop.length, 1);
     const large = productGallery(product(handle), variant('Vargnatt', desktop[0]));
-    assert.deepEqual(Array.from(large.desktop), desktop);
-    assert.equal(large.mobile.length, 0);
+    assert.deepEqual(Array.from(large.desktop.slice(1)), desktop);
+    assert.equal(large.mobile.length, 1);
     const gallery = productGallery(product(handle), variant('Vargnatt', otherFormats[0]));
-    assert.equal(gallery.mobile.length, 0);
-    assert.equal(gallery.desktop.length, 0);
+    assert.equal(gallery.mobile.length, 1);
+    assert.equal(gallery.desktop.length, 1);
   }
 });
 
@@ -105,9 +110,12 @@ const mikrofiberGallery = loadTypeScript('lib/products/gallery.ts', {
 const requestedMobileImage = '/images/kunnskap/mikrofiber_fjellbla_1000x1500_3.webp';
 const requestedSecondImage = '/images/kunnskap/morgenro_340x513.jpg';
 const rejectedImage = '/images/kunnskap/morgenro_ved_fjorden.webp';
-const vargnattImages = ['mikrofiber_vargnatt_45_jarle_2.webp', 'mikrofiber_vargnatt_45_2.webp', 'mikrofiber_vargnatt_45_3.webp', 'mikrofiber_vargnatt_45_4.webp'].map(file => `/images/kunnskap/${file}`);
+const vargnattImages = ['mikrofiber_vargnatt_45_jarle_2.webp', 'mikrofiber_vargnatt_45_2.webp', 'mikrofiber_vargnatt_45_3.webp', 'Mikrofiber_Vargnatt_1440x1800_Full2.webp'].map(file => `/images/kunnskap/${file}`);
 
-test('Fjellblå M and L use exact native ratios and keep the valid new mobile image third', () => {
+const blueStudio = [1, 2, 3, 4].map(n => `/images/kunnskap/Soveposejakke_Blue${n}.webp`);
+const blackStudio = [1, 2, 3, 4].map(n => `/images/kunnskap/Soveposejakke_Black${n}.webp`);
+
+test('Mikrofiber M and L preserve the requested image order for both colors and viewports', () => {
   for (const size of ['Medium', 'Large']) {
     const selected = variant('Fjellblå');
     selected.selectedOptions.push({ name: 'Størrelse', value: size });
@@ -116,17 +124,19 @@ test('Fjellblå M and L use exact native ratios and keep the valid new mobile im
     assert.equal(gallery.mobile[1].width, 340);
     assert.equal(gallery.mobile[1].height, 510);
     assert.equal(gallery.mobile[2].url, requestedMobileImage);
-    assert.equal(gallery.desktop.length, 1);
+    assert.equal(gallery.desktop.length, 5);
     assert.equal(gallery.mobile.length, 8);
-    assert.ok(gallery.desktop.every(image => image.width * 5 === image.height * 4));
+    assert.deepEqual(Array.from(gallery.desktop.slice(0, 4), image => image.url), blueStudio);
+    assert.deepEqual(Array.from(gallery.mobile.slice(4), image => image.url), blueStudio);
+    assert.ok(gallery.desktop[4].url.includes("Mikrofiber_44.webp"));
     assert.ok(gallery.mobile.every(image => image.width * 3 === image.height * 2));
     assert.ok([...gallery.desktop, ...gallery.mobile].every(image => image.url !== rejectedImage));
     const darkVariant = variant('Vargnatt', portrait);
     darkVariant.selectedOptions.push({ name: 'Størrelse', value: size });
     const dark = mikrofiberGallery.productGallery(product('utekos-mikrofiber'), darkVariant);
-    assert.deepEqual(Array.from(dark.desktop, image => image.url), vargnattImages);
-    assert.ok(dark.desktop.every(image => image.width === 603 && image.height === 754));
-    assert.deepEqual(Array.from(dark.mobile), [portrait]);
+    assert.deepEqual(Array.from(dark.desktop, image => image.url), [...vargnattImages, ...blackStudio]);
+    assert.deepEqual(Array.from(dark.mobile, image => image.url), blackStudio);
+    assert.deepEqual(Array.from(dark.mobile, image => [image.width, image.height]), [[2000, 3000], [2000, 3001], [2000, 3000], [2000, 3001]]);
   }
 });
 
@@ -161,10 +171,10 @@ test('Mikrofiber JSON-LD uses the same Fjellblå gallery and one shared review a
       assert.ok(item.image.includes(`https://utekos.no${requestedMobileImage}`));
       assert.ok(!item.image.includes(`https://utekos.no${rejectedImage}`));
       const gallery = mikrofiberGallery.productGallery(product('utekos-mikrofiber'), variant());
-      assert.deepEqual(Array.from(item.image), [...gallery.desktop, ...gallery.mobile].map(image => new URL(image.url, 'https://utekos.no').href));
+      assert.deepEqual(Array.from(item.image), [...new Set([...gallery.desktop, ...gallery.mobile].map(image => new URL(image.url, 'https://utekos.no').href))]);
       assert.equal(new Set(item.image).size, item.image.length);
     } else {
-      assert.deepEqual(Array.from(item.image), [...vargnattImages, '/portrait.webp'].map(url => `https://utekos.no${url}`));
+      assert.deepEqual(Array.from(item.image), [...vargnattImages, ...blackStudio].map(url => `https://utekos.no${url}`));
     }
   }
 });
@@ -186,8 +196,10 @@ test('requested Dun Fjellblå desktop originals retain dimensions and stay out o
   assert.equal(gallery.mobile.length, 0);
   assert.deepEqual(Array.from(gallery.desktop.slice(-3), image => [image.width, image.height]), [[1440, 1800], [1440, 1800], [1237, 1718]]);
   const dark = getGallery(product('utekos-dun'), variant('Vargnatt', desktop[0]));
-  assert.deepEqual(Array.from(dark.desktop), desktop);
-  assert.equal(dark.mobile.length, 0);
+  assert.equal(dark.desktop[0].url, requestedVargnattImage);
+  assert.deepEqual(Array.from(dark.desktop.slice(1)), desktop);
+  assert.equal(dark.mobile.length, 1);
+  assert.equal(dark.mobile[0].url, requestedVargnattImage);
 });
 
 test('Comfyrobe hood portrait appears on desktop at its native ratio while mobile keeps six images', () => {

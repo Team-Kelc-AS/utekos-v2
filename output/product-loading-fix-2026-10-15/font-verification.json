@@ -1,0 +1,16 @@
+{
+  "500": {
+    "matchingGlyphOutlinesAndAdvanceWidths": 245
+  },
+  "800": {
+    "matchingGlyphOutlinesAndAdvanceWidths": 245
+  },
+  "axes": [
+    [
+      "wght",
+      1.0,
+      400.0,
+      1000.0
+    ]
+  ]
+}

@@ -7,11 +7,12 @@ import { cn } from "cn"
 function Tabs({
   className,
   orientation = "horizontal",
+  typography = "default",
   ...props
-}: TabsPrimitive.Root.Props) {
+}: TabsPrimitive.Root.Props & { typography?: "default" | "inherit" }) {
   return (
     <TabsPrimitive.Root
-      data-slot="tabs"
+      data-slot={typography === "default" ? "tabs" : undefined}
       data-orientation={orientation}
       className={cn(
         "group/tabs flex gap-2 data-horizontal:flex-col",
@@ -68,11 +69,15 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
   )
 }
 
-function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
+function TabsContent({
+  className,
+  typography = "default",
+  ...props
+}: TabsPrimitive.Panel.Props & { typography?: "default" | "inherit" }) {
   return (
     <TabsPrimitive.Panel
-      data-slot="tabs-content"
-      className={cn("flex-1 text-sm outline-none", className)}
+      data-slot={typography === "default" ? "tabs-content" : undefined}
+      className={cn("flex-1 outline-none", typography === "default" && "text-sm", className)}
       {...props}
     />
   )

@@ -40,10 +40,10 @@ type PaymentLine = {
   cost: { amountPerQuantity: Money; totalAmount: Money };
   merchandise: { __typename: string; id: string; title: string; price: Money; availableForSale: boolean; currentlyNotInStock: boolean; product: { title: string; handle: string } };
 };
-type PaymentCart = { id: string; cost: { totalAmount: Money }; lines: CursorConnection<PaymentLine> };
+type PaymentCart = { discountCodes?: { code: string; applicable: boolean }[]; id: string; cost: { totalAmount: Money }; lines: CursorConnection<PaymentLine> };
 const CART_QUERY = `query KlarnaCart($id: ID!, $after: String) {
   cart(id: $id) {
-    id cost { totalAmount { amount currencyCode } }
+    id discountCodes { code applicable } cost { totalAmount { amount currencyCode } }
     lines(first: 100, after: $after) {
       nodes { id quantity cost { amountPerQuantity { amount currencyCode } totalAmount { amount currencyCode } }
         merchandise { __typename ... on ProductVariant { id title price { amount currencyCode } availableForSale currentlyNotInStock product { title handle } } }
@@ -67,6 +67,7 @@ export async function cartOrderPayload(fullId: string, backendOrigin: string, bu
     });
     const cart = result.cart;
     if (!cart || cart.id !== fullId) throw new KlarnaBridgeError('Handlekurven er utløpt. Åpne den på nytt.', 409);
+    if (cart.discountCodes?.some(code => code.applicable)) throw new KlarnaBridgeError('Bruk Til kassen for å beholde rabatten og fraktfordelene dine.', 409);
     const pageAmount = minorUnits(cart.cost.totalAmount);
     if (orderAmount !== undefined && pageAmount !== orderAmount) throw new KlarnaBridgeError('Handlekurven ble endret. Start betalingen på nytt.', 409);
     orderAmount = pageAmount;

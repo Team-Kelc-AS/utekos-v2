@@ -11,10 +11,12 @@ import { useEffect, useRef } from "react";
 
 import { DeleteIcon } from "@/components/utekos-icons/DeleteIcon";
 import Dialog from "./Dialog";
+import SmartCartSuggestions from "./SmartCartSuggestions";
 import Image from "next/image";
 import Link from "next/link";
 import { MinusIcon } from "@/components/utekos-icons/MinusIcon";
 import { PlusIcon } from "@/components/utekos-icons/PlusIcon";
+import { KlarnaCartExpressCheckout } from "@/assets/components/klarna/KlarnaProductExpressCheckout";
 import { formatMoney } from "@/lib/products/money";
 import { reportCartView } from "@/lib/cart/tracking";
 import styles from "./commerce.module.css";
@@ -166,9 +168,14 @@ export default function CartDrawer() {
           >
             {pending ? "Oppdaterer …" : "Til kassen"}
           </button>
+          <div className="mt-3">
+            {cart.requiresStandardCheckout ? <p className={styles.muted}>Bruk «Til kassen» for å beholde rabatten og fraktfordelene dine.</p> :
+              <KlarnaCartExpressCheckout disabled={cart.lines.some((line) => !line.available)} />}
+          </div>
           <button className={styles.secondary} onClick={closeCart}>
             Fortsett å handle
           </button>
+          <SmartCartSuggestions cart={cart} pending={pending} />
         </>
       )}
     </Dialog>

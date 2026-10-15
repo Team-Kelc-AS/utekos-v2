@@ -35,10 +35,13 @@ export const collectedShippingAddressSchema = z.object({
   country: z.string().length(2).optional(),
 });
 
-export const prepareSchema = z.strictObject({
-  handle: z.string().regex(/^[a-z0-9-]{1,100}$/),
-  variantId: z.string().regex(/^gid:\/\/shopify\/ProductVariant\/\d+$/),
-});
+export const prepareSchema = z.union([
+  z.strictObject({
+    handle: z.string().regex(/^[a-z0-9-]{1,100}$/),
+    variantId: z.string().regex(/^gid:\/\/shopify\/ProductVariant\/\d+$/),
+  }),
+  z.strictObject({ scope: z.literal('cart') }),
+]);
 export const createOrderSchema = z.strictObject({
   authorizationToken: z.string().min(1).max(4096),
   orderPayload: orderPayloadSchema,

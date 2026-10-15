@@ -13,9 +13,9 @@ Hinting is retained. Norwegian letters, extended Latin, combining marks,
 absent from the original font and still use the existing system fallback,
 without downloading large font subsets that do not contain those characters.
 
-The web file is 88,832 bytes. `src/lib/fonts.ts` loads it through
-`next/font/local`, retaining the CSS variable, preload, swap and fallback
-configuration. The separate Medium TTF used by PDF generation is unchanged.
+The complete web file is 88,832 bytes. `src/lib/fonts.ts` loads it through
+`next/font/local` as an on-demand fallback behind the smaller subset below,
+retaining the public CSS variable and swap behavior. The separate Medium TTF used by PDF generation is unchanged.
 
 ## Source and reproduction
 
@@ -40,3 +40,30 @@ Generated WOFF2 SHA-256:
 
 Next.js serves a hashed copy. Font generation is an explicit maintenance step,
 not a build-time download or a new application dependency.
+
+## Initial-page subset (2026-10-15)
+
+The storefront now preloads `GoogleSansFlex120pt-Latin.woff2` (61,684 bytes,
+245 Unicode mappings), generated from the existing full WOFF2 above. It keeps
+Norwegian letters, common Latin, combining marks, punctuation and ™, all layout
+features, hinting and the full variable weight range. Glyph outlines and advance
+widths were compared against the original at Medium 500 and ExtraBold 800.
+
+`src/lib/fonts.ts` retains the original complete face as a non-preloaded fallback.
+Its `unicode-range` is the original cmap minus the subset cmap, so unsupported
+characters such as arrows do not trigger a pointless download of the complete
+font. An actual extended character such as Ł still loads the original face.
+Pages using extended characters may therefore download both files.
+
+Reproduce with the same fontTools/Brotli environment described above:
+
+```sh
+font-env/bin/fonttools subset src/assets/fonts/GoogleSansFlex120pt-Variable.woff2 \
+  --unicodes='U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0300-036F,U+2000-206F,U+20AC,U+2122,U+2212,U+2215,U+FEFF,U+FFFD' \
+  --layout-features='*' --name-IDs='*' --name-languages='*' --flavor=woff2 \
+  --output-file=src/assets/fonts/GoogleSansFlex120pt-Latin.woff2
+```
+
+If changing the subset, regenerate the complete face's `unicode-range` from
+`TTFont(full).getBestCmap().keys() - TTFont(subset).getBestCmap().keys()`.
+The original complete font and PDF font remain unchanged.

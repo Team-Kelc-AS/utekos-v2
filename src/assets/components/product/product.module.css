@@ -522,13 +522,40 @@
   border-radius: 9999px;
   font-weight: 500;
 }
-.fallback {
-  min-height: 38rem;
+.productSkeleton {
+  /* Keep downstream content outside the initial viewport while streaming. */
+  min-height: 100svh;
+}
+.skeletonImage,
+.skeletonPurchase > div {
   background: #012622;
-  border-radius: 0.5rem;
-  padding: 2rem;
+  border-radius: 0.65rem;
+}
+.skeletonImage {
+  aspect-ratio: 2 / 3;
+}
+.skeletonPurchase {
+  display: grid;
+  align-content: start;
+  gap: 1.5rem;
+  padding-top: 1rem;
+}
+.skeletonTitle { height: 4.2rem; width: 85%; }
+.skeletonPrice { height: 3.3rem; width: 45%; }
+.skeletonOptions { height: 10rem; }
+.skeletonAction { height: 3.5rem; }
+@media (min-width: 768px) {
+  .skeletonImage { aspect-ratio: 4 / 5; }
 }
 @media (min-width: 768px) {
+  .slide picture.desktopPortraitFrame {
+    aspect-ratio: 4 / 5;
+  }
+  .desktopPortraitFrame .productImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
   .grid {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     gap: clamp(2rem, 5vw, 4.5rem);

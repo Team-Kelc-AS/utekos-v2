@@ -635,3 +635,27 @@ test("a product disappearing or a transport error during pagination fails instea
     assert.deepEqual(h.lifetimes, []);
   }
 });
+
+
+test("color availability spans sizes and links to a purchasable combination", () => {
+  const darkMedium = variant(101, "Medium", "Vargnatt", false);
+  const blueMedium = variant(102, "Medium", "Fjellblå", false);
+  const blueLarge = variant(103, "Large", "Fjellblå", true);
+  const fixture = product([darkMedium, blueMedium, blueLarge], "utekos-mikrofiber");
+  const colors = selected => variants.variantOptions(fixture, selected).find(o => o.name === "Farge").values;
+  const blue = colors(darkMedium).find(o => o.value === "Fjellblå");
+  assert.equal(blue.available, true);
+  assert.equal(blue.href, "/produkter/utekos-mikrofiber?farge=fjellbla&storrelse=large");
+  assert.equal(variants.resolveVariant(fixture, Object.fromEntries(new URL(blue.href, "https://utekos.no").searchParams)).id, blueLarge.id);
+  assert.equal(colors(blueLarge).find(o => o.value === "Vargnatt").available, false);
+  const sizes = variants.variantOptions(fixture, blueLarge).find(o => o.name === "Størrelse").values;
+  assert.equal(sizes.find(o => o.value === "Medium").available, false);
+  assert.equal(sizes.find(o => o.value === "Large").available, true);
+
+  blueMedium.availableForSale = true;
+  assert.equal(colors(darkMedium).find(o => o.value === "Fjellblå").href,
+    "/produkter/utekos-mikrofiber?farge=fjellbla&storrelse=medium");
+  blueMedium.availableForSale = false;
+  blueLarge.availableForSale = false;
+  assert.equal(colors(darkMedium).find(o => o.value === "Fjellblå").available, false);
+});

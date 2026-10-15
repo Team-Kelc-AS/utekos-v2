@@ -1,0 +1,38 @@
+{
+  "lightSecondary": {
+    "src": "/images/kunnskap/UtekosMikrofiber_Fjellbla_1440x1800_Camping_TEST_2.webp",
+    "deferSecondary": true
+  },
+  "lightFont": {
+    "src": "/images/kunnskap/UtekosMikrofiber_Fjellbla_1440x1800_Camping_TEST_2.webp",
+    "deferFonts": true
+  },
+  "lightBoth": {
+    "src": "/images/kunnskap/UtekosMikrofiber_Fjellbla_1440x1800_Camping_TEST_2.webp",
+    "deferFonts": true,
+    "deferSecondary": true
+  },
+  "lightFast": {
+    "src": "/images/kunnskap/UtekosMikrofiber_Fjellbla_1440x1800_Camping_TEST_2.webp",
+    "noNetworkThrottle": true,
+    "cpuRate": 1
+  },
+  "lightCPU1": {
+    "src": "/images/kunnskap/UtekosMikrofiber_Fjellbla_1440x1800_Camping_TEST_2.webp",
+    "cpuRate": 1
+  },
+  "lightJS": {
+    "src": "/images/kunnskap/UtekosMikrofiber_Fjellbla_1440x1800_Camping_TEST_2.webp",
+    "deferScripts": true
+  },
+  "lightAll": {
+    "src": "/images/kunnskap/UtekosMikrofiber_Fjellbla_1440x1800_Camping_TEST_2.webp",
+    "deferScripts": true,
+    "deferFonts": true,
+    "deferSecondary": true
+  },
+  "originalFast": {
+    "noNetworkThrottle": true,
+    "cpuRate": 1
+  }
+}

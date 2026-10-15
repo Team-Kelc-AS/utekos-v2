@@ -224,3 +224,43 @@ test('order routes distinguish rejected preflight from unknown payment status', 
   assert.equal(complete.cookieWrites[0][0], 'delete');
   assert.equal(complete.cookieWrites[0][1], 'utekos_cart');
 });
+
+
+test('cart Express reads the cookie cart with multiple quantities and never mutates it', async () => {
+  const lines = [line('1', 2, '123.45', '246.90'), line('2', 3, '123.45', '370.35')];
+  const raw = cart(lines, '617.25');
+  const view = { totalQuantity: 5, lines: lines.map(l => ({ id: l.id, quantity: l.quantity })) };
+  const reads = [];
+  const api = routes({
+    '@/lib/cart/server': { CART_COOKIE: 'utekos_cart', CartError: class extends Error {}, readCart: async id => { reads.push(id); return raw; }, cartView: async () => view },
+    '@/lib/klarna/server': server({ pages: [raw] }),
+  });
+  const response = await api.prepare(request({ scope: 'cart' }));
+  assert.equal(response.status, 200);
+  assert.deepEqual(reads, [fullId]);
+  assert.equal(api.mutations.length, 0);
+  assert.equal(response.data.cart.totalQuantity, 5);
+  assert.equal(response.data.orderPayload.order_amount, 61725);
+  assert.deepEqual(Array.from(response.data.orderPayload.order_lines, l => l.quantity), [2, 3]);
+  assert.equal(response.cookieWrites.length, 0);
+  assert.equal(JSON.stringify(response.data).includes('fixture-secret'), false);
+  assert.equal((await api.prepare(request({ scope: 'cart', variantId: 'gid://shopify/ProductVariant/1' }))).status, 400);
+  assert.equal((await api.prepare(request({ scope: 'cart' }, { origin: 'https://evil.example' }))).status, 403);
+});
+
+test('cart Express rejects missing, expired and empty carts without creating a new cart', async () => {
+  for (const cookie of ['', fullId]) {
+    const api = routes({ '@/lib/cart/server': { CART_COOKIE: 'utekos_cart', CartError: class extends Error {}, readCart: async () => null, cartView: async () => ({ lines: [], totalQuantity: 0 }) } });
+    const response = await api.prepare(request({ scope: 'cart' }, { cookie }));
+    assert.equal(response.status, 409);
+    assert.equal(api.mutations.length, 0);
+    assert.equal(response.data.cart.totalQuantity, 0);
+  }
+});
+
+test('shipping and accessory codes cannot be lost through Express even when merchandise totals are unchanged', async () => {
+  for (const code of ['COMFYFRI', 'TILBEHØR10']) {
+    await assert.rejects(server({ pages: [{ ...cart(), discountCodes: [{ code, applicable: true }] }] }).cartOrderPayload(fullId, backend), /beholde rabatten/);
+  }
+  assert.equal((await server({ pages: [{ ...cart(), discountCodes: [{ code: 'COMFYFRI', applicable: false }] }] }).cartOrderPayload(fullId, backend)).order_amount, 12345);
+});

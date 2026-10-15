@@ -8,7 +8,7 @@ import { canonicalWebVitalSchema, buildWebVitalCustomData, buildWebVitalDataLaye
 import { webVitalMetricNameSchema } from '@/lib/analytics/webVitalMetricName';
 import { sendCanonicalGTMEvent } from '@/lib/analytics/sendCanonicalGTMEvent';
 import { enrichCanonicalBrowserJourneyContext } from '@/lib/analytics/internalJourneyContext';
-import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError';
+import { registerClientErrorListeners } from '@/lib/observability/client/registerClientErrorListeners';
 import { deliverCanonicalEvent } from './delivery';
 
 const metricVersions = new Set<string>();
@@ -38,12 +38,8 @@ export default function TrackingRuntime() {
     if (!browserTrackingEnabled()) return;
     reportNavigation();
     const stopCommerce = attachCommerceTracking();
-    const onError = (event: ErrorEvent) => reportClientCaughtError(event.error ?? new Error('window_error'), 'window');
-    const onRejection = () => reportClientCaughtError(new Error('unhandled_rejection'), 'promise');
-    window.addEventListener('error', onError);
-    window.addEventListener('unhandledrejection', onRejection);
-    return () => { stopCommerce();
-      window.removeEventListener('error', onError); window.removeEventListener('unhandledrejection', onRejection); };
+    const stopErrorListeners = registerClientErrorListeners();
+    return () => { stopCommerce(); stopErrorListeners(); };
   }, []);
   useEffect(() => {
     if (!browserTrackingEnabled()) return;

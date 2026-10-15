@@ -3,8 +3,11 @@ import type { ShopifyProduct, ProductVariant, ProductImage } from '@/lib/shopify
 import { PRODUCT_GALLERY_IMAGE_OVERRIDES } from './gallery/productGalleryImageOverrides';
 import { COMFYROBE_MOBILE_GALLERY_IMAGES } from './gallery/comfyrobeProductGalleryImages';
 import { TECHDOWN_MOBILE_GALLERY_IMAGES } from './gallery/techdown/productGalleryImages';
-import { MICROFIBER_MOBILE_GALLERY_IMAGES, MICROFIBER_VARGNATT_DESKTOP_GALLERY_IMAGES } from './gallery/mikrofiber/mikrofiberProductGalleryImages';
+import { MICROFIBER_MOBILE_GALLERY_IMAGES, MICROFIBER_VARGNATT_DESKTOP_GALLERY_IMAGES, MICROFIBER_BLACK_STUDIO_IMAGES } from './gallery/mikrofiber/mikrofiberProductGalleryImages';
 import { SVALE_MOBILE_GALLERY_IMAGES } from './gallery/svale/svaleProductGalleryImages';
+import { STAPPER_MOBILE_GALLERY_IMAGES } from './gallery/stapper/stapperDesktopImages';
+import { VARGNATT_FULL_IMAGE } from './gallery/vargnattFullImage';
+import { usesDesktopPortraitFrame } from './gallery/desktopPortraitFrame';
 const ASPECT_RATIO_TOLERANCE = 0.015;
 const reportedImages = new Set<string>();
 function originalImages(images: ProductImage[], viewport: 'desktop' | 'mobile', handle: string) {
@@ -13,6 +16,7 @@ function originalImages(images: ProductImage[], viewport: 'desktop' | 'mobile', 
   return images.filter(image => {
     // These explicitly selected desktop originals retain their native proportions.
     const selectedOriginal = viewport === 'desktop' && (
+      usesDesktopPortraitFrame(image.url) ||
       (handle === 'utekos-dun' && image.url === '/images/kunnskap/Fjell-Blue-3000x2000.png') ||
       (handle === 'comfyrobe' && image.url === '/images/kunnskap/Comfy_Woman_2_2x3.webp')
     );
@@ -29,12 +33,26 @@ function originalImages(images: ProductImage[], viewport: 'desktop' | 'mobile', 
 }
 export function productGallery(product: ShopifyProduct, variant: ProductVariant) {
   const color = variant.selectedOptions.find(o => ['Farge', 'Color'].includes(o.name))?.value;
+  if (product.handle === 'utekos-mikrofiber' && color === 'Vargnatt') {
+    return {
+      desktop: originalImages(MICROFIBER_VARGNATT_DESKTOP_GALLERY_IMAGES, 'desktop', product.handle),
+      mobile: originalImages(MICROFIBER_BLACK_STUDIO_IMAGES, 'mobile', product.handle),
+    };
+  }
   if (['utekos-dun', 'utekos-mikrofiber'].includes(product.handle) && color !== 'Fjellblå') {
     const images = variant.image ? [variant.image] : [];
-    const desktop = product.handle === 'utekos-mikrofiber' && color === 'Vargnatt' ? MICROFIBER_VARGNATT_DESKTOP_GALLERY_IMAGES : images;
+    const desktop = images;
+    if (color === 'Vargnatt') {
+      const remaining = (items: ProductImage[]) => items.filter(image => image.url !== VARGNATT_FULL_IMAGE.url);
+      // The requested desktop frame is the sole exception here to native 4:5 imagery.
+      return {
+        desktop: [VARGNATT_FULL_IMAGE, ...originalImages(remaining(desktop), 'desktop', product.handle)],
+        mobile: [VARGNATT_FULL_IMAGE, ...originalImages(remaining(images), 'mobile', product.handle)],
+      };
+    }
     return { desktop: originalImages(desktop, 'desktop', product.handle), mobile: originalImages(images, 'mobile', product.handle) };
   }
   const desktop = PRODUCT_GALLERY_IMAGE_OVERRIDES[product.handle] ?? product.images.nodes;
-  const mobile = ({ comfyrobe: COMFYROBE_MOBILE_GALLERY_IMAGES, 'utekos-techdown': TECHDOWN_MOBILE_GALLERY_IMAGES, 'utekos-mikrofiber': MICROFIBER_MOBILE_GALLERY_IMAGES, 'utekos-svale': SVALE_MOBILE_GALLERY_IMAGES })[product.handle] ?? desktop;
+  const mobile = ({ 'utekos-stapper': STAPPER_MOBILE_GALLERY_IMAGES, comfyrobe: COMFYROBE_MOBILE_GALLERY_IMAGES, 'utekos-techdown': TECHDOWN_MOBILE_GALLERY_IMAGES, 'utekos-mikrofiber': MICROFIBER_MOBILE_GALLERY_IMAGES, 'utekos-svale': SVALE_MOBILE_GALLERY_IMAGES })[product.handle] ?? desktop;
   return { desktop: originalImages(desktop, 'desktop', product.handle), mobile: originalImages(mobile, 'mobile', product.handle) };
 }

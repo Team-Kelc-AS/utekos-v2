@@ -8,7 +8,7 @@ const { loadTypeScript } = require('./load-typescript.cjs');
 
 // Execute the actual Express component callbacks with a fake SDK, HTTP and hooks.
 // This never loads a browser SDK, submits an order or contacts Shopify/Klarna.
-async function harness({ disabled = false, prepareError = false } = {}) {
+async function harness({ disabled = false, prepareError = false, scope } = {}) {
   const calls = [], effects = [], refs = [];
   let click, ready, completed = 0;
   const react = {
@@ -43,7 +43,7 @@ async function harness({ disabled = false, prepareError = false } = {}) {
     constructor(callback) { this.callback = callback; } disconnect() {} observe() { this.callback([{ isIntersecting: true }]); }
   }, require: name => { if (!(name in mocks)) throw new Error(`Unmocked: ${name}`); return mocks[name]; } });
   new vm.Script(code).runInContext(context);
-  exports.KlarnaProductExpressCheckout({ handle: 'utekos-mikrofiber', variantId: 'gid://shopify/ProductVariant/42903231037688', disabled });
+  exports.KlarnaProductExpressCheckout(scope === 'cart' ? { scope, disabled } : { handle: 'utekos-mikrofiber', variantId: 'gid://shopify/ProductVariant/42903231037688', disabled });
   refs[0].current = {};
   effects.forEach(callback => callback());
   await new Promise(resolve => setImmediate(resolve));
@@ -94,4 +94,18 @@ test('ordinary cart double click submits the exact selection once and releases a
   assert.equal(await first, false);
   assert.equal(api.useCartState().pending, false);
   assert.equal(api.useCartState().error, 'Test: utsolgt');
+});
+
+test('cart Express prepares the current cart once without a product add and releases on dismissal', async () => {
+  const h = await harness({ scope: 'cart' });
+  let cancel;
+  const authorize = (_options, _payload, callback) => { cancel = callback; };
+  h.click()(authorize); h.click()(authorize);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(h.calls.length, 1);
+  assert.deepEqual(h.calls[0].body, { scope: 'cart' });
+  assert.equal(h.cartApi.useCartState().pending, true);
+  cancel({ approved: false });
+  assert.equal(h.cartApi.useCartState().pending, false);
+  assert.equal(h.completed(), 0);
 });

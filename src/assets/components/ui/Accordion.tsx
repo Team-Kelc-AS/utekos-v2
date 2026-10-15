@@ -66,6 +66,7 @@ interface AccordionTriggerProps extends React.ComponentPropsWithoutRef<
   iconStyle?: "chevron" | "plus-minus";
   badge?: string | React.ReactNode;
   headingLevel?: 2 | 3 | 4 | 5 | 6;
+  typography?: "default" | "inherit";
 }
 
 const AccordionTrigger = React.forwardRef<
@@ -79,6 +80,7 @@ const AccordionTrigger = React.forwardRef<
       iconStyle = "chevron",
       badge,
       headingLevel = 3,
+      typography = "default",
       ...props
     },
     ref,
@@ -91,13 +93,17 @@ const AccordionTrigger = React.forwardRef<
         ref={ref}
         data-tracking-accordion-trigger=""
         className={cn(
-          "group flex flex-1 items-center justify-between py-5 font-semibold text-[#f0eee9] text-left transition-all hover:text-[#f0eee9]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001715] disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+          "group flex flex-1 items-center justify-between py-5 text-[#f0eee9] text-left transition-all hover:text-[#f0eee9]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001715] disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+          typography === "default" && "font-semibold",
           className,
         )}
         {...props}
       >
         <div className="flex items-center gap-3 pr-4">
-          <span className="text-lg md:text-xl font-bold tracking-tight text-[#f0eee9] group-hover:text-white transition-colors duration-200">
+          <span className={cn(
+            "text-[#f0eee9] group-hover:text-white transition-colors duration-200",
+            typography === "default" && "text-lg md:text-xl font-bold tracking-tight",
+          )}>
             {children}
           </span>
           {badge && (
@@ -127,21 +133,23 @@ interface AccordionContentProps extends React.ComponentPropsWithoutRef<
   typeof BaseAccordion.Panel
 > {
   className?: string;
+  typography?: "default" | "inherit";
 }
 
 const AccordionContent = React.forwardRef<
   React.ComponentRef<typeof BaseAccordion.Panel>,
   AccordionContentProps
->(({ className, children, ...props }, ref) => (
+>(({ className, children, typography = "default", ...props }, ref) => (
   <BaseAccordion.Panel
     ref={ref}
     className={cn(
-      "overflow-hidden text-[#f0eee9]/85 text-base leading-relaxed transition-all data-ending-style:h-0 data-starting-style:h-0",
+      "overflow-hidden transition-all data-ending-style:h-0 data-starting-style:h-0",
+      typography === "default" && "text-[#f0eee9]/85 text-base leading-relaxed",
       className,
     )}
     {...props}
   >
-    <div className="pb-6 pt-1 font-normal">{children}</div>
+    <div className={cn("pb-6 pt-1", typography === "default" && "font-normal")}>{children}</div>
   </BaseAccordion.Panel>
 ));
 AccordionContent.displayName = "AccordionContent";

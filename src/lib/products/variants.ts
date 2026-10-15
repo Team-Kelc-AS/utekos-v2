@@ -57,7 +57,13 @@ export function variantOptions(product: ShopifyProduct, selected: ProductVariant
     values: [...new Set(variants.flatMap(v => v.selectedOptions.filter(o => o.name === option.name).map(o => o.value)))].map(value => {
       const exact = variants.filter(v => v.selectedOptions.some(o => o.name === option.name && o.value === value));
       const compatible = exact.filter(v => v.selectedOptions.every(o => o.name === option.name || selected.selectedOptions.some(s => s.name === o.name && s.value === o.value)));
-      const match = preferred(compatible) ?? preferred(exact);
+      // A color is available if any of its sizes can be purchased. Preserve the
+      // current size when possible; otherwise link to an available size in that color.
+      // Size choices still describe availability within the selected color.
+      const availableColorMatch = optionParam(option.name) === 'farge'
+        ? preferred(compatible.filter(v => v.availableForSale)) ?? preferred(exact.filter(v => v.availableForSale))
+        : undefined;
+      const match = availableColorMatch ?? preferred(compatible) ?? preferred(exact);
       return { value, selected: selected.selectedOptions.some(o => o.name === option.name && o.value === value), available: !!match?.availableForSale, href: match ? variantHref(product.handle, match, variants) : null };
     }),
   }));

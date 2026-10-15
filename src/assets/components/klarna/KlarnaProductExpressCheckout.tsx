@@ -10,12 +10,13 @@ import type { KlarnaAuthorize } from './types';
 import styles from './KlarnaExpressCheckoutButton.module.css';
 
 type Prepared = CartResult & { orderPayload: KlarnaExpressOrderPayload; shopifyCartId: string };
-type Props = { handle: string; variantId: string; disabled?: boolean };
+type Selection = { handle: string; variantId: string; scope?: never } | { scope: 'cart'; handle?: never; variantId?: never };
+type Props = Selection & { disabled?: boolean };
 
-async function prepare(handle: string, variantId: string): Promise<Prepared> {
+async function prepare(selection: Selection): Promise<Prepared> {
   const response = await fetch('/api/klarna/prepare', {
     method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ handle, variantId }),
+    body: JSON.stringify(selection),
   });
   const result = await response.json();
   if (!response.ok) throw new ExpressPreparationError(
@@ -26,19 +27,19 @@ async function prepare(handle: string, variantId: string): Promise<Prepared> {
 }
 
 // Migrated from headless's KlarnaProductExpressCheckout and
-// KlarnaExpressCheckoutButton. Variant selection is fixed by the product card;
-// preparation and order creation use v2's bridge to the existing backend.
-export function KlarnaProductExpressCheckout({ handle, variantId, disabled = false }: Props) {
+// KlarnaExpressCheckoutButton. Product mode adds the selected variant; cart mode
+// uses the existing lines. Both use the same payment lock and backend bridge.
+export function KlarnaProductExpressCheckout({ handle, variantId, scope, disabled = false }: Props) {
   const suffix = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const containerId = `klarna-express-checkout-${suffix}`;
   const hostRef = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
   const { pending } = useCartState();
-  const current = useRef({ handle, variantId, disabled, pending });
+  const current = useRef({ handle, variantId, scope, disabled, pending });
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
-  useEffect(() => { current.current = { handle, variantId, disabled, pending }; }, [handle, variantId, disabled, pending]);
+  useEffect(() => { current.current = { handle, variantId, scope, disabled, pending }; }, [handle, variantId, scope, disabled, pending]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -52,7 +53,12 @@ export function KlarnaProductExpressCheckout({ handle, variantId, disabled = fal
       let ownsCartLock = false;
       setError(null);
       try {
-        const prepared = await prepareExpressCheckout(() => prepare(current.current.handle, current.current.variantId));
+        const prepared = await prepareExpressCheckout(() => {
+          const selection = current.current;
+          return prepare(selection.scope === 'cart'
+            ? { scope: 'cart' }
+            : { handle: selection.handle!, variantId: selection.variantId! });
+        });
         ownsCartLock = true;
         let handled = false;
         authorize({ auto_finalize: true, collect_shipping_address: true }, prepared.orderPayload, result => {
@@ -120,4 +126,8 @@ export function KlarnaProductExpressCheckout({ handle, variantId, disabled = fal
       {error && <p role="alert" className="mt-2 text-sm leading-snug">{error}</p>}
     </div>
   );
+}
+
+export function KlarnaCartExpressCheckout({ disabled = false }: { disabled?: boolean }) {
+  return <KlarnaProductExpressCheckout scope="cart" disabled={disabled} />;
 }

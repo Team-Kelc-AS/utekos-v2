@@ -8,7 +8,7 @@ const authorizePath = '/customer/account/authorize' satisfies Route;
 export default function WishlistDialog({ returnTo, onClose }: { returnTo: string; onClose: () => void }) {
   const [mode, setMode] = useState<'login' | 'create'>('login');
   const [pending, setPending] = useState(false);
-  return <Dialog title="Utekos ønskeliste" onClose={onClose}>
+  return <Dialog title="Utekos ønskeliste" onClose={onClose} className="bg-jungle! text-primary-foreground!">
     <p>Favoritten er lagret på denne enheten.</p>
     <WishlistFacebookLogin returnTo={returnTo} />
     <form className={styles.form} action={authorizePath} method="get" onSubmit={() => setPending(true)}>

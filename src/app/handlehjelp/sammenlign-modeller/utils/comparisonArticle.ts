@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import type {
-  TocEntry as ArticleTocEntry,
-  ArticleReference,
-} from "@mdx-components";
+import type { TocEntry as ArticleTocEntry } from "@/components/mdx/table-of-contents";
+import type { ArticleReference } from "@/components/mdx/references";
 import { SITE_ORIGIN as SITE_URL } from "@/lib/seo/site";
 import { technicalReferences } from "./technicalReferences";
 

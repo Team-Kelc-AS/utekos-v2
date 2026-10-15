@@ -1,5 +1,5 @@
 import * as z from '@/lib/validation/zodMini'
-import { sanitizeOperationalPathname } from './sanitizeOperationalPathname'
+import { sanitizeClientErrorFilename, sanitizeClientErrorStack } from './sanitizeClientErrorDetails'
 
 export const clientErrorDataSchema = z.strictObject({
   source: z.literal('window_error'),
@@ -16,9 +16,14 @@ export const clientErrorDataSchema = z.strictObject({
   filename: z.optional(
     z.pipe(
       z.string().check(z.minLength(1), z.maxLength(512)),
-      z.transform(sanitizeOperationalPathname)
+      z.transform(sanitizeClientErrorFilename)
     )
   ),
+  stack: z.optional(z.pipe(
+    z.string().check(z.maxLength(6_000)),
+    z.transform(sanitizeClientErrorStack)
+  )),
+  operation: z.optional(z.enum(['window', 'promise', 'caught'])),
   line: z.optional(z.int().check(z.gte(0), z.lte(10_000_000))),
   column: z.optional(z.int().check(z.gte(0), z.lte(10_000_000)))
 })

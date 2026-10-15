@@ -1,4 +1,4 @@
-import { ArticleTableOfContents } from "../../../../../mdx-components";
+import { ArticleTableOfContents } from "@/components/mdx/table-of-contents";
 import Image from "next/image";
 import { comparisonArticle as article } from "../utils/comparisonArticle";
 import styles from "../comparisonGuide.module.css";

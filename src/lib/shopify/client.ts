@@ -1,6 +1,6 @@
-import 'server-only';
+import "server-only";
 
-const STOREFRONT_API_VERSION = '2026-10';
+const STOREFRONT_API_VERSION = "2026-10";
 const STOREFRONT_TIMEOUT_MS = 10_000;
 
 function requiredEnv(name: string, fallbackName?: string): string {
@@ -15,9 +15,9 @@ function requiredEnv(name: string, fallbackName?: string): string {
 }
 
 function getEndpoint(): string {
-  const domain = requiredEnv('SHOPIFY_STORE_DOMAIN')
-    .replace(/^https?:\/\//, '')
-    .replace(/\/$/, '');
+  const domain = requiredEnv("SHOPIFY_STORE_DOMAIN")
+    .replace(/^https?:\/\//, "")
+    .replace(/\/$/, "");
 
   return `https://${domain}/api/${STOREFRONT_API_VERSION}/graphql.json`;
 }
@@ -52,19 +52,19 @@ export async function shopifyFetch<
   cache,
 }: ShopifyFetchOptions<TVariables>): Promise<TData> {
   const headers = new Headers({
-    'Content-Type': 'application/json',
-    'Shopify-Storefront-Private-Token': requiredEnv(
-      'SHOPIFY_STOREFRONT_PRIVATE_TOKEN',
-      'STOREFRONT_PRIVATE_ACCESS_TOKEN',
+    "Content-Type": "application/json",
+    "Shopify-Storefront-Private-Token": requiredEnv(
+      "SHOPIFY_STOREFRONT_PRIVATE_TOKEN",
+      "STOREFRONT_PRIVATE_ACCESS_TOKEN",
     ),
   });
 
   if (buyerIp) {
-    headers.set('Shopify-Storefront-Buyer-IP', buyerIp);
+    headers.set("Shopify-Storefront-Buyer-IP", buyerIp);
   }
 
   const response = await fetch(getEndpoint(), {
-    method: 'POST',
+    method: "POST",
     headers,
     body: JSON.stringify({
       query,
@@ -88,12 +88,12 @@ export async function shopifyFetch<
     throw new Error(
       `Shopify GraphQL: ${result.errors
         .map(({ message }) => message)
-        .join('; ')}`,
+        .join("; ")}`,
     );
   }
 
   if (result.data === undefined) {
-    throw new Error('Shopify Storefront API returned no data');
+    throw new Error("Shopify Storefront API returned no data");
   }
 
   return result.data;

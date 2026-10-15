@@ -1,0 +1,26 @@
+[
+  {
+    "profile": "mobile",
+    "width": 302,
+    "cartOnly": true,
+    "quantity": 2,
+    "cancellationUnlocks": true,
+    "reopens": true
+  },
+  {
+    "profile": "ipad",
+    "width": 398,
+    "cartOnly": true,
+    "quantity": 2,
+    "cancellationUnlocks": true,
+    "reopens": true
+  },
+  {
+    "profile": "desktop",
+    "width": 398,
+    "cartOnly": true,
+    "quantity": 2,
+    "cancellationUnlocks": true,
+    "reopens": true
+  }
+]

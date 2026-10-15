@@ -1,0 +1,26 @@
+[
+  {
+    "profile": "mobile",
+    "before": {
+      "available": "true",
+      "href": "/produkter/utekos-mikrofiber?farge=fjellbla&storrelse=large",
+      "strike": "none",
+      "text": "Fjellblå"
+    },
+    "after": "http://localhost:3000/produkter/utekos-mikrofiber?farge=fjellbla&storrelse=large",
+    "mediumUnavailable": true,
+    "largeAvailable": true
+  },
+  {
+    "profile": "desktop",
+    "before": {
+      "available": "true",
+      "href": "/produkter/utekos-mikrofiber?farge=fjellbla&storrelse=large",
+      "strike": "none",
+      "text": "Fjellblå"
+    },
+    "after": "http://localhost:3000/produkter/utekos-mikrofiber?farge=fjellbla&storrelse=large",
+    "mediumUnavailable": true,
+    "largeAvailable": true
+  }
+]

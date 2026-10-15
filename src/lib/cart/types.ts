@@ -1,6 +1,7 @@
 import type { Money, ProductImage } from "@/lib/shopify/product-types";
 
 import type { CanonicalCommerceValue } from "@/lib/analytics/canonicalCommerceItem";
+
 export type CartLine = {
   id: string;
   variantId: string;
@@ -14,6 +15,8 @@ export type CartLine = {
   commerce: CanonicalCommerceValue;
 };
 export type Cart = {
+  discountCodes?: { code: string; applicable: boolean }[];
+  requiresStandardCheckout?: boolean;
   id: string | null;
   checkout: { checkout_id: string; creation_revision: string } | null;
   totalQuantity: number;

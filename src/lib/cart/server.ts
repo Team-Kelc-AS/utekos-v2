@@ -10,7 +10,13 @@ import { productTitle } from "@/lib/catalog/productTitle";
 import { cartCheckoutIdentity } from "./checkout-identity";
 import { cartIdentity } from "./identity";
 import { CartError } from "./error";
-import { CART_FIELDS, LINE_FIELDS, cartRequest, type RawCart, type RawLine } from "./graphql";
+import {
+  CART_FIELDS,
+  LINE_FIELDS,
+  cartRequest,
+  type RawCart,
+  type RawLine,
+} from "./graphql";
 import { emptyCart } from "./types";
 
 export { CART_COOKIE } from "./identity";
@@ -100,6 +106,10 @@ export async function cartView(
   );
   return {
     id: identity.publicId,
+    discountCodes: raw.discountCodes ?? [],
+    requiresStandardCheckout: (raw.discountCodes?.some(code => code.applicable) ?? false) ||
+      Number(raw.cost.totalAmount.amount) < Number(raw.cost.subtotalAmount.amount) ||
+      lines.some(line => Math.round(Number(line.cost.totalAmount.amount) * 100) !== line.quantity * Math.round(Number(line.merchandise.price.amount) * 100)),
     checkout: cartCheckoutIdentity(identity.fullId, raw.checkoutUrl),
     totalQuantity: raw.totalQuantity,
     subtotal: raw.cost.subtotalAmount,

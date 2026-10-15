@@ -1,4 +1,4 @@
-import { CART_COOKIE, CartError } from "@/lib/cart/server";
+import { CART_COOKIE, CartError, readCart, cartView } from "@/lib/cart/server";
 import {
   KlarnaBridgeError,
   cartOrderPayload,
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
   );
   if (!parsed.success)
     return NextResponse.json(
-      { error: "Kontroller produktvarianten." },
+      { error: "Kontroller handlekurven eller produktvarianten." },
       { status: 400, headers: privateHeaders },
     );
   let cartId: string | undefined;
@@ -31,24 +31,32 @@ export async function POST(request: NextRequest) {
   let response: NextResponse;
   try {
     const origin = headlessOrigin(request.nextUrl.origin);
-    const result = await mutateCart(
-      { action: "add", ...parsed.data, quantity: 1 },
-      request.cookies.get(CART_COOKIE)?.value,
-      buyerIp(request),
-    );
-    cartId = result.id;
-    preparedCart = {
-      cart: result.cart,
-      warnings: result.warnings,
-      mutation: result.mutation,
-    };
-    if (result.warnings.length)
+    const existingId = request.cookies.get(CART_COOKIE)?.value;
+    let paymentCartId: string;
+    if ('scope' in parsed.data) {
+      const raw = existingId ? await readCart(existingId, buyerIp(request)) : null;
+      preparedCart = { cart: await cartView(raw, buyerIp(request)), warnings: [] };
+      if (!existingId || !raw || !preparedCart.cart.lines.length)
+        throw new KlarnaBridgeError("Handlekurven er tom. Legg til en vare først.", 409);
+      // Cart Express checks out the existing cart without adding another item.
+      paymentCartId = existingId;
+    } else {
+      const result = await mutateCart(
+        { action: "add", ...parsed.data, quantity: 1 }, existingId, buyerIp(request),
+      );
+      cartId = result.id;
+      paymentCartId = result.id;
+      preparedCart = { cart: result.cart, warnings: result.warnings, mutation: result.mutation };
+    }
+    if (preparedCart.cart.requiresStandardCheckout)
+      throw new KlarnaBridgeError("Bruk Til kassen for å beholde rabatten og fraktfordelene dine.", 409);
+    if (preparedCart.warnings.length)
       throw new KlarnaBridgeError(
         "Handlekurven ble justert. Kontroller den før du betaler.",
         409,
       );
     const orderPayload = await cartOrderPayload(
-      result.id,
+      paymentCartId,
       origin,
       buyerIp(request),
     );

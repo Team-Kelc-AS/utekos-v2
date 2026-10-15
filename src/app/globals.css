@@ -1,9 +1,36 @@
 @import "tailwindcss";
+@import "./typeset.css";
 @import "shadcn/tailwind.css";
 @import "tw-animate-css";
 
-/* Keep vendor dark variants opt-in; OS dark mode must not activate them.
-   The storefront uses scoped surfaces, not a global .dark theme. */
+.typeset-docs {
+  /* Resolve Typeset's theme aliases at the document's own surface. */
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-ring: var(--ring);
+  --typeset-font-body: var(--font-google-sans-flex);
+  --typeset-font-heading: var(--font-google-sans-flex);
+  --typeset-font-mono: var(--font-mono, monospace);
+  --typeset-size: 16px;
+  --typeset-leading: 1.6;
+  --typeset-flow: 1em;
+  font-weight: 500;
+}
+
+/* Utekos typography, shared by documents that opt in to this preset. */
+@layer components {
+  .typeset-docs :where(h1, h2, h3, h4, h5, h6):not(:where(
+    .not-typeset, .not-typeset *, [data-not-typeset], [data-not-typeset] *,
+    [data-slot], [data-slot] *
+  )) {
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+}
 @custom-variant dark (&:is(.dark *));
 
 /* Tailwind utilities: fixed palette values and scoped semantic aliases. */

@@ -2,7 +2,7 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { CloseIcon } from '@/components/utekos-icons/CloseIcon';
 import styles from './commerce.module.css';
-export default function Dialog({ title, children, onClose, drawer = false }: { title: string; children: ReactNode; onClose: () => void; drawer?: boolean }) {
+export default function Dialog({ title, children, onClose, drawer = false, className = '' }: { title: string; children: ReactNode; onClose: () => void; drawer?: boolean; className?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   useEffect(() => {
@@ -13,7 +13,7 @@ export default function Dialog({ title, children, onClose, drawer = false }: { t
     document.body.style.overflow = 'hidden';
     return () => { dialog.close(); document.body.style.overflow = overflow; if (trigger?.isConnected) trigger.focus(); };
   }, []);
-  return <dialog ref={ref} aria-labelledby={titleId} className={`${styles.dialog} ${drawer ? styles.drawer : ''}`}
+  return <dialog ref={ref} aria-labelledby={titleId} className={`${styles.dialog} ${drawer ? styles.drawer : ''} ${className}`}
     onKeyDown={event => {
       if (event.key !== 'Tab') return;
       const controls = [...event.currentTarget.querySelectorAll<HTMLElement>('button, a[href], input, select, textarea, [tabindex]')]
