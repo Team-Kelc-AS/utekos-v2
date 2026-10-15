@@ -1,5 +1,7 @@
 /** HTTP acceptance is deliberately distinct from provider receipt. */
-export type CollectorOutcome = { status: 'accepted_unverified'; httpStatus: number };
+export type CollectorOutcome =
+  | { status: 'accepted_unverified'; httpStatus: number }
+  | { status: 'suppressed'; httpStatus: 204 };
 export async function deliverCanonicalEvent(
   endpoint: string,
   event: unknown,
@@ -14,6 +16,9 @@ export async function deliverCanonicalEvent(
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         signal: AbortSignal.timeout(10_000),
       });
+      // Consent/bot filtering intentionally returns no content. Do not report
+      // this as a transport failure or claim the event was accepted.
+      if (response.status === 204) return { status: 'suppressed', httpStatus: 204 };
       if (response.status === 200 || response.status === 202) {
         return { status: 'accepted_unverified', httpStatus: response.status };
       }

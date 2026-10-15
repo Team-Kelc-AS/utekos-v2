@@ -41,3 +41,16 @@ test('HTTP acceptance never claims provider receipt', async () => {
   assert.equal(result.status, 'accepted_unverified');
   assert.equal(result.httpStatus, 200);
 });
+
+for (const reason of ['consent_required', 'meta_externalads', null]) {
+  test(`204 suppression (${reason}) neither throws nor retries nor claims acceptance`, async () => {
+    let calls = 0;
+    const result = await deliverCanonicalEvent('/api/events/page-view', event, async () => {
+      calls++;
+      return new Response(null, { status: 204, headers: reason ? { 'X-Utekos-Rejection': reason } : {} });
+    });
+    assert.equal(calls, 1);
+    assert.equal(result.status, 'suppressed');
+    assert.equal(result.httpStatus, 204);
+  });
+}
