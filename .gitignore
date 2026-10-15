@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Local MCP configuration can contain private authentication headers
 /.vscode/mcp.json
+
+# Local reports, screenshots and generated test artifacts
+/output/
