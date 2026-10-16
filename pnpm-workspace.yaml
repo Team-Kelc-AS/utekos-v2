@@ -4,3 +4,5 @@ allowBuilds:
   protobufjs: false
   sharp: false
   unrs-resolver: false
+patchedDependencies:
+  meta-capi-param-builder-clientjs@1.3.2: patches/meta-capi-param-builder-clientjs@1.3.2.patch

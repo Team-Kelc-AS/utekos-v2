@@ -111,7 +111,7 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaIpDelay = 0, storedClicks, metaCookie, metaCookiesBlocked = false, metaContextFbc } = {}) {
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaIpDelay = 0, storedClicks, metaCookie, metaCookiesBlocked = false, metaContextFbc } = {}) {
   const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block', userAgent });
   t.after(() => context.close());
   if (storedClicks) await context.addInitScript(identifiers => {
@@ -127,8 +127,9 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
     if (url.origin === 'https://utekos.no' && request.isNavigationRequest()) return route.fulfill({ contentType: 'text/html; charset=utf-8', body: `<!doctype html><html><head><meta charset="utf-8"><title>Tracking fixture</title><script>
       window.__pixelCalls=[];window.__canonicalBrowser=[];window.dataLayer=[];
       window.__metaBackupCalls=0;window.__pixelIdentity=[];
-      if (${metaBackupDelay}>0 || ${metaBackupBlocked}) window.webkit={messageHandlers:{browserProperties:{postMessage(name){
+      if (${metaBackupDelay}>0 || ${metaBackupBlocked} || ${metaBackupRejected}) window.webkit={messageHandlers:{browserProperties:{postMessage(name){
         window.__metaBackupCalls++;
+        if (${metaBackupRejected}) return Promise.reject(new Error('synthetic_native_rejection'));
         return new Promise(resolve=>{if(!${metaBackupBlocked})setTimeout(()=>resolve(name==='clickID'?'OfflineBackupClick':''),${metaBackupDelay})});
       }}}};
       window.__gaReadyAt=performance.now()+${gaDelay};window.__gaGetCount=0;
@@ -921,5 +922,16 @@ for (const pathname of ['/bli-forhandler', '/bli-forhandler/pdf']) {
     assert.equal(result.pixel[0][3].currency, undefined);
     assert.equal(api.events('generate_lead').length, 0, 'server-accepted lead projection is not collected a second time');
     assert.equal(api.events('form_submit').length, 0, 'accepted form submission remains server-owned');
+  });
+}
+
+for (const safariMode of [false, true]) {
+  test(`Meta rejected native bridge does not leak an unhandled rejection (webkit=${safariMode})`, async t => {
+    const api = await fixture(t, 'https://utekos.no/produkter/test-product', { metaBackupRejected: true, safariMode });
+    await api.waitFor('page_view');
+    assert.equal(await api.page.evaluate(() => __metaBackupCalls), 1);
+    assert.equal(api.events('page_view').length, 1);
+    assert.ok(api.events('page_view')[0].browser_id.fbp);
+    assert.equal(api.events('page_view')[0].browser_id.fbc, undefined);
   });
 }
