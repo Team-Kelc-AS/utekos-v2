@@ -22,12 +22,12 @@ const asset = '/_next/static/chunks/abc-123.js';
 test('Chrome, Firefox and Safari locations survive repeated sanitization without secrets', () => {
   const stack = `Error: customer@example.com token=secret\n    at privateCustomer (https://utekos.no${asset}?token=secret:12:34)\nfn@https://utekos.no${asset}:56:78\nhttps://utekos.no${asset}:9:10\n    at https://external.example/customer@example.com.js:3:4`;
   const result = sanitizer.sanitizeClientErrorStack(stack);
-  assert.equal(result, `    at ${asset}:12:34\n    at ${asset}:56:78\n    at ${asset}:9:10\n    at /:other:3:4`);
+  assert.equal(result, `    at ${asset}:12:34\n    at ${asset}:56:78\n    at ${asset}:9:10\n    at ${sanitizer.sanitizeClientErrorFilename('https://external.example')}:3:4`);
   assert.equal(sanitizer.sanitizeClientErrorStack(result), result);
-  assert.doesNotMatch(result, /secret|customer|privateCustomer|external/);
+  assert.doesNotMatch(result, /secret|customer|privateCustomer|external\.example/);
   assert.equal(sanitizer.sanitizeClientErrorStack('arbitrary private text'), '');
   assert.equal(sanitizer.sanitizeClientErrorFilename(`https://utekos.no${asset}?email=private#secret`), asset);
-  assert.equal(sanitizer.sanitizeClientErrorFilename('https://host/customer@example.com'), '/:other');
+  assert.match(sanitizer.sanitizeClientErrorFilename('https://host/customer@example.com'), /^\/:script\/external-origin-[a-f0-9]{16}$/);
   assert.equal(sanitizer.sanitizeClientErrorStack(Array(50).fill(`at https://utekos.no${asset}:1:2`).join('\n')).split('\n').length, 10);
 });
 
@@ -182,4 +182,34 @@ test('instrumentation catches real initial React hydration failure before tracki
       } else assert.equal(payloads.length, 0);
     }
   } finally { await browser.close(); }
+});
+
+test('unknown script origins retain a stable private-data-free label through backend ingestion', () => {
+  const first = 'https://user:secret@vendor.example/customer@example.com.js?token=private#fragment';
+  const label = sanitizer.sanitizeClientErrorFilename(first);
+  assert.match(label, /^\/:script\/external-origin-[a-f0-9]{16}$/);
+  assert.equal(label, sanitizer.sanitizeClientErrorFilename('http://vendor.example:8080/another-script.js'));
+  assert.notEqual(label, sanitizer.sanitizeClientErrorFilename('https://different.example/script.js'));
+  assert.equal(label, sanitizer.sanitizeClientErrorFilename(label));
+  const sent = frontend.clientLogPayloadSchema.parse({
+    event: 'client_error', level: 'error',
+    data: { source: 'window_error', filename: first, line: 1, column: 11853,
+      stack: `at ${first}:1:11853` },
+    context: { pathname: '/produkter/comfyrobe' },
+  });
+  const logged = backend.toAppLogInput(backend.clientLogPayloadSchema.parse(sent));
+  assert.equal(logged.data.filename, label);
+  assert.equal(logged.data.stack, `    at ${label}:1:11853`);
+  assert.equal(logged.data.column, 11853);
+  assert.doesNotMatch(JSON.stringify(logged), /vendor|customer|private|secret|fragment/);
+  assert.equal(appContract.appLogInputSchema.safeParse(logged).success, true);
+  for (const [url, expected] of [
+    ['blob:https://private.example/secret', '/:script/blob'],
+    ['data:text/javascript,private', '/:script/data'],
+    ['webkit-masked-url://hidden/private', '/:script/browser-masked'],
+    ['custom-scheme://private/secret', '/:script/unknown-protocol'],
+  ]) {
+    assert.equal(sanitizer.sanitizeClientErrorFilename(url), expected);
+    assert.equal(sanitizer.sanitizeClientErrorFilename(expected), expected);
+  }
 });

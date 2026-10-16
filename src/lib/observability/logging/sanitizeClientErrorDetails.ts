@@ -13,22 +13,37 @@ const SCRIPT_SOURCES: Record<string, string> = {
 }
 const SOURCE_LABELS = new Set([
   ...Object.values(SCRIPT_SOURCES), 'browser-extension', 'site-proxy',
-  'server-tag-manager'
+  'server-tag-manager', 'blob', 'data', 'browser-masked', 'unknown-protocol'
 ].map(source => `/:script/${source}`))
+
+// Diagnostic grouping only, not an authentication or cryptographic identifier.
+// Hash only the hostname: paths, userinfo, query strings, fragments and ports
+// can contain private values and must never contribute to the label.
+function externalOriginLabel(hostname: string): string {
+  let hash = BigInt('14695981039346656037')
+  for (const character of hostname) {
+    hash ^= BigInt(character.charCodeAt(0))
+    hash = BigInt.asUintN(64, hash * BigInt('1099511628211'))
+  }
+  return `/:script/external-origin-${hash.toString(16).padStart(16, '0')}`
+}
 
 // Preserve build asset locations, never arbitrary URLs, query strings or error text.
 export function sanitizeClientErrorFilename(value: string): string {
   try {
     const url = new URL(value, 'https://utekos.no')
     const path = url.pathname
-    if (SOURCE_LABELS.has(value)) return value
+    if (SOURCE_LABELS.has(value) || /^\/:script\/external-origin-[a-f0-9]{16}$/.test(value)) return value
     if (['chrome-extension:', 'moz-extension:', 'safari-web-extension:'].includes(url.protocol)) {
       return '/:script/browser-extension'
     }
-    if (!['https:', 'http:'].includes(url.protocol)) return '/:other'
+    if (url.protocol === 'blob:') return '/:script/blob'
+    if (url.protocol === 'data:') return '/:script/data'
+    if (url.protocol === 'webkit-masked-url:') return '/:script/browser-masked'
+    if (!['https:', 'http:'].includes(url.protocol)) return '/:script/unknown-protocol'
     const source = SCRIPT_SOURCES[url.hostname]
     if (source) return `/:script/${source}`
-    if (!['utekos.no', 'www.utekos.no'].includes(url.hostname)) return '/:other'
+    if (!['utekos.no', 'www.utekos.no'].includes(url.hostname)) return externalOriginLabel(url.hostname)
     if (path.startsWith('/__sgtm/')) return '/:script/server-tag-manager'
     if (/^\/[a-f0-9]{16}\/script\.js$/.test(path)) return '/:script/site-proxy'
     if (path === '/analytics/meta-pixel-canonical-v1.js') return path
