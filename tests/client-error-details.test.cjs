@@ -123,3 +123,63 @@ test('known external scripts and inline documents retain source without account 
   assert.equal(stack, '    at /:script/google-tag-manager:1:11853');
   assert.equal(sanitizer.sanitizeClientErrorStack(stack), stack);
 });
+
+test('React codes and known public pages survive the entire browser/backend log pipeline', () => {
+  const messages = bundled('..', 'src/lib/observability/client/sanitizeClientErrorBeacon.ts');
+  for (const raw of [
+    'Minified React error #418; visit https://react.dev/errors/418?args[]=customer@example.com',
+    'window: Error: ReactError #418',
+  ]) {
+    const message = messages.sanitizeClientErrorMessage(raw);
+    assert.equal(message, 'ReactError #418');
+    const sent = frontend.clientLogPayloadSchema.parse({
+      event: 'client_error', level: 'error', data: { source: 'window_error', message },
+      context: { pathname: '/uteguiden/hva-er-glamping?email=customer@example.com' },
+    });
+    const logged = backend.toAppLogInput(backend.clientLogPayloadSchema.parse(sent));
+    assert.equal(logged.data.message, 'ReactError #418');
+    assert.equal(logged.context.route, '/uteguiden/hva-er-glamping');
+    assert.doesNotMatch(JSON.stringify(logged), /customer|args|email/);
+    assert.equal(appContract.appLogInputSchema.safeParse(logged).success, true);
+  }
+  assert.equal(messages.sanitizeClientErrorMessage('Minified React error #41812345'), 'ClientError');
+  assert.equal(messages.sanitizeClientErrorMessage('TypeError: private@example.com'), 'TypeError');
+  for (const value of ['/uteguiden/private-person', '/handlehjelp/private-person']) {
+    assert.equal(frontend.sanitizeOperationalPathname(value), '/:other');
+    assert.equal(backend.sanitizeOperationalPathname(value), '/:other');
+  }
+});
+
+test('instrumentation catches real initial React hydration failure before tracking mounts', async () => {
+  const { chromium } = require('playwright');
+  const define = {
+    'process.env.NODE_ENV': '"production"',
+    'process.env.NEXT_PUBLIC_TRACKING_ENABLED': '"true"',
+    'process.env.NEXT_PUBLIC_VERCEL_ENV': '"production"',
+    'process.env.VERCEL_ENV': 'undefined',
+  };
+  const instrumentation = buildSync({ entryPoints: [path.resolve(__dirname, '../src/instrumentation-client.ts')], bundle: true, platform: 'browser', format: 'iife', define, write: false }).outputFiles[0].text;
+  const hydration = buildSync({ stdin: { contents: "import {createElement} from 'react'; import {hydrateRoot} from 'react-dom/client'; hydrateRoot(document.getElementById('root'), createElement('p', null, 'client'), {onRecoverableError: error => window.reportError(error)});", resolveDir: path.resolve(__dirname, '..') }, bundle: true, platform: 'browser', format: 'iife', define, write: false }).outputFiles[0].text;
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    await page.route('**/*', route => route.fulfill({ contentType: 'text/html', body: '<div id="root"><p>server</p></div>' }));
+    for (const origin of ['https://utekos.no', 'https://preview.example']) {
+      await page.goto(origin + '/uteguiden/hva-er-glamping');
+      await page.evaluate(() => {
+        window.testPayloads = [];
+        window.fetch = async (_url, options) => { window.testPayloads.push(JSON.parse(options.body)); return new Response(null); };
+      });
+      await page.addScriptTag({ content: instrumentation });
+      await page.addScriptTag({ content: hydration });
+      await page.waitForFunction(() => document.querySelector('#root p').textContent === 'client');
+      if (origin === 'https://utekos.no') await page.waitForFunction(() => window.testPayloads.length > 0, undefined, { timeout: 3000 });
+      const payloads = await page.evaluate(() => window.testPayloads);
+      if (origin === 'https://utekos.no') {
+        assert.equal(payloads.length, 1);
+        assert.equal(payloads[0].data.message, 'ReactError #418');
+        assert.equal(payloads[0].context.pathname, '/uteguiden/hva-er-glamping');
+      } else assert.equal(payloads.length, 0);
+    }
+  } finally { await browser.close(); }
+});

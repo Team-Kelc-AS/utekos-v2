@@ -11,7 +11,7 @@ export function reportClientCaughtError(
 
   const errorName = error instanceof Error ? error.name : 'OtherError'
   const errorMessage =
-    error instanceof Error ? error.message : 'Caught client exception'
+    error instanceof Error ? error.message : typeof error === 'string' ? error : 'Caught client exception'
   const message = sanitizeClientErrorMessage(
     `${operation}: ${errorName}: ${errorMessage}`
   )
