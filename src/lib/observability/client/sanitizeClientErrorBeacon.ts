@@ -10,6 +10,9 @@ export function sanitizeClientErrorMessage(
   // Accept our own output too: this runs in the browser and again on the server.
   const reactCode = message.match(/\b(?:Minified React error|ReactError) #([1-9]\d{0,3})(?!\d)/)?.[1]
   if (reactCode) return `ReactError #${reactCode}`
+  // Preserve only the bounded HTTP status, never response bodies or URLs.
+  const collectorStatus = message.match(/\b(?:collector_http_|CollectorHTTPError #)([1-5]\d{2})(?!\d)/)?.[1]
+  if (collectorStatus) return `CollectorHTTPError #${collectorStatus}`
   return message.match(KNOWN_ERROR)?.[0] ?? 'ClientError'
 }
 

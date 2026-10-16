@@ -164,9 +164,9 @@ export async function dispatchEvent(event: StorefrontEvent, prepared = false) {
       void deliverCanonicalEvent("/api/events/page-view/capture", {
         capture_state: "granted",
         event: enriched,
-      }).catch(() =>
+      }).catch((error: unknown) =>
         reportClientCaughtError(
-          new Error("capture_failed"),
+          error,
           "page_view.capture",
         ),
       );
@@ -174,9 +174,9 @@ export async function dispatchEvent(event: StorefrontEvent, prepared = false) {
     const delivery = deliverCanonicalEvent(
       `/api/events/${enriched.event_name.replaceAll("_", "-")}`,
       enriched,
-    ).catch(() =>
+    ).catch((error: unknown) =>
       reportClientCaughtError(
-        new Error("collector_delivery_unverified"),
+        error,
         `${enriched.event_name}.collector`,
       ),
     );

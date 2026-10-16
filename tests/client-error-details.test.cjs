@@ -124,6 +124,24 @@ test('known external scripts and inline documents retain source without account 
   assert.equal(sanitizer.sanitizeClientErrorStack(stack), stack);
 });
 
+test('collector HTTP status survives browser/backend logging without response details', () => {
+  const messages = bundled('..', 'src/lib/observability/client/sanitizeClientErrorBeacon.ts');
+  for (const status of [400, 401, 408, 413, 429, 500, 503]) {
+    const message = messages.sanitizeClientErrorMessage(`page_view.collector: Error: collector_http_${status} private@example.com`);
+    assert.equal(message, `CollectorHTTPError #${status}`);
+    const sent = frontend.clientLogPayloadSchema.parse({
+      event: 'client_error', level: 'error', data: { source: 'window_error', message },
+      context: { pathname: '/produkter/comfyrobe' },
+    });
+    const logged = backend.toAppLogInput(backend.clientLogPayloadSchema.parse(sent));
+    assert.equal(logged.data.message, message);
+    assert.doesNotMatch(JSON.stringify(logged), /private|example/);
+    assert.equal(appContract.appLogInputSchema.safeParse(logged).success, true);
+  }
+  assert.equal(messages.sanitizeClientErrorMessage('collector_http_500123'), 'ClientError');
+  assert.equal(messages.sanitizeClientErrorMessage('collector_http_999'), 'ClientError');
+});
+
 test('React codes and known public pages survive the entire browser/backend log pipeline', () => {
   const messages = bundled('..', 'src/lib/observability/client/sanitizeClientErrorBeacon.ts');
   for (const raw of [
