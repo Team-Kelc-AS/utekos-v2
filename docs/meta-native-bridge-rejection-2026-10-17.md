@@ -19,7 +19,16 @@ The five-second application fallback remains necessary for native bridges
 that never settle. This patch does not establish that the historical
 product-page error at `1:11853` came from this SDK, or fix React hydration #418.
 
-Regression: `node --test --test-name-pattern='Meta rejected native bridge|Meta unavailable native bridge|Meta pagehide' tests/tracking-browser.test.cjs`.
+The Android XHR branch also left its promise pending after an empty successful
+response, a non-2xx response, abort, or timeout. An offline Android bridge
+returning HTTP 200 with an empty body reproduced the stall before the fix.
+The patch resolves successful responses even when empty and rejects terminal
+failures within the existing `allSettled` boundary. It does not impose a new
+native timeout or turn an unsuccessful response body into an identifier.
+Regression cases cover empty 200/204, 404, abort, timeout, network error, and
+a successful nonempty click ID.
+
+Regression: `node --test --test-name-pattern='Meta Android terminal|Meta rejected native bridge|Meta unavailable native bridge|Meta pagehide' tests/tracking-browser.test.cjs`.
 
 Review and remove the patch when a later upstream release correctly awaits
 the derived promises. Version 1.3.2 was the latest npm release when checked.

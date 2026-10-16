@@ -111,12 +111,31 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaIpDelay = 0, storedClicks, metaCookie, metaCookiesBlocked = false, metaContextFbc } = {}) {
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, storedClicks, metaCookie, metaCookiesBlocked = false, metaContextFbc } = {}) {
   const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block', userAgent });
   t.after(() => context.close());
   if (storedClicks) await context.addInitScript(identifiers => {
     if (!sessionStorage.getItem('utekos_click_ids')) sessionStorage.setItem('utekos_click_ids', JSON.stringify(identifiers));
   }, storedClicks);
+  if (metaAndroidResponse) await context.addInitScript(response => {
+    const OriginalXHR = window.XMLHttpRequest;
+    window.__androidBridgeCalls = 0;
+    window.XMLHttpRequest = class extends OriginalXHR {
+      open(...args) {
+        this.nativeBridge = String(args[1]).startsWith('properties://browser/');
+        if (!this.nativeBridge) return super.open(...args);
+      }
+      send(...args) {
+        if (!this.nativeBridge) return super.send(...args);
+        window.__androidBridgeCalls++;
+        Object.defineProperties(this, {
+          readyState: { value: 4 }, status: { value: response.status },
+          responseText: { value: response.text },
+        });
+        queueMicrotask(() => this['on' + response.event]?.call(this, new ProgressEvent(response.event)));
+      }
+    };
+  }, metaAndroidResponse);
   if (metaCookie) await context.addCookies([{ name: '_fbc', value: metaCookie, domain: '.utekos.no', path: '/' }]);
   if (metaCookiesBlocked) await context.addInitScript(() => Object.defineProperty(document, 'cookie', { get: () => '', set: () => {} }));
   const requests = [], forbidden = [], errors = [];
@@ -933,5 +952,30 @@ for (const safariMode of [false, true]) {
     assert.equal(api.events('page_view').length, 1);
     assert.ok(api.events('page_view')[0].browser_id.fbp);
     assert.equal(api.events('page_view')[0].browser_id.fbc, undefined);
+  });
+}
+
+for (const response of [
+  { status: 200, text: '', event: 'load' },
+  { status: 204, text: '', event: 'load' },
+  { status: 404, text: 'not-a-click-id', event: 'load' },
+  { status: 0, text: '', event: 'abort' },
+  { status: 0, text: '', event: 'timeout' },
+  { status: 0, text: '', event: 'error' },
+  { status: 200, text: 'OfflineAndroidClick', event: 'load' },
+]) {
+  test(`Meta Android terminal response ${response.event}/${response.status}/${response.text || 'empty'} settles without application timeout`, async t => {
+    const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
+      userAgent: 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/500.0.0.0]',
+      metaAndroidResponse: response,
+    });
+    await api.page.waitForFunction(() => dataLayer.some(entry => entry?.event === 'page_view'), null, { timeout: 2500 });
+    await api.waitFor('page_view');
+    assert.equal(await api.page.evaluate(() => __androidBridgeCalls), 1);
+    assert.equal(api.events('page_view').length, 1);
+    const ids = api.events('page_view')[0].browser_id;
+    assert.ok(ids.fbp);
+    if (response.status === 200 && response.text) assert.match(ids.fbc, /OfflineAndroidClick/);
+    else assert.equal(ids.fbc, undefined);
   });
 }
