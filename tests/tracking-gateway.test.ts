@@ -320,12 +320,14 @@ test('production document proxy captures genuine URL click once and retains brow
     process.env.NEXT_PUBLIC_TRACKING_ENABLED = 'true'
     process.env.NEXT_PUBLIC_VERCEL_ENV = 'production'
     process.env.VERCEL_ENV = 'production'
-    const crawler = proxy(new NextRequest('https://utekos.no/produkter/comfyrobe?fbclid=fixture', {
-      headers: { accept: 'text/html', 'user-agent': 'Mozilla/5.0 meta-externalads/1.1' },
-    }))
-    assert.equal(crawler.status, 200)
-    assert.equal(crawler.headers.get('x-middleware-next'), '1')
-    assert.deepEqual(crawler.headers.getSetCookie(), [])
+    for (const userAgent of ['facebookexternalhit/1.1', 'meta-externalads/1.1', 'meta-webindexer/1.1', 'meta-externalagent/1.1', 'meta-externalfetcher/1.1']) {
+      const crawler = proxy(new NextRequest('https://utekos.no/produkter/comfyrobe?fbclid=fixture', {
+        headers: { accept: 'text/html', 'user-agent': userAgent },
+      }))
+      assert.equal(crawler.status, 200)
+      assert.equal(crawler.headers.get('x-middleware-next'), '1')
+      assert.deepEqual(crawler.headers.getSetCookie(), [])
+    }
     // Execute the actual wrappers rendered by the server, not just the vendor loader.
     // Stub Next Script: its client React context cannot run under react-server conditions.
     const source = readFileSync(new URL('../src/lib/tracking/StapeScripts.tsx', import.meta.url), 'utf8')
@@ -341,7 +343,7 @@ test('production document proxy captures genuine URL click once and retains brow
         return dependencies[name]
       },
     })
-    for (const userAgent of ['Mozilla/5.0 meta-externalads/1.1', 'meta-externalagent/1.1', 'meta-webindexer/1.1', 'Fixture browser']) {
+    for (const userAgent of ['Mozilla/5.0 meta-externalads/1.1', 'facebookexternalhit/1.1', 'meta-externalfetcher/1.1', 'meta-externalagent/1.1', 'meta-webindexer/1.1', 'Fixture browser']) {
       const scripts: string[] = []
       const window = { location: { origin: 'https://utekos.no', href: 'https://utekos.no/produkter' }, dataLayer: [] }
       const context = vm.createContext({ window, URL, navigator: { userAgent }, console,

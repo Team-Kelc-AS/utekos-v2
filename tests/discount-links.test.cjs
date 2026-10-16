@@ -80,7 +80,7 @@ test('discount navigation sets only a private cart cookie, never returns the car
 test('HEAD, prefetch and ads-crawler link checks do not create or change carts', async () => {
   const h = harness([], 'app/discount/[code]/route.ts');
   assert.equal(h.api.HEAD(new NextRequest('https://utekos.no/discount/NBCC128')).headers.get('set-cookie'), null);
-  for (const headers of [{ purpose: 'prefetch' }, { 'sec-purpose': 'prefetch' }, { 'next-router-prefetch': '1' }, { 'user-agent': 'meta-externalads/1.1' }, { 'user-agent': 'meta-externalagent/1.1' }, { 'user-agent': 'meta-webindexer/1.1' }]) {
+  for (const headers of [{ purpose: 'prefetch' }, { 'sec-purpose': 'prefetch' }, { 'next-router-prefetch': '1' }, { 'user-agent': 'facebookexternalhit/1.1' }, { 'user-agent': 'meta-externalfetcher/1.1' }, { 'user-agent': 'meta-externalads/1.1' }, { 'user-agent': 'meta-externalagent/1.1' }, { 'user-agent': 'meta-webindexer/1.1' }]) {
     const response = await h.api.GET(new NextRequest('https://utekos.no/discount/NBCC128', { headers }), { params: Promise.resolve({ code: 'NBCC128' }) });
     assert.equal(response.status, 303);
     assert.equal(response.headers.get('set-cookie'), null);

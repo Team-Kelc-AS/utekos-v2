@@ -1,7 +1,7 @@
 // These self-reported crawler markers only opt out of customer telemetry.
 // They never authorize access to a protected operation.
 export const META_CRAWLER_PATTERN =
-  /(?:^|[\s;(])meta-(?:externalads|externalagent|webindexer)\/\d+(?:\.\d+)*(?=$|[\s;)])/i;
+  /(?:^|[\s;(])(?:facebookexternalhit|meta-(?:externalads|externalagent|webindexer|externalfetcher))\/\d+(?:\.\d+)*(?=$|[\s;)])/i;
 
 export function isMetaCrawler(
   userAgent: string | null | undefined,

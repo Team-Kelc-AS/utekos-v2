@@ -85,7 +85,7 @@ test('browser collectors fail closed outside production, with switch off, wrong 
 test('Meta ads crawler telemetry is discarded before reading bodies, identity, OIDC or forwarding', async () => {
   const { BRIDGE_OPERATIONS } = loadTypeScript('lib/tracking/bridge-contract.ts');
   const paths = BRIDGE_OPERATIONS.filter(path => /^\/api\/(events|observability|meta)\//.test(path) || path === '/api/log');
-  for (const userAgent of ['meta-externalads/1.1', 'Mozilla/5.0 Chrome/131.0 Safari/537.36 Meta-ExternalAds/1.1', 'meta-externalagent/1.1', 'Mozilla/5.0 Chrome/131.0 Safari/537.36 meta-webindexer/1.1']) {
+  for (const userAgent of ['meta-externalads/1.1', 'Mozilla/5.0 Chrome/131.0 Safari/537.36 Meta-ExternalAds/1.1', 'facebookexternalhit/1.1', 'meta-externalfetcher/1.1', 'meta-externalagent/1.1', 'Mozilla/5.0 Chrome/131.0 Safari/537.36 meta-webindexer/1.1']) {
     const api = harness({ tokenFailure: true });
     for (const path of paths) {
       for (const origin of [null, 'null', 'https://foreign.test', ORIGIN]) {
