@@ -9,7 +9,7 @@ import { CART_COOKIE } from "@/lib/cart/identity";
 import { CartError } from "@/lib/cart/error";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/dist/server/web/spec-extension/response";
-import { isMetaAdsCrawler } from "@/lib/tracking/metaAdsCrawler";
+import { isMetaCrawler } from "@/lib/tracking/metaCrawler";
 
 function destination(request: NextRequest) {
   const response = NextResponse.redirect(discountDestination(request.url), 303);
@@ -27,7 +27,7 @@ export async function GET(
     const response = destination(request);
     // Navigation previews and the ads crawler must not create carts.
     if (
-      isMetaAdsCrawler(request.headers.get("user-agent")) ||
+      isMetaCrawler(request.headers.get("user-agent")) ||
       request.headers.has("next-router-prefetch") ||
       /prefetch/i.test(
         request.headers.get("purpose") ??

@@ -1,3 +1,5 @@
+// Match Next's server bootstrap before importing its request/runtime modules.
+import 'next/dist/server/node-environment-baseline'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
@@ -15,7 +17,7 @@ import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from '../src/lib/tracking/googleTagManag
 import { STAPE_CUSTOM_LOADER } from '../src/lib/tracking/stapeCustomLoader'
 import { transformSync } from 'esbuild'
 import * as jsxRuntime from 'react/jsx-runtime'
-import * as metaAdsCrawler from '../src/lib/tracking/metaAdsCrawler'
+import * as metaCrawler from '../src/lib/tracking/metaCrawler'
 import { telemetryRewriteUrl } from '../src/lib/tracking/telemetryRoutes'
 import { config as proxyConfig, proxy } from '../src/proxy'
 import { POST as gatewayPOST } from '../src/app/%5F_sgtm/[[...path]]/route'
@@ -330,7 +332,7 @@ test('production document proxy captures genuine URL click once and retains brow
     const scriptModule = { exports: {} as { StapeScripts: () => { props: { children: { props: { dangerouslySetInnerHTML: { __html: string } } }[] } } } }
     const dependencies: Record<string, unknown> = {
       'server-only': {}, 'next/script': () => null, 'react/jsx-runtime': jsxRuntime,
-      './environment': { productionTrackingEnabled: () => true }, './metaAdsCrawler': metaAdsCrawler,
+      './environment': { productionTrackingEnabled: () => true }, './metaCrawler': metaCrawler,
       './googleTagManagerBootstrap': { GOOGLE_TAG_MANAGER_BOOTSTRAP }, './stapeCustomLoader': { STAPE_CUSTOM_LOADER },
     }
     vm.runInNewContext(transformSync(source, { loader: 'tsx', format: 'cjs', jsx: 'automatic' }).code, {
@@ -339,15 +341,15 @@ test('production document proxy captures genuine URL click once and retains brow
         return dependencies[name]
       },
     })
-    for (const userAgent of ['Mozilla/5.0 meta-externalads/1.1', 'Fixture browser']) {
+    for (const userAgent of ['Mozilla/5.0 meta-externalads/1.1', 'meta-externalagent/1.1', 'meta-webindexer/1.1', 'Fixture browser']) {
       const scripts: string[] = []
       const window = { location: { origin: 'https://utekos.no', href: 'https://utekos.no/produkter' }, dataLayer: [] }
       const context = vm.createContext({ window, URL, navigator: { userAgent }, console,
         document: { cookie: '', getElementsByTagName: () => [{ parentNode: { insertBefore: (element: { src: string }) => scripts.push(element.src) } }], createElement: () => ({ src: '', async: false }) },
       })
       for (const child of scriptModule.exports.StapeScripts().props.children) vm.runInContext(child.props.dangerouslySetInnerHTML.__html, context)
-      assert.equal(scripts.length, userAgent.includes('meta-externalads') ? 0 : 1)
-      assert.equal(window.dataLayer.length > 0, !userAgent.includes('meta-externalads'))
+      assert.equal(scripts.length, metaCrawler.isMetaCrawler(userAgent) ? 0 : 1)
+      assert.equal(window.dataLayer.length > 0, !metaCrawler.isMetaCrawler(userAgent))
     }
     const response = proxy(new NextRequest('https://utekos.no/?fbclid=fixture-click-id', { headers: { accept: 'text/html' } }))
     const fbc = response.cookies.get('_fbc')?.value

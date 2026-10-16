@@ -197,8 +197,9 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
   return { page, requests, events, journey, waitFor, waitForJourney };
 }
 
-test('Meta ads crawler can read products without Pixel, customer events, identity or collector requests', async t => {
-  const api = await fixture(t, undefined, { userAgent: 'Mozilla/5.0 Chrome/131.0 Safari/537.36 meta-externalads/1.1' });
+for (const crawlerName of ['meta-externalads', 'meta-externalagent', 'meta-webindexer'])
+test(`${crawlerName} can read products without Pixel, customer events, identity or collector requests`, async t => {
+  const api = await fixture(t, undefined, { userAgent: `Mozilla/5.0 Chrome/131.0 Safari/537.36 ${crawlerName}/1.1` });
   assert.equal(await api.page.locator('h1').textContent(), 'Fixture product 1');
   await api.page.evaluate(() => {
     UtekosTrackingHarness.reportNavigation();

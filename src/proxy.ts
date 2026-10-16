@@ -9,7 +9,7 @@ import {
   productionTrackingEnabled,
 } from "@/lib/tracking/environment";
 import { telemetryRewriteUrl } from "@/lib/tracking/telemetryRoutes";
-import { isMetaAdsCrawler } from "@/lib/tracking/metaAdsCrawler";
+import { isMetaCrawler } from "@/lib/tracking/metaCrawler";
 
 function noStore<T extends NextResponse>(response: T): T {
   response.headers.set("Cache-Control", "private, no-store, max-age=0");
@@ -49,7 +49,7 @@ export function proxy(request: NextRequest) {
     }));
   }
 
-  if (!enabled || !isDocumentNavigation(request) || isMetaAdsCrawler(request.headers.get('user-agent'))) return NextResponse.next();
+  if (!enabled || !isDocumentNavigation(request) || isMetaCrawler(request.headers.get('user-agent'))) return NextResponse.next();
 
   const metaCookies = captureProxyMetaCookies(request);
   const response = NextResponse.next({
