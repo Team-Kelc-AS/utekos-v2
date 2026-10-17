@@ -17,8 +17,11 @@ const nextConfig: NextConfig = {
   // Resolve route/variant validation before sending headers, so invalid URLs
   // return HTTP 404 instead of a streamed 200 containing a not-found screen.
   htmlLimitedBots: /.*/,
-  // 4 MB of contact images, with room for form fields and multipart headers.
   experimental: {
+    // Unmatched URLs must use one complete 404 document, rather than replaying
+    // the partially prerendered app shell against Next's fallback route tree.
+    globalNotFound: true,
+    // 4 MB of contact images, with room for form fields and multipart headers.
     serverActions: { bodySizeLimit: "4.25mb" },
     cssChunking: "graph",
   },
