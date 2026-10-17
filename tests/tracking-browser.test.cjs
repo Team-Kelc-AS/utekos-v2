@@ -566,6 +566,10 @@ test('Meta unavailable native bridge releases checkout once and does not queue r
   await api.waitFor('page_view', 2);
   assert.equal(await api.page.evaluate(() => __metaBackupCalls), 1);
   assert.equal(api.events('begin_checkout').length, 1);
+  const logs = api.requests.filter(request => request.path === '/api/log');
+  assert.equal(logs.length, 1, 'one bounded collection produces one diagnostic');
+  assert.equal(logs[0].body.data.message, 'MetaParameterCollectionTimeout');
+  assert.equal(logs[0].body.level, 'error', 'a timeout remains visible even when fallback succeeds');
 });
 
 for (const safariMode of [false, true]) {

@@ -13,6 +13,11 @@ export function sanitizeClientErrorMessage(
   // Preserve only the bounded HTTP status, never response bodies or URLs.
   const collectorStatus = message.match(/\b(?:collector_http_|CollectorHTTPError #)([1-5]\d{2})(?!\d)/)?.[1]
   if (collectorStatus) return `CollectorHTTPError #${collectorStatus}`
+  // Keep the fixed collection deadline code across both sanitization layers.
+  // The SDK may still be pending while canonical events continue via fallback.
+  if (/\b(?:meta_parameter_collection_timeout|MetaParameterCollectionTimeout)\b/.test(message)) {
+    return 'MetaParameterCollectionTimeout'
+  }
   return message.match(KNOWN_ERROR)?.[0] ?? 'ClientError'
 }
 

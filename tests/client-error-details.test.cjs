@@ -142,6 +142,30 @@ test('collector HTTP status survives browser/backend logging without response de
   assert.equal(messages.sanitizeClientErrorMessage('collector_http_999'), 'ClientError');
 });
 
+test('Meta collection deadline keeps its fixed reason through browser and backend without private details', () => {
+  const messages = bundled('..', 'src/lib/observability/client/sanitizeClientErrorBeacon.ts');
+  for (const raw of [
+    'meta.parameter_context: Error: meta_parameter_collection_timeout private@example.com token=secret',
+    'MetaParameterCollectionTimeout',
+  ]) {
+    const message = messages.sanitizeClientErrorMessage(raw);
+    assert.equal(message, 'MetaParameterCollectionTimeout');
+    const sent = frontend.clientLogPayloadSchema.parse({
+      event: 'client_error', level: 'error',
+      data: { source: 'window_error', operation: 'caught', message },
+      context: { pathname: '/' },
+    });
+    const logged = backend.toAppLogInput(backend.clientLogPayloadSchema.parse(sent));
+    assert.equal(logged.data.message, 'MetaParameterCollectionTimeout');
+    assert.equal(logged.level, 'ERROR');
+    assert.doesNotMatch(JSON.stringify(logged), /private|token|secret/);
+    assert.equal(appContract.appLogInputSchema.safeParse(logged).success, true);
+  }
+  for (const raw of ['meta_parameter_collection_timeout_private', 'MetaParameterCollectionTimeoutPrivate']) {
+    assert.equal(messages.sanitizeClientErrorMessage(raw), 'ClientError');
+  }
+});
+
 test('React codes and known public pages survive the entire browser/backend log pipeline', () => {
   const messages = bundled('..', 'src/lib/observability/client/sanitizeClientErrorBeacon.ts');
   for (const raw of [
