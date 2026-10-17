@@ -120,6 +120,55 @@
       "reason": "Reviewed 2026-10-17: preserve explicit granted and denied purpose values in Shopify order-attribute parsing, matching backend 51b1213. All eight purpose combinations retain the supplied choice and independently filter GA and marketing identifiers. Invalid states remain unresolved; operator_policy is unchanged. This does not collect or set Shopify privacy choices.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "src/lib/analytics/checkoutConsentSnapshot.ts"
+    },
+    "src/lib/observability/client/reportClientCaughtError.ts": {
+      "baseSha256": "c1fa56fb2b4bdc845bf09b0ff7b2cb65dbd72d1240864427f7c8f897701bed04",
+      "sha256": "9a3b812205c0afbae3721b793bf19599378477888dd279be9e29bd85b16d56b5",
+      "reason": "Reviewed 2026-10-17 against the pinned source: preserve sanitized original error stack, bounded ErrorEvent coordinates and operation in early browser reports. Existing client-error-details tests exercise reporter/listeners, real hydration failure and ingestion through the current backend. No raw message, query or arbitrary stack text is retained.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/observability/client/reportClientCaughtError.ts"
+    },
+    "src/lib/observability/client/sanitizeClientErrorBeacon.ts": {
+      "baseSha256": "089fb04e7bb14ad2ebf2d59ad464ce58cd071ee6ca3801fc2402ce82d3a527ce",
+      "sha256": "6e828dcda7b91d265732c9645f0693ee330ee2dbee282fe402f16b7ace93c36d",
+      "reason": "Reviewed 2026-10-17: retain fixed React error codes, bounded collector HTTP status, Meta deadline and SyntaxError categories across browser/server sanitization. Resolve rotating Vercel script paths from actual script metadata to fixed SDK labels. Chromium/WebKit and current-backend contract tests cover privacy and repeat sanitization; these are diagnostic categories, not proof of historical causes.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/observability/client/sanitizeClientErrorBeacon.ts"
+    },
+    "src/lib/observability/logging/clientErrorDataSchema.ts": {
+      "baseSha256": "1c844f0b680e719433d83f5ceaaf467a5207e2e4b188eec5ae7b0d4cb46e9add",
+      "sha256": "0e32ef2e0b040b29c962379e3f5a133553a13f77c460480cb633f68bd1303593",
+      "reason": "Reviewed 2026-10-17: accept sanitized stack and bounded window/promise/caught operation alongside existing filename and position fields. Byte-identical to current backend; existing frontend/backend/appLog contract tests preserve fields and accept legacy reports.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/observability/logging/clientErrorDataSchema.ts"
+    },
+    "src/lib/observability/logging/sanitizeOperationalPathname.ts": {
+      "baseSha256": "028e3bc62a19a0a4f5a5579ce2cc913e09fa9ab7d524f90053db7c33a52f540f",
+      "sha256": "7fdc7337a0c183e38e054eb12989b51d9931038297b0f99ad5505255085378db",
+      "reason": "Reviewed 2026-10-17: retain an explicit allowlist of public storefront routes for actionable browser errors, with existing operational-route fallback. Queries and arbitrary product/article handles remain sanitized. Current backend has the same implementation except a trailing comma; diagnostic pipeline tests verify known product/article routes and private-value exclusion.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/observability/logging/sanitizeOperationalPathname.ts"
+    },
+    "src/lib/utils/cleanShopifyId.ts": {
+      "baseSha256": "9639d062eada8ebfa321f695a1ab744b248c1e085bc2f807fd022a3e5248ac57",
+      "sha256": "fd2ce97686701c803d1286ccda7b7666be6850cdd77e803e6731520ae3f7ecab",
+      "reason": "Reviewed 2026-10-17 against the pinned source: only quotes, semicolons and the trailing parameter comma changed. ID input checks, string conversion, path splitting and query removal are unchanged.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/utils/cleanShopifyId.ts"
+    },
+    "src/lib/validation/zodMini.ts": {
+      "baseSha256": "774051399ea19671c3e0d069df6bb8f4b5df39ad4a20b29199825934683b7a38",
+      "sha256": "f513c757b47ed7576b7b1d7a836bcc2d97a5bedec9a2b5107196621a68357991",
+      "reason": "Reviewed 2026-10-17 against the pinned source: only quote style and semicolons changed. Zod Mini exports and English locale initialization are unchanged; existing Zod contract tests compare parsed outputs, complete validation issues and emitted browser modules.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/validation/zodMini.ts"
+    },
+    "types/observability/log/LogPayload.ts": {
+      "baseSha256": "f16ae9fa8d24174f3e8a97d4e4f6bddc8ea2d3f2dd93a7fc82c3cb79d3c71bee",
+      "sha256": "1ec4477f78f9015e6ed78c618cb0c1f98ae5a2e4dd0a43a1f9172c6ecabf6ad7",
+      "reason": "Reviewed 2026-10-17: add optional stack and window/promise/caught operation fields to the client_error type, matching runtime schema and current backend byte-for-byte. Existing diagnostic pipeline tests validate old and extended payloads without retaining private error details.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "types/observability/log/LogPayload.ts"
     }
   }
 }
