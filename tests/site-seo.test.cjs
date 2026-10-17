@@ -39,6 +39,7 @@ test('complete social metadata supports native retailer images without losing sh
 test('root defaults cannot leak a homepage canonical or override route social content', () => {
   const root = plain(buildRootMetadata());
   assert.equal(root.metadataBase, 'https://utekos.no/');
+  assert.deepEqual(root.facebook, { appId: '1154247890253046' });
   assert.equal(root.alternates, undefined);
   assert.equal(root.openGraph.url, undefined);
   assert.equal(root.openGraph.title, undefined);

@@ -61,6 +61,8 @@ export function buildRootMetadata(): Metadata {
     description: SITE_DESCRIPTION,
     applicationName: siteIdentity.name,
     publisher: siteIdentity.name,
+    // Utekos App Master: live app with https://utekos.no/ as its registered website.
+    facebook: { appId: "1154247890253046" },
     icons: {
       icon: { url: siteIdentity.logo.src, type: "image/png" },
       apple: { url: siteIdentity.logo.src, type: "image/png" },

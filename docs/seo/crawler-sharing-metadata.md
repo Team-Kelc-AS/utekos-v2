@@ -90,6 +90,29 @@ Sources consulted: installed Next.js 16.4.0 metadata guide and Utekos Docs MCP;
 [Meta domain verification](https://developers.facebook.com/documentation/sharing/domain-verification).
 No package upgrade is required for these documented metadata capabilities.
 
+## Facebook app association — verified 2026-10-17
+
+The original storefront exports `src/app/siteMetadata.ts` from its store layout
+and uses `1154247890253046` for `fb:app_id`. Meta's authenticated app readback
+identifies this as **Utekos App Master**, owned by Utekos Marketing Group
+(`538548380599665`), with `is_live: true` and `app_status: live_mode`.
+The App Dashboard independently shows the app as Published and its Website
+Site URL as `https://utekos.no/`. Privacy and terms URLs also use `utekos.no`.
+The separate App domains field is empty; no app settings were changed.
+
+`buildRootMetadata()` now supplies `facebook.appId`, inherited by every route
+through `src/app/layout.tsx`. This restores the verified public app association
+and addresses the missing `fb:app_id` warning observed after the sharing-image
+release. It does not configure Facebook Login, Pixel or Conversions API, and
+does not establish analytics receipt or attribution.
+
+Sources: authenticated Meta Developer Tools `app_list`/`basic_settings`,
+[App Dashboard](https://developers.facebook.com/apps/1154247890253046/settings/basic/),
+[Meta sharing metadata guide](https://developers.facebook.com/documentation/sharing/webmasters)
+(updated June 30, 2026), and the installed Next.js 16.4.0 `facebook` metadata
+documentation. Production HTML and Sharing Debugger verification are recorded
+separately from this source change.
+
 ## Verification and release gates
 
 Executed pre-release: 28 focused tests passed; typecheck and production build
