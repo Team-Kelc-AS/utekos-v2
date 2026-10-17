@@ -8,6 +8,7 @@ import { FACEBOOK_SESSION_COOKIE, readSession } from '@/lib/facebook-login/sessi
 import { BRIDGE_URL, isBridgeOperation, isCallbackOperation } from './bridge-contract';
 import { productionTrackingEnabled, isTrackingOrigin } from './environment';
 import { isMetaCrawler, isBrowserTelemetryOperation } from './metaCrawler';
+import { CANONICAL_EVENT_BRIDGE_TIMEOUT_MS } from './timeouts';
 
 const REQUEST_HEADERS = [
   'origin', 'referer', 'content-type', 'authorization', 'sec-fetch-site',
@@ -116,7 +117,7 @@ export async function forwardTrackingRequest(request: NextRequest) {
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({ version: 1, operation, method: request.method,
         ...(search ? { search } : {}), bodyBase64: Buffer.from(raw).toString('base64'), context, headers }),
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(operation.startsWith('/api/events/') ? CANONICAL_EVENT_BRIDGE_TIMEOUT_MS : 8000),
     });
     const responseHeaders = new Headers({ 'cache-control': 'private, no-store' });
     for (const name of RESPONSE_HEADERS) {

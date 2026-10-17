@@ -13,7 +13,7 @@ const production = { VERCEL_ENV: 'production', NEXT_PUBLIC_VERCEL_ENV: 'producti
 const acceptedAt = '2026-10-07T12:00:00.000Z';
 const pageViewId = 'cfb9c40a-4be3-44bc-84a7-bdcd85f5e4c1';
 
-function harness({ entry = 'lib/tracking/backend.ts', env = {}, incoming, authorization, tokenFailure = false, networkFailure = false, respond } = {}) {
+function harness({ entry = 'lib/tracking/backend.ts', env = {}, incoming, authorization, tokenFailure = false, networkFailure = false, respond, globals = {} } = {}) {
   const sends = [], audiences = [], sessions = [], errors = [];
   const source = loadTypeScript(entry, {
     env: { ...production, ...env },
@@ -28,7 +28,7 @@ function harness({ entry = 'lib/tracking/backend.ts', env = {}, incoming, author
       'next/dist/server/request/headers': { headers: async () => new Headers(incoming ?? { origin: ORIGIN, referer: `${ORIGIN}/produkter/utekos-dun`, 'user-agent': 'Fixture browser', cookie: '_fbp=fb.1.fixture; _epik=pinterest-fixture; utekos_v2_fb_session=verified-fixture-session' }) },
       'next/dist/server/web/spec-extension/request': { NextRequest },
     },
-    globals: { Request, Response, Headers, Uint8Array, Buffer, crypto: webcrypto, console: { ...console, error: (...args) => errors.push(args) } },
+    globals: { Request, Response, Headers, Uint8Array, Buffer, crypto: webcrypto, console: { ...console, error: (...args) => errors.push(args) }, ...globals },
     fetch: async (url, init) => {
       const envelope = JSON.parse(init.body);
       const body = JSON.parse(Buffer.from(envelope.bodyBase64, 'base64').toString('utf8'));
@@ -206,6 +206,45 @@ test('missing OIDC, oversized body and lost response do not cause unauthenticate
   const logged = JSON.stringify([...token.errors, ...oversize.errors, ...lost.errors]);
   assert.equal(logged.includes('fixture-oidc-token'), false);
   assert.equal(logged.includes('event_name'), false);
+});
+
+test('browser and bridge preserve a receipt after the observed 10.2-second backend response without retrying', async () => {
+  const { setTimeout: delay } = require('node:timers/promises');
+  const { deliverCanonicalEvent } = loadTypeScript('lib/tracking/delivery.ts', { globals: { TextEncoder } });
+  const api = harness({ respond: async ({ init }) => {
+    await delay(10_200, undefined, { signal: init.signal });
+    return Response.json({ status: 'accepted', event_id: pageViewId }, { status: 202 });
+  } });
+  let browserAttempts = 0;
+  const result = await deliverCanonicalEvent('/api/events/view-item-list', { event_id: pageViewId }, (_url, init) => {
+    browserAttempts++;
+    return new Promise((resolve, reject) => {
+      const abort = () => reject(init.signal.reason);
+      init.signal.addEventListener('abort', abort, { once: true });
+      api.forwardTrackingRequest(request('/api/events/view-item-list', { body: init.body }))
+        .then(resolve, reject).finally(() => init.signal.removeEventListener('abort', abort));
+    });
+  });
+  assert.equal(result.status, 'accepted_unverified');
+  assert.equal(result.httpStatus, 202);
+  assert.equal(browserAttempts, 1);
+  assert.equal(api.sends.length, 1);
+  assert.deepEqual(api.errors, []);
+});
+
+test('bridge still aborts a stalled upstream and returns an unverified failure once', async () => {
+  const { setTimeout: delay } = require('node:timers/promises');
+  const api = harness({
+    globals: { AbortSignal: { timeout: () => AbortSignal.timeout(5) } },
+    respond: async ({ init }) => {
+      await delay(100, undefined, { signal: init.signal });
+      throw new Error('stalled upstream must have been aborted');
+    },
+  });
+  const response = await api.forwardTrackingRequest(request('/api/events/view-category'));
+  assert.equal(response.status, 502);
+  assert.equal((await response.json()).error, 'backend_unavailable');
+  assert.equal(api.sends.length, 1);
 });
 
 test('accepted server form retains the actual request Google identity', async () => {

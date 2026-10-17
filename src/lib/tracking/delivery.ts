@@ -1,3 +1,5 @@
+import { CANONICAL_EVENT_BROWSER_TIMEOUT_MS } from './timeouts';
+
 /** HTTP acceptance is deliberately distinct from provider receipt. */
 export type CollectorOutcome =
   | { status: 'accepted_unverified'; httpStatus: number }
@@ -14,7 +16,7 @@ export async function deliverCanonicalEvent(
       const response = await send(endpoint, {
         method: 'POST', body, cache: 'no-store', credentials: 'same-origin', keepalive,
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        signal: AbortSignal.timeout(10_000),
+        signal: AbortSignal.timeout(CANONICAL_EVENT_BROWSER_TIMEOUT_MS),
       });
       // Consent/bot filtering intentionally returns no content. Do not report
       // this as a transport failure or claim the event was accepted.
