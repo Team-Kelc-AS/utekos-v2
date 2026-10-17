@@ -1,6 +1,7 @@
 import type { KnowledgeArticle } from "./knowledgeArticles";
 
 // Source: the unchanged SherpaCore MDX article; image measured at its native dimensions.
+// First production publication: Vercel dpl_F74QUPn4HJP4agbfCvtSnp37uDjg ready timestamp.
 export const sherpaCoreArticle = {
   "slug": "sherpacore",
   "path": "/uteguiden/sherpacore",
@@ -10,7 +11,7 @@ export const sherpaCoreArticle = {
   "description": "SherpaCore™ er betegnelsen på det innvendige fôrstoffet i Comfyrobe. Denne guiden forklarer hvordan tekstilstruktur, flatevekt på 250 g/m² og kapillær fukttransport fungerer i et syntetisk fleecemateriale.",
   "authorId": "utekos",
   "articleSection": "Materialer",
-  "publishedAt": "2026-10-17",
+  "publishedAt": "2026-10-17T16:48:14.257Z",
   "topics": [
     "SherpaCore™",
     "sherpa-fleece",
