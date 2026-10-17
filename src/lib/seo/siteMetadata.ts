@@ -7,6 +7,14 @@ import {
 import type { Metadata } from "next";
 import { SITE_ORIGIN } from "./site";
 
+export type SocialImage = Readonly<{
+  url: string;
+  width: number;
+  height: number;
+  type: string;
+  alt: string;
+}>;
+
 export function buildRobotsMetadata(
   index = true,
 ): Exclude<Metadata["robots"], string | null | undefined> {
@@ -22,6 +30,7 @@ export function buildWebsiteSocialMetadata(
   title: string,
   description: string,
   url?: string,
+  image: SocialImage = siteSocialImage,
 ): Pick<Metadata, "openGraph" | "twitter"> {
   return {
     openGraph: {
@@ -30,14 +39,14 @@ export function buildWebsiteSocialMetadata(
       locale: "nb_NO",
       title,
       description,
-      images: [{ ...siteSocialImage }],
+      images: [{ ...image }],
       ...(url && { url }),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [{ url: siteSocialImage.url, alt: siteSocialImage.alt }],
+      images: [{ url: image.url, alt: image.alt }],
     },
   };
 }

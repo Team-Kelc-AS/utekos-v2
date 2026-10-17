@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildWebsiteSocialMetadata } from "@/lib/seo/siteMetadata";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/dist/client/components/not-found";
@@ -23,7 +24,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `Utekos hos ${retailer.name} – ${retailer.locality}`;
   return {
     title, description: retailer.description, alternates: { canonical: retailerPath(retailer) },
-    openGraph: { title, description: retailer.description, url: retailerPath(retailer), type: "website", locale: "nb_NO", images: [{ url: retailer.image.src, alt: retailer.image.alt }] },
+    ...buildWebsiteSocialMetadata(title, retailer.description, retailerPath(retailer), {
+      url: retailer.image.src, width: retailer.image.width,
+      height: retailer.image.height, alt: retailer.image.alt, type: "image/webp",
+    }),
   };
 }
 

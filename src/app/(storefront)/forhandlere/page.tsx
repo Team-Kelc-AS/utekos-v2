@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildWebsiteSocialMetadata } from "@/lib/seo/siteMetadata";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { DealerCallout, RetailerCard, RetailerJsonLd } from "@/components/retailers/RetailerContent";
 import { retailers, retailerHeading, retailerIntro } from "@/lib/retailers";
@@ -9,7 +10,10 @@ import styles from "@/components/retailers/retailers.module.css";
 export const metadata: Metadata = {
   title: "Forhandlere – kjøp Utekos i butikk", description: retailerIntro,
   alternates: { canonical: "/forhandlere" },
-  openGraph: { title: retailerHeading, description: retailerIntro, url: "/forhandlere", type: "website", locale: "nb_NO", images: [{ url: retailers[0].image.src, alt: retailers[0].image.alt }] },
+  ...buildWebsiteSocialMetadata(retailerHeading, retailerIntro, "/forhandlere", {
+    url: retailers[0].image.src, width: retailers[0].image.width,
+    height: retailers[0].image.height, alt: retailers[0].image.alt, type: "image/webp",
+  }),
 };
 
 export default function RetailersPage() {

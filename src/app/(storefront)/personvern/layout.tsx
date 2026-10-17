@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { googleSansFlex } from "@/lib/fonts";
+import { buildWebsiteSocialMetadata } from "@/lib/seo/siteMetadata";
 import styles from "./privacy.module.css";
 
 const description =
@@ -13,14 +14,7 @@ export const metadata: Metadata = {
   title: "Personvernerklæring",
   description,
   alternates: { canonical: "/personvern" },
-  openGraph: {
-    title: "Personvernerklæring | Utekos",
-    description,
-    url: "/personvern",
-    siteName: "Utekos",
-    locale: "nb_NO",
-    type: "website",
-  },
+  ...buildWebsiteSocialMetadata("Personvernerklæring | Utekos", description, "/personvern"),
 };
 
 export default function PrivacyLayout({ children }: { children: ReactNode }) {

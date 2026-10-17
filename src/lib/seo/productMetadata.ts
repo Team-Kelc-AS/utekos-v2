@@ -5,11 +5,13 @@ import { productTitle } from '@/lib/catalog/productTitle';
 import { getProductPageDescriptionText } from '@/lib/products/content';
 import { descriptionPreview } from '@/lib/products/descriptionPreview';
 import { productGallery } from '@/lib/products/gallery';
-import { resolveVariant } from '@/lib/products/variants';
+import { optionParam, resolveVariant, type ProductSearchParams } from '@/lib/products/variants';
+import { slugifyVariantOption } from '@/lib/products/slugifyVariantOption';
 import { absoluteUrl, productPath } from './site';
+import { productSocialImages } from './productSocialImages';
 
-/** Family-level metadata follows the family canonical, including on selector URLs. */
-export function buildProductMetadata(product: ShopifyProduct): Metadata {
+/** Google keeps the family canonical; supplied color images have their own OG identity. */
+export function buildProductMetadata(product: ShopifyProduct, params: ProductSearchParams = {}): Metadata {
   const title = product.seo.title?.trim() || productTitle(product);
   // 200 is an editorial fallback budget, not a Google character requirement.
   const description = product.seo.description?.trim() || descriptionPreview(
@@ -19,7 +21,14 @@ export function buildProductMetadata(product: ShopifyProduct): Metadata {
   const defaultVariant = resolveVariant(product);
   const gallery = defaultVariant ? productGallery(product, defaultVariant) : null;
   const primaryImage = gallery?.desktop[0] ?? gallery?.mobile[0];
-  const image = primaryImage ? {
+  // A general or size-only URL must not acquire a color identity as stock changes.
+  const selected = params.farge !== undefined || params.variant !== undefined
+    ? resolveVariant(product, params) : undefined;
+  const color = selected?.selectedOptions.find(option => optionParam(option.name) === 'farge')?.value;
+  const colorSlug = color ? slugifyVariantOption(color) : undefined;
+  const colorImage = colorSlug ? productSocialImages[product.handle]?.[colorSlug] : undefined;
+  const sharingUrl = colorImage && colorSlug ? `${canonical}?farge=${encodeURIComponent(colorSlug)}` : canonical;
+  const image = colorImage ? { ...colorImage, url: absoluteUrl(colorImage.url) } : primaryImage ? {
     url: absoluteUrl(primaryImage.url),
     alt: primaryImage.altText?.trim() || productTitle(product),
     ...(primaryImage.width > 0 && { width: primaryImage.width }),
@@ -31,7 +40,7 @@ export function buildProductMetadata(product: ShopifyProduct): Metadata {
     description,
     alternates: { canonical },
     openGraph: {
-      type: 'website', siteName: 'Utekos', locale: 'nb_NO', title, description, url: canonical,
+      type: 'website', siteName: 'Utekos', locale: 'nb_NO', title, description, url: sharingUrl,
       ...(image && { images: [image] }),
     },
     twitter: {

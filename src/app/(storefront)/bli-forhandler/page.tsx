@@ -2,6 +2,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import DealerInquiryForm from "./DealerInquiryForm";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { buildWebsiteSocialMetadata } from "@/lib/seo/siteMetadata";
 import { RetailerJsonLd } from "@/components/retailers/RetailerContent";
 import { dealerHeading } from "@/lib/retailers";
 import { dealerStructuredData } from "@/lib/retailers/structured-data";
@@ -16,13 +17,7 @@ export const metadata: Metadata = {
   title: "Bli forhandler – selg Utekos i din butikk",
   description: dealerIntro,
   alternates: { canonical: "/bli-forhandler" },
-  openGraph: {
-    title: dealerHeading,
-    description: dealerIntro,
-    url: "/bli-forhandler",
-    type: "website",
-    locale: "nb_NO",
-  },
+  ...buildWebsiteSocialMetadata(dealerHeading, dealerIntro, "/bli-forhandler"),
 };
 
 export default function BecomeDealerPage() {

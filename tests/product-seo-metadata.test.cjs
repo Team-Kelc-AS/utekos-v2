@@ -42,6 +42,95 @@ test('blank SEO fields fall back to visible content, and missing images are not 
   assert.equal(data.twitter.images, undefined);
 });
 
+function colorFixture(handle) {
+  const product = fixture();
+  product.handle = handle;
+  product.variants.nodes = ['Fjellblå', 'Vargnatt', 'Annen farge'].flatMap((color, index) =>
+    ['Small', 'Large'].map((size, offset) => ({
+      id: `gid://shopify/ProductVariant/${100 + index * 2 + offset}`, availableForSale: true,
+      selectedOptions: [{ name: 'Farge', value: color }, { name: 'Størrelse', value: size }],
+      image: { url: `/fixture-${index}.webp`, altText: `Testbilde ${color}`, width: 800, height: 1200 },
+    })),
+  );
+  return product;
+}
+
+for (const [handle, color, ids, filename] of [
+  ['utekos-mikrofiber', 'vargnatt', [102, 103], 'og-utekos-vargnatt.webp'],
+  ['utekos-mikrofiber', 'fjellbla', [100, 101], 'og-utekos-fjellbla-blue-bg.webp'],
+  ['utekos-dun', 'fjellbla', [100, 101], 'og-utekos-fjellbla-night-bg.webp'],
+]) test(`${handle} ${color} shares one supplied image across sizes, IDs and tracking parameters`, () => {
+  const product = colorFixture(handle);
+  const canonical = `https://utekos.no/produkter/${handle}`;
+  const queries = [
+    { farge: color },
+    ...['small', 'large'].map(storrelse => ({ farge: color, storrelse })),
+    ...ids.flatMap(id => [{ variant: String(id) }, { variant: `gid://shopify/ProductVariant/${id}` }]),
+    { farge: color, variant: String(ids[1]), storrelse: 'large', utm_source: 'test', fbclid: 'test-only' },
+  ];
+  for (const query of queries) {
+    const data = buildProductMetadata(product, query);
+    assert.equal(data.alternates.canonical, canonical);
+    assert.equal(data.openGraph.url, `${canonical}?farge=${color}`);
+    assert.equal(data.openGraph.images[0].url, `https://utekos.no/images/kunnskap/${filename}`);
+    assert.equal(data.openGraph.images[0].width, 1200);
+    assert.equal(data.openGraph.images[0].height, 630);
+    assert.equal(data.openGraph.images[0].type, 'image/webp');
+    assert.ok(data.openGraph.images[0].alt.includes(color === 'vargnatt' ? 'Vargnatt' : 'Fjellblå'));
+    assert.equal(data.twitter.images[0].url, data.openGraph.images[0].url);
+    assert.equal(data.twitter.images[0].alt, data.openGraph.images[0].alt);
+  }
+  product.variants.nodes.forEach(variant => { variant.availableForSale = false; });
+  assert.equal(buildProductMetadata(product, { farge: color }).openGraph.url, `${canonical}?farge=${color}`);
+});
+
+test('general, size-only and unmapped selections preserve family metadata as stock changes', () => {
+  for (const handle of ['utekos-mikrofiber', 'utekos-dun', 'comfyrobe', 'utekos-techdown', 'utekos-stapper']) {
+    const product = colorFixture(handle);
+    for (const params of [{}, { utm_source: 'test' }, { storrelse: 'large' }, { farge: 'annen-farge' }, { variant: '104' }]) {
+      const data = buildProductMetadata(product, params);
+      assert.equal(data.openGraph.url, data.alternates.canonical);
+      assert.equal(data.openGraph.images[0].url, 'https://utekos.no/fixture-0.webp');
+    }
+    product.variants.nodes[0].availableForSale = false;
+    product.variants.nodes[1].availableForSale = false;
+    assert.equal(buildProductMetadata(product).openGraph.images[0].url, 'https://utekos.no/fixture-1.webp');
+    if (handle !== 'utekos-mikrofiber') {
+      const data = buildProductMetadata(product, { farge: 'vargnatt' });
+      assert.equal(data.openGraph.url, data.alternates.canonical);
+      assert.equal(data.openGraph.images[0].url, 'https://utekos.no/fixture-1.webp');
+    }
+  }
+});
+
+test('invalid or contradictory selectors cannot acquire a supplied color image', () => {
+  const product = colorFixture('utekos-mikrofiber');
+  for (const params of [
+    { farge: ['vargnatt', 'fjellbla'] }, { farge: 'missing' }, { variant: '999' },
+    { farge: 'vargnatt', variant: '100' }, { farge: 'vargnatt', storrelse: 'missing' },
+  ]) {
+    const data = buildProductMetadata(product, params);
+    assert.equal(data.openGraph.url, data.alternates.canonical);
+    assert.equal(data.openGraph.images[0].url, 'https://utekos.no/fixture-0.webp');
+  }
+});
+
+test('supplied image files match declared type and native dimensions', async () => {
+  const path = require('node:path');
+  const fs = require('node:fs');
+  const { createRequire } = require('node:module');
+  const sharp = createRequire(require.resolve('next/package.json'))('sharp');
+  const { productSocialImages } = loadTypeScript('lib/seo/productSocialImages.ts');
+  for (const colors of Object.values(productSocialImages)) for (const image of Object.values(colors)) {
+    const file = path.resolve(__dirname, '../public', image.url.slice(1));
+    const actual = await sharp(file).metadata();
+    assert.equal(actual.width, image.width);
+    assert.equal(actual.height, image.height);
+    assert.equal(`image/${actual.format}`, image.type);
+    assert.ok(fs.statSync(file).size < 5 * 1024 * 1024);
+  }
+});
+
 test('backorders never use the in-stock label and unavailable overrides backorder', () => {
   assert.equal(productAvailability({ availableForSale: true, currentlyNotInStock: false }).label, 'På lager');
   const backorder = productAvailability({ availableForSale: true, currentlyNotInStock: true });

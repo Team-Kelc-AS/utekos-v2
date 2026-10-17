@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { googleSansFlex } from "@/lib/fonts";
+import { buildWebsiteSocialMetadata } from "@/lib/seo/siteMetadata";
 import styles from "./terms.module.css";
 
 const description =
@@ -13,14 +14,7 @@ export const metadata: Metadata = {
   title: "Vilkår og betingelser",
   description,
   alternates: { canonical: "/vilkar-betingelser" },
-  openGraph: {
-    title: "Vilkår og betingelser | Utekos",
-    description,
-    url: "/vilkar-betingelser",
-    siteName: "Utekos",
-    locale: "nb_NO",
-    type: "website",
-  },
+  ...buildWebsiteSocialMetadata("Vilkår og betingelser | Utekos", description, "/vilkar-betingelser"),
 };
 
 export default function TermsLayout({ children }: { children: ReactNode }) {

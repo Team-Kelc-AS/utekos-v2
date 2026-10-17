@@ -46,9 +46,10 @@ export async function generateMetadata({
   const { handle } = await params;
   const product = await getProduct(handle);
   if (!product) notFound();
-  if (!resolveVariant(product, await searchParams)) notFound();
+  const query = await searchParams;
+  if (!resolveVariant(product, query)) notFound();
 
-  return buildProductMetadata(product);
+  return buildProductMetadata(product, query);
 }
 
 export default function ProductPage({ params, searchParams }: Props) {

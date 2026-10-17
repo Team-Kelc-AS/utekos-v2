@@ -33,7 +33,9 @@ Nye produktfamilier trenger en egen gjennomgang av vilkårene før de tas inn i
 uten verifisering.
 
 `productMetadata.ts` lager canonical, Open Graph og Twitter-metadata fra den
-samme produktkilden. Delingsbildet følger standardvalget på familie-canonical.
+samme produktkilden. Generelle lenker beholder standardbildet på familie-canonical.
+Eksplisitte fargevalg og variant-ID-er med et operatørvalgt delingsbilde får en
+stabil `og:url` per produkt og farge. Google-canonical peker fortsatt på familien.
 Validering av eksplisitte variantparametere beholdes i `generateMetadata`.
 Synlig lagerstatus og JSON-LD deler nå `productAvailability`.
 

@@ -5,11 +5,36 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { createRequire } = require('node:module');
 const { loadTypeScript } = require('./load-typescript.cjs');
-const { buildRootMetadata, buildHomeMetadata } = loadTypeScript('lib/seo/siteMetadata.ts');
+const { buildRootMetadata, buildHomeMetadata, buildWebsiteSocialMetadata } = loadTypeScript('lib/seo/siteMetadata.ts');
 const { buildSiteJsonLd } = loadTypeScript('lib/seo/JSON-LD/buildSiteJsonLd.ts');
 const { serializeJsonLd } = loadTypeScript('lib/seo/JSON-LD/serializeJsonLd.ts');
 const { siteIdentity, siteSocialImage } = loadTypeScript('lib/seo/siteIdentity.ts');
 const plain = value => JSON.parse(JSON.stringify(value));
+
+test('complete social metadata supports native retailer images without losing shared defaults', async () => {
+  const { retailers } = loadTypeScript('lib/retailers.ts');
+  const sharp = createRequire(require.resolve('next/package.json'))('sharp');
+  const fallback = buildWebsiteSocialMetadata('Testside', 'Beskrivelse', '/test');
+  assert.deepEqual(plain(fallback.openGraph.images[0]), plain(siteSocialImage));
+  for (const retailer of retailers) {
+    const { src, width, height, alt } = retailer.image;
+    const actual = await sharp(path.resolve(__dirname, '../public', src.slice(1))).metadata();
+    assert.equal(actual.width, width);
+    assert.equal(actual.height, height);
+    assert.equal(actual.format, 'webp');
+    const data = buildWebsiteSocialMetadata(retailer.name, retailer.description, `/forhandlere/${retailer.slug}`, {
+      url: src, width, height, alt, type: 'image/webp',
+    });
+    assert.equal(data.openGraph.images[0].width, width);
+    assert.equal(data.openGraph.images[0].height, height);
+    assert.equal(data.openGraph.images[0].type, 'image/webp');
+    assert.equal(data.openGraph.siteName, 'Utekos');
+    assert.equal(data.openGraph.locale, 'nb_NO');
+    assert.equal(data.twitter.card, 'summary_large_image');
+    assert.equal(data.twitter.images[0].url, src);
+    assert.equal(data.twitter.images[0].alt, alt);
+  }
+});
 
 test('root defaults cannot leak a homepage canonical or override route social content', () => {
   const root = plain(buildRootMetadata());
