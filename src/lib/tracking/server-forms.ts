@@ -6,6 +6,7 @@ import { getVercelOidcToken } from '@vercel/oidc';
 import { ipAddress, geolocation } from '@vercel/functions/headers';
 import * as z from '@/lib/validation/zodMini';
 import { parseLeadFormTrackingContext } from '@/lib/analytics/leadFormTrackingContext';
+import { extractBrowserIds } from '@/lib/analytics/pageViewClientContext';
 import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAuthorization';
 import { canonicalGenerateLeadSchema, buildGenerateLeadDataLayerEvent, type GenerateLeadDataLayerEvent } from '@/lib/analytics/generateLeadEvent';
 import { BRIDGE_URL } from './bridge-contract';
@@ -58,11 +59,13 @@ export async function recordAcceptedForm(form: FormData, formId: string, submiss
   try {
     const context = await formRequest(form); if (!context) return;
     const tracking = context.trackingContext;
+    const browserIds = extractBrowserIds(tracking.cookie_header, tracking.consent);
     await submitOperation(context.request, '/api/events/form-submit', {
       schema_version: 1, event_name: 'form_submit', source: 'server', environment: 'production',
       event_id: submissionId, event_time: new Date().toISOString(), consent: resolveTrackingAuthorization(),
       page_url: tracking.page_url, ...(tracking.page_view_id ? { page_view_id: tracking.page_view_id } : {}),
       ...(tracking.journey_id ? { journey_id: tracking.journey_id } : {}),
+      ...(browserIds ? { browser_id: browserIds } : {}),
       custom_data: { submission_id: submissionId, form_id: formId, form_name: formId, result: 'accepted' },
     });
   } catch { console.error('form_tracking_unverified', { formId }); }

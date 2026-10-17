@@ -13,11 +13,12 @@ const production = { VERCEL_ENV: 'production', NEXT_PUBLIC_VERCEL_ENV: 'producti
 const acceptedAt = '2026-10-07T12:00:00.000Z';
 const pageViewId = 'cfb9c40a-4be3-44bc-84a7-bdcd85f5e4c1';
 
-function harness({ entry = 'lib/tracking/backend.ts', env = {}, incoming, tokenFailure = false, networkFailure = false, respond } = {}) {
+function harness({ entry = 'lib/tracking/backend.ts', env = {}, incoming, authorization, tokenFailure = false, networkFailure = false, respond } = {}) {
   const sends = [], audiences = [], sessions = [], errors = [];
   const source = loadTypeScript(entry, {
     env: { ...production, ...env },
     mocks: {
+      ...(authorization ? { '@/lib/consent/resolveTrackingAuthorization': { resolveTrackingAuthorization: () => authorization } } : {}),
       'node:net': require('node:net'),
       '@/lib/validation/zodMini': require('zod/mini'),
       './internalJourneyContext': { stripInternalJourneyContext: event => { const copy = { ...event }; delete copy.journey_id; delete copy.previous_page_view_id; return copy; } },
@@ -205,6 +206,64 @@ test('missing OIDC, oversized body and lost response do not cause unauthenticate
   const logged = JSON.stringify([...token.errors, ...oversize.errors, ...lost.errors]);
   assert.equal(logged.includes('fixture-oidc-token'), false);
   assert.equal(logged.includes('event_name'), false);
+});
+
+test('accepted server form retains the actual request Google identity', async () => {
+  const api = harness({ entry: 'lib/tracking/server-forms.ts', incoming: {
+    origin: ORIGIN, referer: `${ORIGIN}/produkter/utekos-dun`,
+    'user-agent': 'Fixture browser', cookie: '_ga=GA1.1.123.456',
+  } });
+  await api.recordAcceptedForm(form(), 'product_waitlist_utekos_dun', pageViewId);
+  assert.equal(api.sends.length, 1);
+  assert.equal(api.sends[0].envelope.operation, '/api/events/form-submit');
+  assert.equal(api.sends[0].envelope.headers.cookie, '_ga=GA1.1.123.456');
+  assert.equal(api.sends[0].body.consent.analytics, 'granted');
+  assert.equal(api.sends[0].body.browser_id?.ga_client, 'GA1.1.123.456');
+  assert.equal(api.sends[0].body.event_id, pageViewId);
+});
+
+test('accepted server form ignores forged hidden cookie context', async () => {
+  const api = harness({ entry: 'lib/tracking/server-forms.ts', incoming: {
+    origin: ORIGIN, referer: `${ORIGIN}/produkter/utekos-dun`, cookie: '_ga=GA1.1.123.456',
+  } });
+  const data = form();
+  const context = JSON.parse(data.get('leadTrackingContext'));
+  context.cookie_header = '_ga=GA1.1.999.999';
+  data.set('leadTrackingContext', JSON.stringify(context));
+  await api.recordAcceptedForm(data, 'product_waitlist_utekos_dun', pageViewId);
+  assert.equal(api.sends[0].body.browser_id?.ga_client, 'GA1.1.123.456');
+});
+
+test('accepted server form never invents identity from missing or malformed cookies', async () => {
+  for (const cookie of ['', '_ga=%ZZ', 'session=private']) {
+    const api = harness({ entry: 'lib/tracking/server-forms.ts', incoming: {
+      origin: ORIGIN, referer: `${ORIGIN}/produkter/utekos-dun`, cookie,
+    } });
+    const data = form();
+    const context = JSON.parse(data.get('leadTrackingContext'));
+    context.cookie_header = '_ga=GA1.1.999.999';
+    data.set('leadTrackingContext', JSON.stringify(context));
+    await api.recordAcceptedForm(data, 'product_waitlist_utekos_dun', pageViewId);
+    assert.equal(api.sends.length, 1);
+    assert.equal(api.sends[0].body.browser_id, undefined);
+  }
+});
+
+test('accepted server form filters identity using resolved analytics and marketing authorization', async () => {
+  for (const [analytics, marketing, ga, fbp] of [
+    ['denied', 'granted', undefined, 'fb.1.fixture'],
+    ['granted', 'denied', 'GA1.1.123.456', undefined],
+    ['denied', 'denied', undefined, undefined],
+  ]) {
+    const api = harness({ entry: 'lib/tracking/server-forms.ts',
+      authorization: { analytics, marketing, preferences: 'granted', source: 'operator_policy', version: '1' },
+      incoming: { origin: ORIGIN, referer: `${ORIGIN}/produkter/utekos-dun`, cookie: '_ga=GA1.1.123.456; _fbp=fb.1.fixture' },
+    });
+    await api.recordAcceptedForm(form(), 'product_waitlist_utekos_dun', pageViewId);
+    assert.equal(api.sends.length, 1);
+    assert.equal(api.sends[0].body.browser_id?.ga_client, ga);
+    assert.equal(api.sends[0].body.browser_id?.fbp, fbp);
+  }
 });
 
 test('form tracking ignores preview and invalid or foreign referrers without making network calls', async () => {
