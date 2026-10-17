@@ -1,4 +1,5 @@
 import 'server-only';
+import { isWebCrawler } from './webCrawler';
 import { isIP } from 'node:net';
 import { getVercelOidcToken } from '@vercel/oidc';
 import { geolocation, ipAddress } from '@vercel/functions/headers';
@@ -67,12 +68,12 @@ export async function forwardTrackingRequest(request: NextRequest) {
   if (!enabled || !isTrackingOrigin(origin)) return failure(403, 'tracking_environment_disabled', requestId);
   // Discard crawler telemetry before reading bodies, identity or obtaining OIDC.
   // This is not an authorization bypass: callbacks and commerce APIs remain unchanged.
-  if (request.method === 'POST' && isBrowserTelemetryOperation(operation) && isMetaCrawler(request.headers.get('user-agent'))) {
+  if (request.method === 'POST' && isBrowserTelemetryOperation(operation) && isWebCrawler(request.headers.get('user-agent'))) {
     return new Response(null, { status: 204, headers: {
       'Cache-Control': 'private, no-store',
       'x-utekos-storefront-request-id': requestId,
       'x-utekos-traffic-classification': 'automated_bot',
-      'x-utekos-rejection': 'meta_crawler',
+      'x-utekos-rejection': isMetaCrawler(request.headers.get('user-agent')) ? 'meta_crawler' : 'google_crawler',
     } });
   }
   if (!callback && request.headers.get('origin') !== origin) return failure(403, 'origin_mismatch', requestId);

@@ -17,7 +17,7 @@ import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from '../src/lib/tracking/googleTagManag
 import { STAPE_CUSTOM_LOADER } from '../src/lib/tracking/stapeCustomLoader'
 import { transformSync } from 'esbuild'
 import * as jsxRuntime from 'react/jsx-runtime'
-import * as metaCrawler from '../src/lib/tracking/metaCrawler'
+import * as webCrawler from '../src/lib/tracking/webCrawler'
 import { telemetryRewriteUrl } from '../src/lib/tracking/telemetryRoutes'
 import { config as proxyConfig, proxy } from '../src/proxy'
 import { POST as gatewayPOST } from '../src/app/%5F_sgtm/[[...path]]/route'
@@ -320,7 +320,7 @@ test('production document proxy captures genuine URL click once and retains brow
     process.env.NEXT_PUBLIC_TRACKING_ENABLED = 'true'
     process.env.NEXT_PUBLIC_VERCEL_ENV = 'production'
     process.env.VERCEL_ENV = 'production'
-    for (const userAgent of ['facebookexternalhit/1.1', 'meta-externalads/1.1', 'meta-webindexer/1.1', 'meta-externalagent/1.1', 'meta-externalfetcher/1.1']) {
+    for (const userAgent of ['Googlebot/2.1', 'AdsBot-Google', 'Storebot-Google/1.0', 'Google-Agent', 'GoogleOther', 'facebookexternalhit/1.1', 'meta-externalads/1.1', 'meta-webindexer/1.1', 'meta-externalagent/1.1', 'meta-externalfetcher/1.1']) {
       const crawler = proxy(new NextRequest('https://utekos.no/produkter/comfyrobe?fbclid=fixture', {
         headers: { accept: 'text/html', 'user-agent': userAgent },
       }))
@@ -334,7 +334,7 @@ test('production document proxy captures genuine URL click once and retains brow
     const scriptModule = { exports: {} as { StapeScripts: () => { props: { children: { props: { dangerouslySetInnerHTML: { __html: string } } }[] } } } }
     const dependencies: Record<string, unknown> = {
       'server-only': {}, 'next/script': () => null, 'react/jsx-runtime': jsxRuntime,
-      './environment': { productionTrackingEnabled: () => true }, './metaCrawler': metaCrawler,
+      './environment': { productionTrackingEnabled: () => true }, './webCrawler': webCrawler,
       './googleTagManagerBootstrap': { GOOGLE_TAG_MANAGER_BOOTSTRAP }, './stapeCustomLoader': { STAPE_CUSTOM_LOADER },
     }
     vm.runInNewContext(transformSync(source, { loader: 'tsx', format: 'cjs', jsx: 'automatic' }).code, {
@@ -343,15 +343,15 @@ test('production document proxy captures genuine URL click once and retains brow
         return dependencies[name]
       },
     })
-    for (const userAgent of ['Mozilla/5.0 meta-externalads/1.1', 'facebookexternalhit/1.1', 'meta-externalfetcher/1.1', 'meta-externalagent/1.1', 'meta-webindexer/1.1', 'Fixture browser']) {
+    for (const userAgent of ['Googlebot/2.1', 'AdsBot-Google', 'GoogleMessages', 'Mozilla/5.0 meta-externalads/1.1', 'facebookexternalhit/1.1', 'meta-externalfetcher/1.1', 'meta-externalagent/1.1', 'meta-webindexer/1.1', 'Fixture browser']) {
       const scripts: string[] = []
       const window = { location: { origin: 'https://utekos.no', href: 'https://utekos.no/produkter' }, dataLayer: [] }
       const context = vm.createContext({ window, URL, navigator: { userAgent }, console,
         document: { cookie: '', getElementsByTagName: () => [{ parentNode: { insertBefore: (element: { src: string }) => scripts.push(element.src) } }], createElement: () => ({ src: '', async: false }) },
       })
       for (const child of scriptModule.exports.StapeScripts().props.children) vm.runInContext(child.props.dangerouslySetInnerHTML.__html, context)
-      assert.equal(scripts.length, metaCrawler.isMetaCrawler(userAgent) ? 0 : 1)
-      assert.equal(window.dataLayer.length > 0, !metaCrawler.isMetaCrawler(userAgent))
+      assert.equal(scripts.length, webCrawler.isWebCrawler(userAgent) ? 0 : 1)
+      assert.equal(window.dataLayer.length > 0, !webCrawler.isWebCrawler(userAgent))
     }
     const response = proxy(new NextRequest('https://utekos.no/?fbclid=fixture-click-id', { headers: { accept: 'text/html' } }))
     const fbc = response.cookies.get('_fbc')?.value

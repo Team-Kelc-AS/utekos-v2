@@ -1,4 +1,4 @@
-import { isMetaCrawler } from './metaCrawler'
+import { isWebCrawler } from './webCrawler'
 
 type TrackingEnvironment = {
   NEXT_PUBLIC_TRACKING_ENABLED?: string
@@ -19,7 +19,7 @@ export function trackingEnvironmentAllowsProduction(
 }
 
 export function productionTrackingEnabled(): boolean {
-  if (typeof window !== 'undefined' && isMetaCrawler(window.navigator?.userAgent)) return false
+  if (typeof window !== 'undefined' && isWebCrawler(window.navigator?.userAgent)) return false
   // Keep public lookups literal so Next.js can inline them in browser bundles.
   return trackingEnvironmentAllowsProduction(
     {

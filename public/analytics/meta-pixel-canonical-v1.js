@@ -4,6 +4,8 @@
   // Telemetry opt-out only; public content remains available to Meta's crawler.
   if (/(?:^|[\s;(])(?:facebookexternalhit|meta-(?:externalads|externalagent|webindexer|externalfetcher))\/\d+(?:\.\d+)*(?=$|[\s;)])/i.test(w.navigator && w.navigator.userAgent || '')) return
 
+  if (/(?:^|[\s;(])(?:Googlebot(?:-Image|-Video)?|Storebot-Google|Google-InspectionTool|GoogleOther(?:-Image|-Video)?|Google-CloudVertexBot|AdsBot-Google(?:-Mobile)?|Google-Safety|Mediapartners-Google|Google-CWS|FeedFetcher-Google|Google-GeminiNotebook|Google-Agent|GoogleMessages|Google-Pinpoint|GoogleProducer|Google-Read-Aloud|Google-Site-Verification)(?:\/\d+(?:\.\d+)*)?(?=$|[\s;)])/i.test(w.navigator && w.navigator.userAgent || '')) return
+
   w.dataLayer = w.dataLayer || []
 
   var PIXEL_ID = '1092362672918571'

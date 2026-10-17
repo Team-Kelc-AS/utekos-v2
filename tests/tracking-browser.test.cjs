@@ -197,7 +197,7 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
   return { page, requests, events, journey, waitFor, waitForJourney };
 }
 
-for (const crawlerName of ['meta-externalads', 'meta-externalagent', 'meta-webindexer', 'facebookexternalhit', 'meta-externalfetcher'])
+for (const crawlerName of ['Googlebot', 'AdsBot-Google', 'Storebot-Google', 'Google-Agent', 'GoogleOther', 'GoogleMessages', 'meta-externalads', 'meta-externalagent', 'meta-webindexer', 'facebookexternalhit', 'meta-externalfetcher'])
 test(`${crawlerName} can read products without Pixel, customer events, identity or collector requests`, async t => {
   const api = await fixture(t, undefined, { userAgent: `Mozilla/5.0 Chrome/131.0 Safari/537.36 ${crawlerName}/1.1` });
   assert.equal(await api.page.locator('h1').textContent(), 'Fixture product 1');

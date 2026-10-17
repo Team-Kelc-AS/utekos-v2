@@ -85,7 +85,7 @@ test('browser collectors fail closed outside production, with switch off, wrong 
 test('Meta ads crawler telemetry is discarded before reading bodies, identity, OIDC or forwarding', async () => {
   const { BRIDGE_OPERATIONS } = loadTypeScript('lib/tracking/bridge-contract.ts');
   const paths = BRIDGE_OPERATIONS.filter(path => /^\/api\/(events|observability|meta)\//.test(path) || path === '/api/log');
-  for (const userAgent of ['meta-externalads/1.1', 'Mozilla/5.0 Chrome/131.0 Safari/537.36 Meta-ExternalAds/1.1', 'facebookexternalhit/1.1', 'meta-externalfetcher/1.1', 'meta-externalagent/1.1', 'Mozilla/5.0 Chrome/131.0 Safari/537.36 meta-webindexer/1.1']) {
+  for (const userAgent of ['Googlebot/2.1', 'AdsBot-Google', 'Storebot-Google/1.0', 'Google-Agent', 'GoogleOther', 'GoogleMessages', 'meta-externalads/1.1', 'Mozilla/5.0 Chrome/131.0 Safari/537.36 Meta-ExternalAds/1.1', 'facebookexternalhit/1.1', 'meta-externalfetcher/1.1', 'meta-externalagent/1.1', 'Mozilla/5.0 Chrome/131.0 Safari/537.36 meta-webindexer/1.1']) {
     const api = harness({ tokenFailure: true });
     for (const path of paths) {
       for (const origin of [null, 'null', 'https://foreign.test', ORIGIN]) {
@@ -126,7 +126,7 @@ test('crawler opt-out never grants access or suppresses callbacks, payments or r
     headers: { ...ua, origin: 'https://checkout.shopify.com', 'x-shopify-hmac-sha256': 'fixture-signature' },
   }))).status, 202);
   assert.equal(callback.sends[0].envelope.headers['x-shopify-hmac-sha256'], 'fixture-signature');
-  for (const userAgent of ['Fixture browser', 'Mozilla/5.0 [FBAN/FB4A;FBAV/500.0]', 'Mozilla/5.0 Instagram 350.0', 'not-meta-externalads/1.1']) {
+  for (const userAgent of ['Fixture browser', 'Mozilla/5.0 [FBAN/FB4A;FBAV/500.0]', 'Mozilla/5.0 Instagram 350.0', 'not-meta-externalads/1.1', 'APIs-Google', 'Mozilla/5.0 GSA/350.0']) {
     const api = harness();
     const req = request(undefined, { headers: { 'user-agent': userAgent } });
     req.headers.delete('origin');

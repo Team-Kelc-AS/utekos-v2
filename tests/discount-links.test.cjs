@@ -80,10 +80,20 @@ test('discount navigation sets only a private cart cookie, never returns the car
 test('HEAD, prefetch and ads-crawler link checks do not create or change carts', async () => {
   const h = harness([], 'app/discount/[code]/route.ts');
   assert.equal(h.api.HEAD(new NextRequest('https://utekos.no/discount/NBCC128')).headers.get('set-cookie'), null);
-  for (const headers of [{ purpose: 'prefetch' }, { 'sec-purpose': 'prefetch' }, { 'next-router-prefetch': '1' }, { 'user-agent': 'facebookexternalhit/1.1' }, { 'user-agent': 'meta-externalfetcher/1.1' }, { 'user-agent': 'meta-externalads/1.1' }, { 'user-agent': 'meta-externalagent/1.1' }, { 'user-agent': 'meta-webindexer/1.1' }]) {
+  for (const headers of [{ 'user-agent': 'Googlebot/2.1' }, { 'user-agent': 'AdsBot-Google' }, { 'user-agent': 'GoogleMessages' }, { purpose: 'prefetch' }, { 'sec-purpose': 'prefetch' }, { 'next-router-prefetch': '1' }, { 'user-agent': 'facebookexternalhit/1.1' }, { 'user-agent': 'meta-externalfetcher/1.1' }, { 'user-agent': 'meta-externalads/1.1' }, { 'user-agent': 'meta-externalagent/1.1' }, { 'user-agent': 'meta-webindexer/1.1' }]) {
     const response = await h.api.GET(new NextRequest('https://utekos.no/discount/NBCC128', { headers }), { params: Promise.resolve({ code: 'NBCC128' }) });
     assert.equal(response.status, 303);
     assert.equal(response.headers.get('set-cookie'), null);
   }
   assert.equal(h.requests.length, 0);
+});
+
+test('Google shopping and user-delegated agents retain normal discount cart behavior', async () => {
+ for(const userAgent of ['Storebot-Google/1.0','Google-Agent']) {
+  const h = harness([{ cartCreate: { cart: cart(['NBCC128']), userErrors: [] } }], 'app/discount/[code]/route.ts');
+  const response = await h.api.GET(new NextRequest('https://utekos.no/discount/NBCC128', { headers: { 'user-agent': userAgent } }), { params: Promise.resolve({ code: 'NBCC128' }) });
+  assert.equal(response.status,303);
+  assert.equal(h.requests.length,1);
+  assert.equal(response.cookies.get('utekos_cart').value,id);
+ }
 });
