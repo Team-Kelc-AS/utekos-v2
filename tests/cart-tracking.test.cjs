@@ -289,6 +289,46 @@ test('Klarna reads attribution and correlation from the owned server-side cart',
   assert.equal(JSON.stringify(result).includes('secret-fixture'), false);
 });
 
+for (const analytics of ['granted', 'denied']) {
+  for (const marketing of ['granted', 'denied']) {
+    for (const preferences of ['granted', 'denied']) {
+      test(`checkout attribute readback preserves ${analytics}/${marketing}/${preferences} and filters identifiers by purpose`, () => {
+        const api = checkoutHarness();
+        const cart = makeCart([makeLine(1, '800')]);
+        const event = beginEvent(cart);
+        const consent = { analytics, marketing, preferences, source: 'cookiebot', version: '1' };
+        const notes = api.checkoutAttributes(cart, event, '456').map(attribute => ({
+          name: attribute.key,
+          value: attribute.key === 'utekos_consent' ? JSON.stringify(consent) : attribute.value,
+        }));
+        const parser = loadTypeScript('lib/analytics/checkoutAttributionSnapshot.ts', {
+          mocks: { '@/lib/validation/zodMini': require('zod/mini') },
+        });
+        const result = parser.parseOrderAttributionFromNoteAttributes(notes);
+        assert.deepEqual(JSON.parse(JSON.stringify(result.consent)), consent);
+        assert.equal(result.browser_id?.ga_client_id, analytics === 'granted' ? '123.456' : undefined);
+        assert.equal(result.browser_id?.fbp, marketing === 'granted' ? 'fb.1.1.fixture' : undefined);
+        assert.equal(result.user_data?.facebook_login_id, marketing === 'granted' ? '456' : undefined);
+      });
+    }
+  }
+}
+
+test('checkout consent readback keeps invalid states unresolved and retains operator policy', () => {
+  const parser = loadTypeScript('lib/analytics/checkoutConsentSnapshot.ts', {
+    mocks: { '@/lib/validation/zodMini': require('zod/mini') },
+  });
+  const consent = beginEvent().consent;
+  const notes = value => [{ name: 'utekos_consent', value: JSON.stringify(value) }];
+  assert.deepEqual(JSON.parse(JSON.stringify(parser.parseOrderConsentFromNoteAttributes(notes(consent)))), consent);
+  for (const analytics of ['unknown', true, null, undefined]) {
+    const result = parser.parseOrderConsentFromNoteAttributes(notes({ ...consent, analytics }));
+    assert.equal(result.analytics, 'unknown');
+    assert.equal(result.resolution, 'invalid_payload');
+  }
+  assert.equal(parser.parseOrderConsentFromNoteAttributes([]).resolution, 'missing');
+});
+
 
 test('a targeted mutation never reports another tab line or excess same-variant quantity', () => {
   const before = makeCart([makeLine(1, '800')]);

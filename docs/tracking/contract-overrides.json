@@ -113,6 +113,13 @@
       "reason": "Align canonical fbclid and durable click cache with the actual SDK fbc, preserve the complete fbc timestamp and other provider IDs, and retain explicit URL click precedence. Same-page/live-cookie guards prevent late events from rolling back a newer navigation cache. Server fallback receives only a currently observed URL click, never remints an expired stored raw click, and conflicting fallback fbc is omitted. Offline Chromium/WebKit regressions cover recovery, checkout, restored cookies, navigation ordering and unavailable-cookie fallbacks.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "src/lib/analytics/enrichCanonicalEventWithMetaAttribution.ts"
+    },
+    "src/lib/analytics/checkoutConsentSnapshot.ts": {
+      "baseSha256": "1c7d397f4313d76c923a8fefafac9cdddd09c5337f341db9fae4b988591a6b08",
+      "sha256": "6bfccc8376a005d9ea059cb24f5e643e09bd954e14c9a36ee72d41f757e79a1d",
+      "reason": "Reviewed 2026-10-17: preserve explicit granted and denied purpose values in Shopify order-attribute parsing, matching backend 51b1213. All eight purpose combinations retain the supplied choice and independently filter GA and marketing identifiers. Invalid states remain unresolved; operator_policy is unchanged. This does not collect or set Shopify privacy choices.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/checkoutConsentSnapshot.ts"
     }
   }
 }
