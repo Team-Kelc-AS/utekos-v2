@@ -1,0 +1,67 @@
+.article .panel {
+  --knowledge-ink: #010b0a;
+  --knowledge-ink-muted: #001a18;
+  --knowledge-link: #b44701;
+  --knowledge-link-soft: #b44701;
+  --knowledge-border-strong: color-mix(in srgb, #001a18 35%, transparent);
+  --knowledge-surface: #f0eee9;
+}
+
+.article .ingress {
+  margin-top: 1.75rem;
+  font-size: clamp(1.2rem, 1.08rem + 0.42vw, 1.45rem);
+  line-height: 1.55;
+}
+
+.breadcrumbs {
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  font-size: 0.875rem;
+}
+
+.article .breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article .breadcrumbs li,
+.article .breadcrumbs li + li {
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumbs li + li::before {
+  content: "/";
+  margin-right: 0.5rem;
+}
+
+.article nav[aria-label="I denne artikkelen"] h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.article nav[aria-label="I denne artikkelen"] li + li {
+  margin-top: 0;
+}
+
+.article nav[aria-label="I denne artikkelen"] ol {
+  margin-top: 0;
+}
+
+.article .panel time {
+  font-weight: 500;
+}
+
+.faq {
+  --knowledge-ink: #f0eee9;
+  --knowledge-link: #f0eee9;
+  --knowledge-link-soft: #f0eee9;
+  color: var(--knowledge-ink);
+}
+
+.article .faq h3 {
+  margin: 0;
+}

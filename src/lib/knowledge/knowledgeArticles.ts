@@ -1,3 +1,4 @@
+import { sherpaCoreArticle } from "./sherpacoreArticle";
 import type { Route } from "next";
 import { knowledgeImages } from "./knowledgeImages";
 import { validateKnowledgeArticles } from "./validateKnowledgeArticles";
@@ -993,6 +994,7 @@ function enrichArticle(id: keyof typeof articleContent): KnowledgeArticle {
 }
 
 export const knowledgeArticles = {
+  sherpaCore: sherpaCoreArticle,
   christmasGift: enrichArticle("christmasGift"),
   terrace: enrichArticle("terrace"),
   cloudweave: enrichArticle("cloudweave"),
@@ -1007,6 +1009,7 @@ export const knowledgeArticles = {
 
 // Preserve the existing library order, now shared with its ItemList and sitemap.
 export const knowledgeArticleList: readonly KnowledgeArticle[] = [
+  knowledgeArticles.sherpaCore,
   knowledgeArticles.christmasGift,
   knowledgeArticles.glamping,
   knowledgeArticles.glampingNorway,

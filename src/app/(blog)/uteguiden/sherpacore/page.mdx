@@ -1,0 +1,359 @@
+import { AuthorCard, EditorialFigure } from "./SherpaCoreArticleParts";
+import articleStyles from "../knowledgeArticle.module.css";
+import chrome from "@/components/knowledge/knowledgeChrome.module.css";
+import styles from "./sherpacore.module.css";
+
+<article id="top" className={`${articleStyles.article} ${articleStyles.body} ${styles.article}`}>
+
+{/* 1. Brødsmulesti, H1, ingress og forfatterkort */}
+
+<nav aria-label="Brødsmulesti" className={styles.breadcrumbs}>
+  <ol>
+    <li>
+      <a href="/">Hjem</a>
+    </li>
+    <li>
+      <a href="/uteguiden">Kunnskap</a>
+    </li>
+    <li aria-current="page">Hva er SherpaCore™?</li>
+  </ol>
+</nav>
+
+<h1>Hva er SherpaCore™? Bli kjent med innsiden av Comfyrobe</h1>
+
+<div className={styles.ingress}>
+  {" "}
+  SherpaCore™ er betegnelsen på det innvendige fôrstoffet i Comfyrobe. Denne
+  guiden forklarer hvordan tekstilstruktur, flatevekt på 250 g/m² og kapillær
+  fukttransport fungerer i et syntetisk fleecemateriale <Cite ids={[1]} />{" "}
+  <Cite ids={[3]} /> <Cite ids={[4]} />.{" "}
+</div>
+
+<AuthorCard
+  author="Utekos Fagredaksjon"
+  badgeAlt="Sirkulært sort/hvitt Utekos-merke"
+  publishedDate="2026-10-17"
+  displayDate="17. oktober 2026"
+/>
+
+{/* 2. Hva du vil lære */}
+
+<aside
+  className={`${chrome.learnings} ${styles.panel}`}
+  aria-labelledby="learning-heading"
+>
+  <h2 id="learning-heading">Hva du vil lære</h2>
+  <ul className={chrome.learningsList}>
+    <li>
+      Forskjellen mellom varemerket SherpaCore™, stofftypen sherpa-fleece og
+      selve tekstilfiberen (100 % polyester).
+    </li>
+    <li>
+      Hvordan en hevet fiberoverflate (pile) binder stillestående luft for å
+      begrense varmetap.
+    </li>
+    <li>
+      Hva flatevekten 250 g/m² måler, og hvordan den skiller seg fra plaggets
+      totalvekt.
+    </li>
+    <li>
+      Hvordan hydrofobe polyesterfibre kan ta opp og flytte vann gjennom
+      kapillære hulrom og overflatebehandling.
+    </li>
+    <li>
+      Hvordan innerfôret og det vanntette ytterstoffet utfyller hverandre i en
+      tolags konstruksjon.
+    </li>
+  </ul>
+</aside>
+
+{/* 3. I denne artikkelen */}
+
+<nav aria-label="I denne artikkelen" className={chrome.toc}>
+  <h2> I denne artikkelen </h2>
+  <ol className={chrome.tocList}>
+    <li>
+      <a href="#hva-sherpa-betyr">Hva sherpa-begrepet betyr</a>
+    </li>
+    <li>
+      <a href="#hvordan-fleece-gir-varme">Hvordan fleece bidrar til varme</a>
+    </li>
+    <li>
+      <a href="#hva-250-gm2-betyr">Hva 250 g/m² betyr</a>
+    </li>
+    <li>
+      <a href="#hvordan-polyester-handterer-vann">
+        {" "}
+        Hvordan polyesterstoff håndterer vann{" "}
+      </a>
+    </li>
+    <li>
+      <a href="#mykhet-og-komfort">Mykhet og termofysiologisk komfort</a>
+    </li>
+    <li>
+      <a href="#forets-rolle-i-comfyrobe">Fôrets rolle i Comfyrobe</a>
+    </li>
+    <li>
+      <a href="#vanlige-kundesporsmal">Vanlige spørsmål om SherpaCore™</a>
+    </li>
+    <li>
+      <a href="#kilder">Kilder</a>
+    </li>
+  </ol>
+</nav>
+
+{/* Bilde 1 */}
+
+<EditorialFigure
+  src="/images/kunnskap/sherpacore-makro-struktur.webp"
+  alt="Makrofotografi av hvit og gråtonet sherpa-fleece i 100 prosent polyester som viser den krusede, hevede tekstilstrukturen i naturlig nordisk dagslys."
+  caption="Den krusede overflaten i sherpa-fleece er konstruert av syntetiske polyesterfibre for å etterligne strukturen i ull uten bruk av animalske fibre."
+/>
+
+<h2 id="hva-sherpa-betyr">Hva sherpa-begrepet betyr</h2>
+
+    I tekstilterminologi skilles det mellom materialnavn, stofftype og råfiber <Cite ids={[1]} />. SherpaCore™ er Utekos sitt navn på fôrstoffet, mens «sherpa» beskriver en strikket fleecestruktur med en hevet, kruset overflate som visuelt og taktilt minner om saueull <Cite ids={[1]} /><Cite ids={[5]} />. Selve fiberen i SherpaCore™ er 100 % syntetisk polyester og inneholder ikke ull <Cite ids={[5]} />.
+
+<KnowledgeCallout title="Tommelregel:" appearance="dark">
+
+Skill alltid mellom overflatestruktur og
+fiberinnhold – «sherpa» beskriver hvordan stoffet er børstet og skåret i
+overflaten, ikke hvilken råvare tråden er spunnet av <Cite ids={[1]} />.
+
+</KnowledgeCallout>
+
+<h2 id="hvordan-fleece-gir-varme">Hvordan fleece bidrar til varme</h2>
+
+Syntetisk fleece isolerer ved at strikkekonstruksjonen gjennomgår en mekanisk
+etterbehandling som løfter fibrene til en åpen luv (pile) <Cite ids={[2]} />.
+Denne hevede strukturen skaper små lommer som holder på stillestående luft,
+noe som reduserer varmetap fra kroppen uten at materialet blir tungt eller
+stivt <Cite ids={[2]} />.
+
+{/* Bilde 2 */}
+
+<EditorialFigure
+  src="/images/kunnskap/comfyrobe-kystklima-isolasjon.jpg"
+  alt="Person iført en mørk, værbestandig kåpe med synlig sherpa-fôr i hetten, stående ved en forblåst norsk svabergkyst i grått høstvær."
+  caption="Luftlommene i det innvendige fleecelaget fungerer som et isolerende sjikt når ytterskallet skjermer mot vind."
+/>
+
+<h2 id="hva-250-gm2-betyr">Hva 250 g/m² betyr</h2>
+
+Spesifikasjonen 250 g/m² (gram per kvadratmeter, ofte skrevet
+gsm) angir fôrstoffets masse per arealenhet målt etter standardiserte
+testmetoder som ASTM D3776 <Cite ids={[3]} />
+
+<Cite ids={[5]} />. Verdien beskriver tettheten og tykkelsen i selve
+tekstilduken på rull, og må ikke forveksles med vekten av hele det ferdigsydde
+plagget <Cite ids={[3]} />.
+
+<KnowledgeCallout title="Tommelregel:" appearance="dark">
+
+En flatevekt på 250 g/m² plasserer
+fôret i mellomsjiktet for isolerende fleece – tykkere enn tynn mikrofleece,
+men merkbart mer fleksibelt enn tung ytterfleece <Cite ids={[2]} />
+
+<Cite ids={[3]} />.
+
+</KnowledgeCallout>
+
+<h2 id="hvordan-polyester-handterer-vann">
+  {" "}
+  Hvordan polyesterstoff håndterer vann{" "}
+</h2>
+
+Rene polyesterfibre er fra naturens side hydrofobe og binder svært lite vann
+inne i selve fiberstrukturen <Cite ids={[4]} />. Når fôrstoffet i Comfyrobe
+likevel er spesifisert for godt vannopptak, skyldes det kapillær
+væsketransport (wicking) i de mikroskopiske hulrommene mellom fibrene og
+garnene, kombinert med hydrofil overflatebehandling som reduserer
+overflatespenningen <Cite ids={[4]} />
+
+<Cite ids={[5]} />. Fordi vannet lagres mellom fibrene i stedet for å trenge inn
+og få dem til å svelle, påvirkes tørkehastigheten separat og gir raskere
+opptørking enn i hygroskopiske naturfibre <Cite ids={[2]} />
+<Cite ids={[4]} />.
+
+{/* Bilde 3 */}
+
+<EditorialFigure
+  src="/images/kunnskap/vannopptak-kapillaer-fleece.jpg"
+  alt="Nærbilde av små vanndråper på innsiden av et fuktig sherpa-fôr etter utendørs bading i kaldt nordisk klima."
+  caption="Fukt på huden trekkes inn i kapillærrommene mellom polyesterfibrene uten at selve fibermaterialet sveller."
+  editorialPrompt="Documentary close-up shot of damp hands pulling the inner lapel of a matte dark outerwear robe lined with off-white sherpa fleece after cold-water swimming in a Norwegian fjord. Subtle water droplets visible on the skin and fabric surface, overcast twilight, muted desaturated tones, natural realism, 50mm lens."
+/>
+
+<KnowledgeCallout title="Tommelregel:" appearance="dark">
+
+I tekniske polyestertekstiler skjer vannopptaket
+mellom fibrene via kapillærkrefter, mens tørkehastigheten styres av hvor lite
+vann selve fiberkjernen holder igjen <Cite ids={[4]} />.
+
+</KnowledgeCallout>
+
+<h2 id="mykhet-og-komfort">Mykhet og termofysiologisk komfort</h2>
+
+Tekstilfaglig måles bærekomfort gjennom tre faktorer: varme- og
+fuktregulering, hudfølelse (skin-sensorial comfort) og ergonomisk passform{" "}
+
+<Cite ids={[6]} />. SherpaCore™ er behandlet med antinuppe-prosess
+(anti-pilling) for å bevare den myke overflaten mot huden over tid, samtidig som
+en romslig passform i plagget gir plass til luftlag og bevegelse
+<Cite ids={[5]} />
+<Cite ids={[6]} />.
+
+<h2 id="forets-rolle-i-comfyrobe">Fôrets rolle i Comfyrobe</h2>
+
+I Comfyrobe inngår SherpaCore™ i en todelt konstruksjon der innside og utside
+har adskilte oppgaver <Cite ids={[5]} />. Mens fôret på 250 g/m²
+håndterer isolasjon, fukt fra huden og myk kontaktflate, består utsiden av et
+separat ytterstoff på 130 g/m² i polyester med pustende, vanntett
+PU-belegg og tapede sømmer som beskytter mot vind og nedbør <Cite ids={[5]} />.
+
+{/* Bilde 4 */}
+
+<EditorialFigure
+  src="/images/kunnskap/tolags-konstruksjon-detalj.jpg"
+  alt="Detaljbilde av glidelås, vindstolpe og overgang mellom det matte vanntette ytterstoffet og det lyse sherpa-fôret i en Comfyrobe."
+  caption="Samspillet mellom det matte ytterskallet med PU-membran og det isolerende innerfôret i SherpaCore™."
+  editorialPrompt="Clean architectural detail photograph showing the open front placket and hood edge of a dark slate waterproof robe hanging on a weathered wooden hook outdoors in Nordic mist. Clearly displays the contrast between the smooth, dull 130 gsm waterproof peach-skin outer shell and the 250 gsm textured sherpa fleece lining inside. Muted Scandinavian aesthetic, soft natural light, photorealistic."
+/>
+
+  <h2 id="vanlige-kundesporsmal">Vanlige spørsmål om SherpaCore™</h2>
+<Accordion multiple={false} keepMounted className={`${styles.faq} rounded-2xl bg-jungle px-6`} aria-labelledby="vanlige-kundesporsmal">
+  <AccordionItem value="sherpacore-1">
+    <AccordionTrigger>Inneholder SherpaCore™ ull?</AccordionTrigger>
+    <AccordionContent>
+
+Nei, stoffet består av 100 % polyester; navnet viser kun til den ull-lignende teksturen i overflaten <Cite ids={[1]} /><Cite ids={[5]} />.
+
+    </AccordionContent>
+
+  </AccordionItem>
+  <AccordionItem value="sherpacore-2">
+    <AccordionTrigger>Betyr 250 g/m² at kåpen veier 250 g?</AccordionTrigger>
+    <AccordionContent>
+
+Nei, verdien angir vekten av én kvadratmeter av selve innerfôret, ikke vekten av hele plagget <Cite ids={[3]} />.
+
+    </AccordionContent>
+
+  </AccordionItem>
+  <AccordionItem value="sherpacore-3">
+    <AccordionTrigger>Hvor i plagget sitter SherpaCore™?</AccordionTrigger>
+    <AccordionContent>
+
+SherpaCore™ utgjør hele det innvendige fôret i kropp og hette, skjermet av det vanntette ytterstoffet <Cite ids={[5]} />.
+
+    </AccordionContent>
+
+  </AccordionItem>
+  <AccordionItem value="sherpacore-4">
+    <AccordionTrigger>Hvordan kan polyester ta opp vann og tåle vask?</AccordionTrigger>
+    <AccordionContent>
+
+Tekstilens porøse kapillærstruktur og overflatebehandling trekker opp fukt mellom fibrene, og plagget kan vaskes på 40 °C uten skyllemiddel <Cite ids={[2]} /><Cite ids={[4]} /><Cite ids={[5]} />.
+
+    </AccordionContent>
+
+  </AccordionItem>
+</Accordion>
+
+{/* 5. Tilbake til toppen-pille */}
+
+<div className={chrome.backToTopWrap}>
+  <a href="#top" className={chrome.backToTop} aria-label="Tilbake til toppen">
+    {" "}
+    ↑ Tilbake til toppen{" "}
+  </a>
+</div>
+
+{/* 6. Kilder (N) */}
+
+<details id="kilder" className={chrome.sources}>
+  <summary className={chrome.sourcesSummary}>Kilder (6)</summary>
+  <ol className={chrome.sourcesList}>
+    <li id="kilde-1">
+      <Cite ids={[1]} /> Polartec.{" "}
+      <em>Thermal Pro™ – High-loft & Sherpa Fleece Insulation Fabrics</em>.
+      Tilgjengelig fra:{" "}
+      <a
+        href="https://www.polartec.com/fabrics/insulation/thermal-pro"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {"https://www.polartec.com/fabrics/insulation/thermal-pro"}
+      </a>
+    </li>
+    <li id="kilde-2">
+      <Cite ids={[2]} /> Polartec.{" "}
+      <em>The Original Synthetic Fleece Fabric: Polar Fleece Series</em>.
+      Tilgjengelig fra:{" "}
+      <a
+        href="https://www.polartec.com/fabrics/insulation/fleece-series"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {"https://www.polartec.com/fabrics/insulation/fleece-series"}
+      </a>
+    </li>
+    <li id="kilde-3">
+      <Cite ids={[3]} /> ASTM International.{" "}
+      <em>
+        {" "}
+        ASTM D3776 / D3776M-20(2025): Standard Test Methods for Mass Per Unit
+        Area (Weight) of Fabric{" "}
+      </em>
+      . Tilgjengelig fra:{" "}
+      <a
+        href="https://store.astm.org/d3776_d3776m-20r25.html"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {"https://store.astm.org/d3776_d3776m-20r25.html"}
+      </a>
+    </li>
+    <li id="kilde-4">
+      <Cite ids={[4]} /> Akgun M, Kanik M, Seçmen S, Macit M, Gülşen E. Research
+      on the Method for Controlling the Liquid Absorptivity Behavior of
+      Polyester Textile Materials. <em>AATCC Journal of Research</em>.
+      2022;9(3):143–151. DOI:{" "}
+      <a
+        href="https://doi.org/10.1177/24723444221084395"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {"https://doi.org/10.1177/24723444221084395"}
+      </a>
+    </li>
+    <li id="kilde-5">
+      <Cite ids={[5]} /> Utekos / Navigare.{" "}
+      <em>
+        {" "}
+        Teknisk spesifikasjon og materialliste (BOM): Style #1305UNISEX
+        Comfyrobe / Dryrobe Proto (Innerfabric 250 gsm 100% polyester &
+        Outerfabric 130 gsm PU-coated){" "}
+      </em>
+      . Intern produksjonsdokumentasjon; 2022.
+    </li>
+    <li id="kilde-6">
+      <Cite ids={[6]} /> Hohenstein Laboratories.{" "}
+      <em>
+        {" "}
+        Comfort testing of textiles – Thermophysiological and skin-sensorial
+        comfort{" "}
+      </em>
+      . Tilgjengelig fra:{" "}
+      <a
+        href="https://www.hohenstein.com/en/expertise/performance/comfort"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {"https://www.hohenstein.com/en/expertise/performance/comfort"}
+      </a>
+    </li>
+  </ol>
+</details>
+
+</article>

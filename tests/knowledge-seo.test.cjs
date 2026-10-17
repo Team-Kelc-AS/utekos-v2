@@ -14,13 +14,13 @@ const { buildSiteJsonLd } = loadTypeScript('lib/seo/JSON-LD/buildSiteJsonLd.ts')
 const plain = value => JSON.parse(JSON.stringify(value));
 const root = path.resolve(__dirname, '..');
 const routeRoot = path.join(root, 'src/app/(blog)/uteguiden');
-const expectedSources = [14, 56, 0, 70, 12, 6, 8, 10, 7, 8];
+const expectedSources = [6, 14, 56, 0, 70, 12, 6, 8, 10, 7, 8];
 
 test('registry covers every existing article route once and preserves source counts', () => {
   const routes = fs.readdirSync(routeRoot).filter(slug => fs.existsSync(path.join(routeRoot, slug, 'page.mdx'))).sort();
-  assert.equal(articles.length, 10);
+  assert.equal(articles.length, 11);
   assert.deepEqual(Array.from(articles, a => a.slug).sort(), routes);
-  assert.equal(new Set(articles.map(a => a.path)).size, 10);
+  assert.equal(new Set(articles.map(a => a.path)).size, 11);
   assert.deepEqual(Array.from(articles, a => a.references.length), expectedSources);
   for (const slug of ['', ...routes]) {
     assert.ok(fs.existsSync(path.join(routeRoot, slug, 'layout.mdx')));
@@ -44,8 +44,8 @@ test('metadata, graph identities, dates and image references agree for all artic
     assert.equal(metadata.title.absolute, article.metaTitle);
     assert.equal(metadata.openGraph.url, url);
     assert.equal(metadata.openGraph.type, 'article');
-    assert.equal(metadata.openGraph.images[0].width, 1200);
-    assert.equal(metadata.openGraph.images[0].height, 630);
+    assert.equal(metadata.openGraph.images[0].width, article.socialImage.width);
+    assert.equal(metadata.openGraph.images[0].height, article.socialImage.height);
     assert.equal(metadata.twitter.images[0].url, metadata.openGraph.images[0].url);
     assert.equal(metadata.robots['max-image-preview'], 'large');
     assert.equal(entity.headline, article.title);
@@ -90,9 +90,9 @@ test('overview has a complete ordered collection and no Article entity', () => {
   assert.equal(graph.filter(node => node['@type'] === 'Article').length, 0);
   assert.equal(graph.filter(node => node['@type'] === 'CollectionPage').length, 1);
   const list = graph.find(node => node['@type'] === 'ItemList');
-  assert.equal(list.numberOfItems, 10);
+  assert.equal(list.numberOfItems, 11);
   assert.deepEqual(list.itemListElement.map(item => item.url), Array.from(articles, a => `https://utekos.no${a.path}`));
-  assert.deepEqual(list.itemListElement.map(item => item.position), Array.from({ length: 10 }, (_, i) => i + 1));
+  assert.deepEqual(list.itemListElement.map(item => item.position), Array.from({ length: 11 }, (_, i) => i + 1));
   assert.equal(buildKnowledgeOverviewMetadata().openGraph.type, 'website');
 });
 

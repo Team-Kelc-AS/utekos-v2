@@ -26,8 +26,8 @@ const article = z.object({
   if (value.publishedAt && value.updatedAt && Date.parse(value.updatedAt) < Date.parse(value.publishedAt)) {
     ctx.addIssue({ code: 'custom', path: ['updatedAt'], message: 'Update precedes publication' });
   }
-  if (value.socialImage.width !== 1200 || value.socialImage.height !== 630) {
-    ctx.addIssue({ code: 'custom', path: ['socialImage'], message: 'Share images must be composed at 1200 × 630' });
+  if (value.socialImage.width < 1200 || value.socialImage.height < 630) {
+    ctx.addIssue({ code: 'custom', path: ['socialImage'], message: 'Share images must be at least 1200 × 630; preserve their original ratio' });
   }
 }));
 

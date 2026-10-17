@@ -5,7 +5,7 @@ import { knowledgeAuthors } from '@/content/authors/knowledgeAuthors';
 import { knowledgeOverview, type KnowledgeArticle, type KnowledgeImage } from './knowledgeArticles';
 
 function imageMetadata(image: KnowledgeImage) {
-  return { url: absoluteUrl(image.src), width: image.width, height: image.height, alt: image.alt, type: 'image/png' };
+  return { url: absoluteUrl(image.src), width: image.width, height: image.height, alt: image.alt, type: image.src.endsWith('.webp') ? 'image/webp' : image.src.endsWith('.jpg') || image.src.endsWith('.jpeg') ? 'image/jpeg' : 'image/png' };
 }
 
 function commonMetadata(title: string, description: string, path: string, image: KnowledgeImage): Metadata {
