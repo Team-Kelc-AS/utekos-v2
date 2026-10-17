@@ -23,6 +23,8 @@ const publicStorefrontRoutes = new Set([
   '/produkter/terrasse',
   '/produkter/tilbehor',
   '/produkter/utekos-dun',
+  '/produkter/utekos-mikrofiber',
+  '/produkter/utekos-stapper',
   '/produkter/utekos-techdown',
   '/produkter/varmeplagg',
   '/uteguiden',

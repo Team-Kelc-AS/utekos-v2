@@ -231,3 +231,12 @@ test('unknown script origins retain a stable private-data-free label through bac
     assert.equal(sanitizer.sanitizeClientErrorFilename(expected), expected);
   }
 });
+
+test('public product diagnostics retain Mikrofiber and Stapper through both sanitizers without query data', () => {
+  const local = bundled('..', 'src/lib/observability/logging/sanitizeOperationalPathname.ts');
+  const remote = bundled(process.env.CLIENT_ERROR_BACKEND_ROOT || '..', 'src/lib/observability/logging/sanitizeOperationalPathname.ts');
+  for (const route of ['/produkter/utekos-mikrofiber', '/produkter/utekos-stapper']) {
+    assert.equal(remote.sanitizeOperationalPathname(local.sanitizeOperationalPathname(route + '?email=private@example.test&fbclid=secret')), route);
+  }
+  assert.equal(remote.sanitizeOperationalPathname('/produkter/private@example.test'), '/produkter/:product');
+});
