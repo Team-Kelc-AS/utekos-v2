@@ -30,7 +30,8 @@ for (const [engineName, engine] of Object.entries({ chromium, webkit })) {
           page.on('console', message => {
             if (message.type() === 'error' && /hydrat|didn't match|Minified React/.test(message.text())) errors.push(message.text());
           });
-          const response = await page.goto(new URL(pathname, baseURL).href, { waitUntil: 'domcontentloaded' });
+          const response = await page.goto(new URL(pathname, baseURL).href, { waitUntil: 'load' });
+          await page.evaluate(() => document.fonts.ready);
           assert.equal(response.status(), 404, pathname);
           if (javaScriptEnabled) await page.waitForTimeout(2000);
           assert.deepEqual(errors, [], pathname);
@@ -39,7 +40,7 @@ for (const [engineName, engine] of Object.entries({ chromium, webkit })) {
           assert.equal(await page.locator('h1').innerText(), 'Denne siden finnes ikke');
           assert.equal(await page.getByRole('link', { name: 'Se alle produkter' }).getAttribute('href'), '/produkter');
           assert.equal(await page.getByRole('link', { name: 'Kontakt oss', exact: true }).getAttribute('href'), '/kontaktskjema');
-          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
+          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false, `${pathname}; JavaScript=${javaScriptEnabled}`);
           await page.close();
         }
         await context.close();
