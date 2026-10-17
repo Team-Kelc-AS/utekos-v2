@@ -166,6 +166,70 @@ test('Meta collection deadline keeps its fixed reason through browser and backen
   }
 });
 
+test('syntax categories survive both sanitizers without copying tokens or response contents', () => {
+  const messages = bundled('..', 'src/lib/observability/client/sanitizeClientErrorBeacon.ts');
+  for (const [raw, category] of [
+    ["SyntaxError: Unexpected token '<', private@example.com", 'unexpected-less-than'],
+    ['SyntaxError: Unexpected end of input private@example.com', 'unexpected-end'],
+    ['SyntaxError: Unexpected EOF private@example.com', 'unexpected-end'],
+    ['SyntaxError: Invalid or unexpected token private@example.com', 'invalid-token'],
+    ["SyntaxError: Unexpected token 'private@example.com'", 'unexpected-token'],
+  ]) {
+    const message = messages.sanitizeClientErrorMessage(raw);
+    assert.equal(message, `SyntaxError #${category}`);
+    const sent = frontend.clientLogPayloadSchema.parse({
+      event: 'client_error', level: 'error',
+      data: { source: 'window_error', message, filename: '/:script/vercel-analytics' },
+      context: { pathname: '/' },
+    });
+    const logged = backend.toAppLogInput(backend.clientLogPayloadSchema.parse(sent));
+    assert.equal(logged.data.message, message);
+    assert.equal(logged.data.filename, '/:script/vercel-analytics');
+    assert.equal(logged.level, 'ERROR');
+    assert.doesNotMatch(JSON.stringify(logged), /private|example/);
+    assert.equal(appContract.appLogInputSchema.safeParse(logged).success, true);
+  }
+  assert.equal(messages.sanitizeClientErrorMessage('SyntaxError #private-token'), 'SyntaxError');
+  assert.equal(messages.sanitizeClientErrorFilename('https://utekos.no/1234567890abcdef/script.js'), '/:script/site-proxy');
+});
+
+for (const engine of ['chromium', 'webkit']) {
+  test(`${engine}: real script parse failures distinguish Vercel SDKs without exposing script URLs`, async () => {
+    const code = buildSync({ entryPoints: [path.resolve(__dirname, '../src/lib/observability/client/registerClientErrorListeners.ts')], bundle: true, platform: 'browser', format: 'iife', globalName: 'errorLogging', define: { 'process.env.NODE_ENV': '"production"' }, write: false }).outputFiles[0].text;
+    const browser = await require('playwright')[engine].launch({ headless: true });
+    try {
+      for (const [sdk, label, hash, body, category] of [
+        ['@vercel/analytics/next', 'vercel-analytics', '1111111111111111', '<!doctype html><p>private@example.com</p>', 'unexpected-less-than'],
+        ['@vercel/speed-insights/next', 'vercel-speed-insights', '2222222222222222', 'function unfinished() {', 'unexpected-end'],
+        ['unrecognized-sdk', 'site-proxy', '3333333333333333', '<html>private@example.com', 'unexpected-less-than'],
+      ]) {
+        const page = await browser.newPage();
+        await page.route('**/*', route => route.fulfill({ status: 200, contentType: route.request().resourceType() === 'script' ? 'application/javascript' : 'text/html', body: route.request().resourceType() === 'script' ? body : '<!doctype html><html><head></head><body></body></html>' }));
+        await page.goto('https://utekos.no/');
+        await page.addScriptTag({ content: code });
+        await page.evaluate(({ sdk, hash }) => {
+          window.testErrorPayloads = [];
+          window.fetch = async (_url, options) => { window.testErrorPayloads.push(JSON.parse(options.body)); return new Response(null); };
+          errorLogging.registerClientErrorListeners();
+          const script = document.createElement('script');
+          script.dataset.sdkn = sdk;
+          script.src = `/${hash}/script.js?token=private@example.com`;
+          document.head.appendChild(script);
+        }, { sdk, hash });
+        await page.waitForFunction(() => window.testErrorPayloads.length > 0);
+        const payloads = await page.evaluate(() => window.testErrorPayloads);
+        assert.equal(payloads.length, 1);
+        const logged = backend.toAppLogInput(backend.clientLogPayloadSchema.parse(payloads[0]));
+        assert.equal(logged.data.filename, `/:script/${label}`);
+        assert.equal(logged.data.message, `SyntaxError #${category}`);
+        assert.equal(logged.level, 'ERROR');
+        assert.doesNotMatch(JSON.stringify(logged), /private|example|11111111|22222222|33333333/);
+        await page.close();
+      }
+    } finally { await browser.close(); }
+  });
+}
+
 test('React codes and known public pages survive the entire browser/backend log pipeline', () => {
   const messages = bundled('..', 'src/lib/observability/client/sanitizeClientErrorBeacon.ts');
   for (const raw of [

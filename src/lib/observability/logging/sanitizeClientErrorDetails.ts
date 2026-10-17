@@ -13,6 +13,7 @@ const SCRIPT_SOURCES: Record<string, string> = {
 }
 const SOURCE_LABELS = new Set([
   ...Object.values(SCRIPT_SOURCES), 'browser-extension', 'site-proxy',
+  'vercel-analytics', 'vercel-speed-insights',
   'server-tag-manager', 'blob', 'data', 'browser-masked', 'unknown-protocol'
 ].map(source => `/:script/${source}`))
 

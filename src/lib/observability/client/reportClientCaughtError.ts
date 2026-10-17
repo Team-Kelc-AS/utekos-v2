@@ -1,5 +1,5 @@
-import { sanitizeClientErrorMessage } from './sanitizeClientErrorBeacon'
-import { sanitizeClientErrorFilename, sanitizeClientErrorStack } from '../logging/sanitizeClientErrorDetails'
+import { sanitizeClientErrorFilename, sanitizeClientErrorMessage } from './sanitizeClientErrorBeacon'
+import { sanitizeClientErrorStack } from '../logging/sanitizeClientErrorDetails'
 import { sendClientLog } from './sendClientLog'
 
 export function reportClientCaughtError(
