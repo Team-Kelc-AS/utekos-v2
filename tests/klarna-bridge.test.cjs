@@ -7,6 +7,7 @@ const { loadTypeScript } = require('./load-typescript.cjs');
 const fullId = 'gid://shopify/Cart/fixture-cart?key=fixture-secret';
 const publicId = 'gid://shopify/Cart/fixture-cart';
 const backend = 'https://backend.utekos.no';
+const storefront = 'https://utekos.no';
 const money = amount => ({ amount, currencyCode: 'NOK' });
 function line(id = '1', quantity = 1, amount = '123.45', total = amount) {
   return {
@@ -60,7 +61,9 @@ test('payload has exact variant, quantity and decimal amounts; no secret cart ke
   assert.equal(payload.order_lines[0].quantity, 3);
   assert.equal(payload.order_lines[0].reference, 'gid://shopify/ProductVariant/4');
   assert.equal(payload.merchant_reference1, publicId);
-  assert.equal(payload.merchant_urls.confirmation, `${backend}/kjop/fullfort?klarna_order_id={order.id}`);
+  assert.equal(payload.merchant_urls.confirmation, `${storefront}/kjop/fullfort?klarna_order_id={order.id}`);
+  assert.equal(payload.merchant_urls.notification, `${backend}/api/klarna/notifications?klarna_order_id={order.id}`);
+  assert.equal(payload.order_lines[0].product_url, `${storefront}/produkter/utekos-test`);
   assert.equal(JSON.stringify(payload).includes('fixture-secret'), false);
   assert.equal(api.calls[0].cache, 'no-store');
   assert.equal(api.calls[0].buyerIp, '192.0.2.1');
@@ -102,7 +105,7 @@ test('validated order is submitted through the prepared transport exactly once',
   const calls = [];
   const api = server({ fetch: async (url, options) => {
     calls.push({ url, options });
-    return { ok: true, json: async () => ({ klarna_order_id: 'test-order', redirect_url: `${backend}/kjop/fullfort?klarna_order_id=test-order`, shopify_order_id: 'gid://shopify/Order/test' }) };
+    return { ok: true, json: async () => ({ klarna_order_id: 'test-order', redirect_url: `${storefront}/kjop/fullfort?klarna_order_id=test-order`, shopify_order_id: 'gid://shopify/Order/test' }) };
   } });
   const input = await validInput(api);
   const result = await api.forwardOrder(input, fullId, backend);
@@ -112,8 +115,36 @@ test('validated order is submitted through the prepared transport exactly once',
   assert.equal(calls[0].options.body.includes('fixture-secret'), false);
 });
 
+test('Klarna provider redirects are preserved after authenticated order creation', async () => {
+  for (const redirect of [
+    'https://payments.klarna.com/redirect/fixture?token=fixture',
+    'https://credit.klarna.com/v1/sessions/fixture/redirect',
+  ]) {
+    let sent = 0;
+    const api = server({ fetch: async () => {
+      sent++;
+      return { ok: true, json: async () => ({ klarna_order_id: 'test', redirect_url: redirect, shopify_order_id: 'gid://shopify/Order/test' }) };
+    } });
+    const result = await api.forwardOrder(await validInput(api), fullId, backend);
+    assert.equal(result.redirect_url, redirect);
+    assert.equal(sent, 1);
+  }
+});
+
 test('unsafe redirects and uncertain transport outcomes are not retried', async () => {
-  for (const redirect of ['https://evil.example/kjop/fullfort?klarna_order_id=test', `${backend}/evil?klarna_order_id=test`, `${backend}/kjop/fullfort?klarna_order_id=other`]) {
+  for (const redirect of [
+    'https://evil.example/kjop/fullfort?klarna_order_id=test',
+    `${backend}/kjop/fullfort?klarna_order_id=test`,
+    `${storefront}/evil?klarna_order_id=test`,
+    `${storefront}/kjop/fullfort?klarna_order_id=other`,
+    `${storefront}/kjop/fullfort?klarna_order_id=test&klarna_order_id=other`,
+    'https://payments.klarna.com.evil.example/redirect/fixture',
+    'https://payments.klarna.com@evil.example/redirect/fixture',
+    'https://user:pass@payments.klarna.com/redirect/fixture',
+    'http://payments.klarna.com/redirect/fixture',
+    'https://payments.klarna.com:8443/redirect/fixture',
+    'https://payments.klarna.com/redirect/fixture#fragment',
+  ]) {
     const api = server({ fetch: async () => ({ ok: true, json: async () => ({ klarna_order_id: 'test', redirect_url: redirect, shopify_order_id: 'gid://shopify/Order/test' }) }) });
     await assert.rejects(api.forwardOrder(await validInput(api), fullId, backend), /bekreftelsessiden/);
   }

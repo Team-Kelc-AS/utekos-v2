@@ -7,6 +7,7 @@ import type { CursorConnection } from '@/lib/catalog/paginateConnection';
 import type { KlarnaOrderAttribution } from './attribution';
 import type { NextRequest } from 'next/server';
 import { prepareKlarnaOrderForwarder } from './backend';
+import { SITE_ORIGIN, absoluteUrl, productPath } from '@/lib/seo/site';
 import {
   completedOrderSchema, orderPayloadSchema, publicConfigSchema,
   type KlarnaCreateOrderRequest, type KlarnaExpressOrderPayload,
@@ -96,14 +97,14 @@ export async function cartOrderPayload(fullId: string, backendOrigin: string, bu
     return {
       name: variant.title && variant.title !== 'Default Title' ? `${variant.product.title} — ${variant.title}` : variant.product.title,
       quantity: line.quantity, unit_price: unitPrice, total_amount: total,
-      reference: variant.id, product_url: `${backendOrigin}/produkter/${variant.product.handle}`, type: 'physical' as const,
+      reference: variant.id, product_url: absoluteUrl(productPath(variant.product.handle)), type: 'physical' as const,
     };
   });
   const result = orderPayloadSchema.safeParse({
     purchase_country: 'NO', purchase_currency: 'NOK', locale: 'nb-NO',
     order_amount: orderAmount, order_lines: orderLines, merchant_reference1: identity.publicId,
     merchant_urls: {
-      confirmation: `${backendOrigin}/kjop/fullfort?klarna_order_id={order.id}`,
+      confirmation: `${SITE_ORIGIN}/kjop/fullfort?klarna_order_id={order.id}`,
       notification: `${backendOrigin}/api/klarna/notifications?klarna_order_id={order.id}`,
     },
   });
@@ -154,7 +155,15 @@ export async function forwardOrder(input: KlarnaCreateOrderRequest, fullId: stri
     const result = completedOrderSchema.safeParse(await response.json());
     if (!result.success) throw new Error('Unconfirmed upstream response');
     const redirect = new URL(result.data.redirect_url);
-    if (redirect.origin !== backendOrigin || redirect.pathname !== '/kjop/fullfort' || redirect.username || redirect.password || redirect.searchParams.get('klarna_order_id') !== result.data.klarna_order_id) {
+    // Klarna's create-order redirect can first set a Klarna cookie, then send the
+    // buyer to merchant_urls.confirmation. Keep that provider URL unchanged.
+    // Only accept authenticated backend responses on the documented Klarna hosts
+    // or the exact public confirmation route; the backend has no customer UI.
+    const klarnaRedirect = ['https://payments.klarna.com', 'https://credit.klarna.com'].includes(redirect.origin);
+    const confirmationRedirect = redirect.origin === SITE_ORIGIN && redirect.pathname === '/kjop/fullfort'
+      && redirect.searchParams.getAll('klarna_order_id').length === 1
+      && redirect.searchParams.get('klarna_order_id') === result.data.klarna_order_id;
+    if (redirect.username || redirect.password || redirect.hash || (!klarnaRedirect && !confirmationRedirect)) {
       throw new KlarnaBridgeError('Ordren er opprettet, men bekreftelsessiden kunne ikke åpnes. Kontroller hos Klarna.', 502, 'unknown');
     }
     return result.data;
