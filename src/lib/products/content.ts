@@ -738,16 +738,16 @@ export const PRODUCT_PAGE_CONTENT = {
   comfyrobe: {
     description: {
       title: "Comfyrobe™",
-      lead: "Leverer år etter år.",
+      lead: "Varig kvalitet.",
       blocks: [
         {
           paragraphs: [
-            "En tidløs robe nøye utformet av de fineste fibrene. Tilbyr enestående mykhet, varme og uanstrengt eleganse til alle fire årstider",
+            "En tidløs robe nøye utformet av de fineste fibrene. Tilbyr enestående mykhet, varme og uanstrengt eleganse til alle fire årstider.",
           ],
         },
         {
           paragraphs: [
-            "Plagget er er nedtonet og raffinert. Den ledige unisex-passformen med senket skuldersøm gir upåklagelig bevegelsesfrihet. Mansjettene kan strammes for å eliminere kjølig luftst@m rundt håndleddene. Splittene nederst gir ekstra steglengde når du er i bevegelse. Det slitesterke ytterstoffet i HydroGuard™ er både vanntett og vindtett.",
+            "Plagget er er nedtonet og raffinert. Den ledige unisex-passformen med senket skuldersøm gir upåklagelig bevegelsesfrihet. Mansjettene kan strammes for å eliminere kjølig luftstøm rundt håndleddene. Splittene nederst gir ekstra steglengde når du er i bevegelse. Det slitesterke ytterstoffet i HydroGuard™ er både vanntett og vindtett.",
           ],
         },
         {
