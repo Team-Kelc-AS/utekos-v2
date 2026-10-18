@@ -22,10 +22,17 @@
 
 /* Utekos typography, shared by documents that opt in to this preset. */
 @layer components {
-  .typeset-docs :where(h1, h2, h3, h4, h5, h6):not(:where(
-    .not-typeset, .not-typeset *, [data-not-typeset], [data-not-typeset] *,
-    [data-slot], [data-slot] *
-  )) {
+  .typeset-docs
+    :where(h1, h2, h3, h4, h5, h6):not(
+      :where(
+        .not-typeset,
+        .not-typeset *,
+        [data-not-typeset],
+        [data-not-typeset] *,
+        [data-slot],
+        [data-slot] *
+      )
+    ) {
     font-weight: 800;
     text-transform: none;
     letter-spacing: normal;
@@ -48,6 +55,7 @@
   --color-white: #fff;
   --color-black: #000;
   --color-transparent: transparent;
+  --color-christmas-red: oklch(0.5182 0.2054 27.52);
   --color-current: currentColor;
   --color-brightteal: oklch(0.8276 0.0965 188.82);
   --color-mist: oklch(0.8993 0.01 181.38);

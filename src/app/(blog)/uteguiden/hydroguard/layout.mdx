@@ -1,0 +1,11 @@
+import { KnowledgeJsonLd } from "@/components/knowledge/KnowledgeJsonLd";
+import { buildKnowledgeMetadata } from "@/lib/knowledge/buildKnowledgeMetadata";
+import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
+export const metadata = buildKnowledgeMetadata(knowledgeArticles.hydroGuard);
+export default function ArticleLayout({ children }) {
+  return children;
+}
+
+<KnowledgeJsonLd article={knowledgeArticles.hydroGuard} />
+
+{props.children}

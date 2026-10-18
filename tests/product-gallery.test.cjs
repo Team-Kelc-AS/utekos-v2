@@ -202,7 +202,7 @@ test('requested Dun Fjellblå desktop originals retain dimensions and stay out o
   assert.equal(dark.mobile[0].url, requestedVargnattImage);
 });
 
-test('Comfyrobe hood portrait appears on desktop at its native ratio while mobile keeps six images', () => {
+test('Comfyrobe hood portrait appears on desktop at its native ratio while mobile preserves the requested ten-image order', () => {
   const comfy = loadTypeScript('lib/products/gallery/comfyrobeProductGalleryImages.ts');
   const { productGallery: getGallery } = loadTypeScript('lib/products/gallery.ts', {
     globals: { console: { warn() {} } },
@@ -216,8 +216,19 @@ test('Comfyrobe hood portrait appears on desktop at its native ratio while mobil
   });
   const gallery = getGallery(product('comfyrobe'), variant());
   assert.equal(gallery.desktop.length, 3);
-  assert.equal(gallery.mobile.length, 6);
-  assert.equal(gallery.desktop[2].url, gallery.mobile[1].url);
+  assert.deepEqual(Array.from(gallery.mobile, image => image.url), [
+    '/images/kunnskap/comfyrobe-side-1000x1500_2.webp',
+    '/images/kunnskap/comfyrobe-side-1000x1500_3.webp',
+    '/images/kunnskap/comfyrobe-side-1000x1500_4.webp',
+    '/images/kunnskap/comfyrobe-side-1000x1500.webp',
+    '/images/kunnskap/comfyrobe-sherpacore-1000x1500.webp',
+    '/images/kunnskap/naerbilde-av-utekos-logo-glidelåstrekk.webp',
+    '/images/kunnskap/Comfy_Woman_1200x1800.webp',
+    '/images/kunnskap/Jakke Navy_1.webp',
+    '/images/kunnskap/Jakke Navy_3.webp',
+    '/images/kunnskap/Jakke Navy.webp',
+  ]);
+  assert.equal(gallery.desktop[2].url, '/images/kunnskap/Comfy_Woman_2_2x3.webp');
   assert.equal(gallery.desktop[2].width, 1024);
   assert.equal(gallery.desktop[2].height, 1536);
 });

@@ -1,3 +1,4 @@
+import { hydroGuardArticle } from "./hydroguardArticle";
 import { sherpaCoreArticle } from "./sherpacoreArticle";
 import type { Route } from "next";
 import { knowledgeImages } from "./knowledgeImages";
@@ -994,6 +995,7 @@ function enrichArticle(id: keyof typeof articleContent): KnowledgeArticle {
 }
 
 export const knowledgeArticles = {
+  hydroGuard: hydroGuardArticle,
   sherpaCore: sherpaCoreArticle,
   christmasGift: enrichArticle("christmasGift"),
   terrace: enrichArticle("terrace"),
@@ -1020,6 +1022,7 @@ export const knowledgeArticleList: readonly KnowledgeArticle[] = [
   knowledgeArticles.keepWarm,
   knowledgeArticles.cold,
   knowledgeArticles.ykk,
+  knowledgeArticles.hydroGuard,
 ];
 
 validateKnowledgeArticles(knowledgeArticleList);

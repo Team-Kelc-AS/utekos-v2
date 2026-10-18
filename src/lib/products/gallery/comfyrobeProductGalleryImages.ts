@@ -28,16 +28,44 @@ export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
 // Preserve each original image's dimensions and the selected mobile order.
 export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
   productImage(
-    'comfyrobe-mobile-male',
-    '/images/kunnskap/Comfy_Male_1200x1800.webp',
-    'Mann i marineblå Comfyrobe sett forfra, med hetten nede og hendene i lommene.',
-    1200,
-    1800
+    'comfyrobe-mobile-side-2',
+    '/images/kunnskap/comfyrobe-side-1000x1500_2.webp',
+    'Mann i marineblå Comfyrobe sett forfra på en terrasse ved sjøen, med hetten nede og hendene i lommene.',
+    1000,
+    1500
   ),
   productImage(
-    'comfyrobe-mobile-woman-2',
-    '/images/kunnskap/Comfy_Woman_2_2x3.webp',
-    'Kvinne i marineblå Comfyrobe med hetten oppe og hendene i lommene, sett skrått forfra.',
+    'comfyrobe-mobile-side-3',
+    '/images/kunnskap/comfyrobe-side-1000x1500_3.webp',
+    'Kvinne i marineblå Comfyrobe med hetten oppe, solbriller og hendene i lommene, sett skrått forfra.',
+    1000,
+    1500
+  ),
+  productImage(
+    'comfyrobe-mobile-side-4',
+    '/images/kunnskap/comfyrobe-side-1000x1500_4.webp',
+    'Mann i marineblå Comfyrobe sett fra siden på en terrasse ved sjøen, med hetten nede.',
+    1000,
+    1500
+  ),
+  productImage(
+    'comfyrobe-mobile-side',
+    '/images/kunnskap/comfyrobe-side-1000x1500.webp',
+    'Marineblå Comfyrobe med hetten oppe og vanndråper på stoffet, vist på modell fra siden ved sjøen.',
+    1000,
+    1500
+  ),
+  productImage(
+    'comfyrobe-mobile-sherpacore',
+    '/images/kunnskap/comfyrobe-sherpacore-1000x1500.webp',
+    'Nærbilde av lyst SherpaCore™-fôr, glidelås og brodert Comfyrobe-logo på innsiden av plagget.',
+    1000,
+    1500
+  ),
+  productImage(
+    'comfyrobe-mobile-zipper-logo',
+    '/images/kunnskap/naerbilde-av-utekos-logo-glidelåstrekk.webp',
+    'Nærbilde av glidelåstrekk med Utekos-logo på marineblå Comfyrobe.',
     1024,
     1536
   ),
