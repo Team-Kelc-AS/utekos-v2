@@ -50,7 +50,7 @@ export function ArticleImage({
 }
 
 export function KnowledgeFeaturedStories() {
-  const main = knowledgeArticles.cold
+  const main = knowledgeArticles.christmasGift
   const recommended = [
     knowledgeArticles.cloudweave,
     knowledgeArticles.baseLayer,
