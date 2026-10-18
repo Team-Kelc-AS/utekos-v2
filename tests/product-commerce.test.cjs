@@ -70,6 +70,15 @@ test("default selection prefers an available Stor; falls back to available then 
   );
 });
 
+test("Comfyrobe defaults to XL while explicit size and variant links retain their selection", () => {
+  const comfyrobe = product([variant(21, "M"), variant(22, "XS"), variant(23, "XL")], "comfyrobe");
+  assert.equal(variants.resolveVariant(comfyrobe).id, "gid://shopify/ProductVariant/23");
+  assert.equal(variants.resolveVariant(comfyrobe, { storrelse: "m" }).id, "gid://shopify/ProductVariant/21");
+  assert.equal(variants.resolveVariant(comfyrobe, { variant: "22" }).id, "gid://shopify/ProductVariant/22");
+  comfyrobe.variants.nodes.pop();
+  assert.equal(variants.resolveVariant(comfyrobe).id, "gid://shopify/ProductVariant/21");
+});
+
 test("numeric and GID direct links select exactly the requested variant, including sold out", () => {
   for (const id of ["4", "gid://shopify/ProductVariant/4"]) {
     const selected = variants.resolveVariant(techdown, { variant: id });

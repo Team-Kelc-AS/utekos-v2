@@ -31,7 +31,7 @@ export function VariantCard({ card, eager = false }: { card: OverviewCard; eager
     {gender && <span className={styles.gender}>{gender}</span>}
     <div className={styles.wishlist}>
       <WishlistButton productId={product.id} handle={product.handle} variantId={variant.id}
-        title={title} returnTo={href} className={styles.wishlistButton} />
+        title={title} returnTo={href} showHoverCard className={styles.wishlistButton} />
     </div>
     <CardContent className={styles.content}>
       <CardHeader className={styles.cardHeader}>

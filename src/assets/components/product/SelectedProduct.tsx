@@ -29,6 +29,8 @@ import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { DunReservationButton } from "@/components/reservations/DunReservationButton";
 import { dunSelection } from "@/lib/reservations/dun";
 import { CheckMarkIcon } from "@/components/utekos-icons/CheckMarkIcon";
+import { DiscountCodeReveal } from "./DiscountCodeReveal";
+import { TagOutlineIcon } from "@/components/utekos-icons/TagOutlineIcon";
 import { TruckOutlineIcon } from "@/components/utekos-icons/TruckOutlineIcon";
 import { ReturnsOutlineIcon } from "@/components/utekos-icons/ReturnsOutlineIcon";
 import styles from "./product.module.css";
@@ -123,6 +125,11 @@ export async function SelectedProduct({
               className={styles.wishlistButton}
             />
           </div>
+          {isComfyrobe && (
+            <div className={styles.mobileDiscount}>
+              <DiscountCodeReveal code="COMFYFRI" />
+            </div>
+          )}
           <div className={styles.price}>
             <strong>{formatMoney(variant.price)}</strong>
             {compare && <del>{formatMoney(compare)}</del>}
@@ -201,10 +208,14 @@ export async function SelectedProduct({
             <DunReservationButton selection={dunSelection(variant)} />
           )}
           <ul className={styles.trust}>
-            <li>
-              <TruckOutlineIcon />
-              {isComfyrobe ? "Gratis frakt" : "Gratis frakt fra 999 kr"}
-            </li>
+            {isComfyrobe ? (
+              <li className={`${styles.discountTrust} ${styles.desktopDiscount}`}>
+                <TagOutlineIcon tone="orange" />
+                <DiscountCodeReveal code="COMFYFRI" />
+              </li>
+            ) : (
+              <li><TruckOutlineIcon />Gratis frakt fra 999 kr</li>
+            )}
             <li>
               <ReturnsOutlineIcon />
               <Link href="/frakt-og-retur">Gratis størrelsesbytte</Link>

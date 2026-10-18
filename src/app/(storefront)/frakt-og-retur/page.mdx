@@ -1,4 +1,5 @@
 import styles from "./shipping-returns.module.css";
+import Link from "next/link";
 import { ShippingReturnsSummary } from "@/components/commerce/ShippingReturnsSummary";
 
 <header className={styles.header}>
@@ -38,7 +39,7 @@ import { ShippingReturnsSummary } from "@/components/commerce/ShippingReturnsSum
 
 <div className={styles.contact}>
 
-### Trenger du hjelp?
+## Trenger du hjelp?
 
 [Kontakt Utekos kundeservice](/kontaktskjema), så hjelper vi deg med bestillingen din.
 
@@ -54,11 +55,32 @@ import { ShippingReturnsSummary } from "@/components/commerce/ShippingReturnsSum
 
 <h2 id="frakt-og-levering-heading">Fraktpris og leveringstid</h2>
 
-Ordinær frakt koster **99 kr** på bestillinger under 999 kr. Fra **999 kr** er ordinær frakt gratis i Norge. Du ser fraktbeløpet for bestillingen din i kassen før du betaler.
+Vi tilbyr **gratis ordinær frakt** på alle bestillinger over 999 kr. For bestillinger under 999 kr er fraktprisen **99 kr**. Det eksakte fraktbeløpet vises alltid i kassen før du fullfører kjøpet.
 
-Vi sender med PostNord. Normal leveringstid er **2–5 virkedager etter at PostNord har hentet pakken**. Tiden avhenger av hvor pakken skal leveres. Du får sporing på e-post når pakken er på vei.
+### Rask levering fra vårt lager i Bergen
 
-Venter du på en pakke? Sjekk sporingslenken i e-posten. [Kontakt oss](/kontaktskjema) hvis du mangler sporing eller trenger hjelp med leveringen. Oppgi gjerne ordrenummer.
+Alle pakker sendes direkte fra vårt lager i Bergen med PostNord. Normal leveringstid er **2–5 virkedager**, avhengig av hvor i landet du bor:
+
+- **Bestill innen kl. 14.00:** Pakken sendes fra oss samme dag.
+- **Sør- og Vestlandet:** Normalt levert innen 1–2 virkedager.
+- **Nord-Norge:** Beregn 1–2 dager ekstra.
+
+[Les mer om leveringstider hos PostNord](https://www.postnord.no/tips-og-rad/leveringstid-postnord/)
+
+### Enkel pakkesporing
+
+Så snart bestillingen din er pakket, mottar du en e-post med sporingsnummer slik at du kan følge pakken hele veien hjem:
+
+<Link
+  href="https://www.postnord.no/pakkesporing/"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  https://www.postnord.no/pakkesporing/
+</Link>
+
+**Trenger du hjelp med leveringen?**  
+Sjekk sporingslenken i e-posten din, eller [kontakt oss via kontaktskjemaet](/kontaktskjema). Oppgi gjerne ordrenummeret ditt, så hjelper vi deg raskt!
 
 </section>
 

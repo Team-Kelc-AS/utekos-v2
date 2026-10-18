@@ -17,6 +17,7 @@ import { productOverviewRows } from "@/lib/catalog/overview";
 import { getProductListing } from "@/lib/shopify/getProductListing";
 import { getProduct } from "@/lib/shopify/getProduct";
 import { VariantCard, SvaleGuideCard } from "./VariantCard";
+import { ProductRowsMotion } from "./ProductRowsMotion";
 import styles from "./ProductOverview.module.css";
 
 export async function ProductOverview({ searchParams }: CategoryPageProps) {
@@ -43,10 +44,7 @@ export async function ProductOverview({ searchParams }: CategoryPageProps) {
           Juster. Form. <span>Nyt.</span>
         </h1>
       </header>
-      <section
-        className={styles.rows}
-        aria-label="Alle produkter og størrelser"
-      >
+      <ProductRowsMotion>
         {rows.map((row, rowIndex) => (
           <section
             key={row.id}
@@ -98,7 +96,7 @@ export async function ProductOverview({ searchParams }: CategoryPageProps) {
             Flere produkter
           </Link>
         )}
-      </section>
+      </ProductRowsMotion>
       <div className={styles.guidance}>
         <CategoryNavigation />
         <KnowledgeGuideCards

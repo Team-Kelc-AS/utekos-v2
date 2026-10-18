@@ -5,6 +5,7 @@ import Image, { type ImageProps } from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ImageHoverZoom } from "./ImageHoverZoom";
 import {
   Card,
   CardAction,
@@ -21,6 +22,7 @@ export type ImageCardProps<T extends string = string> = {
   image: Pick<ImageProps, "src" | "alt" | "width" | "height" | "sizes">;
   action: string;
   badge: string;
+  imageHoverZoom?: boolean;
 };
 
 export function ImageCard<T extends string>({
@@ -30,18 +32,23 @@ export function ImageCard<T extends string>({
   image,
   action,
   badge,
+  imageHoverZoom = false,
 }: ImageCardProps<T>) {
+  const cardImage = (
+    <Image
+      {...image}
+      alt={image.alt}
+      sizes={
+        image.sizes ??
+        "(max-width: 639px) calc(100vw - 3rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1279px) calc(25vw - 1.875rem), 290px"
+      }
+      className="block h-auto w-full"
+    />
+  );
+
   return (
     <Card className="relative mx-auto h-full w-full max-w-sm bg-interstellar pt-0 text-[#f0eee9] border border-primary/82 ring-0">
-      <Image
-        {...image}
-        alt={image.alt}
-        sizes={
-          image.sizes ??
-          "(max-width: 639px) calc(100vw - 3rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1279px) calc(25vw - 1.875rem), 290px"
-        }
-        className="block h-auto w-full"
-      />
+      {imageHoverZoom ? <ImageHoverZoom>{cardImage}</ImageHoverZoom> : cardImage}
       <CardHeader className="min-w-0 flex-1 gap-x-3 gap-y-2 has-data-[slot=card-action]:grid-cols-[minmax(0,1fr)_auto]">
         <CardAction className="row-span-1">
           <Badge

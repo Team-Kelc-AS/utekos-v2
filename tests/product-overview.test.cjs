@@ -69,9 +69,9 @@ test('the original row order, exact variant assignments, labels and image files 
       [44, 'Utekos Mikrofiber™ Fjellblå L', '/Mikro_1000x1500_Diagonal.webp'],
     ]],
     ['comfyrobe', 'Comfyrobe™', [
-      [51, 'Comfyrobe™ S/XS', '/Comfy_1000x1500_1.webp'],
-      [52, 'Comfyrobe™ M/L', '/Comfy_1000x1500_Fly.webp'],
-      [53, 'Comfyrobe™ L/XXL', '/Comfy_1000x1500_Open.webp'],
+      [51, 'Comfyrobe™ S/XS', '/images/products/comfyrobe/comfyrobe-normal-fit-woman-card-1000x1500.webp'],
+      [52, 'Comfyrobe™ M/L', '/images/products/comfyrobe/comfyrobe-male-card-1000x1500.webp'],
+      [53, 'Comfyrobe™ L/XXL', '/images/products/comfyrobe/comfyrobe-oversized-fit-on-woman-card-1000x1500.webp'],
     ]],
     ['utekos-stapper', 'Utekos Stapper™', [[61, 'Utekos Stapper™', 'https://example.test/variant-61.webp']]],
   ];

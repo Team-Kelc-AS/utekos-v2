@@ -1,6 +1,7 @@
 import type { KnowledgeArticle } from "./knowledgeArticles";
 
-// Source: the unchanged SherpaCore MDX article; image measured at its native dimensions.
+// Editorial copy is preserved. Internal BOM citation removed at user request.
+// Visible citation numbers retain the deliberate gap at 5; images use native dimensions.
 // First production publication: Vercel dpl_F74QUPn4HJP4agbfCvtSnp37uDjg ready timestamp.
 export const sherpaCoreArticle = {
   "slug": "sherpacore",
@@ -11,6 +12,8 @@ export const sherpaCoreArticle = {
   "description": "SherpaCore™ er betegnelsen på det innvendige fôrstoffet i Comfyrobe. Denne guiden forklarer hvordan tekstilstruktur, flatevekt på 250 g/m² og kapillær fukttransport fungerer i et syntetisk fleecemateriale.",
   "authorId": "utekos",
   "articleSection": "Materialer",
+  // Editorial estimate: article text including callouts, approximately 200 words/minute.
+  "readingMinutes": 4,
   "publishedAt": "2026-10-17T16:48:14.257Z",
   "topics": [
     "SherpaCore™",
@@ -25,6 +28,12 @@ export const sherpaCoreArticle = {
       "width": 1672,
       "height": 941,
       "alt": "Nærbilde av lyst sherpa-fôr, mørkt ytterstoff og glidelås med Comfyrobe-merke."
+    },
+    {
+      "src": "/images/kunnskap/comfyrobe-mann-pa-kaien-sjo-utsikt-1600x900.webp",
+      "width": 1600,
+      "height": 900,
+      "alt": "Person iført en mørk, værbestandig kåpe med synlig sherpa-fôr i hetten, stående ved en forblåst norsk svabergkyst i grått høstvær."
     }
   ],
   "cardImage": {
@@ -62,11 +71,6 @@ export const sherpaCoreArticle = {
       "attribution": "Akgun M, Kanik M, Seçmen S, Macit M, Gülşen E.",
       "suffix": "AATCC Journal of Research. 2022;9(3):143–151.",
       "url": "https://doi.org/10.1177/24723444221084395"
-    },
-    {
-      "title": "Teknisk spesifikasjon og materialliste (BOM): Style #1305UNISEX Comfyrobe / Dryrobe Proto (Innerfabric 250 gsm 100% polyester & Outerfabric 130 gsm PU-coated)",
-      "attribution": "Utekos / Navigare.",
-      "suffix": "Intern produksjonsdokumentasjon; 2022."
     },
     {
       "title": "Comfort testing of textiles – Thermophysiological and skin-sensorial comfort",

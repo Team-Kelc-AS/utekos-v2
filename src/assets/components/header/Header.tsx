@@ -1,5 +1,6 @@
 import "server-only";
 
+import { ArrowRightIcon } from "@/components/utekos-icons/ArrowRightIcon";
 import { CaretDownIcon } from "@/components/utekos-icons/CaretDownIcon";
 import { CartHost } from "@/components/commerce/CartHost";
 import { CartSlot } from "@/components/commerce/CartSlot";
@@ -12,6 +13,7 @@ import { HeadsetIcon } from "@/components/utekos-icons/HeadsetIcon";
 import Image from "next/image";
 import { LineHorizontal3Icon } from "@/components/utekos-icons/LineHorizontal3Icon";
 import Link from "next/link";
+import { MoneyIcon } from "@/components/utekos-icons/MoneyIcon";
 import { ProductCategories } from "./ProductCategories";
 import { SearchIcon } from "@/components/utekos-icons/SearchIcon";
 import { Suspense } from "react";
@@ -40,6 +42,13 @@ export default function Header() {
   );
 
   return (
+    <>
+      <Link href="/produkter/comfyrobe" className={`${googleSansFlex.variable} ${styles.campaign}`}>
+        <MoneyIcon size={20} className={styles.campaignMoney} />
+        <span className={styles.campaignDesktop}>Høstens kupp? 50% rabatt på Comfyrobe™. <span className={styles.campaignSaving}>Spar 845,- og få fri frakt</span></span>
+        <span className={styles.campaignMobile}>Høstens kupp? Halv pris på Comfyrobe! Kjøp her</span>
+        <ArrowRightIcon size={20} />
+      </Link>
     <header className={`${googleSansFlex.variable} ${styles.header}`}>
       <div className={styles.container}>
         <Link
@@ -118,44 +127,26 @@ export default function Header() {
               </Link>
             }
             closeIcon={closeIcon}
-          >
-            <nav className={styles.panelNavigation} aria-label="Alle sider">
-              <ul className={styles.menuLinks}>
+            categories={
+              <ul className={styles.menuCategoryLinks}>
                 <li>
-                  <details className={styles.menuCategories}>
-                    <summary>
-                      <span>Produkter</span>
-                      <CaretDownIcon
-                        size={20}
-                        tone="orange"
-                        className={styles.primaryIcon}
-                      />
-                    </summary>
-                    <ul>
-                      <li>
-                        <Link
-                          href={headerNavigation.products.href}
-                          className={styles.link}
-                        >
-                          Alle produkter
-                        </Link>
-                      </li>
-                      {headerNavigation.categories.map(({ href, label }) => (
-                        <li key={href}>
-                          <Link href={href} className={styles.link}>
-                            {label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
+                  <Link href={headerNavigation.products.href} className={styles.link}>
+                    Alle produkter
+                  </Link>
                 </li>
-                {secondaryLinks}
+                {headerNavigation.categories.map(({ href, label }) => (
+                  <li key={href}>
+                    <Link href={href} className={styles.link}>{label}</Link>
+                  </li>
+                ))}
               </ul>
-            </nav>
+            }
+          >
+            {secondaryLinks}
           </HeaderMenu>
         </div>
       </div>
     </header>
+    </>
   );
 }

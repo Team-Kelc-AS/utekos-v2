@@ -24,7 +24,9 @@ export function resolveVariant(product: Pick<ShopifyProduct, 'handle' | 'variant
     const query = params[key] as string;
     return slugifyVariantOption(value) === query || (['Liten', 'Middels', 'Stor', 'Større'].includes(value) && resolveTechDownSizeValue(query) === value);
   }));
-  const defaultVariant = preferred(variants);
+  const defaultVariant = (product.handle === 'comfyrobe'
+    ? variants.find(v => v.selectedOptions.some(o => optionParam(o.name) === 'storrelse' && o.value === 'XL'))
+    : undefined) ?? preferred(variants);
   return matches.find(v => v.id === defaultVariant?.id) ?? preferred(matches);
 }
 export function variantHref(handle: string, variant: ProductVariant, siblings?: ProductVariant[]) {

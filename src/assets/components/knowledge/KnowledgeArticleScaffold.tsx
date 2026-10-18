@@ -16,26 +16,45 @@ export function KnowledgeArticleScaffold({
   hero,
   heroPlacement = "before-title",
   children,
+  header,
+  footer,
+  className,
 }: {
   article: KnowledgeArticle;
   hero?: ReactNode;
   heroPlacement?: "before-title" | "after-title";
   children: ReactNode;
+  /** Preserve an existing editorial introduction without rewriting its copy. */
+  header?: ReactNode;
+  /** Override closing content when migrating an article verbatim. */
+  footer?: ReactNode;
+  className?: string;
 }) {
   return (
-    <article id="top" className={articleStyles.article}>
-      <KnowledgeArticleBreadcrumbs article={article} />
-      {heroPlacement === "before-title" ? hero : null}
-      <KnowledgeArticleIntro
-        article={article}
-        afterTitle={heroPlacement === "after-title" ? hero : undefined}
-      />
-      <KnowledgeLearnings article={article} />
-      <KnowledgeToc article={article} />
+    <article
+      id="top"
+      className={[articleStyles.article, className].filter(Boolean).join(" ")}
+    >
+      {header ?? (
+        <>
+          <KnowledgeArticleBreadcrumbs article={article} />
+          {heroPlacement === "before-title" ? hero : null}
+          <KnowledgeArticleIntro
+            article={article}
+            afterTitle={heroPlacement === "after-title" ? hero : undefined}
+          />
+          <KnowledgeLearnings article={article} />
+          <KnowledgeToc article={article} />
+        </>
+      )}
       <div className={articleStyles.body}>{children}</div>
-      <ArticleRelatedContent article={article} />
-      <BackToTop />
-      <KnowledgeSources article={article} />
+      {footer ?? (
+        <>
+          <ArticleRelatedContent article={article} />
+          <BackToTop />
+          <KnowledgeSources article={article} />
+        </>
+      )}
     </article>
   );
 }

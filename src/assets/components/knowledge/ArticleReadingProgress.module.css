@@ -1,0 +1,21 @@
+.progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  height: 6px;
+  background: #b44701;
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: left center;
+  visibility: hidden;
+}
+
+.progress[data-active] {
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce), print {
+  .progress {
+    display: none;
+  }
+}

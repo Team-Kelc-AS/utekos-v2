@@ -60,13 +60,12 @@ interface UtekosFAQProps {
 export function UtekosFAQ({
   items = defaultQuestions,
   title = "Ofte stilte spørsmål",
-  subtitle = "Alt du trenger å vite om konstruksjon, vedlikehold og levetid i krevende nordisk klima.",
 }: UtekosFAQProps) {
   return (
     <section aria-labelledby="techdown-faq-title" className="w-full">
       <div className="mx-auto w-full max-w-3xl">
-        <div className="mb-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#f0eee9]/15 bg-[#012622]/80 px-3 py-1 text-xs font-semibold tracking-wider uppercase text-[#f0eee9]/70 mb-3">
+        <div className="pb-1">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#f0eee9]/15 bg-[#012622]/80 px-3 py-1 text-xs font-semibold tracking-wider uppercase text-[#f0eee9]/70 mb-4">
             <HelpCircle className="h-3.5 w-3.5 text-[#b44701]" />
             FAQ
           </div>
@@ -76,11 +75,8 @@ export function UtekosFAQ({
           >
             {title}
           </h2>
-          {subtitle && (
-            <p className="mt-2 text-sm sm:text-base text-[#f0eee9]/70 leading-relaxed">
-              {subtitle}
-            </p>
-          )}
+
+          <p className="mt-2 text-sm sm:text-base text-[#f0eee9]/70 leading-relaxed"></p>
         </div>
 
         <Accordion multiple={false} className="flex flex-col gap-3.5 w-full">

@@ -37,7 +37,10 @@ export function VariantCardActions({
     }
   }
   return (
-    <div className={styles.actions}>
+    <div
+      className={styles.actions}
+      data-layout={handle === "utekos-dun" && !available && reservationSelection ? "reservation" : undefined}
+    >
       {handle === "utekos-dun" && !available && reservationSelection && (
         <DunReservationButton
           selection={reservationSelection}

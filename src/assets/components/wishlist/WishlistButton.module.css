@@ -3,6 +3,11 @@
   display: block;
   width: 24px;
   height: 24px;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.outline,
+.filled {
+  transition: opacity 180ms ease-out;
 }
 .filled {
   position: absolute;
@@ -15,7 +20,10 @@
 .cardWishlist:focus-visible .filled {
   opacity: 1;
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
+  .cardWishlist:hover .heart {
+    transform: scale(1.12) rotate(-8deg);
+  }
   .cardWishlist:hover .outline {
     opacity: 0;
   }
@@ -35,6 +43,15 @@
   font-weight: 500;
 }
 @media (prefers-reduced-motion: reduce) {
+  .heart,
+  .outline,
+  .filled {
+    transition: none;
+    transform: none;
+  }
+  .cardWishlist:hover .heart {
+    transform: none;
+  }
   .hoverCard {
     animation: none;
   }

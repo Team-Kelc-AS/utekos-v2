@@ -28,6 +28,9 @@ export function CategoryRelatedGuides({ categoryKey }: { categoryKey: ListingKey
 }
 
 const relatedArticles: Record<string, readonly ArticleKey[]> = {
+  // Same garment shell first; then layering, warmth, heat loss and insulation.
+  // Deliberate editorial order, not a measured ranking or popularity claim.
+  sherpacore: ['hydroGuard', 'baseLayer', 'keepWarm', 'cold', 'cloudweave'],
   'hvordan-forlenge-terassesesongen': ['keepWarm', 'baseLayer'],
   cloudweave: ['baseLayer', 'keepWarm'],
   'hva-skal-man-ha-innerst': ['keepWarm', 'cloudweave'],

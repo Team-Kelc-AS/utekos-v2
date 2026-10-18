@@ -1,0 +1,96 @@
+.navigationItem {
+  border: 0;
+}
+.navigationTrigger {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 56px;
+  padding: 16px;
+  border: 1px solid #f0eee91a;
+  border-radius: 16px;
+  background: #f0eee90e;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.navigationTrigger svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: #b44701;
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.navigationTrigger[data-panel-open] {
+  background: #012622;
+  border-color: #b447017a;
+}
+.navigationTrigger[data-panel-open] svg {
+  transform: rotate(180deg);
+}
+.navigationTrigger:focus-visible {
+  outline: 2px solid #f0eee9;
+  outline-offset: 3px;
+}
+.navigationTrigger:active {
+  transform: scale(0.985);
+  background: #012622;
+}
+.navigationTrigger:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.navigationPanel {
+  height: var(--accordion-panel-height);
+  overflow: hidden;
+  opacity: 1;
+  transition:
+    height 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease-out;
+}
+.navigationPanel[data-starting-style],
+.navigationPanel[data-ending-style] {
+  height: 0;
+  opacity: 0;
+}
+.navigationContent {
+  padding-top: 8px;
+  transform: translateY(0);
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.navigationPanel[data-starting-style] .navigationContent,
+.navigationPanel[data-ending-style] .navigationContent {
+  transform: translateY(-6px);
+}
+@media (hover: hover) and (pointer: fine) {
+  .navigationTrigger:hover {
+    background: #012622;
+    border-color: #b447017a;
+    transform: translateX(3px);
+  }
+  .navigationTrigger:hover:active {
+    transform: translateX(2px) scale(0.985);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .navigationTrigger,
+  .navigationTrigger svg,
+  .navigationPanel,
+  .navigationContent {
+    transition: none;
+  }
+  .navigationTrigger:hover,
+  .navigationTrigger:active,
+  .navigationTrigger:hover:active,
+  .navigationContent {
+    transform: none;
+  }
+}

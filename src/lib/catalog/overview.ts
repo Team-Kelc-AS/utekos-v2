@@ -32,9 +32,9 @@ const definitions: Definition[] = [
     { size: 'Large', color: 'Vargnatt', label: 'Vargnatt L', image: '/Soveposejakke_Black_4.webp', width: 1333, height: 2000 },
   ] },
   { id: 'comfyrobe', handle: 'comfyrobe', label: 'Comfyrobe™', color: 'Fjellnatt', cards: [
-    { size: 'XS', label: 'S/XS', image: '/Comfy_1000x1500_1.webp' },
-    { size: 'M', label: 'M/L', image: '/Comfy_1000x1500_Fly.webp' },
-    { size: 'XL', label: 'L/XXL', image: '/Comfy_1000x1500_Open.webp' },
+    { size: 'XS', label: 'S/XS', image: '/images/products/comfyrobe/comfyrobe-normal-fit-woman-card-1000x1500.webp' },
+    { size: 'M', label: 'M/L', image: '/images/products/comfyrobe/comfyrobe-male-card-1000x1500.webp', width: 1536, height: 2048 },
+    { size: 'XL', label: 'L/XXL', image: '/images/products/comfyrobe/comfyrobe-oversized-fit-on-woman-card-1000x1500.webp' },
   ] },
 ];
 

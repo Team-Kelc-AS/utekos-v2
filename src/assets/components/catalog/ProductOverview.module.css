@@ -164,10 +164,58 @@
   font-weight: 500;
   white-space: nowrap;
 }
-.buy:hover,
-.guideLink:hover {
-  background: var(--primary);
-  opacity: 0.9;
+.buy,
+.guideLink,
+.detailLink,
+.wishlistButton {
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease-out,
+    background-color 180ms ease-out;
+}
+.buy:active:not(:disabled),
+.guideLink:active,
+.detailLink:active,
+.wishlistButton:active {
+  transform: scale(0.96);
+}
+.buy:focus-visible,
+.guideLink:focus-visible,
+.detailLink:focus-visible,
+.wishlistButton:focus-visible {
+  outline: 2px solid #f0eee9;
+  outline-offset: 3px;
+}
+.wishlistButton[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 1px #b44701;
+}
+@media (hover: hover) and (pointer: fine) {
+  .buy:hover:not(:disabled),
+  .guideLink:hover,
+  .detailLink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -6px #010b0ab3, inset 0 0 0 1px #f0eee966;
+  }
+  .wishlistButton:hover {
+    transform: translateY(-2px);
+    background: #012622;
+    box-shadow: 0 6px 16px #010b0a66, inset 0 0 0 1px #b44701;
+  }
+  .buy:hover:active:not(:disabled),
+  .guideLink:hover:active,
+  .detailLink:hover:active,
+  .wishlistButton:hover:active {
+    transform: scale(0.96);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .buy,
+  .guideLink,
+  .detailLink,
+  .wishlistButton {
+    transition: none;
+    transform: none !important;
+  }
 }
 .buy:disabled {
   opacity: 0.65;
@@ -231,6 +279,9 @@
   .actions {
     grid-template-columns: minmax(0, 1fr) minmax(150px, 1fr);
   }
+  .actions[data-layout="reservation"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .actions .bag {
     display: none;
   }
@@ -276,5 +327,17 @@
   .previous,
   .next {
     display: none;
+  }
+}
+
+/* Enhancement is armed only after the deferred module loads. */
+.row[data-row-motion="waiting"] .slide {
+  opacity: 0;
+  transform: translate(18px, 24px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .row[data-row-motion="waiting"] .slide {
+    opacity: 1;
+    transform: none;
   }
 }

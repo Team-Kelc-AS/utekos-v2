@@ -1,5 +1,17 @@
 import type { ReactNode } from "react";
+import { Signpost } from "lucide-react";
 import styles from "./knowledgeChrome.module.css";
+
+export function KnowledgeCalloutTitle({ title }: { title: string }) {
+  return (
+    <p className={styles.calloutTitle}>
+      {/^(tommelregel|tommelfingerregel)/i.test(title) && (
+        <Signpost className={styles.calloutIcon} aria-hidden="true" />
+      )}
+      <span>{title}</span>
+    </p>
+  );
+}
 
 export function KnowledgeCallout({
   title,
@@ -19,7 +31,7 @@ export function KnowledgeCallout({
       data-appearance={appearance}
       aria-label={title}
     >
-      <p className={styles.calloutTitle}>{title}</p>
+      <KnowledgeCalloutTitle title={title} />
       <div className={styles.calloutBody}>{children}</div>
     </aside>
   );

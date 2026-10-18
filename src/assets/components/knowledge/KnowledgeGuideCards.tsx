@@ -22,6 +22,7 @@ export function KnowledgeGuideCards({
         title: article.title,
         description: article.description,
         image: article.cardImage,
+        imageHoverZoom: true,
         badge: "Uteguiden",
         action: "Les artikkelen",
       }))}

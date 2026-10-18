@@ -16,9 +16,9 @@ colors:
   outline: "#a68b80"
   outline-variant: "#584239"
   surface-tint: "#ffb595"
-  primary: "#ffb595"
+  primary: "#b94700"
   on-primary: "#571e00"
-  primary-container: "#b44701"
+  primary-container: "##b94700"
   on-primary-container: "#ffe5db"
   inverse-primary: "#a23f00"
   secondary: "#a1ced9"
@@ -180,9 +180,20 @@ mørkt, sobert og autoritativt univers.
 
 ### Målgruppe og opplevelse
 
-Designet henvender seg til kvalitetsbevisste friluftsfolk,
-fagpersoner og arktiske eventyrere. Grensesnittet skal formidle
-trygghet, teknisk presisjon og lun beskyttelse mot elementene.
+Designet henvender seg til kvalitetsbevisste, sofistikerte livsnytere på rundt 50-70 år (58 år snitt,)
+fagpersoner. Typiske camping- og/eller bobileiere, hytteeiere, boligeiere og båteiere. Øvre middelklasse økonomisk.
+Mest kvinner, men også menn - gjerne på gavejakt - men alle produkter er UNISEX. Grensesnittet skal formidle
+trygghet, kvalitet, autæritet, teknisk presisjon og lun beskyttelse mot elementene.
+
+**Vi bruker utelukkende evidensbasert markedsføring og evidensbasert tilnærming til valg og implementasjoner:**
+
+- **Skriver og lager innhold knyttet mot `kategoriinngangspunkt` (`CEB`)**
+- **Er konsekvente med bruk av `distinkte merkevareelementer`**
+- **Sørge for at hver besøkende aktiverer hukommelsesnevroner og sikrer økt `mental tilgjengelighet`**
+- **Sørge for at produktene er _lett å kjøpe_, ref `fysisk tilgjengelighet`:**
+  - **Eksempler på hvordan:**
+    - Sticky **CTA** med kjøp nå eller Klarna Express Checkout alltid synlig
+    - Knapper som åpner modaler med **Frakt og retur** info, **størrelsesguider**, **Reviews**, **vaskeinstruksjoner**, **FAQs** og
 
 ## Colors
 
@@ -195,7 +206,7 @@ mot primære handlinger.
 - **Bakgrunn & Flater (`#001a18`, `#012622`, `#02252a`)**: Dype,
   kromatisk rike bunntoner som forhindrer flatt, livløst sort. De
   danner et omsluttende fundament for innhold og bilder.
-- **Primæraksjon (`#b44701` / `#b94700`)**: Varm brent oransje
+- **Primæraksjon (`##b94700` / `#b94700`)**: Varm brent oransje
   («Ember»). Skal benyttes med nøysomhet – utelukkende reservert
   for de viktigste konverteringspunktene, kjøpshandlinger og
   aktive markører.
@@ -236,6 +247,10 @@ brødtekstskala.
 
 Layoutfilosofien er rotfestet i ro, symmetri og sjenerøs
 luftighet som gir hvert element og bilde lov til å puste.
+
+## Tekstbredde
+
+- Aldri mer enn **55 tegn** i bredden.
 
 ### Gridmodell og breakpoints
 
@@ -302,7 +317,7 @@ inspirert av isolerte ytterklær og merkets sirkulære logomerke.
 
 ### Knapper (Buttons)
 
-- **Primary**: Bakgrunn i `#b44701`, tekst i `#f0eee9`, radius
+- **Primary**: Bakgrunn i `##b94700`, tekst i `#f0eee9`, radius
   10–12px. Ved hover forskyves fargen mykt til `#c85a17`. Skal
   kun brukes én gang per synsfelt for primær konvertering.
 - **Secondary**: Bakgrunn i `#003740` eller transparent med 1px
@@ -328,7 +343,7 @@ inspirert av isolerte ytterklær og merkets sirkulære logomerke.
   radius 8px, tekst i `#f0eee9`. Fokus markeres med en presis 1px
   kantlinje i `#75dbd3` uten bred glød (focus-ring).
 - **Checkboxes & Radios**: Tilpassede flater i `#012622` med
-  aksent i `#b44701` når valgt.
+  aksent i `##b94700` når valgt.
 
 ### Statusbrikker og Chips
 
@@ -336,7 +351,7 @@ inspirert av isolerte ytterklær og merkets sirkulære logomerke.
   12px horisontalt), `label-sm` typografi. Duse bakgrunner med
   1px semi-transparent ramme.
 
-### Redaksjonelt innhold (`/kunnskap/`)
+### [Redaksjonelt innhold (`/kunnskap/`)](./DESIGN.md#redaksjonelt-innhold-kunnskap)
 
 - **Tone of Voice**: Nøktern guide, aldri selgende markedsføring.
   Hver faktapåstand skal underbygges med referansetall i samme
@@ -360,3 +375,94 @@ inspirert av isolerte ytterklær og merkets sirkulære logomerke.
   skandinaviske vGoogle Sans Flexforhold i dempet palett. Ingen unødvendig
   pynt. Hvert bilde krever redaksjonell prompt-dokumentasjon i
   koden.
+
+#### [Lesesystem](./DESIGN.md#lesesystem)
+
+**Retningslinjer**
+
+| Brødtekst       | 19 px desktop / 18 px mobil     |
+| --------------- | ------------------------------- |
+| Linjeavstand    | 1,6                             |
+| Tekstbredde     | Omtrent 65ch                    |
+| Bokstavavstand  | Normal (0 ekstra)               |
+| H2              | 30 / 26 px                      |
+| H3              | 23 / 21 px                      |
+| Avsnitt         | 35–80 ord normalt               |
+| Avsnittsavstand | 24 px                           |
+| Callouts        | Utgangspunkt 1 per 400–700 ord  |
+| Bilder          | 4 relevante bilder per 1500 ord |
+
+---
+
+#### Avsnittslengde og avstand
+
+**Retningslinjer for innholdsrytme**
+
+| Parameter                  | Anbefaling                                           |
+| -------------------------- | ---------------------------------------------------- |
+| Avsnittslengde             | Vanligvis 35–80 ord                                  |
+| Lengre forklarende avsnitt | Opptil ca. 100–120 ord når sammenhengen krever det   |
+| Setningslengde             | Varier; ofte 12–22 ord som redaksjonelt utgangspunkt |
+| Avstand mellom avsnitt     | 20–28 px                                             |
+| Avstand før H2             | 48–64 px                                             |
+| Avstand etter H2           | 16–24 px                                             |
+| Avstand før H3             | 32–40 px                                             |
+| Avstand etter H3           | 12–16 px                                             |
+
+---
+
+## [Mobile vs Desktop:](./DESIGN.md#mobile-vs-desktop)
+
+| Parameter       | Mobil               | Desktop   |
+| --------------- | ------------------- | --------- |
+| Skriftstørrelse | 18 px               | 19 px     |
+| Linjeavstand    | 1,6                 | 1,6       |
+| Sidepadding     | 20 px               | Responsiv |
+| Tekstbredde     | Tilgjengelig bredde | Ca. 60ch  |
+| Bokstavavstand  | Normal              | Normal    |
+| Justering       | Venstre             | Venstre   |
+
+### Konkret eksempel
+
+Med 20 px sidepadding på hver side:
+
+| Mobil viewport | Tilgjengelig tekstbredde |
+| -------------- | ------------------------ |
+| 320 px         | 280 px                   |
+| 360 px         | 320 px                   |
+| 375 px         | 335 px                   |
+| 390 px         | 350 px                   |
+| 414 px         | 374 px                   |
+| 430 px         | 390 px                   |
+
+- Én relevant callout per 400–700 ord i en lengre informasjonsartikkel, eventuelt én per større hovedseksjon; kjønnsvurdering. Dette er en redaksjonell startregel.
+- Benytt `Callout` med èn viktig presisering, 30–60 ord.
+- ## Hvordan hele artikkelen bør bygges opp
+
+**Eksempel** en artikkel på omtrent 1400 ord.
+
+### [ARTIKKELSTRUKTUR](./DESIGN.md#artikkelstruktur)
+
+# H1: Hva er sherpa-fleece?
+
+Ingress på 40–60 ord som besvarer artikkelens hovedspørsmål.
+
+`H2`: Hva betyr sherpa?
+
+**180–220 ord** fordelt på 2–3 avsnitt. Gi den sentrale definisjonen umiddelbart.
+
+**Callout**: Sherpa betyr ikke nødvendigvis ull
+
+Én viktig presisering, **30–60 ord**.
+
+`H2`: Hvordan bidrar fleece til varme?
+
+**200–250 ord**. Forklar sammenhengen mellom tekstilstruktur, luft og isolasjon.
+
+`H3`: Hvorfor har materialets tykkelse betydning?
+
+Kort utdyping innenfor samme hovedtema.
+
+**Praktisk å vite** - `Callout` (Som en variasjon på Tommelfingerregel, som nå kommer litt vel ofte)
+
+`H2`: **Oppsummering og vanlige spørsmål:** 150–200 ord. Oppsummer det viktigste og besvar gjenstående spørsmål.

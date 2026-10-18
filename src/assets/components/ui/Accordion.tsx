@@ -6,14 +6,16 @@ import { ChevronDown, Minus, Plus } from "lucide-react";
 
 import { Accordion as BaseAccordion } from "@base-ui/react/accordion";
 import { cn } from "@/lib/utils";
+import styles from "./accordion.module.css";
 
 /**
  * Utekos Premium Accordion
  * Bygget på `@base-ui/react/accordion` med Utekos Nordic Sanctuary design tokens.
  *
- * Støtter to distinkte varianter:
+ * Støtter tre distinkte varianter:
  * - 'flush': Minimalistisk skillelinjestil for ProductDetails (tekniske spesifikasjoner, materialer)
  * - 'card': Frittstående paneler med subtil kantlinje og glassaktig bakgrunn for FAQ
+ * - 'navigation': Menyflater med animerte tilstandsoverganger og arvet typografi
  */
 
 interface AccordionProps extends React.ComponentPropsWithoutRef<
@@ -37,7 +39,7 @@ Accordion.displayName = "Accordion";
 interface AccordionItemProps extends React.ComponentPropsWithoutRef<
   typeof BaseAccordion.Item
 > {
-  variant?: "flush" | "card";
+  variant?: "flush" | "card" | "navigation";
 }
 
 const AccordionItem = React.forwardRef<
@@ -46,9 +48,10 @@ const AccordionItem = React.forwardRef<
 >(({ className, variant = "flush", ...props }, ref) => (
   <BaseAccordion.Item
     ref={ref}
-    data-tracking-accordion-item=""
+    data-tracking-accordion-item={variant === "navigation" ? undefined : ""}
     className={cn(
-      "transition-all duration-300 ease-out",
+      variant !== "navigation" && "transition-all duration-300 ease-out",
+      variant === "navigation" && styles.navigationItem,
       variant === "flush" &&
         "border-b border-[#f0eee9]/15 last:border-b-0 data-panel-open:border-[#f0eee9]/30",
       variant === "card" &&
@@ -63,6 +66,7 @@ AccordionItem.displayName = "AccordionItem";
 interface AccordionTriggerProps extends React.ComponentPropsWithoutRef<
   typeof BaseAccordion.Trigger
 > {
+  variant?: "default" | "navigation";
   iconStyle?: "chevron" | "plus-minus";
   badge?: string | React.ReactNode;
   headingLevel?: 2 | 3 | 4 | 5 | 6;
@@ -77,6 +81,7 @@ const AccordionTrigger = React.forwardRef<
     {
       className,
       children,
+      variant = "default",
       iconStyle = "chevron",
       badge,
       headingLevel = 3,
@@ -91,14 +96,17 @@ const AccordionTrigger = React.forwardRef<
     >
       <BaseAccordion.Trigger
         ref={ref}
-        data-tracking-accordion-trigger=""
+        data-tracking-accordion-trigger={variant === "navigation" ? undefined : ""}
         className={cn(
-          "group flex flex-1 items-center justify-between py-5 text-[#f0eee9] text-left transition-all hover:text-[#f0eee9]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001715] disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
-          typography === "default" && "font-semibold",
+          variant === "navigation" ? styles.navigationTrigger : "group flex flex-1 items-center justify-between py-5 text-[#f0eee9] text-left transition-all hover:text-[#f0eee9]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001715] disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+          variant !== "navigation" && typography === "default" && "font-semibold",
           className,
         )}
         {...props}
       >
+        {variant === "navigation" ? (
+          <><span>{children}</span><ChevronDown aria-hidden="true" /></>
+        ) : <>
         <div className="flex items-center gap-3 pr-4">
           <span className={cn(
             "text-[#f0eee9] group-hover:text-white transition-colors duration-200",
@@ -123,6 +131,7 @@ const AccordionTrigger = React.forwardRef<
             <Minus className="hidden h-4 w-4 shrink-0 transition-transform duration-300 group-data-panel-open:block" />
           </span>
         )}
+        </>}
       </BaseAccordion.Trigger>
     </BaseAccordion.Header>
   ),
@@ -132,6 +141,7 @@ AccordionTrigger.displayName = "AccordionTrigger";
 interface AccordionContentProps extends React.ComponentPropsWithoutRef<
   typeof BaseAccordion.Panel
 > {
+  variant?: "default" | "navigation";
   className?: string;
   typography?: "default" | "inherit";
 }
@@ -139,17 +149,17 @@ interface AccordionContentProps extends React.ComponentPropsWithoutRef<
 const AccordionContent = React.forwardRef<
   React.ComponentRef<typeof BaseAccordion.Panel>,
   AccordionContentProps
->(({ className, children, typography = "default", ...props }, ref) => (
+>(({ className, children, typography = "default", variant = "default", ...props }, ref) => (
   <BaseAccordion.Panel
     ref={ref}
     className={cn(
-      "overflow-hidden transition-all data-ending-style:h-0 data-starting-style:h-0",
+      variant === "navigation" ? styles.navigationPanel : "overflow-hidden transition-all data-ending-style:h-0 data-starting-style:h-0",
       typography === "default" && "text-[#f0eee9]/85 text-base leading-relaxed",
       className,
     )}
     {...props}
   >
-    <div className={cn("pb-6 pt-1", typography === "default" && "font-normal")}>{children}</div>
+    <div className={variant === "navigation" ? styles.navigationContent : cn("pb-6 pt-1", typography === "default" && "font-normal")}>{children}</div>
   </BaseAccordion.Panel>
 ));
 AccordionContent.displayName = "AccordionContent";

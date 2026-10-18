@@ -5,30 +5,25 @@ import { knowledgeAuthors } from "@/content/authors/knowledgeAuthors";
 import styles from "./knowledgeChrome.module.css";
 const dateFormatter = new Intl.DateTimeFormat("nb-NO", {
   dateStyle: "long",
-  timeStyle: "short",
   timeZone: "Europe/Oslo",
 });
 
 function formatTimestamp(value: string): string {
-  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return new Intl.DateTimeFormat("nb-NO", {
-      dateStyle: "long",
-      timeZone: "Europe/Oslo",
-    }).format(new Date(value));
-  }
   return dateFormatter.format(new Date(value));
 }
 
 export function KnowledgeArticleMeta({
   article,
+  className,
 }: {
   article: Partial<Pick<KnowledgeArticle, "publishedAt" | "readingMinutes">>;
+  className?: string;
 }) {
   const author = knowledgeAuthors.utekos;
 
   return (
     <aside
-      className={styles.authorCard}
+      className={[styles.authorCard, className].filter(Boolean).join(" ")}
       aria-label="Forfatter og publiseringsinformasjon"
     >
       <div className={styles.logoFrame}>

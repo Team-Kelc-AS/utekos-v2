@@ -15,8 +15,7 @@ test.before(async () => {
         import {ProductPageChat} from './src/assets/components/chat/ProductPageChat';
         import {ChatScreen} from './src/assets/components/chat/ChatScreen';
         import {Chat} from './src/assets/components/chat/Chat';
-        import {TanStackAiHelper} from './src/assets/components/chat/TanStackAiHelper';
-        createRoot(document.getElementById('root')).render(window.fixture === 'product' ? <ProductPageChat /> : window.fixture === 'chat' ? <Chat /> : window.fixture === 'demo' ? <TanStackAiHelper /> : <ChatScreen />);`,
+        createRoot(document.getElementById('root')).render(window.fixture === 'product' ? <ProductPageChat /> : window.fixture === 'chat' ? <Chat /> : <ChatScreen />);`,
     },
     bundle: true, write: false, format: 'iife', platform: 'browser', jsx: 'automatic',
     define: { 'process.env.NODE_ENV': '"production"' },
@@ -114,15 +113,4 @@ test('the main Chat component sends through the API and restores its transcript 
   await expect(page.getByText('Svar fra test.')).toBeVisible();
   assert.equal(requests.length, 1);
   assert.deepEqual(hydrations, ['support-chat', 'support-chat']);
-});
-
-test('the scripted chat demo renders its scroller, tooltips and menu without runtime errors', async t => {
-  const { page, requests } = await fixture(t, 'demo', 390);
-  await expect(page.getByText('New Chat', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Add files' }).click();
-  await expect(page.getByRole('menuitem', { name: 'Create Image' })).toBeDisabled();
-  await page.keyboard.press('Escape');
-  await page.getByRole('button', { name: 'Send', exact: true }).click();
-  await expect(page.getByText("I'm building a chat for our app", { exact: false }).first()).toBeVisible();
-  assert.equal(requests.length, 0);
 });

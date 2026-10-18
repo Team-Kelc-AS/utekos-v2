@@ -14,7 +14,7 @@ const { buildSiteJsonLd } = loadTypeScript('lib/seo/JSON-LD/buildSiteJsonLd.ts')
 const plain = value => JSON.parse(JSON.stringify(value));
 const root = path.resolve(__dirname, '..');
 const routeRoot = path.join(root, 'src/app/(blog)/uteguiden');
-const expectedSources = [6, 14, 56, 0, 70, 12, 6, 8, 10, 7, 8, 11];
+const expectedSources = [5, 14, 56, 0, 70, 12, 6, 8, 10, 7, 8, 11];
 
 test('registry covers every existing article route once and preserves source counts', () => {
   const routes = fs.readdirSync(routeRoot).filter(slug => fs.existsSync(path.join(routeRoot, slug, 'page.mdx'))).sort();

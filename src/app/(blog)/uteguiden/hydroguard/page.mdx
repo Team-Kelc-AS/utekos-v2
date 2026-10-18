@@ -1,6 +1,8 @@
-import { AuthorCard } from "../sherpacore/SherpaCoreArticleParts";
+import { KnowledgeArticleMeta } from "@/components/knowledge/KnowledgeArticleMeta";
+import { hydroGuardArticle } from "@/lib/knowledge/hydroguardArticle";
 import { EditorialFigure } from "./HydroGuardArticleParts";
 import { BackToTop } from "@/components/knowledge/BackToTop";
+import { KnowledgeCalloutTitle } from "@/components/knowledge/KnowledgeCallout";
 import articleStyles from "../knowledgeArticle.module.css";
 import chrome from "@/components/knowledge/knowledgeChrome.module.css";
 import styles from "../sherpacore/sherpacore.module.css";
@@ -9,8 +11,12 @@ import styles from "../sherpacore/sherpacore.module.css";
 
 <nav aria-label="Brødsmulesti" className={styles.breadcrumbs}>
   <ol>
-    <li><a href="/">Hjem</a></li>
-    <li><a href="/uteguiden">Kunnskap</a></li>
+    <li>
+      <a href="/">Hjem</a>
+    </li>
+    <li>
+      <a href="/uteguiden">Kunnskap</a>
+    </li>
     <li aria-current="page">HydroGuard™</li>
   </ol>
 </nav>
@@ -20,18 +26,12 @@ import styles from "../sherpacore/sherpacore.module.css";
 <div className={styles.ingress}>
   HydroGuard™ er Utekos sin betegnelse på det vanntette ytterstoffet i
   Comfyrobe™. Materialet består av et polyesterstoff med en myk, matt
-  peach-skin-overflate på utsiden, en oppgitt stoffvekt på 130 g/m²
-  og et funksjonelt, pustende polyuretanbelegg (PU) på baksiden <Cite ids={[1]} />.
+  peach-skin-overflate på utsiden, en oppgitt stoffvekt på 130 g/m² og et
+  funksjonelt, pustende polyuretanbelegg (PU) på baksiden <Cite ids={[1]} />.
 </div>
 
-<AuthorCard
-  author="Utekos Fagredaksjon"
-  badgeAlt="Sirkulært sort/hvitt Utekos-merke"
-  publishedDate="2026-10-17"
-  displayDate="17. oktober 2026"
-/>
+<KnowledgeArticleMeta article={hydroGuardArticle} className={styles.panel} />
 
-<p>6 min</p>
 
 {/* 2. Hva du vil lære */}
 
@@ -45,15 +45,18 @@ import styles from "../sherpacore/sherpacore.module.css";
 - **Overflatetekstur:** Hva
   «peach skin» innebærer og hvordan mekanisk bearbeiding gir en matt, myk
   tekstiloverflate <Cite ids={[1]} />
+
   <Cite ids={[2]} />.
 
 - **Membran- og beleggfunksjon:** Hvordan et PU-belegg
   stopper flytende vann og samtidig slipper gjennom vanndamp <Cite ids={[3]} />
+
   <Cite ids={[4]} />.
 
 - **Standardiserte målebegreper:** Forskjellen på
   vanntetthet, vannavvisning, vanndampmotstand, luftgjennomgang og gramvekt
   (130 g/m²) <Cite ids={[5]} />
+
   <Cite ids={[6]} />
   <Cite ids={[7]} />
   <Cite ids={[8]} />
@@ -107,7 +110,9 @@ HydroGuard™ er navnet på ytterstoffet som utgjør den ytre klimabarrieren i C
 Denne todelte rollen til ytterstoffet gjør at brukeren møter en myk og matt tekstilside utvendig, mens den tekniske beskyttelsen mot fukt ivaretas av belegget som ligger skjult på innsiden av stoffet mot fôret <Cite ids={[1]} />.
 
 <aside className={chrome.callout} aria-label="Tommelregel">
-  **Tommelregel:** Skille alltid mellom tekstilens basisfiber (polyester), den
+  <KnowledgeCalloutTitle title="Tommelregel:" />
+
+  Skille alltid mellom tekstilens basisfiber (polyester), den
   mekaniske overflatefinishen på utsiden (peach skin) og den kjemiske barrieren
   på baksiden (PU-belegg) når du vurderer et skallmateriales egenskaper{" "}
   <Cite ids={[1]} />.
@@ -120,7 +125,9 @@ I materialspesifikasjonen for HydroGuard™ er det oppgitt at stoffet skal ha en
 Maskinprodusenten Lafer beskriver hvordan slike effekter på vevde og strikkede tekstiler fremstilles mekanisk ved hjelp av roterende børster eller slipende valser med diamant- og smergeloverflater (_microsand_) <Cite ids={[2]} />. Når overflatefibrene i polyestergarnet bearbeides med presis spenningskontroll, brytes den glatte, blanke plastfølelsen som ubehandlet syntetisk stoff ofte har, og resultatet blir en matt og myk tekstiloverflate <Cite ids={[1]} /><Cite ids={[2]} />.
 
 <aside className={chrome.callout} aria-label="Tommelregel">
-  **Tommelregel:** En matt «peach skin»-overflate endrer tekstilens utseende og
+  <KnowledgeCalloutTitle title="Tommelregel:" />
+
+  En matt «peach skin»-overflate endrer tekstilens utseende og
   berøringsfølelse gjennom overflatebearbeiding, men det er belegget på baksiden
   som avgjør selve vanntettheten <Cite ids={[1]} />
   <Cite ids={[2]} />.
@@ -141,7 +148,9 @@ Polymerprodusenten Covestro forklarer at funksjonelle tekstilbelegg basert på p
 />
 
 <aside className={chrome.callout} aria-label="Tommelregel">
-  **Tommelregel:** Når PU-belegget er plassert på baksiden av ytterstoffet,
+  <KnowledgeCalloutTitle title="Tommelregel:" />
+
+  Når PU-belegget er plassert på baksiden av ytterstoffet,
   ligger den vanntette barrieren beskyttet bak selve polyesterveven mot ytre
   mekanisk slitasje <Cite ids={[1]} />.
 </aside>
@@ -158,7 +167,9 @@ At et tekstil kan være både vanntett og pustende på samme tid, skyldes den fy
 Produktdokumentasjonen for HydroGuard™ spesifiserer at ytterstoffet benytter et pustende PU-belegg, uten å låse spesifikasjonen til én bestemt underkategori av polymerteknologi <Cite ids={[1]} />.
 
 <aside className={chrome.callout} aria-label="Tommelregel">
-  **Tommelregel:** For at vanndamp skal transporteres effektivt ut gjennom et
+  <KnowledgeCalloutTitle title="Tommelregel:" />
+
+  For at vanndamp skal transporteres effektivt ut gjennom et
   pustende PU-belegg, må det være en forskjell i fuktighet og temperatur mellom
   innsiden av plagget og luften utenfor <Cite ids={[4]} />
   <Cite ids={[9]} />.
@@ -173,7 +184,9 @@ I dagligtale blandes ofte begrepene «vanntett» og «vannavvisende», men i int
 **Motstand mot overflatefukting (vannavvisning)** testes etter ISO 4920:2012 (spraytest) <Cite ids={[6]} />. Denne testen måler kun i hvilken grad vann preller av på selve tekstiloverflaten uten å trekke inn i fibrene, og standarden fastslår at den ikke kan brukes til å vurdere stoffets motstand mot gjennomtrenging av regn under trykk <Cite ids={[6]} /><Cite ids={[9]} />. Dessuten påpeker testinstituttet SATRA at et ferdig plaggs totale beskyttelse i regnvær også avhenger av konstruksjonsdetaljer som sømmer og åpninger <Cite ids={[11]} />.
 
 <aside className={chrome.callout} aria-label="Tommelregel">
-  **Tommelregel:** At vann perler på utsiden av et plagg viser kun at overflaten
+  <KnowledgeCalloutTitle title="Tommelregel:" />
+
+  At vann perler på utsiden av et plagg viser kun at overflaten
   er vannavvisende (ISO 4920); det er motstanden mot vanntrykk gjennom stoffet
   (ISO 811) som avgjør om tekstilet er vanntett <Cite ids={[5]} />
   <Cite ids={[6]} />.
@@ -186,7 +199,9 @@ I tekniske tekstiler betyr **pusteevne** evnen til å slippe gjennom vanndamp (s
 Spesifikasjonen **130 g/m²** (130 gsm) angir ytterstoffets flatevekt, altså massen per kvadratmeter tekstil <Cite ids={[1]} />. Målemetoden er beskrevet i standarden ASTM D3776/D3776M-20(2025) <Cite ids={[10]} />. Dette tallet forteller hvor tett og kraftig selve ytterstoffet er konstruert per kvadratmeter, men representerer ikke totalvekten på det ferdige plagget eller graden av varmeisolasjon <Cite ids={[1]} /><Cite ids={[10]} />.
 
 <aside className={chrome.callout} aria-label="Tommelregel">
-  **Tommelregel:** Pusteevne måler transport av fukt i dampform (ISO 11092),
+  <KnowledgeCalloutTitle title="Tommelregel:" />
+
+  Pusteevne måler transport av fukt i dampform (ISO 11092),
   mens luftgjennomgang måler vindtetthet (ISO 9237) – et vindtett skallstoff kan
   derfor fortsatt være pustende <Cite ids={[7]} />
   <Cite ids={[8]} />
@@ -206,7 +221,9 @@ I Comfyrobe™ fungerer HydroGuard™ og innerfôret SherpaCore™ som et lagdel
 Testinstituttet Hohenstein beskriver hvordan et funksjonelt bekledningssystem er avhengig av at de enkelte lagene samarbeider om varmeisolasjon, fukthåndtering og beskyttelse mot ytre værforhold <Cite ids={[9]} />. Når det indre laget tar opp og buffrer fuktighet mens ytterstoffet slipper vanndamp videre ut og holder regn ute, opprettholdes et mer stabilt mikroklima inne i plagget <Cite ids={[1]} /><Cite ids={[9]} />.
 
 <aside className={chrome.callout} aria-label="Tommelregel">
-  **Tommelregel:** Ytterstoffet (HydroGuard™) skal holde flytende vann ute og
+  <KnowledgeCalloutTitle title="Tommelregel:" />
+
+  Ytterstoffet (HydroGuard™) skal holde flytende vann ute og
   slippe damp ut, mens innerfôret (SherpaCore™) skal binde stillestående luft
   for varme og håndtere fukt nær kroppen <Cite ids={[1]} />
   <Cite ids={[9]} />.
@@ -228,10 +245,11 @@ I den tekniske stykklisten for Comfyrobe™ er ytterstoffet HydroGuard™ spesif
 Ettersom et ferdig plagg består av flere sammensatte komponenter – inkludert SherpaCore™-fôret, glidelåser og sømmer – skal du ved vask og tørking alltid følge den innsydde vaskeanvisningen i selve plagget <Cite ids={[1]} />.
 
 <aside className={chrome.callout} aria-label="Tommelregel">
-  **Tommelregel:** Selv om ytterstoffet isolert sett er spesifisert for vask ved
-  40 °C, skal vask og tørking av hele plagget alltid utføres
-  etter den komplette vaskeanvisningen på innsiden av Comfyrobe™ <Cite ids={[1]} />
-  .
+  <KnowledgeCalloutTitle title="Tommelregel:" />
+
+  Selv om ytterstoffet isolert sett er spesifisert for vask ved
+  40 °C, skal vask og tørking av hele plagget alltid utføres etter den komplette
+  vaskeanvisningen på innsiden av Comfyrobe™ <Cite ids={[1]} />.
 </aside>
 
 {/* 5. Tilbake til toppen */}
@@ -278,7 +296,9 @@ Ettersom et ferdig plagg består av flere sammensatte komponenter – inkludert 
         target="_blank"
         rel="noopener noreferrer"
       >
-        {"https://www.covestro.com/press/water-based-waterproof-and-water-vapor-permeable/"}
+        {
+          "https://www.covestro.com/press/water-based-waterproof-and-water-vapor-permeable/"
+        }
       </a>
     </li>
     <li id="kilde-4">
@@ -365,7 +385,9 @@ Ettersom et ferdig plagg består av flere sammensatte komponenter – inkludert 
         target="_blank"
         rel="noopener noreferrer"
       >
-        {"https://www.hohenstein.us/en-us/trust/hohenstein-quality-labels/from-a-z/hohenstein-performance-index"}
+        {
+          "https://www.hohenstein.us/en-us/trust/hohenstein-quality-labels/from-a-z/hohenstein-performance-index"
+        }
       </a>
     </li>
     <li id="kilde-10">

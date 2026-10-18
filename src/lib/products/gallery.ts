@@ -11,7 +11,7 @@ import { usesDesktopPortraitFrame } from './gallery/desktopPortraitFrame';
 const ASPECT_RATIO_TOLERANCE = 0.015;
 const reportedImages = new Set<string>();
 function originalImages(images: ProductImage[], viewport: 'desktop' | 'mobile', handle: string) {
-  const [width, height] = viewport === 'mobile' ? [2, 3] : [4, 5];
+  const [width, height] = viewport === 'mobile' ? (handle === 'comfyrobe' ? [3, 4] : [2, 3]) : [4, 5];
   // Allow 1.5% relative ratio deviation; preserve the original dimensions.
   return images.filter(image => {
     // These explicitly selected desktop originals retain their native proportions.

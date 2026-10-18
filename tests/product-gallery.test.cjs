@@ -4,6 +4,7 @@ const test = require('node:test');
 const { loadTypeScript } = require('./load-typescript.cjs');
 
 const image = (id, width, height) => ({ id, url: `/${id}.webp`, altText: id, width, height });
+const comfyPortrait = image('comfy-portrait', 1536, 2048);
 const portrait = image('portrait', 1000, 1500);
 const requestedVargnattImage = '/images/kunnskap/Black_Mikrofiber_Full.webp';
 const otherFormats = [image('square', 1000, 1000), image('tall', 887, 1774), image('desktop', 1440, 1800)];
@@ -13,7 +14,7 @@ const { productGallery } = loadTypeScript('lib/products/gallery.ts', {
   globals: { console: { warn: message => warnings.push(message) } },
   mocks: {
     './gallery/productGalleryImageOverrides': { PRODUCT_GALLERY_IMAGE_OVERRIDES: { comfyrobe: desktop, 'utekos-dun': desktop, 'utekos-stapper': [otherFormats[0]] } },
-    './gallery/comfyrobeProductGalleryImages': { COMFYROBE_MOBILE_GALLERY_IMAGES: [portrait, ...otherFormats] },
+    './gallery/comfyrobeProductGalleryImages': { COMFYROBE_MOBILE_GALLERY_IMAGES: [comfyPortrait, portrait, ...otherFormats] },
     './gallery/techdown/productGalleryImages': { TECHDOWN_MOBILE_GALLERY_IMAGES: [] },
     './gallery/mikrofiber/mikrofiberProductGalleryImages': { MICROFIBER_MOBILE_GALLERY_IMAGES: [] },
     './gallery/svale/svaleProductGalleryImages': { SVALE_MOBILE_GALLERY_IMAGES: [] },
@@ -23,9 +24,9 @@ const { productGallery } = loadTypeScript('lib/products/gallery.ts', {
 const product = (handle, images = []) => ({ handle, images: { nodes: images } });
 const variant = (color = 'Fjellblå', image = null) => ({ selectedOptions: [{ name: 'Farge', value: color }], image });
 
-test('galleries accept only 2:3 originals on mobile and 4:5 originals on desktop', () => {
+test('Comfyrobe accepts 3:4 originals on mobile and retains its desktop ratio', () => {
   const gallery = productGallery(product('comfyrobe'), variant());
-  assert.deepEqual(Array.from(gallery.mobile), [portrait]);
+  assert.deepEqual(Array.from(gallery.mobile), [comfyPortrait]);
   assert.deepEqual(Array.from(gallery.desktop), desktop);
 });
 
@@ -202,7 +203,7 @@ test('requested Dun Fjellblå desktop originals retain dimensions and stay out o
   assert.equal(dark.mobile[0].url, requestedVargnattImage);
 });
 
-test('Comfyrobe hood portrait appears on desktop at its native ratio while mobile preserves the requested ten-image order', () => {
+test('Comfyrobe uses separate native 4:5 desktop and 3:4 mobile galleries', () => {
   const comfy = loadTypeScript('lib/products/gallery/comfyrobeProductGalleryImages.ts');
   const { productGallery: getGallery } = loadTypeScript('lib/products/gallery.ts', {
     globals: { console: { warn() {} } },
@@ -215,20 +216,27 @@ test('Comfyrobe hood portrait appears on desktop at its native ratio while mobil
     },
   });
   const gallery = getGallery(product('comfyrobe'), variant());
-  assert.equal(gallery.desktop.length, 3);
-  assert.deepEqual(Array.from(gallery.mobile, image => image.url), [
-    '/images/kunnskap/comfyrobe-side-1000x1500_2.webp',
-    '/images/kunnskap/comfyrobe-side-1000x1500_3.webp',
-    '/images/kunnskap/comfyrobe-side-1000x1500_4.webp',
-    '/images/kunnskap/comfyrobe-side-1000x1500.webp',
-    '/images/kunnskap/comfyrobe-sherpacore-1000x1500.webp',
-    '/images/kunnskap/naerbilde-av-utekos-logo-glidelåstrekk.webp',
-    '/images/kunnskap/Comfy_Woman_1200x1800.webp',
-    '/images/kunnskap/Jakke Navy_1.webp',
-    '/images/kunnskap/Jakke Navy_3.webp',
-    '/images/kunnskap/Jakke Navy.webp',
+  assert.equal(gallery.desktop.length, 13);
+  const fs = require('node:fs');
+  const files = fs.readdirSync('public/images/products/comfyrobe').filter(file => file.endsWith('.webp') && !file.includes('1440x1800') && file !== 'comfyrobe-herre-smiler-lurt-hender-i-lommen.webp');
+  assert.equal(gallery.mobile.length, 17);
+  assert.deepEqual(Array.from(gallery.mobile, image => image.url).sort(), files.map(file => `/images/products/comfyrobe/${file}`).sort());
+  assert.deepEqual(Array.from(gallery.mobile.slice(0, 6), image => image.url), [
+    '/images/products/comfyrobe/1.webp',
+    '/images/products/comfyrobe/2.webp',
+    '/images/products/comfyrobe/comfyrobe-avslappet-herre-staende-hender-i-lomme.webp',
+    '/images/products/comfyrobe/comfyrobe-herre-smiler-med-hendene-i-lommen.webp',
+    '/images/products/comfyrobe/3.webp',
+    '/images/products/comfyrobe/4.webp',
   ]);
-  assert.equal(gallery.desktop[2].url, '/images/kunnskap/Comfy_Woman_2_2x3.webp');
-  assert.equal(gallery.desktop[2].width, 1024);
-  assert.equal(gallery.desktop[2].height, 1536);
+  for (const image of gallery.mobile) {
+    assert.equal(image.width / image.height, 3 / 4);
+    assert.ok(image.altText);
+  }
+  for (const image of gallery.desktop) {
+    assert.equal(image.width, 1440);
+    assert.equal(image.height, 1800);
+    assert.ok(image.url.startsWith('/images/products/comfyrobe/'));
+    assert.ok(fs.existsSync(`public${image.url}`));
+  }
 });

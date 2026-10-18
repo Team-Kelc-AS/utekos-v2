@@ -148,7 +148,6 @@
   width: 100%;
   height: auto;
   margin: 0 auto 1.25rem;
-  border-radius: 12px;
 }
 .featuredCard [data-slot="card-title"] {
   font-size: clamp(1.5rem, 2.3vw, 2rem);
@@ -202,7 +201,6 @@
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 0.75rem;
 }
 .recommendedCopy {
   min-width: 0;

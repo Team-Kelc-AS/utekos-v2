@@ -13,6 +13,7 @@ import { KnowledgeArticlePagination } from './KnowledgeArticlePagination'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { ImageHoverZoom } from '@/components/ImageHoverZoom'
 
 type OverviewArticle = KnowledgeArticle
 
@@ -31,18 +32,20 @@ export function ArticleImage({
 }) {
   const image = article.cardImage
   return (
-    <Image
-      {...image}
-      alt={image.alt}
-      className={thumbnail ? styles.recommendedImage : cover ? 'block h-auto w-full' : styles.cardImage}
-      loading={featured ? 'eager' : undefined}
-      fetchPriority={featured ? 'high' : undefined}
-      sizes={thumbnail ? '(max-width: 639px) 72px, 96px'
-        : featured ? '(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(100vw - 3rem), (max-width: 1264px) calc(50vw - 2.375rem), 594px'
-        : cover
-        ? '(max-width: 767px) calc(100vw - 2rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1264px) calc(33.33vw - 2rem), 389px'
-        : '(max-width: 639px) calc(100vw - 72px), (max-width: 1023px) calc(50vw - 64px), 350px'}
-    />
+    <ImageHoverZoom>
+      <Image
+        {...image}
+        alt={image.alt}
+        className={thumbnail ? styles.recommendedImage : cover ? 'block h-auto w-full' : styles.cardImage}
+        loading={featured ? 'eager' : undefined}
+        fetchPriority={featured ? 'high' : undefined}
+        sizes={thumbnail ? '(max-width: 639px) 72px, 96px'
+          : featured ? '(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(100vw - 3rem), (max-width: 1264px) calc(50vw - 2.375rem), 594px'
+          : cover
+          ? '(max-width: 767px) calc(100vw - 2rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1264px) calc(33.33vw - 2rem), 389px'
+          : '(max-width: 639px) calc(100vw - 72px), (max-width: 1023px) calc(50vw - 64px), 350px'}
+      />
+    </ImageHoverZoom>
   )
 }
 

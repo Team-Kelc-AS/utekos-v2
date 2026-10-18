@@ -37,15 +37,15 @@ export function ProductDetails({
                 id={section.id}
                 value={section.id}
               >
-                <AccordionTrigger>
+                <AccordionTrigger headingLevel={2}>
                   <ProductDetailLabel section={section.id}>
                     {section.title}
                   </ProductDetailLabel>
                 </AccordionTrigger>
-                <AccordionContent className={styles.detailBody}>
-                  {section.groups.map((group, i) => (
-                    <div key={i}>
-                      {group.title && <h3>{group.title}</h3>}
+                <AccordionContent keepMounted className={styles.detailBody}>
+                  <Accordion>
+                  {section.groups.map((group, i) => {
+                    const body = <>
                       {group.paragraphs?.map((p) => (
                         <p key={p}>{p}</p>
                       ))}
@@ -72,8 +72,15 @@ export function ProductDetails({
                           <p>{group.note.text}</p>
                         </aside>
                       )}
-                    </div>
-                  ))}
+                    </>;
+                    return group.title ? (
+                      <AccordionItem key={i} value={`${section.id}-${i}`}>
+                        <AccordionTrigger headingLevel={3} typography="inherit">{group.title}</AccordionTrigger>
+                        <AccordionContent keepMounted>{body}</AccordionContent>
+                      </AccordionItem>
+                    ) : <div key={i}>{body}</div>;
+                  })}
+                  </Accordion>
                 </AccordionContent>
               </AccordionItem>
             ))}

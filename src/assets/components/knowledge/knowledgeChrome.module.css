@@ -148,6 +148,19 @@
   box-shadow: 0 0.6rem 1.8rem rgb(28 27 26 / 6%);
 }
 
+/* The callout owns both surrounding gaps. Heading and figure margins must
+   not enlarge them, including when a callout ends the article-body wrapper. */
+:not(.callout):has(+ .callout[aria-label]) {
+  margin-block-end: 0;
+}
+
+.callout[aria-label] + :not(.callout),
+.callout[aria-label] + :not(.callout) > :first-child,
+:has(> .callout[aria-label]:last-child) + *,
+:has(> .callout[aria-label]:last-child) + * > :first-child {
+  margin-block-start: 0;
+}
+
 .callout[data-tone] {
   --knowledge-ink: #1c1b1a;
   --knowledge-link: #71330f;
@@ -157,11 +170,22 @@
 }
 
 .callout .calloutTitle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
   margin: 0;
   color: inherit;
   font-size: 1rem;
   font-weight: 800;
   line-height: 1.35;
+}
+
+.calloutIcon {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.05rem;
+  color: #b94700;
 }
 
 .calloutBody {

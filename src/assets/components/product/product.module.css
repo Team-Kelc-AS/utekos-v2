@@ -651,3 +651,33 @@
     display: none;
   }
 }
+
+.trust .discountTrust {
+  align-items: flex-start;
+}
+.discountTrust > svg {
+  margin-top: 10px;
+}
+
+.mobileDiscount {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobileDiscount {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+  }
+
+  .trust .desktopDiscount {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .galleryColumn[data-gallery-product='comfyrobe'] .galleryControls {
+    margin-top: 1.25rem;
+  }
+}

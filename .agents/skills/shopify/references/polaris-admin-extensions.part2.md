@@ -4,15 +4,93 @@ This guide is split so each part fits in a single read. The other parts sit in t
 directory — `polaris-admin-extensions.md` — and you should read the ones relevant to your task.
 
 ---
+
 ```html
-<s-table loading paginate hasPreviousPage hasNextPage variant="auto"><s-table-header-row><s-table-header listSlot="primary">Product</s-table-header><s-table-header listSlot="labeled" format="currency">Price</s-table-header></s-table-header-row><s-table-body><s-table-row clickDelegate="first-cell"><s-table-cell>Blue T-Shirt</s-table-cell><s-table-cell>$29.99</s-table-cell></s-table-row></s-table-body></s-table>
-<s-text accessibilityVisibility="visible" dir="ltr" color="subdued" type="strong" tone="success" fontVariantNumeric="tabular-nums" interestFor="text-tip">Styled text</s-text>
-<s-text-area name="description" value="A great product" defaultValue="" disabled label="Description" labelAccessibilityVisibility="exclusive" placeholder="Enter description" readOnly required error="Too short" details="Product description" autocomplete="off" maxLength="500" minLength="10" rows={4}></s-text-area>
-<s-text-field disabled name="title" value="Blue T-Shirt" defaultValue="Untitled" details="Product name" error="Required" label="Title" labelAccessibilityVisibility="exclusive" placeholder="Enter title" readOnly required autocomplete="off" icon="product" maxLength="255" minLength="1" prefix="SKU-" suffix="™"></s-text-field>
-<s-thumbnail src="https://example.com/thumb.jpg" alt="Product" size="base"></s-thumbnail>
+<s-table loading paginate hasPreviousPage hasNextPage variant="auto"
+  ><s-table-header-row
+    ><s-table-header listSlot="primary">Product</s-table-header
+    ><s-table-header listSlot="labeled" format="currency"
+      >Price</s-table-header
+    ></s-table-header-row
+  ><s-table-body
+    ><s-table-row clickDelegate="first-cell"
+      ><s-table-cell>Blue T-Shirt</s-table-cell
+      ><s-table-cell>$29.99</s-table-cell></s-table-row
+    ></s-table-body
+  ></s-table
+>
+<s-text
+  accessibilityVisibility="visible"
+  dir="ltr"
+  color="subdued"
+  type="strong"
+  tone="success"
+  fontVariantNumeric="tabular-nums"
+  interestFor="text-tip"
+  >Styled text</s-text
+>
+<s-text-area
+  name="description"
+  value="A great product"
+  defaultValue=""
+  disabled
+  label="Description"
+  labelAccessibilityVisibility="exclusive"
+  placeholder="Enter description"
+  readOnly
+  required
+  error="Too short"
+  details="Product description"
+  autocomplete="off"
+  maxLength="500"
+  minLength="10"
+  rows="{4}"
+></s-text-area>
+<s-text-field
+  disabled
+  name="title"
+  value="Blue T-Shirt"
+  defaultValue="Untitled"
+  details="Product name"
+  error="Required"
+  label="Title"
+  labelAccessibilityVisibility="exclusive"
+  placeholder="Enter title"
+  readOnly
+  required
+  autocomplete="off"
+  icon="product"
+  maxLength="255"
+  minLength="1"
+  prefix="SKU-"
+  suffix="™"
+></s-text-field>
+<s-thumbnail
+  src="https://example.com/thumb.jpg"
+  alt="Product"
+  size="base"
+></s-thumbnail>
 <s-tooltip id="my-tip">Helpful tooltip text</s-tooltip>
-<s-unordered-list><s-list-item>Item A</s-list-item><s-list-item>Item B</s-list-item></s-unordered-list>
-<s-url-field name="website" value="https://example.com" defaultValue="https://" disabled label="Website" labelAccessibilityVisibility="exclusive" placeholder="https://example.com" readOnly required error="Invalid URL" details="Store URL" autocomplete="url" maxLength="2000" minLength="10"></s-url-field>
+<s-unordered-list
+  ><s-list-item>Item A</s-list-item
+  ><s-list-item>Item B</s-list-item></s-unordered-list
+>
+<s-url-field
+  name="website"
+  value="https://example.com"
+  defaultValue="https://"
+  disabled
+  label="Website"
+  labelAccessibilityVisibility="exclusive"
+  placeholder="https://example.com"
+  readOnly
+  required
+  error="Invalid URL"
+  details="Store URL"
+  autocomplete="url"
+  maxLength="2000"
+  minLength="10"
+></s-url-field>
 ```
 
 ## Web component imports (all versions except 2025-07)

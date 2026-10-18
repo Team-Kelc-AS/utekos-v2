@@ -12,6 +12,7 @@ export function HeaderMenu({
   trigger: ReactNode;
   logo: ReactNode;
   closeIcon: ReactNode;
+  categories: ReactNode;
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
