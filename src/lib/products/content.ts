@@ -753,7 +753,7 @@ export const PRODUCT_PAGE_CONTENT = {
         {
           title: "Tåler regelmessig vask og fuktig utendørsbruk",
           paragraphs: [
-            "[SherpaCore™](/app/(blog)/uteguiden/sherpacore/page.mdx) er spesielt behandlet for å ha god fuktabsorpsjon. Den oppbygde, krøllete strukturfôringen fanger kroppsvarme i luftrommene og gir høy isolasjon uten unødig tyngde. Materialet absorberer effektivt fuktighet og holder deg komfortabel etter aktivitet eller eksponering for kulde. ",
+            "SherpaCore™ er spesielt behandlet for å ha god fuktabsorpsjon. Den oppbygde, krøllete strukturfôringen fanger kroppsvarme i luftrommene og gir høy isolasjon uten unødig tyngde. Materialet absorberer effektivt fuktighet og holder deg komfortabel etter aktivitet eller eksponering for kulde. ",
           ],
         },
         {
