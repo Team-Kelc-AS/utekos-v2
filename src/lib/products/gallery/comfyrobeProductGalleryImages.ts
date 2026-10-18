@@ -53,13 +53,6 @@ export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
     1800
   ),
   productImage(
-    'comfyrobe-desktop-comfyrobe-zipper-ykk-1440x1800',
-    '/images/products/comfyrobe/comfyrobe-zipper-ykk-1440x1800.webp',
-    'Nærbilde av glidelås og søm i mørkt Comfyrobe-stoff.',
-    1440,
-    1800
-  ),
-  productImage(
     'comfyrobe-desktop-comfyrobe-borrelas-1440x1800',
     '/images/products/comfyrobe/comfyrobe-borrelas-1440x1800.webp',
     'Erme på Comfyrobe med åpen borrelåsjustering ved håndleddet.',

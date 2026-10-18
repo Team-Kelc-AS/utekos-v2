@@ -216,7 +216,7 @@ test('Comfyrobe uses separate native 4:5 desktop and 3:4 mobile galleries', () =
     },
   });
   const gallery = getGallery(product('comfyrobe'), variant());
-  assert.equal(gallery.desktop.length, 13);
+  assert.equal(gallery.desktop.length, 12);
   const fs = require('node:fs');
   const files = fs.readdirSync('public/images/products/comfyrobe').filter(file => file.endsWith('.webp') && !file.includes('1440x1800') && !file.includes('-card-') && file !== 'comfyrobe-herre-smiler-lurt-hender-i-lommen.webp');
   assert.equal(gallery.mobile.length, 17);
