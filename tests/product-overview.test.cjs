@@ -43,7 +43,7 @@ const row = (rows, rowId) => rows.find(item => item.id === rowId);
 
 test('the original row order, exact variant assignments, labels and image files are preserved', () => {
   const rows = productOverviewRows(catalogue());
-  assert.deepEqual(Array.from(rows, item => item.id), ['svale', 'techdown', 'color-Vargnatt', 'color-Fjellblå', 'comfyrobe', 'utekos-stapper']);
+  assert.deepEqual(Array.from(rows, item => item.id), ['svale', 'techdown', 'color-Vargnatt', 'color-Fjellblå', 'comfyrobe']);
   const expected = [
     ['svale', 'Utekos Svale', [
       [11, 'Utekos Svale Middels', '/Svale_1.webp'],
@@ -68,12 +68,12 @@ test('the original row order, exact variant assignments, labels and image files 
       [43, 'Utekos Mikrofiber™ Fjellblå M', '/Mikro_1000x1500_Front.webp'],
       [44, 'Utekos Mikrofiber™ Fjellblå L', '/Mikro_1000x1500_Diagonal.webp'],
     ]],
-    ['comfyrobe', 'Comfyrobe™', [
+    ['comfyrobe', 'Comfyrobe™ og Utekos Stapper™', [
       [51, 'Comfyrobe™ S/XS', '/images/products/comfyrobe/comfyrobe-normal-fit-woman-card-1000x1500.webp'],
-      [52, 'Comfyrobe™ M/L', '/images/products/comfyrobe/comfyrobe-male-card-1000x1500.webp'],
+      [52, 'Comfyrobe™ M/L', '/images/products/comfyrobe/comfyrobe-medium-card-1000x1500.jpg'],
       [53, 'Comfyrobe™ L/XXL', '/images/products/comfyrobe/comfyrobe-oversized-fit-on-woman-card-1000x1500.webp'],
+      [61, 'Utekos Stapper™', '/images/products/Stapper-1000x1500.jpg'],
     ]],
-    ['utekos-stapper', 'Utekos Stapper™', [[61, 'Utekos Stapper™', 'https://example.test/variant-61.webp']]],
   ];
   for (const [rowId, label, cards] of expected) {
     const actual = row(rows, rowId);
@@ -127,7 +127,7 @@ test('missing or ambiguous size/color combinations are omitted without selecting
 test('Comfyrobe labels map to Shopify XS, M and XL without inferring other sizes', () => {
   const products = catalogue();
   products.find(product => product.handle === 'comfyrobe').variants.nodes.push(variant(54, 'S', 'Fjellnatt'), variant(55, 'L', 'Fjellnatt'), variant(56, 'XXL', 'Fjellnatt'));
-  assert.deepEqual(Array.from(row(productOverviewRows(products), 'comfyrobe').cards, card => [card.title, card.variant.selectedOptions[0].value, card.variant.id]), [
+  assert.deepEqual(Array.from(row(productOverviewRows(products), 'comfyrobe').cards.filter(card => card.product.handle === 'comfyrobe'), card => [card.title, card.variant.selectedOptions[0].value, card.variant.id]), [
     ['Comfyrobe™ S/XS', 'XS', id(51)], ['Comfyrobe™ M/L', 'M', id(52)], ['Comfyrobe™ L/XXL', 'XL', id(53)],
   ]);
 });
@@ -140,16 +140,27 @@ test('curated images keep original dimensions and accessories use their own medi
     assert.equal(card.image.width, width);
     assert.equal(card.image.height, height);
   }
-  const stapper = products.find(product => product.handle === 'utekos-stapper');
-  assert.equal(row(productOverviewRows(products), 'utekos-stapper').cards[0].image, stapper.variants.nodes[0].image);
-  stapper.variants.nodes[0].image = null;
-  assert.equal(row(productOverviewRows(products), 'utekos-stapper').cards[0].image, stapper.images.nodes[0]);
-  stapper.images.nodes = [];
-  assert.equal(row(productOverviewRows(products), 'utekos-stapper'), undefined);
+  const stapper = cards.find(card => card.product.handle === 'utekos-stapper');
+  assert.equal(stapper.image.url, '/images/products/Stapper-1000x1500.jpg');
+  assert.equal(stapper.image.width, 1000);
+  assert.equal(stapper.image.height, 1500);
+  const medium = cards.find(card => card.variant.id === id(52));
+  assert.equal(medium.image.width, 1000);
+  assert.equal(medium.image.height, 1500);
 });
 
 test('missing products and an empty catalogue do not create placeholder cards', () => {
   const products = catalogue().filter(product => product.handle !== 'utekos-techdown');
   assert.equal(row(productOverviewRows(products), 'techdown'), undefined);
   assert.equal(productOverviewRows([]).length, 0);
+});
+
+
+test('Stapper remains visible when Comfyrobe is absent and is never duplicated', () => {
+  const rows = productOverviewRows(catalogue().filter(product => product.handle !== 'comfyrobe'));
+  const stapper = row(rows, 'comfyrobe');
+  assert.equal(stapper.label, 'Utekos Stapper™');
+  assert.equal(stapper.cards.length, 1);
+  assert.equal(stapper.cards[0].variant.id, id(61));
+  assert.equal(row(rows, 'utekos-stapper'), undefined);
 });

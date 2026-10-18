@@ -33,7 +33,7 @@ const definitions: Definition[] = [
   ] },
   { id: 'comfyrobe', handle: 'comfyrobe', label: 'Comfyrobe™', color: 'Fjellnatt', cards: [
     { size: 'XS', label: 'S/XS', image: '/images/products/comfyrobe/comfyrobe-normal-fit-woman-card-1000x1500.webp' },
-    { size: 'M', label: 'M/L', image: '/images/products/comfyrobe/comfyrobe-male-card-1000x1500.webp', width: 1536, height: 2048 },
+    { size: 'M', label: 'M/L', image: '/images/products/comfyrobe/comfyrobe-medium-card-1000x1500.jpg' },
     { size: 'XL', label: 'L/XXL', image: '/images/products/comfyrobe/comfyrobe-oversized-fit-on-woman-card-1000x1500.webp' },
   ] },
 ];
@@ -75,11 +75,24 @@ export function productOverviewRows(products: ShopifyProduct[]): OverviewRow[] {
   // Keep accessories and future products visible, using their own variant media.
   for (const product of products.filter(product => !definitions.some(definition => definition.handle === product.handle))) {
     const title = productTitle(product);
-    rows.set(product.handle, { id: product.handle, label: title, cards: publicVariants(product).map(variant => ({
+    const isStapper = product.handle === 'utekos-stapper';
+    const rowId = isStapper ? 'comfyrobe' : product.handle;
+    const existing = rows.get(rowId);
+    const cards = publicVariants(product).map(variant => ({
       product, variant,
       title: product.variants.nodes.length === 1 ? title : `${title} ${variant.title}`,
-      image: variant.image ?? product.images.nodes[0],
-    })).filter(card => !!card.image) });
+      image: isStapper ? {
+        url: '/images/products/Stapper-1000x1500.jpg',
+        altText: 'Svart Utekos Stapper™ med kompresjonsstropper og Utekos-logo',
+        width: 1000, height: 1500,
+      } : variant.image ?? product.images.nodes[0],
+    })).filter(card => !!card.image);
+    if (cards.length === 0) continue;
+    rows.set(rowId, {
+      id: rowId,
+      label: existing ? `${existing.label} og ${title}` : title,
+      cards: [...(existing?.cards ?? []), ...cards],
+    });
   }
   return [...rows.values()].filter(row => row.cards.length > 0);
 }

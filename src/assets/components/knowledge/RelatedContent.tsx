@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ListingKey } from "@/lib/catalog/categories";
 import {
   knowledgeArticles,
+  getRelatedKnowledgeArticles,
   type KnowledgeArticle,
 } from "@/lib/knowledge/knowledgeArticles";
 import { KnowledgeGuideCards } from "./KnowledgeGuideCards";
@@ -43,16 +44,6 @@ export function CategoryRelatedGuides({
   );
 }
 
-const relatedArticles: Record<string, readonly ArticleKey[]> = {
-  sherpacore: ["hydroGuard", "baseLayer", "keepWarm", "cold", "cloudweave"],
-  "hvordan-forlenge-terassesesongen": ["keepWarm", "baseLayer"],
-  cloudweave: ["baseLayer", "keepWarm"],
-  "hva-skal-man-ha-innerst": ["keepWarm", "cloudweave"],
-  "hvordan-holde-varmen-ute": ["baseLayer", "cold"],
-  "hvorfor-blir-man-kald": ["keepWarm", "baseLayer"],
-  ykk: ["cloudweave", "keepWarm"],
-};
-
 export function ArticleRelatedContent({
   article,
 }: {
@@ -62,10 +53,10 @@ export function ArticleRelatedContent({
     <section aria-labelledby="les-videre" className={styles.related}>
       <h2 id="les-videre">Mer fra Uteguiden</h2>
       <ul>
-        {(relatedArticles[article.slug] ?? []).map((key) => (
-          <li key={key}>
-            <Link href={knowledgeArticles[key].path} prefetch={false}>
-              {knowledgeArticles[key].title}
+        {getRelatedKnowledgeArticles(article).map((related) => (
+          <li key={related.path}>
+            <Link href={related.path} prefetch={false}>
+              {related.title}
             </Link>
           </li>
         ))}

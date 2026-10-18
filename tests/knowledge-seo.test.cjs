@@ -6,7 +6,7 @@ const test = require('node:test');
 const { createRequire } = require('node:module');
 const { loadTypeScript } = require('./load-typescript.cjs');
 const sharp = createRequire(require.resolve('next/package.json'))('sharp');
-const { knowledgeArticleList: articles, knowledgeOverview } = loadTypeScript('lib/knowledge/knowledgeArticles.ts');
+const { knowledgeArticleList: articles, knowledgeOverview, knowledgeArticles, getRelatedKnowledgeArticles } = loadTypeScript('lib/knowledge/knowledgeArticles.ts');
 const { buildKnowledgeMetadata, buildKnowledgeOverviewMetadata } = loadTypeScript('lib/knowledge/buildKnowledgeMetadata.ts');
 const { buildKnowledgeJsonLd, buildKnowledgeOverviewJsonLd, serializeKnowledgeJsonLd } = loadTypeScript('lib/knowledge/buildKnowledgeJsonLd.ts');
 const { validateKnowledgeArticles } = loadTypeScript('lib/knowledge/validateKnowledgeArticles.ts');
@@ -134,4 +134,21 @@ test('all declared local images exist with exact dimensions; social graphics are
       assert.ok(fs.statSync(file).size < 8_000_000);
     }
   }
+});
+
+
+test('every article links to every other registered guide, including future additions', () => {
+  assert.deepEqual(Array.from(articles), Object.values(knowledgeArticles));
+  for (const article of articles) {
+    const related = Array.from(getRelatedKnowledgeArticles(article));
+    assert.equal(related.length, articles.length - 1);
+    assert.equal(new Set(related.map(item => item.path)).size, related.length);
+    assert.ok(related.every(item => item.path !== article.path));
+  }
+  const added = { ...articles[0], slug: 'new-guide', path: '/uteguiden/new-guide' };
+  const expanded = [...articles, added];
+  for (const article of articles) {
+    assert.ok(getRelatedKnowledgeArticles(article, expanded).includes(added));
+  }
+  assert.equal(getRelatedKnowledgeArticles(added, expanded).length, articles.length);
 });

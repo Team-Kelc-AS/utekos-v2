@@ -994,35 +994,32 @@ function enrichArticle(id: keyof typeof articleContent): KnowledgeArticle {
   };
 }
 
+// This registry also defines overview order, sitemap entries and related links.
+// Register each article once; consumers derive their lists automatically.
 export const knowledgeArticles = {
-  hydroGuard: hydroGuardArticle,
   sherpaCore: sherpaCoreArticle,
   christmasGift: enrichArticle("christmasGift"),
+  glamping: enrichArticle("glamping"),
+  glampingNorway: enrichArticle("glampingNorway"),
+  winterStorage: enrichArticle("winterStorage"),
   terrace: enrichArticle("terrace"),
   cloudweave: enrichArticle("cloudweave"),
   baseLayer: enrichArticle("baseLayer"),
   keepWarm: enrichArticle("keepWarm"),
   cold: enrichArticle("cold"),
   ykk: enrichArticle("ykk"),
-  glamping: enrichArticle("glamping"),
-  glampingNorway: enrichArticle("glampingNorway"),
-  winterStorage: enrichArticle("winterStorage"),
+  hydroGuard: hydroGuardArticle,
 } as const;
 
-// Preserve the existing library order, now shared with its ItemList and sitemap.
-export const knowledgeArticleList: readonly KnowledgeArticle[] = [
-  knowledgeArticles.sherpaCore,
-  knowledgeArticles.christmasGift,
-  knowledgeArticles.glamping,
-  knowledgeArticles.glampingNorway,
-  knowledgeArticles.winterStorage,
-  knowledgeArticles.terrace,
-  knowledgeArticles.cloudweave,
-  knowledgeArticles.baseLayer,
-  knowledgeArticles.keepWarm,
-  knowledgeArticles.cold,
-  knowledgeArticles.ykk,
-  knowledgeArticles.hydroGuard,
-];
+export const knowledgeArticleList: readonly KnowledgeArticle[] =
+  Object.values(knowledgeArticles);
 
 validateKnowledgeArticles(knowledgeArticleList);
+
+/** Every registered guide is discoverable, excluding the current article itself. */
+export function getRelatedKnowledgeArticles(
+  article: KnowledgeArticle,
+  articles: readonly KnowledgeArticle[] = knowledgeArticleList,
+): readonly KnowledgeArticle[] {
+  return articles.filter((related) => related.path !== article.path);
+}
