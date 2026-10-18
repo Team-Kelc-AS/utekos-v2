@@ -1,4 +1,8 @@
 import { CANONICAL_EVENT_BROWSER_TIMEOUT_MS } from './timeouts';
+import { recordCollectorFailureDiagnostics } from '../observability/client/collectorFailureDiagnostics';
+
+// This counts canonical requests only, not other SDKs sharing the browser quota.
+let canonicalInFlightKeepaliveBytes = 0;
 
 /** HTTP acceptance is deliberately distinct from provider receipt. */
 export type CollectorOutcome =
@@ -10,13 +14,16 @@ export async function deliverCanonicalEvent(
   send: typeof fetch = fetch,
 ): Promise<CollectorOutcome> {
   const body = JSON.stringify(event); // Serialize once: retries retain all IDs/timestamps.
-  const keepalive = new TextEncoder().encode(body).byteLength <= 65_536;
+  const bodyBytes = new TextEncoder().encode(body).byteLength;
+  const keepalive = bodyBytes <= 65_536;
   for (let attempt = 0; attempt < 2; attempt++) {
+    const signal = AbortSignal.timeout(CANONICAL_EVENT_BROWSER_TIMEOUT_MS);
+    if (keepalive) canonicalInFlightKeepaliveBytes += bodyBytes;
     try {
       const response = await send(endpoint, {
         method: 'POST', body, cache: 'no-store', credentials: 'same-origin', keepalive,
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        signal: AbortSignal.timeout(CANONICAL_EVENT_BROWSER_TIMEOUT_MS),
+        signal,
       });
       // Consent/bot filtering intentionally returns no content. Do not report
       // this as a transport failure or claim the event was accepted.
@@ -27,7 +34,16 @@ export async function deliverCanonicalEvent(
       if (attempt === 0 && (response.status === 408 || response.status === 429 || response.status >= 500)) continue;
       throw new CollectorRejection(response.status);
     } catch (error) {
-      if (attempt === 1 || error instanceof CollectorRejection) throw error;
+      if (error instanceof CollectorRejection) throw error;
+      if (attempt === 1) {
+        recordCollectorFailureDiagnostics(error, endpoint, {
+          body_bytes: bodyBytes, canonical_in_flight_keepalive_bytes: canonicalInFlightKeepaliveBytes,
+          keepalive, signal_aborted: signal.aborted,
+        });
+        throw error;
+      }
+    } finally {
+      if (keepalive) canonicalInFlightKeepaliveBytes -= bodyBytes;
     }
   }
   throw new Error('collector_unavailable');

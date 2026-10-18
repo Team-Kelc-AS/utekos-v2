@@ -1,6 +1,7 @@
 import { sanitizeClientErrorFilename, sanitizeClientErrorMessage } from './sanitizeClientErrorBeacon'
 import { sanitizeClientErrorStack } from '../logging/sanitizeClientErrorDetails'
 import { sendClientLog } from './sendClientLog'
+import { getCollectorFailureDiagnostics } from './collectorFailureDiagnostics'
 
 export function reportClientCaughtError(
   error: unknown,
@@ -15,6 +16,7 @@ export function reportClientCaughtError(
   const message = sanitizeClientErrorMessage(
     `${operation}: ${errorName}: ${errorMessage}`
   )
+  const collector = getCollectorFailureDiagnostics(error)
 
   if (process.env.NODE_ENV !== 'production') {
     console.error(`[client-operation] ${operation}`, error)
@@ -28,6 +30,7 @@ export function reportClientCaughtError(
       data: {
         source: 'window_error',
         operation: operation === 'window' || operation === 'promise' ? operation : 'caught',
+        ...(collector ? { collector } : {}),
         ...(error instanceof Error && error.stack ? { stack: sanitizeClientErrorStack(error.stack) } : {}),
         ...(details?.filename ? { filename: sanitizeClientErrorFilename(details.filename) } : {}),
         ...(validPosition(details?.lineno) ? { line: details?.lineno } : {}),

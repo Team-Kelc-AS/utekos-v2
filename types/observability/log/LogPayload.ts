@@ -1,4 +1,5 @@
 import type { ConsentDiagnosticCode } from './ConsentDiagnosticCode'
+import type { CollectorFailureDiagnostics } from '@/lib/observability/client/collectorFailureDiagnostics'
 
 type ClientLogContext = { pathname: string }
 
@@ -17,6 +18,7 @@ export type LogPayload =
         message?: string
         stack?: string
         operation?: 'window' | 'promise' | 'caught'
+        collector?: CollectorFailureDiagnostics
         filename?: string
         line?: number
         column?: number
