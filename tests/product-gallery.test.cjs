@@ -218,7 +218,7 @@ test('Comfyrobe uses separate native 4:5 desktop and 3:4 mobile galleries', () =
   const gallery = getGallery(product('comfyrobe'), variant());
   assert.equal(gallery.desktop.length, 13);
   const fs = require('node:fs');
-  const files = fs.readdirSync('public/images/products/comfyrobe').filter(file => file.endsWith('.webp') && !file.includes('1440x1800') && file !== 'comfyrobe-herre-smiler-lurt-hender-i-lommen.webp');
+  const files = fs.readdirSync('public/images/products/comfyrobe').filter(file => file.endsWith('.webp') && !file.includes('1440x1800') && !file.includes('-card-') && file !== 'comfyrobe-herre-smiler-lurt-hender-i-lommen.webp');
   assert.equal(gallery.mobile.length, 17);
   assert.deepEqual(Array.from(gallery.mobile, image => image.url).sort(), files.map(file => `/images/products/comfyrobe/${file}`).sort());
   assert.deepEqual(Array.from(gallery.mobile.slice(0, 6), image => image.url), [

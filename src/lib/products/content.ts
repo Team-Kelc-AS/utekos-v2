@@ -767,7 +767,6 @@ export const PRODUCT_PAGE_CONTENT = {
             "Rent og stilfullt design som passer både i naturen og i byen.",
             "Maskinvask på 30 °C med lignende farger. ",
           ],
-          s,
         },
         {
           paragraphs: [
