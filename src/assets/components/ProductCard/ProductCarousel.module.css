@@ -29,6 +29,9 @@
 .message { padding-block: 2rem; }
 .message a { text-decoration: underline; text-underline-offset: .2em; }
 .loading { min-height: 28rem; }
+.fallbackRail { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; touch-action: auto; }
+.fallbackRail::-webkit-scrollbar { display: none; }
+.fallbackItem { flex: 0 0 var(--card-basis); min-width: 0; scroll-snap-align: start; }
 
 @media (min-width: 768px) {
   .section { padding: 4rem 2rem; }

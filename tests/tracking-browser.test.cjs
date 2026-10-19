@@ -42,6 +42,8 @@ async function buildHarness(environment) {
         hydrateRoot(container,createElement(Gate),{onRecoverableError(error){window.__gateHydrationErrors.push(error.message)}});
       }`, resolveDir: root, loader: 'ts' },
     absWorkingDir: root, bundle: true, format: 'iife', globalName: 'UtekosTrackingHarness', platform: 'browser', target: 'chrome120', write: false,
+    // CSS Modules in the real Accordion need an output path even for an in-memory build.
+    outfile: 'tracking-harness.js',
     define: { 'process.env.NEXT_PUBLIC_TRACKING_ENABLED': '"true"', 'process.env.NEXT_PUBLIC_VERCEL_ENV': JSON.stringify(environment), 'process.env.VERCEL_ENV': JSON.stringify(environment), 'process.env.NODE_ENV': '"production"', 'process.env': '{}' },
   });
   return result.outputFiles[0].text;

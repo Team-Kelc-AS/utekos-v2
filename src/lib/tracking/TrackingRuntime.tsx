@@ -9,6 +9,7 @@ import { webVitalMetricNameSchema } from '@/lib/analytics/webVitalMetricName';
 import { sendCanonicalGTMEvent } from '@/lib/analytics/sendCanonicalGTMEvent';
 import { enrichCanonicalBrowserJourneyContext } from '@/lib/analytics/internalJourneyContext';
 import { deliverCanonicalEvent } from './delivery';
+import { summarizeVitalEntries, vitalDocumentPath } from './web-vital-diagnostics';
 
 const metricVersions = new Set<string>();
 const reportVital: Parameters<typeof useReportWebVitals>[0] = metric => {
@@ -19,10 +20,13 @@ const reportVital: Parameters<typeof useReportWebVitals>[0] = metric => {
   metricVersions.add(key);
   try {
     const envelope = createBrowserEvent('page_view', {});
+    const documentPath = vitalDocumentPath(performance.getEntriesByType('navigation')[0]?.name, location.href);
     const event = canonicalWebVitalSchema.parse({ ...envelope, event_name: 'web_vital',
       custom_data: buildWebVitalCustomData({
         name: name.data, metricId: metric.id, value: metric.value, delta: metric.delta,
-        entries: [], pathname: location.pathname, rating: metric.rating, navigationType: metric.navigationType,
+        entries: summarizeVitalEntries(metric.entries), pathname: documentPath,
+        attribution: { metric_scope: 'document', document_pathname: documentPath, reporting_pathname: location.pathname },
+        rating: metric.rating, navigationType: metric.navigationType,
       }) });
     const enriched = enrichCanonicalBrowserJourneyContext(event);
     void sendCanonicalGTMEvent(buildWebVitalDataLayerEvent(enriched));

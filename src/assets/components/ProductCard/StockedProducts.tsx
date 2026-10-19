@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { unstable_rethrow } from 'next/dist/client/components/unstable-rethrow';
 import { io } from 'next/dist/server/request/io';
 import { ProductCard } from '@/components/ProductCard/ProductCard';
-import { ProductCarousel } from '@/components/ProductCard/ProductCarousel';
+import { DeferredProductCarousel as ProductCarousel } from '@/components/ProductCard/DeferredProductCarousel';
 import { getProductCards, type ProductCardData } from '@/lib/shopify/getProductCards';
 import { googleSansFlex } from '@/lib/fonts';
 import { homeProducts } from '@/lib/catalog/homeProducts';

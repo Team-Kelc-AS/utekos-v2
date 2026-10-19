@@ -206,11 +206,9 @@
 }
 .pending {
   min-height: 1.4em;
+  line-height: 1.4;
   font-size: 0.875rem;
-  margin: 0 important;
-}
-.pending:empty {
-  min-height: 0;
+  margin: 0 !important;
 }
 .stock {
   display: flex;
@@ -255,6 +253,8 @@
 }
 .reviewSummary {
   min-width: 0;
+  /* Reserve the streamed rating panel, including its padding and border. */
+  min-height: 7rem;
 }
 .detailBody ul {
   padding-left: 1.25rem;
@@ -592,6 +592,7 @@
   }
 }
 @media (max-width: 374px) {
+  .reviewSummary { min-height: 10rem; }
   .container {
     width: calc(100% - 2rem);
   }
