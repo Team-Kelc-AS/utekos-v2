@@ -71,19 +71,19 @@ export function HeroSection() {
             <span className="block">Uanstrengt eleganse</span>{" "}
             <span className="block">for kjølige dager.</span>
           </h1>
-          <p className="mt-2 max-w-xl text-center text-sm text-foreground sm:mt-3 sm:text-lg lg:pointer-fine:mt-4 lg:pointer-fine:text-[clamp(1rem,1.25vw,1.5rem)] lg:pointer-none:mt-4 lg:pointer-none:text-[clamp(1rem,1.25vw,1.5rem)]">
+          <p className="mt-2 max-w-xl text-center font-sans text-sm font-extralight text-[#dacec2] sm:mt-3 sm:text-lg lg:pointer-fine:mt-4 lg:pointer-fine:text-[clamp(1rem,1.25vw,1.5rem)] lg:pointer-none:mt-4 lg:pointer-none:text-[clamp(1rem,1.25vw,1.5rem)]">
             Omfavn høstsesongen med omsluttende luksus.
           </p>
           <div className="mt-4 flex w-full justify-center gap-3 sm:mt-5 lg:pointer-fine:gap-6 lg:pointer-none:gap-6">
             <a
               href="https://kasse.utekos.no/cart/43959919051000:1?channel=buy_button"
-              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-primary px-5 font-sans text-base font-medium text-primary-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
+              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-primary px-5 font-sans text-base font-semibold text-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
             >
               Kjøp XS
             </a>
             <a
               href="https://kasse.utekos.no/cart/43959919116536:1?channel=buy_button"
-              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-(image:--background-image-comfyrobe-gradient) px-5 font-sans text-base font-medium text-primary-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
+              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-(image:--background-image-comfyrobe-gradient) px-5 font-sans text-base font-semibold text-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
             >
               Kjøp XL
             </a>
