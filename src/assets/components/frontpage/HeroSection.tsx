@@ -66,31 +66,29 @@ export function HeroSection() {
     >
       <div className="relative">
         <HeroImage />
-        <div className="absolute inset-x-0 bottom-24 z-10 flex justify-center gap-3 px-4 sm:top-[28%] sm:bottom-auto sm:px-6 lg:pointer-fine:top-1/2 lg:pointer-fine:-translate-y-1/2 lg:pointer-none:top-1/2 lg:pointer-none:-translate-y-1/2">
-          <a
-            href="https://kasse.utekos.no/cart/43959919051000:1?channel=buy_button"
-            className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-full bg-primary px-5 font-sans text-base font-medium text-primary-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:rounded-lg lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:rounded-lg lg:pointer-none:text-lg"
-          >
-            Kjøp XS
-          </a>
-          <a
-            href="https://kasse.utekos.no/cart/43959919116536:1?channel=buy_button"
-            className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-full bg-(image:--background-image-comfyrobe-gradient) px-5 font-sans text-base font-medium text-primary-foreground shadow-lg shadow-black/30 ring-1 ring-white/40 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:rounded-lg lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:rounded-lg lg:pointer-none:text-lg"
-          >
-            Kjøp XL
-          </a>
+        <div className="absolute inset-x-0 top-[58%] z-10 flex flex-col items-center px-4 sm:top-[55%] sm:px-6">
+          <h1 id="hero-h1" className="m-0 max-w-3xl text-center text-[clamp(1.25rem,4vw,3.5rem)] leading-[1.08] font-extrabold text-white uppercase lg:pointer-fine:text-[clamp(1.75rem,2.5vw,3.5rem)] lg:pointer-none:text-[clamp(1.75rem,2.5vw,3.5rem)]">
+            <span className="block">Uanstrengt eleganse</span>
+            <span className="block">for kjølige dager.</span>
+          </h1>
+          <p className="mt-2 max-w-xl text-center text-sm text-foreground sm:mt-3 sm:text-lg lg:pointer-fine:mt-4 lg:pointer-fine:text-[clamp(1rem,1.25vw,1.5rem)] lg:pointer-none:mt-4 lg:pointer-none:text-[clamp(1rem,1.25vw,1.5rem)]">
+            Omfavn høstsesongen med omsluttende luksus.
+          </p>
+          <div className="mt-4 flex w-full justify-center gap-3 sm:mt-5 lg:pointer-fine:gap-6 lg:pointer-none:gap-6">
+            <a
+              href="https://kasse.utekos.no/cart/43959919051000:1?channel=buy_button"
+              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-primary px-5 font-sans text-base font-medium text-primary-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
+            >
+              Kjøp XS
+            </a>
+            <a
+              href="https://kasse.utekos.no/cart/43959919116536:1?channel=buy_button"
+              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-(image:--background-image-comfyrobe-gradient) px-5 font-sans text-base font-medium text-primary-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
+            >
+              Kjøp XL
+            </a>
+          </div>
         </div>
-      </div>
-      <div className="flex flex-col items-center bg-jungle px-4 py-12 text-center sm:gap-8 sm:px-0 sm:py-14 lg:py-16">
-        <h1
-          id="hero-h1"
-          className="m-0 max-w-3xl text-4xl/[1.15] font-extrabold text-balance sm:text-5xl/[1.15] lg:text-6xl/[1.15]"
-        >
-          Skreddersy varmen
-        </h1>
-        <p className="m-0 hidden text-xl/[1.4] text-balance sm:block md:text-3xl/[1.4]">
-          Opplev kompromissløs komfort og overlegen allsidighet.
-        </p>
       </div>
     </section>
   );
