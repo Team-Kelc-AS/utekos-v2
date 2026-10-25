@@ -68,7 +68,7 @@ export function HeroSection() {
         <HeroImage />
         <div className="absolute inset-x-0 top-[58%] z-10 flex flex-col items-center px-4 sm:top-[55%] sm:px-6">
           <h1 id="hero-h1" className="m-0 max-w-3xl text-center text-[clamp(1.25rem,4vw,3.5rem)] leading-[1.08] font-extrabold text-white uppercase lg:pointer-fine:text-[clamp(1.75rem,2.5vw,3.5rem)] lg:pointer-none:text-[clamp(1.75rem,2.5vw,3.5rem)]">
-            <span className="block">Uanstrengt eleganse</span>
+            <span className="block">Uanstrengt eleganse</span>{" "}
             <span className="block">for kjølige dager.</span>
           </h1>
           <p className="mt-2 max-w-xl text-center text-sm text-foreground sm:mt-3 sm:text-lg lg:pointer-fine:mt-4 lg:pointer-fine:text-[clamp(1rem,1.25vw,1.5rem)] lg:pointer-none:mt-4 lg:pointer-none:text-[clamp(1rem,1.25vw,1.5rem)]">
