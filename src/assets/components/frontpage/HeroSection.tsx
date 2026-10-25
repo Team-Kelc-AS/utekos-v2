@@ -1,6 +1,6 @@
 import "server-only";
 
-import frontPageImage from "../../../../public/images/products/Comfyrobe_1080x1920_4.webp";
+import frontPageImage from "../../../../public/corporate/brand/img/Comfyrobe_Desktop.webp";
 import comfyrobeMobileImage from "../../../../public/corporate/brand/img/Comfyrobe_Mobile_Hero.webp";
 import comfyrobePortraitImage from "../../../../public/corporate/brand/img/Comfyrobe1534x2000.webp";
 import { getImageProps } from "next/image";
