@@ -1,0 +1,169 @@
+/* The active server-resolved variant also themes the shared header and portals. */
+body:has(> main[data-product-theme="comfyrobe"]:not([style*="display: none"])) {
+  --product-page-gradient: linear-gradient(
+    to right in oklch,
+    #191f26,
+    #1e2330,
+    #222631,
+    #262b37,
+    #2c3340,
+    #2c3340,
+    #262b37,
+    #222631,
+    #1e2330,
+    #191f26
+  );
+  --product-page-background: #191f26;
+  --product-page-surface: oklch(0.2286 0.0096 285.62);
+  --product-page-elevated: oklch(0.2294 0.0232 267.21);
+  --product-page-gallery-accent: #b44701;
+  --product-newsletter-surface: oklch(0.2254 0.0232 267.21);
+}
+
+body:has(> main[data-product-theme="patriot-blue"]:not([style*="display: none"])) {
+  --color-patriot-blue-600: oklch(0.3004 0.0537 281.83);
+  --color-patriot-blue-500: oklch(0.3291 0.0484 275.39);
+  --color-patriot-blue-400: color-mix(in oklch, var(--color-patriot-blue-300), var(--color-patriot-blue-500));
+  --color-patriot-blue-300: oklch(0.3304 0.0537 281.83);
+  --color-patriot-blue-200: color-mix(in oklch, var(--color-patriot-blue-100), var(--color-patriot-blue-300));
+  --color-patriot-blue-100: oklch(0.3504 0.0537 281.83);
+  --color-patriot-blue-50: color-mix(in oklch, var(--color-patriot-blue-100) 96%, white);
+  --patriot-blue-gradient: linear-gradient(
+    to right in oklch,
+    var(--color-patriot-blue-600) 0%,
+    var(--color-patriot-blue-500) 7.5%,
+    var(--color-patriot-blue-400) 15%,
+    var(--color-patriot-blue-300) 22.5%,
+    var(--color-patriot-blue-200) 30%,
+    var(--color-patriot-blue-100) 37.5%,
+    var(--color-patriot-blue-50) 44%,
+    var(--color-patriot-blue-50) 54%,
+    var(--color-patriot-blue-100) 62.5%,
+    var(--color-patriot-blue-200) 70%,
+    var(--color-patriot-blue-300) 77.5%,
+    var(--color-patriot-blue-400) 85%,
+    var(--color-patriot-blue-500) 92.5%,
+    var(--color-patriot-blue-600) 100%
+  );
+  --product-page-gradient: var(--patriot-blue-gradient);
+  --product-page-background: var(--color-patriot-blue-600);
+  --product-page-surface: var(--color-patriot-blue-300);
+  --product-page-elevated: var(--color-patriot-blue-100);
+}
+
+body:has(> main[data-product-theme="vargnatt"]:not([style*="display: none"])) {
+  --color-vargnatt-100: oklch(0.161 0.0084 285.42);
+  --color-vargnatt-200: oklch(0.198 0.01 285.46);
+  --color-vargnatt-300: oklch(0.2286 0.0096 285.62);
+  --color-vargnatt-400: oklch(0.2499 0.0094 285.7);
+  --color-vargnatt-500: oklch(0.2789 0.0091 285.79);
+  --vargnatt-gradient: linear-gradient(
+    to right in oklch,
+    var(--color-vargnatt-100) 0%,
+    var(--color-vargnatt-200) 12.5%,
+    var(--color-vargnatt-300) 25%,
+    var(--color-vargnatt-400) 37.5%,
+    var(--color-vargnatt-500) 50%,
+    var(--color-vargnatt-400) 62.5%,
+    var(--color-vargnatt-300) 75%,
+    var(--color-vargnatt-200) 87.5%,
+    var(--color-vargnatt-100) 100%
+  );
+  --product-page-gradient: var(--vargnatt-gradient);
+  --product-page-background: var(--color-vargnatt-100);
+  --product-page-surface: var(--color-vargnatt-300);
+  --product-page-elevated: var(--color-vargnatt-500);
+}
+
+body:has(> main[data-product-theme]:not([style*="display: none"])) {
+  --night: var(--product-page-background);
+  --jungle: var(--product-page-surface);
+  --background: var(--product-page-background);
+  --foreground: #f0eee9;
+  --card: var(--product-page-surface);
+  --card-foreground: #f0eee9;
+  --popover: var(--product-page-surface);
+  --popover-foreground: #f0eee9;
+  --secondary: var(--product-page-surface);
+  --secondary-foreground: #f0eee9;
+  --muted: var(--product-page-elevated);
+  --muted-foreground: #f0eee9;
+  --accent: var(--product-page-elevated);
+  --accent-foreground: #f0eee9;
+  --border: #f0eee940;
+  --input: #f0eee950;
+  background-color: var(--product-page-background);
+  background-image: var(--product-page-gradient);
+}
+
+body:has(> main[data-product-theme]:not([style*="display: none"])) > :is(header, footer) {
+  background: transparent;
+}
+
+main[data-product-theme] {
+  background-color: var(--product-page-background);
+  background-image: var(--product-page-gradient);
+}
+
+main[data-product-theme] :is(
+  [data-variant],
+  [data-variant]:hover,
+  [data-tracking-accordion-trigger],
+  [data-tracking-accordion-trigger]:is(:hover, :active),
+  [data-tracking-accordion-trigger] > span:last-child,
+  aside[aria-label="Kjøp valgt variant"],
+  section[aria-label="Detaljer om produktet"] aside,
+  [data-dun-reservation-trigger],
+  [aria-label="Bla gjennom produktvarianter"] button
+) {
+  background-color: var(--product-page-surface);
+}
+
+main[data-product-theme] :is([data-gallery-controls] > span, [data-gallery-product] button[aria-label$="bilde"]) {
+  background-color: var(--product-page-gallery-accent, var(--product-page-surface));
+}
+
+main[data-product-theme] :is(
+  [data-dun-reservation-trigger],
+  [aria-label="Bla gjennom produktvarianter"] button
+):hover {
+  background-color: var(--product-page-elevated);
+}
+
+main[data-product-theme="patriot-blue"] section[aria-label="Detaljer om produktet"] {
+  --product-page-surface: var(--color-patriot-blue-600);
+}
+
+main[data-product-theme] > section[data-tracking-list="related-products"] {
+  background: transparent;
+}
+
+main[data-product-theme] [data-product-card] {
+  background-color: var(--product-page-background);
+  background-image: var(--product-page-gradient);
+}
+
+main[data-product-theme] [data-product-card] > :not([data-slot="card-content"]),
+main[data-product-theme] [data-product-card] :is(
+  button[aria-label^="Spill av video"],
+  button[aria-pressed][aria-controls],
+  [data-slot="card-content"] a > span.absolute,
+  button[aria-label$="produktvariant"]
+) {
+  background: var(--product-page-surface);
+}
+
+body:has(> main[data-product-theme]:not([style*="display: none"])) :is(
+  header input[type="search"],
+  header nav[aria-label="Hovedmeny"] :is(a, button):is(:hover, :active),
+  [role="dialog"]:has(nav[aria-label="Alle sider"]),
+  nav[aria-label="Alle sider"] :is(button[aria-expanded], [role="region"] ul, [role="region"] > div, a),
+  [data-slot="combobox-content"]:has(input[aria-label="Filtrer kategorier"])
+) {
+  background: var(--product-page-surface);
+}
+
+body:has(> main[data-product-theme]:not([style*="display: none"])) footer section[aria-labelledby="footer-newsletter-heading"] {
+  background-color: var(--product-newsletter-surface, var(--product-page-surface));
+  background-image: linear-gradient(90deg, var(--product-newsletter-surface, var(--product-page-surface)), var(--product-page-elevated), var(--product-newsletter-surface, var(--product-page-surface)));
+}

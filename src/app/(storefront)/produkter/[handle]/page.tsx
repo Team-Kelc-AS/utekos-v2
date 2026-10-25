@@ -12,6 +12,7 @@ import { SelectedProduct } from "@/components/product/SelectedProduct";
 import { ProductDetails } from "@/components/product/ProductDetails";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import {
+  optionParam,
   resolveVariant,
   type ProductSearchParams,
 } from "@/lib/products/variants";
@@ -69,8 +70,26 @@ async function ProductContent({ params, searchParams }: Props) {
     notFound();
   }
 
+  const variant = resolveVariant(product, await searchParams);
+  if (!variant) notFound();
+  const color = variant.selectedOptions.find(
+    (option) => optionParam(option.name) === "farge",
+  )?.value;
+  const productTheme = product.handle === "comfyrobe"
+    ? "comfyrobe"
+    : ["utekos-dun", "utekos-mikrofiber"].includes(product.handle)
+      ? color === "Fjellblå"
+        ? "patriot-blue"
+        : color === "Vargnatt"
+          ? "vargnatt"
+          : undefined
+      : undefined;
+
   return (
-    <main className={`${googleSansFlex.variable} ${styles.page}`}>
+    <main
+      className={`${googleSansFlex.variable} ${styles.page}`}
+      data-product-theme={productTheme}
+    >
       <div className={styles.container}>
         <div className={styles.breadcrumbs}>
           <Breadcrumbs items={productBreadcrumbs(product)} />

@@ -2,6 +2,7 @@
 @import "./typeset.css";
 @import "shadcn/tailwind.css";
 @import "tw-animate-css";
+@import "./product-variant-theme.css";
 
 .typeset-docs {
   /* Resolve Typeset's theme aliases at the document's own surface. */
@@ -43,6 +44,19 @@
 /* Tailwind utilities: fixed palette values and scoped semantic aliases. */
 @theme inline {
   --color-*: initial;
+  --background-image-comfyrobe-gradient: linear-gradient(
+    to right in oklch,
+    #191f26,
+    #1e2330,
+    #222631,
+    #262b37,
+    #2c3340,
+    #2c3340,
+    #262b37,
+    #222631,
+    #1e2330,
+    #191f26
+  );
   --font-sans: var(--font-google-sans-flex);
   --font-google-sans: var(--font-google-sans-flex);
   --color-facebook-login-button: var(--facebook-login-button);

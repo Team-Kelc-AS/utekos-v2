@@ -69,7 +69,7 @@ export function GalleryControls({ children, desktopCount, mobileCount, showMobil
       }}>
       {children}
     </div>
-    {(desktopCount > 1 || (showMobileControls && mobileCount > 1)) && <div className={styles.galleryControls} data-gallery-viewport={controlsViewport}>
+    {(desktopCount > 1 || (showMobileControls && mobileCount > 1)) && <div className={styles.galleryControls} data-gallery-controls data-gallery-viewport={controlsViewport}>
       <button type="button" onClick={() => move(-1)} disabled={index === 0} aria-label="Forrige bilde" aria-controls={railId}><CaretLeftIcon /></button>
       <span aria-live="polite" aria-atomic="true">
         <span data-gallery-viewport="desktop">{Math.min(index + 1, desktopCount)} / {desktopCount}</span>

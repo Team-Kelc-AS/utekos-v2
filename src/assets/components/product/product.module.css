@@ -82,14 +82,22 @@
   height: auto;
 }
 .galleryControls {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  margin-top: 0.5rem;
+  margin: 0;
   font-size: 0.875rem;
+  pointer-events: none;
 }
 .galleryControls button {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  transform: translateY(-50%);
+  pointer-events: auto;
   width: 44px;
   height: 44px;
   display: grid;
@@ -99,6 +107,21 @@
   background: #012622;
   color: #f0eee9;
   cursor: pointer;
+}
+.galleryControls button:first-child {
+  left: 1rem;
+}
+.galleryControls button:last-child {
+  right: 1rem;
+}
+.galleryControls > span {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  padding-inline: 0.5rem;
+  border-radius: 9999px;
+  background-color: #012622;
+  transform: translateX(-50%);
 }
 .galleryControls button:disabled {
   opacity: 0.3;
