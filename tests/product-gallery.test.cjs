@@ -219,15 +219,18 @@ test('Comfyrobe uses separate native 4:5 desktop and 3:4 mobile galleries', () =
   assert.equal(gallery.desktop.length, 12);
   const fs = require('node:fs');
   const files = fs.readdirSync('public/images/products/comfyrobe').filter(file => file.endsWith('.webp') && !file.includes('1440x1800') && !file.includes('-card-') && file !== 'comfyrobe-herre-smiler-lurt-hender-i-lommen.webp');
-  assert.equal(gallery.mobile.length, 17);
-  assert.deepEqual(Array.from(gallery.mobile, image => image.url).sort(), files.map(file => `/images/products/comfyrobe/${file}`).sort());
+  assert.equal(gallery.mobile.length, 18);
+  assert.deepEqual(
+    Array.from(gallery.mobile, image => image.url.normalize('NFC')).sort(),
+    files.map(file => `/images/products/comfyrobe/${file}`.normalize('NFC')).sort()
+  );
   assert.deepEqual(Array.from(gallery.mobile.slice(0, 6), image => image.url), [
+    '/images/products/comfyrobe/Comfyrobe.webp',
     '/images/products/comfyrobe/1.webp',
     '/images/products/comfyrobe/2.webp',
     '/images/products/comfyrobe/comfyrobe-avslappet-herre-staende-hender-i-lomme.webp',
     '/images/products/comfyrobe/comfyrobe-herre-smiler-med-hendene-i-lommen.webp',
     '/images/products/comfyrobe/3.webp',
-    '/images/products/comfyrobe/4.webp',
   ]);
   for (const image of gallery.mobile) {
     assert.equal(image.width / image.height, 3 / 4);

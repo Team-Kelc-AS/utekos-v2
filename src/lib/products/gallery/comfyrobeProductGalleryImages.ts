@@ -92,6 +92,13 @@ export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
 // Native 3:4 originals in the requested mobile order.
 export const COMFYROBE_MOBILE_GALLERY_IMAGES: Image[] = [
   productImage(
+    'comfyrobe-mobile-comfyrobe',
+    '/images/products/comfyrobe/Comfyrobe.webp',
+    'Marineblå Comfyrobe vist forfra i helfigur, med hette, glidelås og lyse fôrkanter.',
+    1800,
+    2400
+  ),
+  productImage(
     'comfyrobe-mobile-1',
     '/images/products/comfyrobe/1.webp',
     'Nærbilde av åpen Comfyrobe med høy krage, glidelås og brodert navn.',
