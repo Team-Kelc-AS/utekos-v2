@@ -1,6 +1,7 @@
 import "server-only";
 
 import frontPageImage from "../../../../public/images/products/Comfyrobe_1080x1920_4.webp";
+import comfyrobeMobileImage from "../../../../public/corporate/brand/img/Comfyrobe1080x1440.webp";
 import comfyrobePortraitImage from "../../../../public/corporate/brand/img/Comfyrobe1534x2000.webp";
 import { getImageProps } from "next/image";
 import { googleSansFlex } from "@/lib/fonts";
@@ -26,15 +27,23 @@ function HeroImage() {
     loading: "eager",
     fetchPriority: "high",
   });
+  const { props: mobile } = getImageProps({
+    src: comfyrobeMobileImage,
+    alt: heroAlt,
+    sizes: "100vw",
+    loading: "eager",
+    fetchPriority: "high",
+  });
 
   return (
     <>
       <link rel="preload" as="image" media={desktopMedia} href={props.src} fetchPriority="high" />
-      <link rel="preload" as="image" media="(max-width: 639px)" imageSrcSet={portrait.srcSet} imageSizes={portrait.sizes} fetchPriority="high" />
+      <link rel="preload" as="image" media="(max-width: 639px)" imageSrcSet={mobile.srcSet} imageSizes={mobile.sizes} fetchPriority="high" />
       <link rel="preload" as="image" media={tabletMedia} imageSrcSet={portrait.srcSet} imageSizes={portrait.sizes} fetchPriority="high" />
       <picture className="block w-full">
         <source media={desktopMedia} srcSet={props.src} width={props.width} height={props.height} />
-        <img {...portrait} alt={heroAlt} className="block h-auto w-full" />
+        <source media={tabletMedia} srcSet={portrait.srcSet} sizes={portrait.sizes} width={portrait.width} height={portrait.height} />
+        <img {...mobile} alt={heroAlt} className="block h-auto w-full" />
       </picture>
     </>
   );
