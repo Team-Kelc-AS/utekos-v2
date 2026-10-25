@@ -76,10 +76,22 @@
 .slide picture {
   display: block;
 }
+.imageFrame {
+  position: relative;
+}
 .productImage {
   display: block;
   width: 100%;
   height: auto;
+}
+.comfyrobeSticker {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  width: clamp(3.6rem, 17.6%, 6.8rem);
+  height: auto;
+  pointer-events: none;
 }
 .galleryControls {
   position: absolute;
