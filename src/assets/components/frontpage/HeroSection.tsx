@@ -64,7 +64,23 @@ export function HeroSection() {
         "isolate w-full bg-background font-sans font-medium text-foreground [--background:#001a18] [--foreground:#f0eee9] [--primary:#b44701] [font-optical-sizing:none] [font-variation-settings:'opsz'_120]",
       )}
     >
-      <HeroImage />
+      <div className="relative">
+        <HeroImage />
+        <div className="absolute inset-x-0 bottom-24 z-10 flex justify-center gap-3 px-4 sm:top-[28%] sm:bottom-auto sm:px-6 lg:pointer-fine:top-[72%] lg:pointer-none:top-[72%]">
+          <a
+            href="https://kasse.utekos.no/cart/43959919051000:1?channel=buy_button"
+            className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-full bg-primary px-5 font-sans text-base font-medium text-primary-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-40 sm:flex-none"
+          >
+            Kjøp XS
+          </a>
+          <a
+            href="https://kasse.utekos.no/cart/43959919116536:1?channel=buy_button"
+            className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-full bg-(image:--background-image-comfyrobe-gradient) px-5 font-sans text-base font-medium text-primary-foreground shadow-lg shadow-black/30 ring-1 ring-white/40 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-40 sm:flex-none"
+          >
+            Kjøp XL
+          </a>
+        </div>
+      </div>
       <div className="flex flex-col items-center bg-jungle px-4 py-12 text-center sm:gap-8 sm:px-0 sm:py-14 lg:py-16">
         <h1
           id="hero-h1"
