@@ -59,7 +59,7 @@ export function GET(): Response {
 <style nonce="${nonce}">
 @font-face{font-family:Google Sans Flex;src:url('/fonts/google-sans-flex-120pt-latin.woff2') format('woff2');font-weight:100 1000;font-display:swap}
 *{box-sizing:border-box}body{margin:0;background:#f0eee9;color:#001a18;font-family:Google Sans Flex,sans-serif;font-weight:500;line-height:1.6}
-header{background:#001a18;padding:24px max(24px,calc((100vw - 1000px)/2))}header img{display:block;width:140px;height:auto}
+header{background:#f0eee9;border-bottom:1px solid #001a1826;padding:24px max(24px,calc((100vw - 1000px)/2))}header img{display:block;width:140px;height:auto}
 main{max-width:680px;padding:clamp(40px,10vh,110px) 24px;margin:auto}.eyebrow{color:#b44701;font-size:14px;letter-spacing:.08em}
 h1{font-size:clamp(30px,5vw,44px);font-weight:800;line-height:1.15;margin:16px 0 24px}p{font-size:18px}small{display:block;margin-top:28px;color:#34524d}
 a{color:#001a18;text-underline-offset:4px}button{font:inherit;border:1px solid #001a18;border-radius:8px;padding:12px 20px;background:transparent;color:#001a18;cursor:pointer}
@@ -71,7 +71,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #b44701;outline-offset:4p
 <p>Valget er frivillig. For å vise Googles valg bruker vi ordrenummer, e-postadresse, leveringsland og forventet leveringsdato fra bestillingen din.</p>
 <p id="status" role="status">Bekrefter bestillingen …</p><button id="retry" hidden>Prøv igjen</button>
 <small>Bestillingen din påvirkes ikke av valget. <a href="/personvern">Les om personvern</a> eller <a href="/">gå tilbake til Utekos</a>.</small>
-<noscript><p>Du må tillate JavaScript for å se Googles valg. Bestillingen din er fortsatt registrert.</p></noscript></main>
+<noscript><p>Du må tillate JavaScript for å se Googles valg. Dette påvirker ikke bestillingen din.</p></noscript></main>
 <script nonce="${nonce}">
 (() => {
   const ticket = location.hash.slice(1);
@@ -79,7 +79,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #b44701;outline-offset:4p
   const status = document.getElementById('status');
   const retry = document.getElementById('retry');
   function unavailable() {
-    status.textContent = 'Lenken er utløpt eller bestillingen kan ikke bekreftes. Åpne valget på nytt fra takkesiden. Bestillingen din er fortsatt registrert.';
+    status.textContent = 'Lenken er utløpt eller bestillingen kan ikke bekreftes. Åpne valget på nytt fra takkesiden. Dette påvirker ikke bestillingen din.';
     retry.hidden = true;
   }
   if (!/^[A-Za-z0-9_-]{80,2048}$/.test(ticket)) { unavailable(); return; }
