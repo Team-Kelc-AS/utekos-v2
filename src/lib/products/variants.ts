@@ -29,7 +29,7 @@ export function resolveVariant(product: Pick<ShopifyProduct, 'handle' | 'variant
     : undefined) ?? preferred(variants);
   return matches.find(v => v.id === defaultVariant?.id) ?? preferred(matches);
 }
-export function variantHref(handle: string, variant: ProductVariant, siblings?: ProductVariant[]) {
+export function variantHref(handle: string, variant: ProductVariant, siblings?: ProductVariant[], sourceParams?: ProductSearchParams) {
   const params = new URLSearchParams();
   // Keep the public URL order stable regardless of Shopify's option order.
   for (const key of ['farge', 'storrelse', 'kjonn']) {
@@ -50,9 +50,15 @@ export function variantHref(handle: string, variant: ProductVariant, siblings?: 
   if (!params.size || unsupported || !resolvesExactly || (matches && (matches.length !== 1 || matches[0].id !== variant.id))) {
     params.set('variant', variant.id.split('/').at(-1)!);
   }
+  for (const [key, value] of Object.entries(sourceParams ?? {})) {
+    if (['variant', 'farge', 'storrelse', 'kjonn'].includes(key)) continue;
+    for (const item of Array.isArray(value) ? value : value === undefined ? [] : [value]) {
+      params.append(key, item);
+    }
+  }
   return `/produkter/${handle}?${params}` as const;
 }
-export function variantOptions(product: ShopifyProduct, selected: ProductVariant) {
+export function variantOptions(product: ShopifyProduct, selected: ProductVariant, sourceParams?: ProductSearchParams) {
   const variants = publicVariants(product);
   return product.options.filter(o => optionParam(o.name) !== 'kjonn').sort((a, b) => Number(optionParam(b.name) === 'storrelse') - Number(optionParam(a.name) === 'storrelse')).map(option => ({
     name: optionLabel(option.name),
@@ -66,7 +72,7 @@ export function variantOptions(product: ShopifyProduct, selected: ProductVariant
         ? preferred(compatible.filter(v => v.availableForSale)) ?? preferred(exact.filter(v => v.availableForSale))
         : undefined;
       const match = availableColorMatch ?? preferred(compatible) ?? preferred(exact);
-      return { value, selected: selected.selectedOptions.some(o => o.name === option.name && o.value === value), available: !!match?.availableForSale, href: match ? variantHref(product.handle, match, variants) : null };
+      return { value, selected: selected.selectedOptions.some(o => o.name === option.name && o.value === value), available: !!match?.availableForSale, href: match ? variantHref(product.handle, match, variants, sourceParams) : null };
     }),
   }));
 }

@@ -113,21 +113,28 @@ function readDurableAttribution(
 }
 
 function readUrlAttribution(searchParams: URLSearchParams) {
+  const source = resolvePaidAttributionSource(searchParams)
+  // Legacy Meta ads put numeric campaign/ad IDs in the UTM fields.
+  const metaUtmId = (key: string) => {
+    const value = firstQueryValue(searchParams, [key])
+    return source === 'meta' && value && /^\d+$/.test(value)
+      ? value : undefined
+  }
   return parseCampaignAttribution({
     campaign_id: firstQueryValue(searchParams, [
       'campaign_id',
       'hsa_cam',
       'utm_id'
-    ]),
+    ]) ?? metaUtmId('utm_campaign'),
     campaign_name: firstQueryValue(searchParams, [
       'campaign_name',
       'utm_campaign'
     ]),
     adset_id: firstQueryValue(searchParams, ['adset_id', 'hsa_grp']),
     adset_name: firstQueryValue(searchParams, ['adset_name']),
-    ad_id: firstQueryValue(searchParams, ['ad_id', 'hsa_ad']),
+    ad_id: firstQueryValue(searchParams, ['ad_id', 'hsa_ad']) ?? metaUtmId('utm_content'),
     ad_name: firstQueryValue(searchParams, ['ad_name']),
-    source: resolvePaidAttributionSource(searchParams)
+    source
   })
 }
 

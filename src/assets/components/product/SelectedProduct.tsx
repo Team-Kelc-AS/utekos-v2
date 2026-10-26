@@ -38,7 +38,7 @@ import styles from "./product.module.css";
 import commerceStyles from "@/components/commerce/commerce.module.css";
 
 const COMFY_XS_BUYNOW_CHECKOUT_URL = "https://utekos.no/comfy-xs";
-const COMFY_XL_BUYNOW_CHECKOUT_URL = "https://utekos.no/comfyrobe-xl";
+const COMFY_XL_BUYNOW_CHECKOUT_URL = "https://utekos.no/comfy-xl";
 
 export async function SelectedProduct({
   product,
@@ -61,14 +61,22 @@ export async function SelectedProduct({
         ? COMFY_XL_BUYNOW_CHECKOUT_URL
         : null
     : null;
-  const comfyCheckoutButton = comfyCheckoutUrl && variant.availableForSale ? (
-    <a href={comfyCheckoutUrl} className={commerceStyles.primary}>
+  const comfyCheckoutHref = comfyCheckoutUrl ? new URL(comfyCheckoutUrl) : null;
+  if (comfyCheckoutHref) {
+    for (const [key, value] of Object.entries(params)) {
+      for (const item of Array.isArray(value) ? value : value === undefined ? [] : [value]) {
+        comfyCheckoutHref.searchParams.append(key, item);
+      }
+    }
+  }
+  const comfyCheckoutButton = comfyCheckoutHref && variant.availableForSale ? (
+    <a href={comfyCheckoutHref.href} className={commerceStyles.primary}>
       Kjøp nå
     </a>
   ) : null;
   const title = productTitle(product);
   const images = productGallery(product, variant);
-  const options = variantOptions(product, variant);
+  const options = variantOptions(product, variant, isComfyrobe ? params : undefined);
   const compare =
     variant.compareAtPrice &&
     variant.compareAtPrice.currencyCode === variant.price.currencyCode &&
