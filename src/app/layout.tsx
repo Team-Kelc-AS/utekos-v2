@@ -7,6 +7,7 @@ import { Telemetry } from "@/lib/tracking/Telemetry";
 import Footer from "@/components/Footer";
 import { googleSansFlex } from "@/lib/fonts";
 import Header from "@/components/header/Header";
+import { GoogleMerchantWidget } from "@/components/GoogleMerchantWidget";
 import type { Metadata } from "next";
 import { buildRootMetadata } from "@/lib/seo/siteMetadata";
 import { buildSiteJsonLd } from "@/lib/seo/JSON-LD/buildSiteJsonLd";
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Header />
         {children}
         <Footer />
+        <GoogleMerchantWidget />
       </body>
     </html>
   );
