@@ -115,6 +115,50 @@
 /* Tailwind utilities: fixed palette values and scoped semantic aliases. */
 @theme inline {
   --color-*: initial;
+  --background-image-patriot-blue-gradient: linear-gradient(
+    to right in oklch,
+    var(--color-patriot-blue-600) 0%,
+    var(--color-patriot-blue-500) 7.5%,
+    var(--color-patriot-blue-400) 15%,
+    var(--color-patriot-blue-300) 22.5%,
+    var(--color-patriot-blue-200) 30%,
+    var(--color-patriot-blue-100) 37.5%,
+    var(--color-patriot-blue-50) 44%,
+    var(--color-patriot-blue-50) 54%,
+    var(--color-patriot-blue-100) 62.5%,
+    var(--color-patriot-blue-200) 70%,
+    var(--color-patriot-blue-300) 77.5%,
+    var(--color-patriot-blue-400) 85%,
+    var(--color-patriot-blue-500) 92.5%,
+    var(--color-patriot-blue-600) 100%
+  );
+  --background-image-vargnatt-gradient: linear-gradient(
+    to right in oklch,
+    var(--color-vargnatt-100) 0%,
+    var(--color-vargnatt-200) 12.5%,
+    var(--color-vargnatt-300) 25%,
+    var(--color-vargnatt-400) 37.5%,
+    var(--color-vargnatt-500) 50%,
+    var(--color-vargnatt-400) 62.5%,
+    var(--color-vargnatt-300) 75%,
+    var(--color-vargnatt-200) 87.5%,
+    var(--color-vargnatt-100) 100%
+  );
+  --background-image-comfy-gradient: linear-gradient(
+    to right in oklch,
+    var(--color-utekos-dark-1) 0%,
+    var(--color-utekos-dark-2) 10%,
+    var(--color-utekos-dark-3) 15%,
+    var(--color-utekos-dark-4) 25%,
+    var(--color-utekos-dark-5) 35%,
+    var(--color-utekos-dark-6) 45%,
+    var(--color-utekos-dark-1) 55%,
+    var(--color-utekos-dark-2) 65%,
+    var(--color-utekos-dark-3) 75%,
+    var(--color-utekos-dark-4) 85%,
+    var(--color-utekos-dark-5) 90%,
+    var(--color-utekos-dark-6) 100%
+  );
   --background-image-comfyrobe-gradient: linear-gradient(
     to right in oklch,
     #191f26,
@@ -128,6 +172,27 @@
     #1e2330,
     #191f26
   );
+  --color-utekos-dark-1: oklch(0.1994 0.0232 267.21);
+  --color-utekos-dark-2: oklch(0.2094 0.0232 267.21);
+  --color-utekos-dark-3: oklch(0.2254 0.0232 267.21);
+  --color-utekos-dark-4: oklch(0.2286 0.0096 285.62);
+  --color-utekos-dark-5: oklch(0.2294 0.0232 267.21);
+  --color-utekos-dark-6: oklch(0.2494 0.0232 267.21);
+  --color-maritime-blue-100: oklch(0.2884 0.0366 279.42);
+  --color-maritime-blue-300: oklch(0.2684 0.0366 279.42);
+  --color-maritime-blue-500: oklch(0.2484 0.0366 279.42);
+  --color-maritime-blue-700: oklch(0.2284 0.0366 279.42);
+  --color-midnight-shell-100: oklch(0.3391 0.0577 280.19);
+  --color-midnight-shell-300: oklch(0.3291 0.0484 275.39);
+  --color-midnight-shell-500: oklch(0.3091 0.0484 275.39);
+  --color-patriot-blue-50: color-mix(in oklch, var(--color-patriot-blue-100) 96%, white);
+  --color-patriot-blue-100: oklch(0.3504 0.0537 281.83);
+  --color-patriot-blue-200: color-mix(in oklch, var(--color-patriot-blue-100), var(--color-patriot-blue-300));
+  --color-patriot-blue-300: oklch(0.3304 0.0537 281.83);
+  --color-patriot-blue-400: color-mix(in oklch, var(--color-patriot-blue-300), var(--color-patriot-blue-500));
+  --color-patriot-blue-500: oklch(0.3291 0.0484 275.39);
+  --color-patriot-blue-600: oklch(0.3004 0.0537 281.83);
+  --color-skipper-blue-600: oklch(0.3982 0.0575 278.29);
   --font-sans: var(--font-google-sans-flex);
   --font-google-sans: var(--font-google-sans-flex);
   --color-facebook-login-button: var(--facebook-login-button);
@@ -224,6 +289,11 @@
   --color-light-teal: var(--light-teal);
   --color-dark-teal: var(--dark-teal);
   --color-green-noir: var(--green-noir);
+  --color-vargnatt-100: oklch(0.161 0.0084 285.42);
+  --color-vargnatt-200: oklch(0.198 0.01 285.46);
+  --color-vargnatt-300: oklch(0.2286 0.0096 285.62);
+  --color-vargnatt-400: oklch(0.2499 0.0094 285.7);
+  --color-vargnatt-500: oklch(0.2789 0.0091 285.79);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -251,6 +321,65 @@
 
 /* Runtime tokens are shared by semantic utilities and CSS Modules. */
 :root {
+  --color-patriot-blue-50: color-mix(in oklch, var(--color-patriot-blue-100) 96%, white);
+  --color-patriot-blue-100: oklch(0.3504 0.0537 281.83);
+  --color-patriot-blue-200: color-mix(in oklch, var(--color-patriot-blue-100), var(--color-patriot-blue-300));
+  --color-patriot-blue-300: oklch(0.3304 0.0537 281.83);
+  --color-patriot-blue-400: color-mix(in oklch, var(--color-patriot-blue-300), var(--color-patriot-blue-500));
+  --color-patriot-blue-500: oklch(0.3291 0.0484 275.39);
+  --color-patriot-blue-600: oklch(0.3004 0.0537 281.83);
+  --color-vargnatt-100: oklch(0.161 0.0084 285.42);
+  --color-vargnatt-200: oklch(0.198 0.01 285.46);
+  --color-vargnatt-300: oklch(0.2286 0.0096 285.62);
+  --color-vargnatt-400: oklch(0.2499 0.0094 285.7);
+  --color-vargnatt-500: oklch(0.2789 0.0091 285.79);
+  --patriot-blue-gradient: linear-gradient(
+    to right in oklch,
+    var(--color-patriot-blue-600) 0%,
+    var(--color-patriot-blue-500) 7.5%,
+    var(--color-patriot-blue-400) 15%,
+    var(--color-patriot-blue-300) 22.5%,
+    var(--color-patriot-blue-200) 30%,
+    var(--color-patriot-blue-100) 37.5%,
+    var(--color-patriot-blue-50) 44%,
+    var(--color-patriot-blue-50) 54%,
+    var(--color-patriot-blue-100) 62.5%,
+    var(--color-patriot-blue-200) 70%,
+    var(--color-patriot-blue-300) 77.5%,
+    var(--color-patriot-blue-400) 85%,
+    var(--color-patriot-blue-500) 92.5%,
+    var(--color-patriot-blue-600) 100%
+  );
+  --vargnatt-gradient: linear-gradient(
+    to right in oklch,
+    var(--color-vargnatt-100) 0%,
+    var(--color-vargnatt-200) 12.5%,
+    var(--color-vargnatt-300) 25%,
+    var(--color-vargnatt-400) 37.5%,
+    var(--color-vargnatt-500) 50%,
+    var(--color-vargnatt-400) 62.5%,
+    var(--color-vargnatt-300) 75%,
+    var(--color-vargnatt-200) 87.5%,
+    var(--color-vargnatt-100) 100%
+  );
+  --utekos-dark-1: oklch(0.1994 0.0232 267.21);
+  --utekos-dark-2: oklch(0.2094 0.0232 267.21);
+  --utekos-dark-3: oklch(0.2254 0.0232 267.21);
+  --utekos-dark-4: oklch(0.2286 0.0096 285.62);
+  --utekos-dark-5: oklch(0.2294 0.0232 267.21);
+  --utekos-dark-6: oklch(0.2494 0.0232 267.21);
+  --comfyrobe-banner-gradient: linear-gradient(
+    90deg,
+    #cb5005,
+    #e35205,
+    #e95c00,
+    #f56600,
+    #f9690b,
+    #f9690b,
+    #f56600,
+    #e35205,
+    #cb5005
+  );
   --font-sans: var(--font-google-sans-flex);
   --font-google-sans: var(--font-google-sans-flex);
   --radius: 0.625rem;
