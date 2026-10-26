@@ -1,0 +1,182 @@
+/* HydroGuard presentation stays local to preserve the other Uteguiden articles. */
+.article.article {
+  box-sizing: content-box;
+  width: auto;
+  max-width: min(55ch, 720px);
+  padding-inline: 20px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: normal;
+  overflow-wrap: normal;
+}
+
+.article.article h1 {
+  font-size: clamp(38px, 6vw, 56px);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
+.article.article h2 {
+  margin: 48px 0 16px;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: normal;
+}
+
+.article.article p {
+  margin-block: 24px 0;
+}
+
+.article .ingress {
+  margin-top: 24px;
+  font-size: 18px;
+}
+
+.article .ingress > p {
+  margin: 0;
+}
+
+.article .panel {
+  --knowledge-ink: #010b0a;
+  --knowledge-ink-muted: #001a18;
+  --knowledge-link: #b44701;
+  --knowledge-link-soft: #b44701;
+  --knowledge-border-strong: color-mix(in srgb, #001a18 35%, transparent);
+  --knowledge-surface: #f0eee9;
+}
+
+.article.article .panel p {
+  margin: 0;
+}
+
+.article .learnings,
+.article nav[aria-label="I denne artikkelen"],
+.article aside[data-tone] {
+  --knowledge-ink: #f0eee9;
+  --knowledge-ink-muted: #f0eee9;
+  --knowledge-link: #f0eee9;
+  --knowledge-link-soft: #f0eee9;
+  --knowledge-border-strong: rgb(240 238 233 / 16%);
+  --knowledge-surface: #012622;
+  padding: clamp(20px, 4vw, 28px);
+  border: 1px solid var(--knowledge-border-strong);
+  border-radius: 12px;
+  background: var(--knowledge-surface);
+  color: var(--knowledge-ink);
+  box-shadow: none;
+}
+
+.article.article .learnings > h2:first-child {
+  margin: 0 0 16px;
+  color: inherit;
+  font-size: 23px;
+  line-height: 1.3;
+  letter-spacing: normal;
+}
+
+.article .learnings > ul {
+  margin-block: 0;
+}
+
+.article.article .learnings li > p {
+  margin: 0;
+}
+
+.article .learnings li::marker,
+.article nav[aria-label="I denne artikkelen"] li::marker {
+  color: inherit;
+}
+
+.article.article nav[aria-label="I denne artikkelen"] > p {
+  margin: 0 0 16px;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.article nav[aria-label="I denne artikkelen"] li + li {
+  margin-top: 0;
+}
+
+.article.article aside[data-tone] > p,
+.article.article aside[data-tone] > div > :first-child {
+  margin: 0;
+}
+
+.article .citationGroup,
+.article.article sup {
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
+.breadcrumbs {
+  margin-bottom: clamp(32px, 5vw, 56px);
+  font-size: 14px;
+}
+
+.article .breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article .breadcrumbs li,
+.article .breadcrumbs li + li {
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumbs li + li::before {
+  content: "/";
+  margin-right: 8px;
+}
+
+.article .sources {
+  margin-top: 48px;
+  padding: 20px;
+  border: 1px solid var(--knowledge-border-strong);
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.article .sources > summary {
+  min-height: 44px;
+  cursor: pointer;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.article .sources > ol {
+  padding: 0;
+  list-style: none;
+}
+
+.article .sources li {
+  padding: 0;
+  scroll-margin-top: 7rem;
+}
+
+.article .sources a {
+  overflow-wrap: anywhere;
+}
+
+.article .captionNote {
+  color: var(--knowledge-ink-muted);
+  font-size: 16px;
+}
+
+@media (min-width: 56rem) {
+  .article.article,
+  .article .ingress {
+    font-size: 19px;
+  }
+
+  .article.article h2 {
+    margin-top: 56px;
+    margin-bottom: 20px;
+    font-size: 30px;
+  }
+}

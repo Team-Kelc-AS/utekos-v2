@@ -1,3 +1,4 @@
+import type { DetailedHTMLProps, HTMLAttributes } from "react";
 import type { KlarnaCollectedShippingAddress, KlarnaExpressOrderPayload } from '@/lib/klarna/contracts';
 
 export type KlarnaAuthorizationResult = {
@@ -37,3 +38,18 @@ declare global {
     };
   }
 }
+
+/** Klarna On-site Messaging custom element attributes. */
+export type KlarnaPlacementProps = DetailedHTMLProps<
+  HTMLAttributes<HTMLElement>,
+  HTMLElement
+> & {
+  "data-key":
+    | "top-strip-promotion-auto-size"
+    | "top-strip-promotion-badge"
+    | "credit-promotion-auto-size"
+    | "credit-promotion-badge"
+    | "footer-promotion-auto-size"
+    | "info-page";
+  "data-locale": string;
+};
