@@ -3,6 +3,7 @@
 @import "shadcn/tailwind.css";
 @import "tw-animate-css";
 @import "./product-variant-theme.css";
+@source not "../lib/google-customer-reviews/shell.generated.json";
 
 .typeset-docs {
   /* Resolve Typeset's theme aliases at the document's own surface. */
@@ -40,6 +41,76 @@
   }
 }
 @custom-variant dark (&:is(.dark *));
+
+@font-face {
+  font-family: "Google Sans Flex Reviews";
+  src: url("/fonts/google-sans-flex-120pt-latin.woff2") format("woff2");
+  font-weight: 100 1000;
+  font-display: swap;
+}
+
+.google-review-page {
+  --font-google-sans-flex: "Google Sans Flex Reviews", sans-serif;
+  --background: #f0eee9;
+  --foreground: #010b0a;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.google-review-page .review-frame {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.google-review-page .review-wordmark {
+  display: block;
+  width: 112px;
+  height: auto;
+}
+
+.google-review-page [data-slot="card"] {
+  --background: #012622;
+  --foreground: #f0eee9;
+  --card: #012622;
+  --card-foreground: #f0eee9;
+  --muted: #001a18;
+  --muted-foreground: color-mix(in srgb, #f0eee9 78%, transparent);
+  --border: color-mix(in srgb, #f0eee9 15%, transparent);
+  --primary: #b44701;
+  --primary-foreground: #f0eee9;
+  --ring: #b44701;
+  --card-spacing: 24px;
+}
+
+.google-review-page h1 {
+  font-size: clamp(20px, 5vw, 24px);
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.google-review-page [data-slot="card-content"] {
+  font-size: 16px;
+}
+
+.google-review-page [data-slot="empty"] {
+  padding: 16px 0;
+}
+
+.google-review-page [data-slot="button"] {
+  min-height: 44px;
+}
+
+.google-review-page [data-slot="card-footer"] > a {
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
 
 /* Tailwind utilities: fixed palette values and scoped semantic aliases. */
 @theme inline {

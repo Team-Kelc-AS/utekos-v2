@@ -186,6 +186,9 @@ importers:
       playwright:
         specifier: 1.61.0
         version: 1.61.0
+      postcss:
+        specifier: 8.5.28
+        version: 8.5.28
       schema-dts:
         specifier: 2.1.0
         version: 2.1.0
