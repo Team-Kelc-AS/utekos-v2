@@ -37,7 +37,7 @@ export function GoogleMerchantWidget() {
     <Script
       id="merchantWidgetScript"
       src="https://www.gstatic.com/shopping/merchant/merchantwidget.js"
-      strategy="lazyOnload"
+      strategy="afterInteractive"
       onReady={() => {
         if (started.current) return;
         if (!window.merchantwidget) {
