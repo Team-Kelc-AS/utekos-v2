@@ -117,10 +117,15 @@ function startCollection(input: EnsureMetaClientParameterContextInput): Collecti
       const shouldCollectClientIp =
         !hasCollectedClientIpForDocument &&
         shouldCollectMetaClientIp(input.pageUrl, process.env.NODE_ENV)
-      // Await the SDK result once. In-app click recovery precedes IP collection.
+      // IP lookup and in-app click recovery are independent. Start the one IP
+      // request alongside recovery, then let the SDK collect both results. A
+      // healthy 3.5s native bridge plus 2.3s IP lookup must not hit our 5s bound.
+      const clientIpAddress = shouldCollectClientIp
+        ? getConsentedClientIpAddress(input.consent)
+        : undefined
       const parameters = await builder.processAndCollectAllParams(
         input.pageUrl,
-        shouldCollectClientIp ? () => getConsentedClientIpAddress(input.consent) : undefined
+        clientIpAddress ? () => clientIpAddress : undefined
       )
       if (parameters._fbi) hasCollectedClientIpForDocument = true
       completedPageUrl = input.pageUrl

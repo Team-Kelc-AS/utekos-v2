@@ -574,6 +574,22 @@ test('Meta unavailable native bridge releases checkout once and does not queue r
   assert.equal(logs[0].body.level, 'error', 'a timeout remains visible even when fallback succeeds');
 });
 
+test('Meta collects native click and client IP concurrently without a false combined timeout', async t => {
+  const started = Date.now();
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
+    metaBackupDelay: 3500, metaIpDelay: 2300,
+  });
+  await api.waitFor('page_view');
+  const elapsed = Date.now() - started;
+  assert.ok(elapsed < 4800, `identity must be released before the unrelated IP request completes: ${elapsed} ms`);
+  assert.match(api.events('page_view')[0].browser_id.fbc, /\.OfflineBackupClick\./);
+  assert.match(await api.page.evaluate(() => document.cookie), /_fbi=192\.0\.2\.1/);
+  assert.equal(await api.page.evaluate(() => __metaBackupCalls), 1);
+  await api.page.waitForTimeout(2500);
+  assert.equal(api.events('page_view').length, 1);
+  assert.deepEqual(api.requests.filter(request => request.path === '/api/log'), [], 'successful identity recovery must not be reported as a collection timeout');
+});
+
 for (const safariMode of [false, true]) {
 test(`Meta pagehide releases pending identity once and a late result cannot replay PageView (webkit=${safariMode})`, async t => {
   const api = await fixture(t, 'https://utekos.no/produkter/test-product', { metaBackupDelay: 1900, safariMode });

@@ -77,6 +77,31 @@ test('native reason categories, oversized bodies and unknown endpoint values nev
   }
 });
 
+for (const visibility of ['visible', 'hidden']) {
+  test(`transport retries keep the correct mode and release byte counters when ${visibility}`, async () => {
+    const previousDocument = global.document;
+    global.document = { visibilityState: visibility };
+    try {
+      const { deliverCanonicalEvent, getCollectorFailureDiagnostics } = helpers();
+      const attempts = [];
+      const error = new TypeError('Failed to fetch');
+      await assert.rejects(deliverCanonicalEvent('/api/events/view-item', {}, async (_url, init) => {
+        attempts.push(init.keepalive);
+        throw error;
+      }));
+      assert.deepEqual(attempts, visibility === 'visible' ? [true, false] : [true, true]);
+      const diagnostic = getCollectorFailureDiagnostics(error);
+      assert.equal(diagnostic.keepalive, visibility !== 'visible');
+      assert.equal(diagnostic.canonical_in_flight_keepalive_bytes, visibility === 'visible' ? 0 : 2);
+      const next = new DOMException('deadline', 'TimeoutError');
+      await assert.rejects(deliverCanonicalEvent('/api/events/page-view', {}, async () => { throw next; }));
+      assert.equal(getCollectorFailureDiagnostics(next).canonical_in_flight_keepalive_bytes, 2, 'prior attempts leave no bytes behind');
+    } finally {
+      global.document = previousDocument;
+    }
+  });
+}
+
 test('the actual attempt signal identifies a deadline without changing the two-attempt policy', async () => {
   const { deliverCanonicalEvent, getCollectorFailureDiagnostics } = helpers();
   const original = global.AbortSignal;

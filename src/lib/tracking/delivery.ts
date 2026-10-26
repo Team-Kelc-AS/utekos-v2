@@ -15,13 +15,14 @@ export async function deliverCanonicalEvent(
 ): Promise<CollectorOutcome> {
   const body = JSON.stringify(event); // Serialize once: retries retain all IDs/timestamps.
   const bodyBytes = new TextEncoder().encode(body).byteLength;
-  const keepalive = bodyBytes <= 65_536;
+  let keepalive = bodyBytes <= 65_536;
   for (let attempt = 0; attempt < 2; attempt++) {
+    const attemptKeepalive = keepalive;
     const signal = AbortSignal.timeout(CANONICAL_EVENT_BROWSER_TIMEOUT_MS);
-    if (keepalive) canonicalInFlightKeepaliveBytes += bodyBytes;
+    if (attemptKeepalive) canonicalInFlightKeepaliveBytes += bodyBytes;
     try {
       const response = await send(endpoint, {
-        method: 'POST', body, cache: 'no-store', credentials: 'same-origin', keepalive,
+        method: 'POST', body, cache: 'no-store', credentials: 'same-origin', keepalive: attemptKeepalive,
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         signal,
       });
@@ -35,15 +36,22 @@ export async function deliverCanonicalEvent(
       throw new CollectorRejection(response.status);
     } catch (error) {
       if (error instanceof CollectorRejection) throw error;
+      // The browser's 64 KiB keepalive budget is shared with other SDKs. A
+      // visible page can retry normally when native fetch rejects that budget;
+      // preserve keepalive on page exit and retain the same serialized event.
+      if (attempt === 0 && error instanceof TypeError &&
+        typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        keepalive = false;
+      }
       if (attempt === 1) {
         recordCollectorFailureDiagnostics(error, endpoint, {
           body_bytes: bodyBytes, canonical_in_flight_keepalive_bytes: canonicalInFlightKeepaliveBytes,
-          keepalive, signal_aborted: signal.aborted,
+          keepalive: attemptKeepalive, signal_aborted: signal.aborted,
         });
         throw error;
       }
     } finally {
-      if (keepalive) canonicalInFlightKeepaliveBytes -= bodyBytes;
+      if (attemptKeepalive) canonicalInFlightKeepaliveBytes -= bodyBytes;
     }
   }
   throw new Error('collector_unavailable');
