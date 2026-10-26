@@ -508,29 +508,8 @@ export const PRODUCT_PAGE_CONTENT = {
   "utekos-dun": {
     description: {
       title: "Utekos Dun™",
-      lead: "Opplev en ny standard for varme og komfort i friluftsgarderoben.",
-      blocks: [
-        {
-          paragraphs: [
-            "Utekos Dun™ omslutter deg med luksuriøs dunisolasjon med over 90 % kvalitetsdun, beskyttet av et slitesterkt nylonytterlag. Med vannavvisende og flammehemmende DWR-behandlet stoff kan du forlenge kvelden ute med trygg komfort.",
-          ],
-        },
-        {
-          paragraphs: [
-            "Plagget kombinerer elegant sovepose og jakke i ett. Den romslige passformen gir full bevegelsesfrihet, enten du brygger morgenkaffe ved bobilen eller koser deg på hytteterrassen.",
-          ],
-        },
-        {
-          paragraphs: [
-            "Justerbar hette og toveis glidelås gjør at du tilpasser Utekos Dun™ etter behov. Snør den igjen rundt beina for maksimal varme, eller åpne nederst for ventilasjon når du beveger deg.",
-          ],
-        },
-        {
-          paragraphs: [
-            "Fra vinterfjellet til kjølige sommerkvelder leverer Utekos Dun™ en kombinasjon av varme, komfort og mobilitet for deg som vil nyte livet utendørs.",
-          ],
-        },
-      ],
+      lead: "Tro mot sitt navn og sin iboende funksjon ble den uttenkt av Erling Holthe, med en ufravikelig visjon om økt komfort og bevegelsesfrihet. Justerbar passform, regulerbar ventilasjon og nøye utvalgt andedun gjør varmeplagget upåklagelig, selv for den mest kravstore livsnyteren. Utekos-ikonet omfavner deg med kompromissløs komfort og overlegen allsidighet. Skapt for glamping, bobil, båt, camping, hytte- og terrasseliv.",
+      blocks: [],
     },
     accordion: [
       {
