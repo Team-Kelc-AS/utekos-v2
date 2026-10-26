@@ -345,6 +345,11 @@
   margin-top: 1rem;
 }
 
+.accordion > div > [data-tracking-accordion-item] > h2 > [data-tracking-accordion-trigger],
+.accordion > div > [data-tracking-accordion-item] > [role="region"] {
+  padding-inline: clamp(1rem, 2vw, 1.75rem);
+}
+
 main[data-product-theme="comfyrobe"] .accordion > div {
   gap: 1.25rem;
 }
@@ -358,11 +363,7 @@ main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion
 }
 main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion-item] > h2 > [data-tracking-accordion-trigger] {
   min-height: 72px;
-  padding-inline: clamp(1rem, 2vw, 1.75rem);
   border-radius: 0.75rem;
-}
-main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion-item] > [role="region"] {
-  padding-inline: clamp(1rem, 2vw, 1.75rem);
 }
 
 /* 1. Flush layout: Fjerner rammeboksen for et renere, integrert utseende */
