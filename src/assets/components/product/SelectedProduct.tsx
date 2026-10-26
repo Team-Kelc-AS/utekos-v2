@@ -27,8 +27,6 @@ import { getProductSizeGuideDialogContent } from "@/lib/products/getProductSizeG
 import { AddToCart } from "@/components/commerce/AddToCart";
 import { KlarnaProductExpressCheckout } from "@/components/klarna/KlarnaProductExpressCheckout";
 import { WishlistButton } from "@/components/wishlist/WishlistButton";
-import { DunReservationButton } from "@/components/reservations/DunReservationButton";
-import { dunSelection } from "@/lib/reservations/dun";
 import { CheckMarkIcon } from "@/components/utekos-icons/CheckMarkIcon";
 import { DiscountCodeReveal } from "./DiscountCodeReveal";
 import { TagOutlineIcon } from "@/components/utekos-icons/TagOutlineIcon";
@@ -214,9 +212,6 @@ export async function SelectedProduct({
                 />
               )}
           </div>
-          {product.handle === "utekos-dun" && !variant.availableForSale && (
-            <DunReservationButton selection={dunSelection(variant)} />
-          )}
           <ul className={styles.trust}>
             {isComfyrobe ? (
               <li className={`${styles.discountTrust} ${styles.desktopDiscount}`}>
