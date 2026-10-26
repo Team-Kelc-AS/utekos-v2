@@ -1,8 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { z } from 'zod';
 
-export const runtime = 'nodejs';
-
 const privateHeaders = {
   'Cache-Control': 'private, no-store, max-age=0',
   'Referrer-Policy': 'no-referrer',
