@@ -9,6 +9,7 @@ import {
 
 import { ProductDetailLabel } from "./ProductDetailLabel";
 import { ProductReviewList } from "./ProductReviews";
+import { Separator } from "@/components/ui/separator";
 import { UtekosFAQ } from "./UtekosFAQ";
 import { ProductMaterialGuide } from "@/components/knowledge/RelatedContent";
 import { Suspense } from "react";
@@ -25,6 +26,9 @@ export function ProductDetails({
   const content = getProductPageContent(handle);
   return (
     <div className={styles.details}>
+      {handle === "comfyrobe" && (
+        <Separator className={styles.detailsSeparator} />
+      )}
       {!!content?.accordion?.length && (
         <section
           className={styles.accordion}

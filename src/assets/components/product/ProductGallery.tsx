@@ -7,7 +7,7 @@ import { GalleryControls } from './GalleryControls';
 import { DesktopProductVideo } from './DesktopProductVideo';
 import { ComfyrobeSticker } from './ComfyrobeSticker';
 import styles from './product.module.css';
-export function ProductGallery({ desktop, mobile, title, video, videoLabel, showMobileControls = true, showComfyrobeSticker = false }: { desktop: ProductImage[]; mobile: ProductImage[]; title: string; video?: ProductVideoSource; videoLabel?: string; showMobileControls?: boolean; showComfyrobeSticker?: boolean }) {
+export function ProductGallery({ desktop, mobile, title, video, videoLabel, showMobileControls = true, showComfyrobeSticker = false, mobileFullWidth = false }: { desktop: ProductImage[]; mobile: ProductImage[]; title: string; video?: ProductVideoSource; videoLabel?: string; showMobileControls?: boolean; showComfyrobeSticker?: boolean; mobileFullWidth?: boolean }) {
   if (!desktop.length && !mobile.length) return <div className={styles.missingImage}>Produktbilde er ikke tilgjengelig for denne varianten.</div>;
   const desktopImages = desktop;
   const mobileImages = mobile;
@@ -20,7 +20,7 @@ export function ProductGallery({ desktop, mobile, title, video, videoLabel, show
     const viewport = !desktopImages[index] ? 'mobile' : !mobileImages[index] ? 'desktop' : undefined;
     // The 76rem container and desktop grid make this column roughly 600px.
     // 600px lets 2x screens choose 1200w instead of jumping to 1920w.
-    const common = { sizes: '(min-width: 1280px) 600px, (min-width: 768px) 50vw, calc(100vw - 48px)', loading: index === 0 ? 'eager' as const : 'lazy' as const, fetchPriority: index === 0 ? 'high' as const : 'auto' as const };
+    const common = { sizes: `(min-width: 1280px) 600px, (min-width: 768px) 50vw, ${mobileFullWidth ? '100vw' : 'calc(100vw - 48px)'}`, loading: index === 0 ? 'eager' as const : 'lazy' as const, fetchPriority: index === 0 ? 'high' as const : 'auto' as const };
     const { props: desktopProps } = getImageProps({ ...common, src: large.url, width: large.width, height: large.height, alt: large.altText || title });
     const { props: mobileProps } = getImageProps({ ...common, src: small.url, width: small.width, height: small.height, alt: small.altText || title });
     // A picture has one alt attribute; use a shared description when its sources show different scenes.

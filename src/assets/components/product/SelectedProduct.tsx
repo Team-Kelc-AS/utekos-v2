@@ -49,6 +49,7 @@ export async function SelectedProduct({
   const variant = resolveVariant(product, params);
   if (!variant) notFound();
   const isComfyrobe = product.handle === "comfyrobe";
+  const fullWidthMobileGallery = isComfyrobe;
   const size = variant.selectedOptions.find(
     (option) => optionParam(option.name) === "storrelse",
   )?.value;
@@ -101,11 +102,13 @@ export async function SelectedProduct({
         <div
           className={styles.galleryColumn}
           data-gallery-product={product.handle}
+          data-gallery-mobile-format={fullWidthMobileGallery ? "3:4" : undefined}
         >
           <ProductGallery
             key={variant.id}
             {...images}
             title={title}
+            mobileFullWidth={fullWidthMobileGallery}
             showComfyrobeSticker={hasComfyrobeHalfPrice(product.handle, variant)}
             video={productVariantVideo(product.handle, variant)}
             videoLabel={`${title} – ${label}`}
@@ -133,15 +136,16 @@ export async function SelectedProduct({
               className={styles.wishlistButton}
             />
           </div>
-          {isComfyrobe && (
-            <div className={styles.mobileDiscount}>
-              <DiscountCodeReveal code="COMFYFRI" />
-            </div>
-          )}
           <div className={styles.price}>
             <strong>{formatMoney(variant.price)}</strong>
             {compare && <del>{formatMoney(compare)}</del>}
           </div>
+          {isComfyrobe && (
+            <div className={`${styles.discountTrust} ${styles.mobileDiscount}`}>
+              <TagOutlineIcon tone="orange" />
+              <DiscountCodeReveal code="COMFYFRI" />
+            </div>
+          )}
           <VariantOptions selectedId={variant.id}>
             {options
               .filter((o) => o.values.some((v) => v.value !== "Default Title"))
@@ -171,7 +175,7 @@ export async function SelectedProduct({
                       )}
                     </div>
                   </fieldset>
-                  {optionParam(option.name) === "storrelse" && (
+                  {!isComfyrobe && optionParam(option.name) === "storrelse" && (
                     <div
                       data-tracking-size-guide
                       className={styles.sizeGuideButton}
@@ -204,7 +208,7 @@ export async function SelectedProduct({
               />
             )}
             {variant.availableForSale &&
-              variant.currentlyNotInStock === false && (
+              (isComfyrobe || variant.currentlyNotInStock === false) && (
                 <KlarnaProductExpressCheckout
                   key={variant.id}
                   handle={product.handle}
@@ -225,7 +229,20 @@ export async function SelectedProduct({
               <ReturnsOutlineIcon />
               <Link href="/frakt-og-retur">Gratis størrelsesbytte</Link>
             </li>
+            {isComfyrobe && <li><TruckOutlineIcon />Rask levering</li>}
           </ul>
+          {isComfyrobe && (
+            <div data-tracking-size-guide className={styles.sizeGuideButton}>
+              <OsCaravanSizeGuideDialog
+                content={getProductSizeGuideDialogContent(product)}
+                trackingData={{
+                  product_handle: product.handle,
+                  placement: "product-size-selector",
+                }}
+                triggerClassName="h-12 w-full min-w-0 justify-center gap-2 rounded px-6 font-sans font-semibold text-base"
+              />
+            </div>
+          )}
           <div className={styles.reviewSummary}>
             <Suspense fallback={null}>
               <ProductReviews productId={product.id} />

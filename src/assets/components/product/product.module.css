@@ -302,7 +302,15 @@
   padding-top: 2rem;
   border-top: 1px solid #f0eee930;
 }
-.details > div:empty {
+.details:has(> .detailsSeparator) {
+  padding-top: 0;
+  border-top: 0;
+}
+.detailsSeparator {
+  grid-column: 1 / -1;
+  background-color: color-mix(in oklab, var(--oat-milk) 22%, transparent);
+}
+.details > div:empty:not([data-slot="separator"]) {
   display: none;
 }
 .reviewColumn {
@@ -335,6 +343,26 @@
 .accordion {
   min-width: 0;
   margin-top: 1rem;
+}
+
+main[data-product-theme="comfyrobe"] .accordion > div {
+  gap: 1.25rem;
+}
+main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion-item] {
+  border: 0;
+  border-radius: 0.75rem;
+  background-color: var(--product-page-surface);
+}
+main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion-item] > h2 {
+  margin: 0;
+}
+main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion-item] > h2 > [data-tracking-accordion-trigger] {
+  min-height: 72px;
+  padding-inline: clamp(1rem, 2vw, 1.75rem);
+  border-radius: 0.75rem;
+}
+main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion-item] > [role="region"] {
+  padding-inline: clamp(1rem, 2vw, 1.75rem);
 }
 
 /* 1. Flush layout: Fjerner rammeboksen for et renere, integrert utseende */
@@ -675,8 +703,23 @@
 }
 
 @media (max-width: 767px) {
+  .galleryColumn[data-gallery-mobile-format='3:4'] {
+    width: 100vw;
+    margin-inline: calc((100% - 100vw) / 2);
+  }
+  .galleryColumn[data-gallery-mobile-format='3:4'] .slides {
+    border-radius: 0;
+  }
+  .galleryColumn[data-gallery-mobile-format='3:4'] .slide picture {
+    aspect-ratio: 3 / 4;
+  }
+  .galleryColumn[data-gallery-mobile-format='3:4'] .productImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
   .galleryColumn[data-gallery-product='comfyrobe'] .slide {
-    background-color: #012622;
+    background-color: var(--product-page-surface);
   }
   .gallery [data-gallery-viewport="desktop"] {
     display: none;
@@ -702,8 +745,9 @@
 @media (max-width: 767px) {
   .mobileDiscount {
     display: flex;
-    justify-content: flex-end;
-    margin-top: 0.25rem;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
     font-size: 0.875rem;
   }
 
@@ -716,4 +760,45 @@
   .galleryColumn[data-gallery-product='comfyrobe'] .galleryControls {
     margin-top: 1.25rem;
   }
+}
+
+.grid:has(> .galleryColumn[data-gallery-product='comfyrobe']) .options {
+  display: grid;
+  gap: 1.25rem;
+}
+.grid:has(> .galleryColumn[data-gallery-product='comfyrobe']) .options fieldset {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  margin: 0;
+}
+.grid:has(> .galleryColumn[data-gallery-product='comfyrobe']) .options legend {
+  float: left;
+  flex: 0 0 5.5rem;
+  width: 5.5rem;
+  margin: 0;
+}
+.grid:has(> .galleryColumn[data-gallery-product='comfyrobe']) .optionValues {
+  min-width: 0;
+}
+.grid:has(> .galleryColumn[data-gallery-product='comfyrobe']) .option,
+.grid:has(> .galleryColumn[data-gallery-product='comfyrobe']) .option[aria-current='true'] {
+  border-color: var(--oat-milk);
+}
+.grid:has(> .galleryColumn[data-gallery-product='comfyrobe']) .option[aria-current='true'] {
+  box-shadow: none;
+}
+.grid:has(> .galleryColumn[data-gallery-product='comfyrobe']) .trust {
+  grid-auto-rows: minmax(44px, auto);
+}
+.grid:has(> .galleryColumn[data-gallery-product='comfyrobe']) .sizeGuideButton {
+  margin-bottom: 1.5rem;
+}
+main[data-product-theme="comfyrobe"] .purchaseActions > a,
+main[data-product-theme="comfyrobe"] .sticky a {
+  border-radius: 9999px;
+}
+main[data-product-theme="comfyrobe"] .purchaseActions {
+  grid-template-columns: minmax(0, 1fr);
 }
