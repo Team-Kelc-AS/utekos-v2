@@ -9,7 +9,8 @@
   --muted-foreground: #f0eee9;
   flex: 1;
   min-width: 0;
-  background: var(--background);
+  background-color: #001211;
+  background-image: var(--background-gradient);
   color: var(--foreground);
   font-weight: 500;
 }

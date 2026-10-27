@@ -87,7 +87,15 @@ export function CategoryPage({
   return (
     <main
       data-tracking-route={listingPath(categoryKey)}
-      className={`flex-1 bg-night px-6 py-10 text-primary-foreground${categoryKey === "varmeplagg" ? " lg:px-4" : ""}`}
+      className={`flex-1 px-6 py-10 text-primary-foreground${categoryKey === "all" ? "" : " bg-night"}${categoryKey === "varmeplagg" ? " lg:px-4" : ""}`}
+      style={
+        categoryKey === "all"
+          ? {
+              backgroundColor: "#001211",
+              backgroundImage: "var(--background-gradient)",
+            }
+          : undefined
+      }
     >
       <div className={`mx-auto space-y-10 ${categoryKey === "varmeplagg" ? "max-w-[100rem]" : "max-w-6xl"}`}>
         <Breadcrumbs

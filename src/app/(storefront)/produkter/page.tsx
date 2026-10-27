@@ -18,7 +18,11 @@ export default function Page({ searchParams }: CategoryPageProps) {
       <Suspense
         fallback={
           <main
-            className="flex-1 bg-[#001a18] p-6 text-[#f0eee9]"
+            className="flex-1 p-6 text-[#f0eee9]"
+            style={{
+              backgroundColor: "#001211",
+              backgroundImage: "var(--background-gradient)",
+            }}
             aria-busy="true"
           >
             Laster produktoversikten …
