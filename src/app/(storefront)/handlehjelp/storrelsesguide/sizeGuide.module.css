@@ -41,9 +41,9 @@
     #012622,
     #001a18
   );
-  --knowledge-ink: #fff;
-  --knowledge-ink-muted: #fff;
-  --knowledge-link: #fff;
+  --knowledge-ink: var(--foreground);
+  --knowledge-ink-muted: var(--foreground);
+  --knowledge-link: var(--foreground);
   --knowledge-surface: var(--guide-card);
   --knowledge-border: #ffffff40;
   --primary: var(--guide-background);
@@ -51,7 +51,7 @@
   padding: 2rem 1rem 4rem;
   background-color: #001211;
   background-image: var(--background-gradient);
-  color: #fff;
+  color: var(--foreground);
 }
 
 .page :is(.sizeCard, .infoCard, .stepCard) {
@@ -59,7 +59,7 @@
   gap: 1.25rem;
   min-width: 0;
   border-radius: 2rem;
-  color: #fff;
+  color: var(--foreground);
   font-size: inherit;
   box-shadow: none;
   /* Nytt for å gi mer luft inni kortene, spesielt med avrundede hjørner */
@@ -133,7 +133,7 @@
   min-height: 3.5rem;
   padding: 1.25rem;
   border-radius: inherit;
-  color: #fff;
+  color: var(--foreground);
   font-size: 1.25rem; /* Justert litt ned */
   font-weight: 800;
   text-align: center;
@@ -154,7 +154,7 @@
   border-radius: 1.5rem;
   background-color: #cb5005;
   background-image: var(--comfyrobe-banner-gradient);
-  color: #fff;
+  color: var(--foreground);
   font-size: 1.25rem; /* Justert litt ned for bedre flyt på mobil */
   line-height: 1.5;
 }
@@ -193,7 +193,7 @@
 /* Scope the existing MDX tables and FAQ card to this page's palette. */
 .page [data-slot="card"] {
   --card: #001211;
-  --card-foreground: #fff;
+  --card-foreground: var(--foreground);
   background-color: #001211;
   background-image: var(--guide-card-gradient);
   border-radius: 1.5rem; /* Litt mindre radius på FAQ-kortet for variasjon */
@@ -220,6 +220,10 @@
 }
 .page [data-slot="accordion-trigger"] {
   font-weight: 800;
+}
+.page button[data-tracking-accordion-trigger]:hover > div > span,
+.page button[data-tracking-accordion-trigger]:is(:hover, [data-panel-open]) > span {
+  color: var(--foreground);
 }
 .page section[id$="measurements"] > h3,
 .page section[id="faq"] [data-slot="card-title"] > h3 {
@@ -251,7 +255,7 @@
   scroll-margin-block-start: 2rem;
 }
 .page a:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--foreground);
   outline-offset: 4px;
 }
 
