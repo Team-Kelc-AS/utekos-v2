@@ -49,6 +49,8 @@ body:has(> main[data-product-theme="patriot-blue"]:not([style*="display: none"])
   --product-page-background: var(--color-patriot-blue-600);
   --product-page-surface: var(--color-patriot-blue-300);
   --product-page-elevated: var(--color-patriot-blue-100);
+  --product-newsletter-surface: #272845;
+  --product-newsletter-gradient: linear-gradient(90deg, #272845, #2c2d4b, #313250, #2c2d4b, #272845);
 }
 
 body:has(> main[data-product-theme="vargnatt"]:not([style*="display: none"])) {
@@ -165,5 +167,5 @@ body:has(> main[data-product-theme]:not([style*="display: none"])) :is(
 
 body:has(> main[data-product-theme]:not([style*="display: none"])) footer section[aria-labelledby="footer-newsletter-heading"] {
   background-color: var(--product-newsletter-surface, var(--product-page-surface));
-  background-image: linear-gradient(90deg, var(--product-newsletter-surface, var(--product-page-surface)), var(--product-page-elevated), var(--product-newsletter-surface, var(--product-page-surface)));
+  background-image: var(--product-newsletter-gradient, linear-gradient(90deg, var(--product-newsletter-surface, var(--product-page-surface)), var(--product-page-elevated), var(--product-newsletter-surface, var(--product-page-surface))));
 }
