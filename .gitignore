@@ -46,3 +46,7 @@ next-env.d.ts
 
 # Local reports, screenshots and generated test artifacts
 /output/
+
+# Python test/operations bytecode
+__pycache__/
+*.pyc
