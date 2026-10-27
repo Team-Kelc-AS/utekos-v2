@@ -13,7 +13,7 @@ export const metadata: Metadata = buildHomeMetadata();
 
 export default function Home() {
   return (
-    <main className="flex-1">
+    <main className="flex-1" data-homepage>
       <HeroSection />
       <Suspense fallback={<HomeProductsLoading />}>
         <HomeProducts />

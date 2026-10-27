@@ -483,6 +483,11 @@ body:has(> main[data-homepage]) > header {
   background-image: var(--background-gradient);
 }
 
+main[data-homepage] > :not(:first-child) {
+  background-color: var(--background);
+  background-image: var(--background-gradient);
+}
+
 /* Breadcrumbs follow their surface, including the fixed light catalog pages. */
 [data-slot="breadcrumb"] {
   --foreground: currentColor;
