@@ -12,8 +12,8 @@ export default function MaintenanceLayout({ children }: { children: ReactNode })
   return (
     <>
       <SupportJsonLd page="maintenance" />
-      <main className="flex-1 bg-background px-4 py-8 text-foreground [--background:var(--evening)] [--foreground:var(--cloud-dancer)] [--card:var(--jungle)] [--card-foreground:var(--foreground)] [--muted:var(--jungle)] [--muted-foreground:var(--foreground)] sm:px-6 sm:py-12">
-        <div className="mx-auto max-w-4xl">
+      <main className="flex-1 bg-[#001211] bg-(image:--background-gradient) px-4 py-8 text-[#f0eee9] [--background:#001211] [--border:#18504a] [--card:#001a18] [--card-foreground:#f0eee9] [--foreground:#f0eee9] [--muted:#012622] [--muted-foreground:#c9d6d1] [--primary:#b94700] [--ring:#b94700] sm:px-6 sm:py-12">
+        <div className="mx-auto max-w-6xl">
           <div className="mb-8">
             <Breadcrumbs items={supportPages.maintenance.breadcrumbs} />
           </div>

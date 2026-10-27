@@ -16,18 +16,48 @@ body:has(> main[data-product-theme="comfyrobe"]:not([style*="display: none"])) {
   --product-page-background: #191f26;
   --product-page-surface: oklch(0.2286 0.0096 285.62);
   --product-page-elevated: oklch(0.2294 0.0232 267.21);
-  --product-page-gallery-accent: #b44701;
-  --product-newsletter-surface: oklch(0.2254 0.0232 267.21);
+  --product-page-gallery-accent: #b94700;
+  --comfyrobe-field-gradient: linear-gradient(
+    90deg in oklch,
+    #1d232c 0%,
+    #242b36 50%,
+    #1d232c 100%
+  );
+  --product-newsletter-surface: #171c23;
+  --product-newsletter-gradient: linear-gradient(
+    90deg in oklch,
+    #171c23 0%,
+    #1e232d 25%,
+    #242a36 50%,
+    #1e232d 75%,
+    #171c23 100%
+  );
+  --product-accordion-surface: var(--product-newsletter-surface);
+  --product-accordion-gradient: var(--product-newsletter-gradient);
 }
 
-body:has(> main[data-product-theme="patriot-blue"]:not([style*="display: none"])) {
+body:has(
+  > main[data-product-theme="patriot-blue"]:not([style*="display: none"])
+) {
   --color-patriot-blue-600: oklch(0.3004 0.0537 281.83);
   --color-patriot-blue-500: oklch(0.3291 0.0484 275.39);
-  --color-patriot-blue-400: color-mix(in oklch, var(--color-patriot-blue-300), var(--color-patriot-blue-500));
+  --color-patriot-blue-400: color-mix(
+    in oklch,
+    var(--color-patriot-blue-300),
+    var(--color-patriot-blue-500)
+  );
   --color-patriot-blue-300: oklch(0.3304 0.0537 281.83);
-  --color-patriot-blue-200: color-mix(in oklch, var(--color-patriot-blue-100), var(--color-patriot-blue-300));
+  --color-patriot-blue-200: color-mix(
+    in oklch,
+    var(--color-patriot-blue-100),
+    var(--color-patriot-blue-300)
+  );
   --color-patriot-blue-100: oklch(0.3504 0.0537 281.83);
-  --color-patriot-blue-50: color-mix(in oklch, var(--color-patriot-blue-100) 96%, white);
+  --color-patriot-blue-50: color-mix(
+    in oklch,
+    var(--color-patriot-blue-100) 96%,
+    white
+  );
   --patriot-blue-gradient: linear-gradient(
     to right in oklch,
     var(--color-patriot-blue-600) 0%,
@@ -50,7 +80,16 @@ body:has(> main[data-product-theme="patriot-blue"]:not([style*="display: none"])
   --product-page-surface: var(--color-patriot-blue-300);
   --product-page-elevated: var(--color-patriot-blue-100);
   --product-newsletter-surface: #272845;
-  --product-newsletter-gradient: linear-gradient(90deg, #272845, #2c2d4b, #313250, #2c2d4b, #272845);
+  --product-newsletter-gradient: linear-gradient(
+    90deg,
+    #272845,
+    #2c2d4b,
+    #313250,
+    #2c2d4b,
+    #272845
+  );
+  --product-accordion-surface: var(--product-newsletter-surface);
+  --product-accordion-gradient: var(--product-newsletter-gradient);
 }
 
 body:has(> main[data-product-theme="vargnatt"]:not([style*="display: none"])) {
@@ -98,8 +137,17 @@ body:has(> main[data-product-theme]:not([style*="display: none"])) {
   background-image: var(--product-page-gradient);
 }
 
-body:has(> main[data-product-theme]:not([style*="display: none"])) > :is(header, footer) {
+body:has(> main[data-product-theme]:not([style*="display: none"]))
+  > :is(header, footer) {
   background: transparent;
+}
+
+body:has(
+    > main[data-product-theme="patriot-blue"]:not([style*="display: none"])
+  )
+  > header {
+  background-color: var(--product-newsletter-surface);
+  background-image: var(--product-newsletter-gradient);
 }
 
 main[data-product-theme] {
@@ -107,32 +155,42 @@ main[data-product-theme] {
   background-image: var(--product-page-gradient);
 }
 
-main[data-product-theme] :is(
-  [data-variant],
-  [data-variant]:hover,
-  [data-tracking-accordion-trigger],
-  [data-tracking-accordion-trigger]:is(:hover, :active),
-  [data-tracking-accordion-trigger] > span:last-child,
-  aside[aria-label="Kjøp valgt variant"],
-  section[aria-label="Detaljer om produktet"] aside,
-  [data-dun-reservation-trigger],
-  [aria-label="Bla gjennom produktvarianter"] button
-) {
+main[data-product-theme]
+  :is(
+    [data-variant],
+    [data-variant]:hover,
+    [data-tracking-accordion-trigger],
+    [data-tracking-accordion-trigger]:is(:hover, :active),
+    [data-tracking-accordion-trigger] > span:last-child,
+    aside[aria-label="Kjøp valgt variant"],
+    section[aria-label="Detaljer om produktet"] aside,
+    [data-dun-reservation-trigger],
+    [aria-label="Bla gjennom produktvarianter"] button
+  ) {
   background-color: var(--product-page-surface);
 }
 
-main[data-product-theme] :is([data-gallery-controls] > span, [data-gallery-product] button[aria-label$="bilde"]) {
-  background-color: var(--product-page-gallery-accent, var(--product-page-surface));
+main[data-product-theme]
+  :is(
+    [data-gallery-controls] > span,
+    [data-gallery-product] button[aria-label$="bilde"]
+  ) {
+  background-color: var(
+    --product-page-gallery-accent,
+    var(--product-page-surface)
+  );
 }
 
-main[data-product-theme] :is(
-  [data-dun-reservation-trigger],
-  [aria-label="Bla gjennom produktvarianter"] button
-):hover {
+main[data-product-theme]
+  :is(
+    [data-dun-reservation-trigger],
+    [aria-label="Bla gjennom produktvarianter"] button
+  ):hover {
   background-color: var(--product-page-elevated);
 }
 
-main[data-product-theme="patriot-blue"] section[aria-label="Detaljer om produktet"] {
+main[data-product-theme="patriot-blue"]
+  section[aria-label="Detaljer om produktet"] {
   --product-page-surface: var(--color-patriot-blue-600);
 }
 
@@ -146,26 +204,108 @@ main[data-product-theme] [data-product-card] {
 }
 
 main[data-product-theme] [data-product-card] > :not([data-slot="card-content"]),
-main[data-product-theme] [data-product-card] :is(
-  button[aria-label^="Spill av video"],
-  button[aria-pressed][aria-controls],
-  [data-slot="card-content"] a > span.absolute,
-  button[aria-label$="produktvariant"]
-) {
+main[data-product-theme]
+  [data-product-card]
+  :is(
+    button[aria-label^="Spill av video"],
+    button[aria-pressed][aria-controls],
+    [data-slot="card-content"] a > span.absolute,
+    button[aria-label$="produktvariant"]
+  ) {
   background: var(--product-page-surface);
 }
 
-body:has(> main[data-product-theme]:not([style*="display: none"])) :is(
-  header input[type="search"],
-  header nav[aria-label="Hovedmeny"] :is(a, button):is(:hover, :active),
-  [role="dialog"]:has(nav[aria-label="Alle sider"]),
-  nav[aria-label="Alle sider"] :is(button[aria-expanded], [role="region"] ul, [role="region"] > div, a),
-  [data-slot="combobox-content"]:has(input[aria-label="Filtrer kategorier"])
-) {
+main[data-product-theme="patriot-blue"]
+  > section[data-tracking-list="related-products"]
+  [data-product-card],
+main[data-product-theme="patriot-blue"]
+  > section[data-tracking-list="related-products"]
+  [data-product-card]
+  > :not([data-slot="card-content"]),
+main[data-product-theme="patriot-blue"]
+  > section[data-tracking-list="related-products"]
+  [data-product-card]
+  :is(
+    button[aria-label^="Spill av video"],
+    button[aria-pressed][aria-controls],
+    [data-slot="card-content"] a > span.absolute,
+    button[aria-label$="produktvariant"]
+  ) {
+  background-color: var(--product-newsletter-surface);
+  background-image: var(--product-newsletter-gradient);
+}
+
+main[data-product-theme="patriot-blue"]
+  section[aria-label="Detaljer om produktet"]
+  > div
+  > [data-tracking-accordion-item]
+  > h2
+  > [data-tracking-accordion-trigger] {
+  background-color: transparent;
+  background-image: none;
+}
+
+main[data-product-theme="comfyrobe"]
+  section[aria-label="Detaljer om produktet"]
+  [data-tracking-accordion-trigger] {
+  background-color: transparent;
+  background-image: none;
+}
+
+main[data-product-theme="comfyrobe"]
+  > section[data-tracking-list="related-products"]
+  [data-product-card],
+main[data-product-theme="comfyrobe"]
+  > section[data-tracking-list="related-products"]
+  [data-product-card]
+  > :not([data-slot="card-content"]) {
+  background-color: var(--product-newsletter-surface);
+  background-image: var(--product-newsletter-gradient);
+}
+
+body:has(> main[data-product-theme]:not([style*="display: none"]))
+  :is(
+    header input[type="search"],
+    header nav[aria-label="Hovedmeny"] :is(a, button):is(:hover, :active),
+    [role="dialog"]:has(nav[aria-label="Alle sider"]),
+    nav[aria-label="Alle sider"]
+      :is(button[aria-expanded], [role="region"] ul, [role="region"] > div, a),
+    [data-slot="combobox-content"]:has(input[aria-label="Filtrer kategorier"])
+  ) {
   background: var(--product-page-surface);
 }
 
-body:has(> main[data-product-theme]:not([style*="display: none"])) footer section[aria-labelledby="footer-newsletter-heading"] {
-  background-color: var(--product-newsletter-surface, var(--product-page-surface));
-  background-image: var(--product-newsletter-gradient, linear-gradient(90deg, var(--product-newsletter-surface, var(--product-page-surface)), var(--product-page-elevated), var(--product-newsletter-surface, var(--product-page-surface))));
+body:has(> main[data-product-theme]:not([style*="display: none"]))
+  footer
+  section[aria-labelledby="footer-newsletter-heading"] {
+  background-color: var(
+    --product-newsletter-surface,
+    var(--product-page-surface)
+  );
+  background-image: var(
+    --product-newsletter-gradient,
+    linear-gradient(
+      90deg,
+      var(--product-newsletter-surface, var(--product-page-surface)),
+      var(--product-page-elevated),
+      var(--product-newsletter-surface, var(--product-page-surface))
+    )
+  );
+}
+
+body:has(> main[data-product-theme="comfyrobe"]:not([style*="display: none"]))
+  footer
+  section[aria-labelledby="footer-newsletter-heading"]
+  input[type="email"] {
+  border-color: #f0eee970;
+  background-color: #1d232c;
+  background-image: var(--comfyrobe-field-gradient);
+  color: #f0eee9;
+}
+
+body:has(> main[data-product-theme="comfyrobe"]:not([style*="display: none"]))
+  footer
+  section[aria-labelledby="footer-newsletter-heading"]
+  input[type="email"]::placeholder {
+  color: #f0eee9b3;
 }

@@ -216,7 +216,95 @@
 .cartTotal {
   display: flex;
   justify-content: space-between;
-  margin-block: 1.5rem 0.75rem;
+  font-weight: 600;
+}
+.cartDrawer {
+  --night: #001a18;
+  --jungle: #012622;
+  --primary: #b44701;
+  --destructive: #ffb4ab;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+}
+.cartDrawer .dialogHeading {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 1.5rem;
+}
+.cartDrawer .empty {
+  padding-inline: 1.5rem;
+}
+.cartNotices {
+  flex-shrink: 0;
+  max-height: 20dvh;
+  overflow-y: auto;
+}
+.cartNotices:not(:empty) {
+  padding-inline: 1.5rem;
+}
+.cartBody {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-inline: 1.5rem;
+}
+.cartSuggestions {
+  max-height: 35dvh;
+  overflow-y: auto;
+}
+.cartSuggestions .smartCart {
+  margin: 0;
+  padding: 1.5rem;
+}
+.cartFooter {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  background: var(--jungle);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.checkoutActions {
+  --klarna-button-height: 56px;
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.checkoutButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.875rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 2rem;
+  background: var(--primary);
+  color: var(--foreground);
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: opacity 150ms, background-color 150ms, transform 150ms;
+}
+.checkoutButton:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--primary) 90%, transparent);
+  opacity: 0.6;
+  transform: scale(1.03);
+}
+.checkoutAlert {
+  border: 1px solid color-mix(in srgb, var(--destructive) 20%, transparent);
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  background: color-mix(in srgb, var(--destructive) 10%, transparent);
+  color: var(--destructive);
+  font-size: 0.875rem;
+  line-height: 1.375;
 }
 .form {
   display: grid;
@@ -280,4 +368,3 @@
 .suggestionProduct { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 0.75rem; }
 .suggestionImage { width: 64px; height: auto; border-radius: 0.25rem; }
 .suggestion select { display: block; max-width: 100%; width: 100%; padding: 0.4rem; background: var(--night); color: var(--foreground); border: 1px solid color-mix(in srgb, var(--foreground) 30%, transparent); border-radius: 0.25rem; font: inherit; font-size: 0.85rem; }
-.offerHint { margin-top: 0.75rem; font-size: 0.8rem; }

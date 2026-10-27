@@ -15,6 +15,9 @@ function review(id, extra = '') {
 function widget(reviews = [review('1')], count = 1, productId = 123) {
   return { product_external_id: productId, widget: `<div class="jdgm-rev-widg" data-average-rating="${count ? '4.00' : '0.00'}" data-number-of-reviews="${count}">${reviews.join('')}</div>` };
 }
+function storeWidget(reviews = [review('1')], count = 1) {
+  return { page: '1', reviews_tab: `<div class="jdgm-revs-tab__content"><div class="jdgm-revs-tab__content-header" data-number-of-shop-reviews="${count}"></div>${reviews.join('')}</div>` };
+}
 function setup(responses = [widget()], configured = true) {
   const calls = [];
   const cache = [];
@@ -122,5 +125,40 @@ test('preview distinguishes zero reviews from errors, missing config and mismatc
   }
   const missing = setup([], false);
   assert.equal(await missing.getJudgeMePreview('gid://shopify/Product/123'), null);
+  assert.equal(missing.calls.length, 0);
+});
+
+test('store reviews use only the published shop widget and keep the product endpoint separate', async () => {
+  const storeReview = review('shop-1', '<script>secret()</script>')
+    .replace('datetime="2026-09-01T12:00:00Z"', 'data-content="2026-09-01 12:00:00 UTC"');
+  const h = setup([storeWidget([storeReview])]);
+  const data = await h.getJudgeMeStoreReviews();
+  assert.equal(data.count, 1);
+  assert.equal(data.reviews[0].date, '2026-09-01T12:00:00.000Z');
+  assert.equal(data.reviews[0].verified, true);
+  assert.doesNotMatch(data.reviews[0].body, /secret/);
+  const url = new URL(h.calls[0].url);
+  assert.equal(url.pathname, '/api/v1/widgets/reviews_tab');
+  assert.equal(url.searchParams.get('review_type'), 'shop-reviews');
+  assert.equal(url.searchParams.has('external_id'), false);
+  assert.equal(url.searchParams.has('api_token'), false);
+});
+
+test('store review pagination preserves all published feedback and provider count', async () => {
+  const h = setup([storeWidget([review('1')], 2), storeWidget([review('2')], 2)]);
+  const data = await h.getJudgeMeStoreReviews();
+  assert.equal(data.count, 2);
+  assert.deepEqual(Array.from(data.reviews, item => item.id), ['1', '2']);
+  assert.deepEqual(h.calls.map(call => new URL(call.url).searchParams.get('page')), ['1', '2']);
+});
+
+test('unavailable or malformed shop widget does not become a product review', async () => {
+  for (const response of [new Error('timeout'), { status: 429 }, { reviews_tab: '<div>Changed format</div>' }]) {
+    const h = setup([response]);
+    assert.equal(await h.getJudgeMeStoreReviews(), null);
+    assert.equal(h.cache.at(-1), 'seconds');
+  }
+  const missing = setup([], false);
+  assert.equal(await missing.getJudgeMeStoreReviews(), null);
   assert.equal(missing.calls.length, 0);
 });

@@ -44,10 +44,10 @@ export const comparisonArticle = {
     id: `${SITE_URL}/#organization`,
   },
   image: {
-    src: "/hengekoye.jpg",
-    alt: "To personer i blå Utekos-plagg slapper av i en hengekøye i skogen",
-    width: 1731,
-    height: 1155,
+    src: "/images/uteguiden/social/uteguiden-v1.png",
+    alt: "Uteguiden-grafikk med Utekos-logo og fjellillustrasjon",
+    width: 1200,
+    height: 630,
   },
   topics: [
     "Utekos Dun",

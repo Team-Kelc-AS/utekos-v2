@@ -55,6 +55,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/gaveguide",
+        destination: "/handlehjelp/klarna",
+        permanent: true,
+      },
+      {
         source: "/skreddersy-varmen",
         destination: "/produkter/utekos-techdown",
         permanent: true,

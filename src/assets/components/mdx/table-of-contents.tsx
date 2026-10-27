@@ -1,4 +1,5 @@
 import styles from "./mdx.module.css";
+import { cx } from "./shared";
 
 export type TocEntry = {
   id: string;
@@ -12,6 +13,7 @@ export type TableOfContentsProps = {
   id?: string;
   collapsible?: boolean;
   bordered?: boolean;
+  className?: string;
 };
 function TocList({ entries }: { entries: readonly TocEntry[] }) {
   return (
@@ -34,11 +36,12 @@ export function TableOfContents({
   id,
   collapsible = false,
   bordered = true,
+  className,
 }: TableOfContentsProps) {
   if (!entries.length) return null;
   return (
     <nav
-      className={styles.toc}
+      className={cx(styles.toc, className)}
       data-bordered={bordered}
       aria-label={id ? undefined : title}
       aria-labelledby={id}

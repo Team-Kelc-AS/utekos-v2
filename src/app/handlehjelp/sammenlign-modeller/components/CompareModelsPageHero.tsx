@@ -1,7 +1,6 @@
 import { ArticleTableOfContents } from "@/components/mdx/table-of-contents";
-import Image from "next/image";
 import { comparisonArticle as article } from "../utils/comparisonArticle";
-import styles from "../comparisonGuide.module.css";
+import { comparisonGuideClasses as styles } from "../comparisonGuideClasses";
 
 export function CompareModelsPageHero() {
   // Emphasize names without keeping a second copy of the introduction.
@@ -10,15 +9,6 @@ export function CompareModelsPageHero() {
   );
   return (
     <header>
-      <Image
-        src={article.image.src}
-        alt={article.image.alt}
-        width={article.image.width}
-        height={article.image.height}
-        preload
-        sizes="100vw"
-        className="block h-auto w-full"
-      />
       <div className={`${styles.container} ${styles.intro}`}>
         <span className={styles.pill}>{article.category}</span>
         <h1 id="compare-models-title">{article.title}</h1>

@@ -19,6 +19,7 @@ declare global {
   interface Window {
     klarnaAsyncCallback?: () => void;
     Klarna?: {
+      OnsiteMessaging?: { refresh: () => void };
       Payments: {
         Buttons: {
           init: (config: { client_id: string }) => {

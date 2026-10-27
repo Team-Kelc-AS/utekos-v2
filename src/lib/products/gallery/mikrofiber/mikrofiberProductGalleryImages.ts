@@ -8,8 +8,8 @@ const MICROFIBER_MOBILE_STILL_HEIGHT = 1500
 
 export const MICROFIBER_BLUE_STUDIO_IMAGES: Image[] = [
   productImage('mikrofiber-blue-studio-1', '/images/kunnskap/Soveposejakke_Blue1.webp', 'Utekos Mikrofiber™ Fjellblå i full lengde forfra.', 2000, 3000),
-  productImage('mikrofiber-blue-studio-2', '/images/kunnskap/Soveposejakke_Blue2.webp', 'Utekos Mikrofiber™ Fjellblå i full lengde bakfra.', 2000, 3000),
-  productImage('mikrofiber-blue-studio-3', '/images/kunnskap/Soveposejakke_Blue3.webp', 'Utekos Mikrofiber™ Fjellblå i mellomlengde forfra.', 1200, 1800),
+  productImage('mikrofiber-blue-studio-2', '/images/products/Utekos_Fjellbla_1080x1440_Bak.webp', 'Utekos Mikrofiber™ Fjellblå i full lengde bakfra.', 1080, 1440),
+  productImage('mikrofiber-blue-studio-3', '/images/products/Utekos_Fjellbla_1080x1440_Parkas.webp', 'Utekos Mikrofiber™ Fjellblå i parkaslengde forfra.', 1080, 1440),
   productImage('mikrofiber-blue-studio-4', '/images/kunnskap/Soveposejakke_Blue4.webp', 'Utekos Mikrofiber™ Fjellblå i kort lengde forfra.', 2000, 3000),
 ]
 
@@ -84,7 +84,7 @@ export const MICROFIBER_MOBILE_GALLERY_IMAGES: Image[] = [
   ...MICROFIBER_BLUE_STUDIO_IMAGES
 ]
 
-// Studio originals use the shared desktop 4:5 frame, followed by the existing lifestyle image.
+// The replacement originals keep their native 3:4 proportions on every viewport.
 export const MICROFIBER_PRODUCT_GALLERY_IMAGES: Image[] = [
   ...MICROFIBER_BLUE_STUDIO_IMAGES,
   productImage(

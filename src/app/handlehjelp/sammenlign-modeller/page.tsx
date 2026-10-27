@@ -1,7 +1,7 @@
 import Content from './content.mdx'
 import { CompareModelsPageHero } from './components/CompareModelsPageHero'
 import { buildComparisonMetadata } from './utils/comparisonArticle'
-import styles from './comparisonGuide.module.css'
+import { comparisonGuideClasses as styles } from './comparisonGuideClasses'
 export const metadata = buildComparisonMetadata()
 
 export default function CompareModelsPage() {

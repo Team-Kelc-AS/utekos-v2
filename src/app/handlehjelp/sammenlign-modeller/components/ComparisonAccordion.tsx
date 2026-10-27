@@ -7,14 +7,14 @@ import {
 import { comparisonRows, modelRecommendations } from "../utils/comparisonData";
 
 import { TableCellContent } from "./TableCellContent";
-import styles from "../comparisonGuide.module.css";
+import { comparisonGuideClasses as styles } from "../comparisonGuideClasses";
 
 export function ComparisonAccordion() {
   return (
     <Accordion multiple={false} defaultValue={[]} className={styles.faq}>
       {modelRecommendations.map((model) => (
-        <AccordionItem key={model.key} value={model.key}>
-          <AccordionTrigger>{model.name}</AccordionTrigger>
+        <AccordionItem key={model.key} value={model.key} className={styles.faqItem}>
+          <AccordionTrigger className={styles.faqTrigger}>{model.name}</AccordionTrigger>
           <AccordionContent keepMounted>
             <dl className={styles.modelDetails}>
               {comparisonRows.map((row) => (

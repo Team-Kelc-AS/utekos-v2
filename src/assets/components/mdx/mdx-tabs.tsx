@@ -14,7 +14,7 @@ export function MdxTabs({
     // Typeset excludes data-slot subtrees; keep the controls excluded, but let
     // the root and panels expose their article content to the document styles.
     <Tabs defaultValue={defaultValue} typography="inherit" className="my-8 w-full">
-      <TabsList className="mb-6 flex h-auto w-full flex-wrap justify-start gap-2 rounded-xl bg-muted p-2 ring-1 ring-border">
+      <TabsList className="mb-6 flex h-auto w-full flex-wrap justify-start gap-2 rounded-xl bg-[#001211] bg-[linear-gradient(90deg,#001211,#001a18,#001f1c,#001f1c,#001a18,#001211)] p-2 ring-1 ring-border">
         {items.map((item) => (
           <TabsTrigger
             key={item.value}
@@ -41,7 +41,7 @@ export function MdxTab({
     <TabsContent
       value={value}
       typography="inherit"
-      className="mt-0 rounded-2xl border border-border bg-card p-6 text-left text-card-foreground sm:p-8"
+      className="mt-0 rounded-2xl border border-border bg-[#001211] bg-[linear-gradient(90deg,#001211,#001a18,#001f1c,#001f1c,#001a18,#001211)] p-6 text-left text-card-foreground sm:p-8"
     >
       {children}
     </TabsContent>
@@ -59,21 +59,21 @@ export function SpecRow({
 }) {
   return (
     <div className="my-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-      <div className="rounded-xl bg-background p-4 ring-1 ring-border">
+      <div className="rounded-xl bg-[#001211] bg-[linear-gradient(90deg,#001211,#021715,#001a18,#031f1d,#001a18,#021715,#001211)] p-4 ring-1 ring-border">
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
           <Thermometer className="size-4 text-primary" />
           <span>Temperatur</span>
         </div>
         <p>{temp}</p>
       </div>
-      <div className="rounded-xl bg-background p-4 ring-1 ring-border">
+      <div className="rounded-xl bg-[#001211] bg-[linear-gradient(90deg,#001211,#021715,#001a18,#031f1d,#001a18,#021715,#001211)] p-4 ring-1 ring-border">
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
           <Droplets className="size-4 text-primary" />
           <span>Vaskemiddel</span>
         </div>
         <p>{soap}</p>
       </div>
-      <div className="rounded-xl bg-background p-4 ring-1 ring-border">
+      <div className="rounded-xl bg-[#001211] bg-[linear-gradient(90deg,#001211,#021715,#001a18,#031f1d,#001a18,#021715,#001211)] p-4 ring-1 ring-border">
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
           <Wind className="size-4 text-primary" />
           <span>Tørkemetode</span>

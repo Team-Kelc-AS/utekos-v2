@@ -31,7 +31,7 @@ export function Callout({
       {...props}
       aria-label={props["aria-label"] ?? label}
       className={cx(
-        "my-10 rounded-xl border border-primary/50 border-l-4 border-l-primary bg-card p-6 text-left text-card-foreground sm:p-8",
+        "my-10 rounded-xl border border-primary/50 border-l-4 border-l-primary bg-[#001211] bg-[linear-gradient(90deg,#001211,#001a18,#001f1c,#001f1c,#001a18,#001211)] p-6 text-left text-card-foreground sm:p-8",
         className,
       )}
     >

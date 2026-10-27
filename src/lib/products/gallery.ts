@@ -10,17 +10,21 @@ import { STAPPER_MOBILE_GALLERY_IMAGES } from './gallery/stapper/stapperDesktopI
 import { VARGNATT_FULL_IMAGE } from './gallery/vargnattFullImage';
 import { usesDesktopPortraitFrame } from './gallery/desktopPortraitFrame';
 const ASPECT_RATIO_TOLERANCE = 0.015;
+const MIKROFIBER_NATIVE_ORIGINALS = new Set([
+  '/images/products/Utekos_Fjellbla_1080x1440_Bak.webp',
+  '/images/products/Utekos_Fjellbla_1080x1440_Parkas.webp',
+]);
 const reportedImages = new Set<string>();
 function originalImages(images: ProductImage[], viewport: 'desktop' | 'mobile', handle: string, ratio?: readonly [number, number]) {
   const [width, height] = ratio ?? (viewport === 'mobile' ? (handle === 'comfyrobe' ? [3, 4] : [2, 3]) : [4, 5]);
   // Allow 1.5% relative ratio deviation; preserve the original dimensions.
   return images.filter(image => {
-    // These explicitly selected desktop originals retain their native proportions.
-    const selectedOriginal = viewport === 'desktop' && (
+    // Explicitly selected originals retain their native proportions.
+    const selectedOriginal = (handle === 'utekos-mikrofiber' && MIKROFIBER_NATIVE_ORIGINALS.has(image.url)) || (viewport === 'desktop' && (
       usesDesktopPortraitFrame(image.url) ||
       (handle === 'utekos-dun' && image.url === '/images/kunnskap/Fjell-Blue-3000x2000.png') ||
       (handle === 'comfyrobe' && image.url === '/images/kunnskap/Comfy_Woman_2_2x3.webp')
-    );
+    ));
     const valid = image.width > 0 && image.height > 0 && Number.isFinite(image.width) && Number.isFinite(image.height) && (selectedOriginal || Math.abs(image.width * height - image.height * width) <= image.height * width * ASPECT_RATIO_TOLERANCE);
     if (!valid && process.env.NODE_ENV !== 'production') {
       const message = `[ProductGallery] ${handle}: ${image.url.split('?')[0]} (${image.width} × ${image.height}) er utelatt på ${viewport}. Originalbildet må være ${width}:${height} (±1,5 %).`;

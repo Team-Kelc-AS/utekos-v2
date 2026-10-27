@@ -5,7 +5,7 @@ import {
   AccordionTrigger
 } from '@/components/ui/Accordion'
 import { faqItems } from '../utils/comparisonData'
-import styles from '../comparisonGuide.module.css'
+import { comparisonGuideClasses as styles } from '../comparisonGuideClasses'
 
 export function ComparisonFaq() {
   return (
@@ -15,8 +15,8 @@ export function ComparisonFaq() {
       className={styles.faq}
     >
       {faqItems.map(item => (
-        <AccordionItem key={item.question} value={item.question}>
-          <AccordionTrigger>{item.question}</AccordionTrigger>
+        <AccordionItem key={item.question} value={item.question} className={styles.faqItem}>
+          <AccordionTrigger className={styles.faqTrigger}>{item.question}</AccordionTrigger>
           <AccordionContent keepMounted>
             <p>{item.answer}</p>
           </AccordionContent>

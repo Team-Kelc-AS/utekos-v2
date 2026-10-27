@@ -102,7 +102,7 @@ export default function Header() {
             <SearchIcon
               size={20}
               tone="orange"
-              className={styles.primaryIcon}
+              className={`${styles.primaryIcon} ${styles.actionIcon}`}
             />
           }
         />
@@ -116,9 +116,9 @@ export default function Header() {
                 <LineHorizontal3Icon
                   size={20}
                   tone="orange"
-                  className={styles.primaryIcon}
+                  className={`${styles.primaryIcon} ${styles.actionIcon}`}
                 />
-                <span>Meny</span>
+                <span className={styles.menuLabel}>Meny</span>
               </>
             }
             logo={

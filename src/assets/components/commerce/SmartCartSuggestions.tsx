@@ -33,7 +33,6 @@ function Suggestion({ product, pending }: { product: CartSuggestion; pending: bo
       </div>
     </div>
     <button type="button" className={styles.secondary} disabled={pending} onClick={() => { void changeCart({ action: 'add', handle: product.handle, variantId: variant.id, quantity: 1 }); }}>Legg til {product.title}</button>
-    {product.accessory && <p className={styles.offerHint}>Ved kjøp fra 999 kr får du automatisk 10 % rabatt på én tilbehørsvare når vilkårene er oppfylt.</p>}
   </li>;
 }
 
@@ -54,7 +53,6 @@ export default function SmartCartSuggestions({ cart, pending }: { cart: Cart; pe
   const codes = cart.discountCodes ?? [];
   const applied = (code: string) => codes.some(item => item.applicable && item.code.toUpperCase() === code);
   const hasComfyrobe = cart.lines.some(line => line.handle === 'comfyrobe');
-  const hasAccessory = cart.lines.some(line => products.some(product => product.accessory && product.handle === line.handle));
   return <section className={styles.smartCart} aria-label="Frakt og tilbehør">
     <div className={styles.shippingNotice} role="status">
       {shipping.free ? <p>Gratulerer, du har gratis frakt!</p> : <>
@@ -66,10 +64,6 @@ export default function SmartCartSuggestions({ cart, pending }: { cart: Cart; pe
       <p>Få gratis frakt på Comfyrobe™ med <strong>{COMFY_SHIPPING_CODE}</strong>.</p>
       <p className={styles.muted}>Kan ikke kombineres med andre rabatter.</p>
       <PromotionCode code={COMFY_SHIPPING_CODE} applied={applied(COMFY_SHIPPING_CODE)} pending={pending} />
-    </div>}
-    {hasAccessory && <div className={styles.promotion}>
-      <p><strong>Fullfør din Utekos – 10 % på tilbehør!</strong></p>
-      <p className={styles.muted}>Ved kjøp fra 999 kr får du automatisk 10 % rabatt på én tilbehørsvare når vilkårene er oppfylt. Du trenger ingen rabattkode.</p>
     </div>}
     {suggestions.length > 0 && <>
       <h3>{suggestions.some(product => product.accessory) ? 'Fullfør din Utekos' : 'Andre livsnytere har også sett på'}</h3>

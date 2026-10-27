@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
 import { KlarnaInfoPagePlacement } from "../handlehjelp/klarna/components/KlarnaInfoPagePlacementComponent";
 import { KlarnaOnSiteMessagingScript } from "../handlehjelp/klarna/components/KlarnaOnSiteMessagingScript";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://utekos.no"),

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { modelRecommendations } from "../utils/comparisonData";
-import styles from "../comparisonGuide.module.css";
+import { comparisonGuideClasses as styles } from "../comparisonGuideClasses";
 
 export function PersonaCards() {
   return (

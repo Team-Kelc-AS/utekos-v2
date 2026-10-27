@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/Accordion";
 
 import { ProductDetailLabel } from "./ProductDetailLabel";
-import { ProductReviewList } from "./ProductReviews";
+import { ProductReviewList, StoreReviewList } from "./ProductReviews";
 import { Separator } from "@/components/ui/separator";
 import { UtekosFAQ } from "./UtekosFAQ";
 import { ProductMaterialGuide } from "@/components/knowledge/RelatedContent";
@@ -93,7 +93,7 @@ export function ProductDetails({
       )}
       <div className={styles.reviewColumn}>
         <Suspense fallback={null}>
-          <ProductReviewList productId={productId} />
+          {handle === "comfyrobe" ? <StoreReviewList /> : <ProductReviewList productId={productId} />}
         </Suspense>
       </div>
       {handle === "utekos-techdown" && (

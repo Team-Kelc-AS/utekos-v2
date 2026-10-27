@@ -380,6 +380,28 @@
     #e35205,
     #cb5005
   );
+  --comfyrobe-banner-gradient-dark-to-light: linear-gradient(
+    90deg,
+    #d15400,
+    #e95c00,
+    #f96900,
+    #ff7700,
+    #ff7700,
+    #f96900,
+    #e95c00,
+    #d15400
+  );
+  --comfyrobe-banner-gradient-light-to-dark: linear-gradient(
+    90deg,
+    #ff7700,
+    #f96900,
+    #e95c00,
+    #d15400,
+    #d15400,
+    #e95c00,
+    #f96900,
+    #ff7700
+  );
   --background-gradient: linear-gradient(
     90deg,
     #001211,

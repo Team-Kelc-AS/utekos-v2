@@ -18,7 +18,7 @@ import {
   variantOptions,
   type ProductSearchParams,
 } from "@/lib/products/variants";
-import { ProductReviews } from "./ProductReviews";
+import { ProductReviews, StoreReviewSummary } from "./ProductReviews";
 import { ProductDescription } from "./ProductDescription";
 import { ProductGallery } from "./ProductGallery";
 import { VariantOptions } from "./VariantOptions";
@@ -49,7 +49,10 @@ export async function SelectedProduct({
   const variant = resolveVariant(product, params);
   if (!variant) notFound();
   const isComfyrobe = product.handle === "comfyrobe";
-  const fullWidthMobileGallery = isComfyrobe;
+  const isMikrofiberBlue = product.handle === "utekos-mikrofiber" && variant.selectedOptions.some(
+    (option) => optionParam(option.name) === "farge" && option.value === "Fjellblå",
+  );
+  const fullWidthMobileGallery = isComfyrobe || isMikrofiberBlue;
   const size = variant.selectedOptions.find(
     (option) => optionParam(option.name) === "storrelse",
   )?.value;
@@ -245,7 +248,7 @@ export async function SelectedProduct({
           )}
           <div className={styles.reviewSummary}>
             <Suspense fallback={null}>
-              <ProductReviews productId={product.id} />
+              {isComfyrobe ? <StoreReviewSummary /> : <ProductReviews productId={product.id} />}
             </Suspense>
           </div>
           <ProductDescription

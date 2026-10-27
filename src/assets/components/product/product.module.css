@@ -356,7 +356,7 @@ main[data-product-theme="comfyrobe"] .accordion > div {
 main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion-item] {
   border: 0;
   border-radius: 0.75rem;
-  background-color: var(--product-page-surface);
+  background-color: var(--product-accordion-surface);
 }
 main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion-item] > h2 {
   margin: 0;
@@ -385,6 +385,26 @@ main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion
 }
 .accordion [data-slot="accordion-item"][data-open] {
   background: transparent;
+}
+.accordion > div {
+  gap: 1.25rem;
+  border: 0;
+}
+.accordion > div > [data-tracking-accordion-item],
+.accordion > div > [data-tracking-accordion-item][data-open] {
+  border: 0;
+  border-radius: 0.5rem;
+  background-color: var(--product-accordion-surface, var(--product-page-surface, #012622));
+  background-image: var(--product-accordion-gradient, none);
+}
+.accordion > div > [data-tracking-accordion-item] + [data-tracking-accordion-item] {
+  border-top: 0;
+}
+.accordion > div > [data-tracking-accordion-item] > h2 {
+  margin: 0;
+}
+.accordion > div > [data-tracking-accordion-item] > h2 > [data-tracking-accordion-trigger] {
+  border-radius: 0.5rem;
 }
 .accordion [data-slot="accordion-header"] {
   margin: 0;
@@ -644,6 +664,9 @@ main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion
     position: absolute;
     inset: 0;
     max-height: none;
+  }
+  .reviewColumn > section[data-review-scope="store"] {
+    position: static;
   }
   .related li {
     flex-basis: calc((100% - 3rem) / 3);

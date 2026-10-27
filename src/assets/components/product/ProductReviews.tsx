@@ -2,13 +2,30 @@ import 'server-only';
 
 import Image from 'next/image';
 import { io } from 'next/dist/server/request/io';
-import { getJudgeMeReviews } from '@/lib/products/judgeme';
+import { getJudgeMeReviews, getJudgeMeStoreReviews, type JudgeMeReview } from '@/lib/products/judgeme';
 import styles from './ProductReviews.module.css';
 
 const dateFormat = new Intl.DateTimeFormat('nb-NO', { dateStyle: 'long', timeZone: 'Europe/Oslo' });
 
 function Stars({ rating }: { rating: number }) {
   return <span className={styles.stars} aria-hidden="true"><span>★★★★★</span><span className={`${styles.filledStars} bg-primary`} style={{ width: `${rating / 5 * 100}%` }}>★★★★★</span></span>;
+}
+
+function ReviewItems({ reviews, verifiedLabel }: { reviews: JudgeMeReview[]; verifiedLabel: string }) {
+  return reviews.map(review => (
+    <li key={review.id} className={styles.review}>
+      <div className={styles.reviewHeader}>
+        <strong>{review.author}</strong>
+        <span className={styles.reviewRating}><Stars rating={review.rating} /><span className="sr-only">{review.rating} av 5 stjerner</span></span>
+      </div>
+      <div className={styles.meta}>
+        {review.verified && <span>{verifiedLabel}</span>}
+        {review.date && <time dateTime={review.date}>{dateFormat.format(new Date(review.date))}</time>}
+      </div>
+      {review.title && <h3 className={styles.title}>{review.title}</h3>}
+      {review.body && <p className={styles.body}>{review.body}</p>}
+    </li>
+  ));
 }
 
 export async function ProductReviews({ productId }: { productId: string }) {
@@ -40,21 +57,42 @@ export async function ProductReviewList({ productId }: { productId: string }) {
           <h2 className={styles.heading}>Kundeomtaler</h2>
           {data.reviews.length < data.count && <p className={styles.partial}>Viser {data.reviews.length} av {data.count} omtaler.</p>}
           <ul className={styles.list} tabIndex={0} aria-label="Les kundeomtalene">
-            {data.reviews.map(review => (
-              <li key={review.id} className={styles.review}>
-                <div className={styles.reviewHeader}>
-                  <strong>{review.author}</strong>
-                  <span className={styles.reviewRating}><Stars rating={review.rating} /><span className="sr-only">{review.rating} av 5 stjerner</span></span>
-                </div>
-                <div className={styles.meta}>
-                  {review.verified && <span>Bekreftet kjøp</span>}
-                  {review.date && <time dateTime={review.date}>{dateFormat.format(new Date(review.date))}</time>}
-                </div>
-                {review.title && <h3 className={styles.title}>{review.title}</h3>}
-                {review.body && <p className={styles.body}>{review.body}</p>}
-              </li>
-            ))}
+            <ReviewItems reviews={data.reviews} verifiedLabel="Bekreftet kjøp" />
           </ul>
+    </section>
+  );
+}
+
+export async function StoreReviewSummary() {
+  await io();
+  const data = await getJudgeMeStoreReviews();
+  if (!data || data.reviews.length === 0) return null;
+
+  return (
+    <section className={styles.panel} aria-label="Butikkomtaler fra Judge.me">
+      <div className={styles.overview}>
+        <div>
+          <strong>Kundeomtaler</strong>
+          <p className={styles.rating}>{data.count} {data.count === 1 ? 'butikkomtale' : 'butikkomtaler'} · <a href="#butikkomtaler" className={styles.storeReviewLink}>Les omtalene</a></p>
+        </div>
+        <Image src="/logo-judgme.svg" alt="Judge.me" width={1187} height={224} className={styles.logo} />
+      </div>
+    </section>
+  );
+}
+
+export async function StoreReviewList() {
+  await io();
+  const data = await getJudgeMeStoreReviews();
+  if (!data || data.reviews.length === 0) return null;
+
+  return (
+    <section id="butikkomtaler" className={`${styles.panel} ${styles.reviewPanel}`} aria-label="Butikkomtaler om Utekos fra Judge.me" data-journey-section="reviews" data-review-scope="store">
+      <h2 className={styles.heading}>Kundeomtaler</h2>
+      {data.reviews.length < data.count && <p className={styles.partial}>Viser {data.reviews.length} av {data.count} omtaler.</p>}
+      <ul className={styles.list} tabIndex={0} aria-label="Les butikkomtalene">
+        <ReviewItems reviews={data.reviews} verifiedLabel="Bekreftet kunde" />
+      </ul>
     </section>
   );
 }

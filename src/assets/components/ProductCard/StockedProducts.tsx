@@ -1,17 +1,20 @@
-import 'server-only';
+import "server-only";
 
-import type { ReactNode } from 'react';
-import Link from 'next/link';
-import { unstable_rethrow } from 'next/dist/client/components/unstable-rethrow';
-import { io } from 'next/dist/server/request/io';
-import { ProductCard } from '@/components/ProductCard/ProductCard';
-import { DeferredProductCarousel as ProductCarousel } from '@/components/ProductCard/DeferredProductCarousel';
-import { getProductCards, type ProductCardData } from '@/lib/shopify/getProductCards';
-import { googleSansFlex } from '@/lib/fonts';
-import { homeProducts } from '@/lib/catalog/homeProducts';
-import { productVariantVideo } from '@/lib/products/variantVideos';
-import stapperImage from '../../../../public/images/kunnskap/stapper_45.webp';
-import styles from '@/components/ProductCard/ProductCarousel.module.css';
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { unstable_rethrow } from "next/dist/client/components/unstable-rethrow";
+import { io } from "next/dist/server/request/io";
+import { ProductCard } from "@/components/ProductCard/ProductCard";
+import { DeferredProductCarousel as ProductCarousel } from "@/components/ProductCard/DeferredProductCarousel";
+import {
+  getProductCards,
+  type ProductCardData,
+} from "@/lib/shopify/getProductCards";
+import { googleSansFlex } from "@/lib/fonts";
+import { homeProducts } from "@/lib/catalog/homeProducts";
+import { productVariantVideo } from "@/lib/products/variantVideos";
+import stapperImage from "@public/images/kunnskap/stapper_45.webp";
+import styles from "@/components/ProductCard/ProductCarousel.module.css";
 
 const sectionClassName = `${googleSansFlex.variable} ${styles.section} font-sans`;
 
@@ -25,31 +28,89 @@ type StockedProductsProps = {
   introduction?: ReactNode;
 };
 
-export async function StockedProducts({ title, headingId, listId, route, excludeProductHandle, includeStapper = false, introduction }: StockedProductsProps) {
+export async function StockedProducts({
+  title,
+  headingId,
+  listId,
+  route,
+  excludeProductHandle,
+  includeStapper = false,
+  introduction,
+}: StockedProductsProps) {
   // The seconds cache is request-time content. Make that boundary explicit to
   // avoid Next 16.3.8's cache-warming miss during the final prerender pass.
   // io() preserves prefetching and does not change inventory cache lifetimes.
   await io();
   let cards: ProductCardData[];
   try {
-    cards = homeProducts(await getProductCards(), excludeProductHandle, includeStapper).map(card => card.product.handle === 'utekos-stapper'
-      ? { ...card, variant: { ...card.variant, image: { url: stapperImage.src, width: stapperImage.width, height: stapperImage.height, altText: 'Svart Utekos Stapper™ kompresjonsbag ved en hytte om vinteren' } } }
-      : card);
-  }
-  catch (error) {
+    cards = homeProducts(
+      await getProductCards(),
+      excludeProductHandle,
+      includeStapper,
+    ).map((card) =>
+      card.product.handle === "utekos-stapper"
+        ? {
+            ...card,
+            variant: {
+              ...card.variant,
+              image: {
+                url: stapperImage.src,
+                width: stapperImage.width,
+                height: stapperImage.height,
+                altText:
+                  "Svart Utekos Stapper™ kompresjonsbag ved en hytte om vinteren",
+              },
+            },
+          }
+        : card,
+    );
+  } catch (error) {
     unstable_rethrow(error);
-    console.error('Product cards unavailable', error);
-    return <section className={sectionClassName} aria-labelledby={headingId} data-tracking-route={route} data-tracking-list={listId} data-tracking-list-name={title}>
-      <h2 id={headingId}>{title}</h2>
-      {introduction}
-      <p className={styles.message}>Produktene kunne ikke lastes akkurat nå. <Link href="/produkter">Se alle produkter</Link></p>
-    </section>;
+    console.error("Product cards unavailable", error);
+    return (
+      <section
+        className={sectionClassName}
+        aria-labelledby={headingId}
+        data-tracking-route={route}
+        data-tracking-list={listId}
+        data-tracking-list-name={title}
+      >
+        <h2 id={headingId}>{title}</h2>
+        {introduction}
+        <p className={styles.message}>
+          Produktene kunne ikke lastes akkurat nå.{" "}
+          <Link href="/produkter">Se alle produkter</Link>
+        </p>
+      </section>
+    );
   }
 
-  return <section className={sectionClassName} aria-labelledby={headingId} data-tracking-route={route} data-tracking-list={listId} data-tracking-list-name={title}>
-    <h2 id={headingId}>{title}</h2>
-    {introduction}
-    {cards.length ? <ProductCarousel>{cards.map(card => <ProductCard key={card.variant.id} {...card} video={productVariantVideo(card.product.handle, card.variant)} />)}</ProductCarousel>
-      : <p className={styles.message}>Ingen produktvarianter er på lager akkurat nå. <Link href="/produkter">Se alle produkter</Link></p>}
-  </section>;
+  return (
+    <section
+      className={sectionClassName}
+      aria-labelledby={headingId}
+      data-tracking-route={route}
+      data-tracking-list={listId}
+      data-tracking-list-name={title}
+    >
+      <h2 id={headingId}>{title}</h2>
+      {introduction}
+      {cards.length ? (
+        <ProductCarousel>
+          {cards.map((card) => (
+            <ProductCard
+              key={card.variant.id}
+              {...card}
+              video={productVariantVideo(card.product.handle, card.variant)}
+            />
+          ))}
+        </ProductCarousel>
+      ) : (
+        <p className={styles.message}>
+          Ingen produktvarianter er på lager akkurat nå.{" "}
+          <Link href="/produkter">Se alle produkter</Link>
+        </p>
+      )}
+    </section>
+  );
 }

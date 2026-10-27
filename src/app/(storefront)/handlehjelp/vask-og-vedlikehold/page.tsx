@@ -1,5 +1,15 @@
 import Content from "./content.mdx";
 import { typesetComponents } from "@/components/mdx/typeset";
+import type { ReactNode } from "react";
+
+function MaintenanceTypeset({ children }: { children?: ReactNode }) {
+  return <div className="typeset typeset-docs w-full max-w-none">{children}</div>;
+}
+
+const maintenanceComponents = {
+  ...typesetComponents,
+  wrapper: MaintenanceTypeset,
+};
 
 export const metadata = {
   title: "Vedlikehold av Utekos | Slik bevarer du varmen i mange år",
@@ -8,5 +18,5 @@ export const metadata = {
 };
 
 export default function MaintenancePage() {
-  return <Content components={typesetComponents} />;
+  return <Content components={maintenanceComponents} />;
 }

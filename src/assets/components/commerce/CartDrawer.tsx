@@ -2,7 +2,6 @@
 
 import {
   changeCart,
-  checkout,
   closeCart,
   refreshCart,
   useCartState,
@@ -11,12 +10,12 @@ import { useEffect, useRef } from "react";
 
 import { DeleteIcon } from "@/components/utekos-icons/DeleteIcon";
 import Dialog from "./Dialog";
+import CartFooter from "./CartFooter";
 import SmartCartSuggestions from "./SmartCartSuggestions";
 import Image from "next/image";
 import Link from "next/link";
 import { MinusIcon } from "@/components/utekos-icons/MinusIcon";
 import { PlusIcon } from "@/components/utekos-icons/PlusIcon";
-import { KlarnaCartExpressCheckout } from "@/assets/components/klarna/KlarnaProductExpressCheckout";
 import { formatMoney } from "@/lib/products/money";
 import { reportCartView } from "@/lib/cart/tracking";
 import styles from "./commerce.module.css";
@@ -33,8 +32,8 @@ export default function CartDrawer() {
     return () => cancelAnimationFrame(frame);
   }, [cart]);
   return (
-    <Dialog title="Handlekurven din" onClose={closeCart} drawer>
-      <div aria-live="polite">
+    <Dialog title="Handlekurven din" onClose={closeCart} drawer className={styles.cartDrawer}>
+      <div aria-live="polite" className={styles.cartNotices}>
         {error && (
           <p role="alert" className={styles.message}>
             {error}{" "}
@@ -68,114 +67,99 @@ export default function CartDrawer() {
         </div>
       ) : (
         <>
-          <ul className={styles.cartLines}>
-            {cart.lines.map((line) => (
-              <li key={line.id} className={styles.cartLine}>
-                {line.image && (
-                  <Image
-                    src={line.image.url}
-                    alt={line.image.altText || line.title}
-                    width={line.image.width}
-                    height={line.image.height}
-                    sizes="80px"
-                    className={styles.lineImage}
-                  />
-                )}
-                <div>
-                  <Link
-                    href={`/produkter/${line.handle}?variant=${encodeURIComponent(line.variantId)}`}
-                    onClick={closeCart}
-                  >
-                    {line.title}
-                  </Link>
-                  <p className={styles.muted}>{line.variantTitle}</p>
-                  <strong>{formatMoney(line.total)}</strong>
-                  {!line.available && <p>Ikke tilgjengelig</p>}
-                  <div className={styles.lineActions}>
-                    <div
-                      className={styles.quantityControl}
-                      role="group"
-                      aria-label={`Antall ${line.title}, ${line.variantTitle}`}
-                      aria-busy={pending}
+          <div className={styles.cartBody}>
+            <ul className={styles.cartLines}>
+              {cart.lines.map((line) => (
+                <li key={line.id} className={styles.cartLine}>
+                  {line.image && (
+                    <Image
+                      src={line.image.url}
+                      alt={line.image.altText || line.title}
+                      width={line.image.width}
+                      height={line.image.height}
+                      sizes="80px"
+                      className={styles.lineImage}
+                    />
+                  )}
+                  <div>
+                    <Link
+                      href={`/produkter/${line.handle}?variant=${encodeURIComponent(line.variantId)}`}
+                      onClick={closeCart}
                     >
+                      {line.title}
+                    </Link>
+                    <p className={styles.muted}>{line.variantTitle}</p>
+                    <strong>{formatMoney(line.total)}</strong>
+                    {!line.available && <p>Ikke tilgjengelig</p>}
+                    <div className={styles.lineActions}>
+                      <div
+                        className={styles.quantityControl}
+                        role="group"
+                        aria-label={`Antall ${line.title}, ${line.variantTitle}`}
+                        aria-busy={pending}
+                      >
+                        <button
+                          type="button"
+                          disabled={pending || line.quantity < 1}
+                          aria-label={`Reduser antall for ${line.title}`}
+                          onClick={() => {
+                            void changeCart(
+                              line.quantity === 1
+                                ? { action: "remove", lineId: line.id }
+                                : {
+                                    action: "update",
+                                    lineId: line.id,
+                                    quantity: line.quantity - 1,
+                                  },
+                            );
+                          }}
+                        >
+                          <MinusIcon tone="orange" size={16} />
+                        </button>
+                        <span
+                          className={styles.quantityValue}
+                          aria-live="polite"
+                          aria-atomic="true"
+                        >
+                          <span className="sr-only">Antall: </span>
+                          {line.quantity}
+                        </span>
+                        <button
+                          type="button"
+                          disabled={pending || line.quantity >= 99}
+                          aria-label={`Øk antall for ${line.title}`}
+                          onClick={() => {
+                            void changeCart({
+                              action: "update",
+                              lineId: line.id,
+                              quantity: line.quantity + 1,
+                            });
+                          }}
+                        >
+                          <PlusIcon tone="orange" size={16} />
+                        </button>
+                      </div>
                       <button
                         type="button"
-                        disabled={pending || line.quantity < 1}
-                        aria-label={`Reduser antall for ${line.title}`}
+                        className={styles.removeLine}
+                        disabled={pending}
                         onClick={() => {
-                          void changeCart(
-                            line.quantity === 1
-                              ? { action: "remove", lineId: line.id }
-                              : {
-                                  action: "update",
-                                  lineId: line.id,
-                                  quantity: line.quantity - 1,
-                                },
-                          );
+                          void changeCart({ action: "remove", lineId: line.id });
                         }}
+                        aria-label={`Fjern ${line.title}`}
                       >
-                        <MinusIcon tone="orange" size={16} />
-                      </button>
-                      <span
-                        className={styles.quantityValue}
-                        aria-live="polite"
-                        aria-atomic="true"
-                      >
-                        <span className="sr-only">Antall: </span>
-                        {line.quantity}
-                      </span>
-                      <button
-                        type="button"
-                        disabled={pending || line.quantity >= 99}
-                        aria-label={`Øk antall for ${line.title}`}
-                        onClick={() => {
-                          void changeCart({
-                            action: "update",
-                            lineId: line.id,
-                            quantity: line.quantity + 1,
-                          });
-                        }}
-                      >
-                        <PlusIcon tone="orange" size={16} />
+                        <DeleteIcon tone="orange" size={18} />
                       </button>
                     </div>
-                    <button
-                      type="button"
-                      className={styles.removeLine}
-                      disabled={pending}
-                      onClick={() => {
-                        void changeCart({ action: "remove", lineId: line.id });
-                      }}
-                      aria-label={`Fjern ${line.title}`}
-                    >
-                      <DeleteIcon tone="orange" size={18} />
-                    </button>
                   </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <div className={styles.cartTotal}>
-            <span>Sum varer</span>
-            <strong>{formatMoney(cart.subtotal)}</strong>
+                </li>
+              ))}
+            </ul>
           </div>
-          <button
-            className={styles.primary}
-            disabled={pending || cart.lines.some((l) => !l.available)}
-            onClick={() => {
-              void checkout();
-            }}
-          >
-            {pending ? "Oppdaterer …" : "Til kassen"}
-          </button>
-          <div className="mt-3">
-            {cart.requiresStandardCheckout ? <p className={styles.muted}>Bruk «Til kassen» for å beholde rabatten og fraktfordelene dine.</p> :
-              <KlarnaCartExpressCheckout disabled={cart.lines.some((line) => !line.available)} />}
+          <div className={styles.cartSuggestions}>
+            <SmartCartSuggestions cart={cart} pending={pending} />
           </div>
-          <button className={styles.secondary} onClick={closeCart}>
-            Fortsett å handle
-          </button>
-          <SmartCartSuggestions cart={cart} pending={pending} />
+          <CartFooter cart={cart} pending={pending} />
         </>
       )}
     </Dialog>

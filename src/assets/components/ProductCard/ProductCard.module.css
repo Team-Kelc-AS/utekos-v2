@@ -26,6 +26,16 @@
 
 .card a:focus-visible { outline: 2px solid var(--card-foreground); outline-offset: -3px; }
 
+.card [data-slot='card-footer'] > [data-slot='button']:not(:disabled) {
+  background-color: #ff7700;
+  background-image: var(--comfyrobe-banner-gradient-light-to-dark);
+}
+
+[aria-roledescription='slide']:nth-child(odd) .card [data-slot='card-footer'] > [data-slot='button']:not(:disabled) {
+  background-color: #d15400;
+  background-image: var(--comfyrobe-banner-gradient-dark-to-light);
+}
+
 @media (min-width: 1280px) {
   .card:has([data-card-flipped='true']) [data-slot='card-header'] {
     margin-top: 0;

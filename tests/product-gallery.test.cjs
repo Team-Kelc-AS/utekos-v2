@@ -113,7 +113,8 @@ const mikrofiberGallery = loadTypeScript('lib/products/gallery.ts', {
 const rejectedImage = '/images/kunnskap/morgenro_ved_fjorden.webp';
 const vargnattImages = ['mikrofiber_vargnatt_45_jarle_2.webp', 'mikrofiber_vargnatt_45_2.webp', 'mikrofiber_vargnatt_45_3.webp', 'Mikrofiber_Vargnatt_1440x1800_Full2.webp'].map(file => `/images/kunnskap/${file}`);
 
-const blueStudio = [1, 2, 3, 4].map(n => `/images/kunnskap/Soveposejakke_Blue${n}.webp`);
+const blueReplacements = ['Bak', 'Parkas'].map(view => `/images/products/Utekos_Fjellbla_1080x1440_${view}.webp`);
+const blueStudio = ['/images/kunnskap/Soveposejakke_Blue1.webp', ...blueReplacements, '/images/kunnskap/Soveposejakke_Blue4.webp'];
 const blackStudio = [1, 2, 3, 4].map(n => `/images/kunnskap/Soveposejakke_Black${n}.webp`);
 
 test('Mikrofiber M and L use the nine Fjellblå mobile images while other galleries remain unchanged', () => {
@@ -127,6 +128,7 @@ test('Mikrofiber M and L use the nine Fjellblå mobile images while other galler
     assert.equal(gallery.mobile.length, 9);
     assert.deepEqual(Array.from(gallery.desktop.slice(0, 4), image => image.url), blueStudio);
     assert.ok(gallery.desktop[4].url.includes("Mikrofiber_44.webp"));
+    assert.deepEqual(Array.from(gallery.desktop.slice(1, 3), image => image.url), blueReplacements);
     assert.ok(gallery.mobile.every(image => image.width === 1200 && image.height === 1600));
     assert.ok([...gallery.desktop, ...gallery.mobile].every(image => image.url !== rejectedImage));
     const darkVariant = variant('Vargnatt', portrait);

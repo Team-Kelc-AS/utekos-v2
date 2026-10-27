@@ -21,10 +21,14 @@ export type JudgeMeReviews = {
   reviews: JudgeMeReview[];
 };
 
+export type JudgeMeStoreReviews = Pick<JudgeMeReviews, 'count' | 'reviews'>;
+
 const responseSchema = z.object({
   product_external_id: z.union([z.string(), z.number()]).transform(String),
   widget: z.string().max(2_000_000),
 });
+
+const storeResponseSchema = z.object({ reviews_tab: z.string().max(2_000_000) });
 
 /** Extract only public display fields; never inject the provider's HTML or scripts. */
 export function parseReviewWidget(input: unknown, externalId: string): JudgeMeReviews {
@@ -53,6 +57,34 @@ export function parseReviewWidget(input: unknown, externalId: string): JudgeMeRe
     };
   });
   return { average, count, reviews };
+}
+
+/** The public shop-reviews tab contains only published store feedback. */
+export function parseStoreReviewWidget(input: unknown): JudgeMeStoreReviews {
+  const response = storeResponseSchema.parse(input);
+  const $ = load(response.reviews_tab);
+  $('script, style, template').remove();
+  const header = $('.jdgm-revs-tab__content-header');
+  if (header.length !== 1) throw new Error('judgeme_store_widget_missing');
+  const count = z.coerce.number().int().nonnegative().parse(header.attr('data-number-of-shop-reviews'));
+  const reviews = $('.jdgm-revs-tab__content .jdgm-rev').toArray().map(element => {
+    const review = $(element);
+    const body = review.find('.jdgm-rev__body').clone();
+    body.find('br').replaceWith('\n');
+    body.find('p').append('\n');
+    const timestamp = review.find('.jdgm-rev__timestamp').attr('data-content');
+    const date = timestamp?.replace(' ', 'T').replace(/ UTC$/, 'Z');
+    return {
+      id: z.string().min(1).parse(review.attr('data-review-id')),
+      author: review.find('.jdgm-rev__author').text().trim() || 'Anonym',
+      rating: z.coerce.number().int().min(1).max(5).parse(review.find('.jdgm-rev__rating').attr('data-score')),
+      title: review.find('.jdgm-rev__title').text().trim(),
+      body: body.text().trim(),
+      date: date && Number.isFinite(Date.parse(date)) ? new Date(date).toISOString() : null,
+      verified: review.attr('data-verified-buyer') === 'true',
+    };
+  });
+  return { count, reviews };
 }
 
 async function readWidget(domain: string, externalId: string, token: string, perPage: number, page: number) {
@@ -110,6 +142,39 @@ export async function getJudgeMeReviews(productId: string): Promise<JudgeMeRevie
     return { average: result.average, count: result.count, reviews: [...reviews.values()] };
   } catch {
     // Reviews must not block shopping. Do not substitute historical counts or log tokens.
+    cacheLife('seconds');
+    return null;
+  }
+}
+
+export async function getJudgeMeStoreReviews(): Promise<JudgeMeStoreReviews | null> {
+  'use cache';
+  cacheLife({ stale: 300, revalidate: 300, expire: 3600 });
+  cacheTag('judgeme:store');
+  const token = process.env.JUDGE_ME_PUBLIC_API_TOKEN;
+  const domain = process.env.SHOPIFY_STORE_DOMAIN?.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  if (!token || !domain) { cacheLife('seconds'); return null; }
+
+  try {
+    let result: JudgeMeStoreReviews | undefined;
+    const reviews = new Map<string, JudgeMeReview>();
+    for (let page = 1; page <= 10; page++) {
+      const url = new URL('https://api.judge.me/api/v1/widgets/reviews_tab');
+      url.search = new URLSearchParams({ shop_domain: domain, review_type: 'shop-reviews', per_page: '100', page: String(page) }).toString();
+      const response = await fetch(url, {
+        headers: { 'X-Api-Token': token },
+        cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(5000),
+      });
+      if (!response.ok) throw new Error('judgeme_store_unavailable');
+      const data = parseStoreReviewWidget(await response.json());
+      result ??= data;
+      if (data.count !== result.count) throw new Error('judgeme_store_changed_during_pagination');
+      const previousSize = reviews.size;
+      for (const review of data.reviews) reviews.set(review.id, review);
+      if (reviews.size >= result.count || reviews.size === previousSize) break;
+    }
+    return result ? { count: result.count, reviews: [...reviews.values()] } : null;
+  } catch {
     cacheLife('seconds');
     return null;
   }

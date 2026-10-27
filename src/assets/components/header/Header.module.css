@@ -23,8 +23,8 @@
   gap: 0.75rem;
   min-height: 44px;
   padding: 0.625rem 1rem;
-  background-color: #cb5005;
-  background-image: var(--comfyrobe-banner-gradient);
+  background-color: #ff7700;
+  background-image: var(--comfyrobe-banner-gradient-light-to-dark);
   color: #f0eee9;
   font-size: 0.875rem;
   text-align: center;
@@ -396,6 +396,31 @@
   padding: 12px;
   background: #012622;
   color: #f0eee9;
+}
+@media (max-width: 767px) {
+  .container {
+    flex-wrap: nowrap;
+    column-gap: 0.25rem;
+  }
+  .headerSearchField .control,
+  .actions > .control,
+  .actions > div > button {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .actions > div {
+    display: flex;
+    align-items: center;
+  }
+  .actionIcon {
+    width: 24px;
+    height: 24px;
+  }
+  .menuLabel {
+    display: none;
+  }
 }
 @media (min-width: 640px) {
   .container {

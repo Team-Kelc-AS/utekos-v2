@@ -382,7 +382,7 @@ inspirert av isolerte ytterklær og merkets sirkulære logomerke.
 
 | Brødtekst       | 19 px desktop / 18 px mobil     |
 | --------------- | ------------------------------- |
-| Linjeavstand    | 1,6                             |
+| Linjeavstand    | 1,4                             |
 | Tekstbredde     | Omtrent 65ch                    |
 | Bokstavavstand  | Normal (0 ekstra)               |
 | H2              | 30 / 26 px                      |
@@ -416,7 +416,7 @@ inspirert av isolerte ytterklær og merkets sirkulære logomerke.
 | Parameter       | Mobil               | Desktop   |
 | --------------- | ------------------- | --------- |
 | Skriftstørrelse | 18 px               | 19 px     |
-| Linjeavstand    | 1,6                 | 1,6       |
+| Linjeavstand    | 1,45                | 1,45      |
 | Sidepadding     | 20 px               | Responsiv |
 | Tekstbredde     | Tilgjengelig bredde | Ca. 60ch  |
 | Bokstavavstand  | Normal              | Normal    |
