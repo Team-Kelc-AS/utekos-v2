@@ -240,6 +240,13 @@
 .page [data-slot="accordion-body"] :is(ul, ol) {
   margin-block: 0.5rem;
 }
+.sectionDivider {
+  --border: color-mix(in srgb, var(--foreground) 20%, transparent);
+  margin-block: clamp(2.5rem, 5vw, 3.5rem);
+}
+.page [data-slot="separator"] + section > h2 {
+  margin-block-start: clamp(2rem, 4vw, 3rem);
+}
 .page section[id] {
   scroll-margin-block-start: 2rem;
 }

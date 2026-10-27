@@ -1,5 +1,7 @@
 {/* page.mdx */}
 import { SizeGuideGrid, SizeOptionCard, GuideNotice, GuideInfoCard, GuideStep } from './SizeGuideCards';
+import { Separator } from '@/components/ui/separator';
+import styles from './sizeGuide.module.css';
 
 # Størrelsesguide
 
@@ -81,7 +83,7 @@ Utekos TechDown™ er designet med en normal og balansert passform over skuldre,
   </GuideStep>
 </SizeGuideGrid>
 
----
+<Separator className={styles.sectionDivider} />
 
 <section id="tech-down-measurements" aria-labelledby="techdown--plaggmål-i-centimeter" className="scroll-mt-28">
 <span id="tech-down-measurements-caption" />
@@ -162,6 +164,8 @@ Utekos TechDown™ er designet med en normal og balansert passform over skuldre,
 </section>
 </section>
 
+<Separator className={styles.sectionDivider} />
+
 <section id="mikrofiber" className="scroll-mt-28">
 <span id="utekos-size-guide" />
 <span id="utekos-size-guide-heading" />
@@ -236,6 +240,8 @@ For våre Dun- og Mikrofiber-modeller er størrelsesspranget mellom Medium og La
 </section>
 </section>
 
+<Separator className={styles.sectionDivider} />
+
 <section id="comfyrobe" className="scroll-mt-28">
 <span id="comfyrobe-size-guide" />
 <span id="comfyrobe-size-guide-heading" />
@@ -304,6 +310,8 @@ Comfyrobe™ har en rektangulær, unisex og bevisst romslig passform, med god pl
 </section>
 </section>
 
+<Separator className={styles.sectionDivider} />
+
 <section id="storrelsesbytte" className="scroll-mt-28">
 <span id="storrelsesbytte-heading" />
 
@@ -337,6 +345,8 @@ Ble det feil størrelse? Vi ordner og betaler returfrakten slik at du kostnadsfr
 
 </GuideInfoCard>
 </section>
+
+<Separator className={styles.sectionDivider} />
 
 <section id="size-guide-cta" className="scroll-mt-28">
 <span id="size-guide-cta-heading" />
