@@ -2,7 +2,45 @@
 .page {
   --guide-background: #012a2e;
   --guide-card: #18546a;
-  --guide-notice: #f24405;
+  --guide-card-gradient: linear-gradient(
+    90deg,
+    #001211,
+    #001a18,
+    #001f1c,
+    #001f1c,
+    #001a18,
+    #001211
+  );
+  --guide-table-action-gradient: linear-gradient(
+    90deg,
+    #001211,
+    #021715,
+    #001a18,
+    #031f1d,
+    #001a18,
+    #021715,
+    #001211
+  );
+  --guide-row-gradient-odd: linear-gradient(
+    90deg,
+    #001211,
+    #010b0a,
+    #001a18,
+    #001f1c,
+    #001a18,
+    #010b0a,
+    #001211
+  );
+  --guide-row-gradient-even: linear-gradient(
+    135deg,
+    #001a18,
+    #012622,
+    #052b27,
+    #0b302c,
+    #052b27,
+    #012622,
+    #001a18
+  );
   --knowledge-ink: #fff;
   --knowledge-ink-muted: #fff;
   --knowledge-link: #fff;
@@ -11,7 +49,8 @@
   --primary: var(--guide-background);
   flex: 1;
   padding: 2rem 1rem 4rem;
-  background: var(--guide-background);
+  background-color: #001211;
+  background-image: var(--background-gradient);
   color: #fff;
 }
 
@@ -20,7 +59,6 @@
   gap: 1.25rem;
   min-width: 0;
   border-radius: 2rem;
-  background: var(--guide-card);
   color: #fff;
   font-size: inherit;
   box-shadow: none;
@@ -85,9 +123,10 @@
 .page .sizeFooter {
   display: block;
   padding: 0;
-  border: 0;
+  border: 0.5px solid color-mix(in srgb, var(--foreground) 70%, transparent);
   border-radius: 1rem; /* Avrundet selve knappen litt */
-  background: #113d4d; /* Mørkere farge for å se mer ut som en knapp */
+  background-color: #001211;
+  background-image: var(--guide-table-action-gradient);
   margin-top: auto; /* Skyv ned i bunnen */
   margin-inline: -0.5rem; /* La knappen strekke seg litt utover paddingen for design */
   margin-bottom: -0.5rem;
@@ -106,7 +145,7 @@
 }
 .sizeFooter a:hover {
   text-decoration: none;
-  background-color: #0e303d; /* Hover-effekt */
+  background-color: #ffffff0a;
 }
 
 .notice {
@@ -117,7 +156,8 @@
   margin-block: 2rem;
   padding: 1.5rem;
   border-radius: 1.5rem;
-  background: var(--guide-notice);
+  background-color: #cb5005;
+  background-image: var(--comfyrobe-banner-gradient);
   color: #fff;
   font-size: 1.25rem; /* Justert litt ned for bedre flyt på mobil */
   line-height: 1.5;
@@ -156,10 +196,31 @@
 
 /* Scope the existing MDX tables and FAQ card to this page's palette. */
 .page [data-slot="card"] {
-  --card: var(--guide-card);
+  --card: #001211;
   --card-foreground: #fff;
+  background-color: #001211;
+  background-image: var(--guide-card-gradient);
   border-radius: 1.5rem; /* Litt mindre radius på FAQ-kortet for variasjon */
   box-shadow: none;
+}
+.page nav[data-bordered="false"] {
+  background-color: #001211;
+  background-image: var(--guide-card-gradient);
+}
+.page section[id$="measurements"] table thead {
+  background-color: #001211;
+  background-image: var(--guide-table-action-gradient);
+}
+.page section[id$="measurements"] table thead th {
+  background: transparent;
+}
+.page section[id$="measurements"] table tbody tr:nth-child(odd) {
+  background-color: #001211;
+  background-image: var(--guide-row-gradient-odd);
+}
+.page section[id$="measurements"] table tbody tr:nth-child(even) {
+  background-color: #001a18;
+  background-image: var(--guide-row-gradient-even);
 }
 .page [data-slot="accordion-trigger"] {
   font-weight: 800;

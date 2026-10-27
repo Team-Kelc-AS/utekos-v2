@@ -380,6 +380,16 @@
     #e35205,
     #cb5005
   );
+  --background-gradient: linear-gradient(
+    90deg,
+    #001211,
+    #001a18,
+    #001f1c,
+    #012622,
+    #001f1c,
+    #001a18,
+    #001211
+  );
   --font-sans: var(--font-google-sans-flex);
   --font-google-sans: var(--font-google-sans-flex);
   --radius: 0.625rem;
@@ -442,8 +452,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #001211;
+  --foreground: #f0eee9;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -458,6 +468,7 @@
 
   body {
     @apply font-sans bg-background text-foreground;
+    background-image: var(--background-gradient);
     font-weight: 500;
   }
   html {
@@ -465,6 +476,11 @@
     font-optical-sizing: none;
     font-variation-settings: "opsz" 120;
   }
+}
+
+body:has(> main[data-homepage]) > header {
+  background-color: var(--background);
+  background-image: var(--background-gradient);
 }
 
 /* Breadcrumbs follow their surface, including the fixed light catalog pages. */
