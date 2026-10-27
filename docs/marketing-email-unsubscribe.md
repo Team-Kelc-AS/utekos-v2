@@ -27,9 +27,24 @@ Future Shopify imports must preserve Resend opt-outs. This route does not modify
 Shopify marketing consent. A Resend `unsubscribed:false` value is a suppression
 check, not independent evidence of consent.
 
-Validation: 10 unit tests, focused ESLint and full TypeScript check passed.
-Production GET, one-click POST and persisted contact state must be verified before
-the campaign is released. Creating this route never starts a campaign.
+Validation on 2026-10-27: 10 TypeScript unit tests, four runner tests, focused
+ESLint and full TypeScript check passed. Production GET returned confirmation
+without changing subscription state. One-click POST and repeated POST returned
+200 and empty bodies; a provider read-back confirmed the isolated test contact
+was unsubscribed. A separate full-content test was delivered to a Resend test
+address, then unsubscribed successfully. All 15 campaign images returned image
+responses. No campaign emails were sent to customers during preparation.
+
+`scripts/marketing-campaign.py` defaults to dry-run. Prepared manifests and receipt
+logs live in the ignored `.env-campaign-state` directory, with restricted local
+permissions. Both customer groups remain `HOLD`; no future delivery is scheduled.
+Sending requires an explicit `--send` argument and a time-bounded release for the
+selected group in `release.json`, after the user supplies a delivery time.
+The runner validates reviewed manifest hashes, excludes internal domains,
+checks current subscription state, locks concurrent delivery, writes pending
+state before each API call, and durably records accepted message IDs. A pending
+request older than 23 hours requires reconciliation, never an automatic resend.
+Do not commit recipient manifests, credentials or receipt logs.
 
 Sources:
 - https://resend.com/pricing
