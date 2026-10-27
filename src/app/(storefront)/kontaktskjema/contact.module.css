@@ -1,5 +1,6 @@
 .page {
-  background: #001a18;
+  background-color: #001211;
+  background-image: var(--background-gradient);
   color: #f0eee9;
   font-family: var(--font-google-sans-flex), sans-serif;
   font-weight: 500;
