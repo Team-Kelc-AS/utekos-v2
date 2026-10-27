@@ -2,6 +2,7 @@ import 'server-only';
 import type { ShopifyProduct, ProductVariant, ProductImage } from '@/lib/shopify/product-types';
 import { PRODUCT_GALLERY_IMAGE_OVERRIDES } from './gallery/productGalleryImageOverrides';
 import { COMFYROBE_MOBILE_GALLERY_IMAGES } from './gallery/comfyrobeProductGalleryImages';
+import { FJELLBLA_MOBILE_GALLERY_IMAGES } from './gallery/fjellblaMobileGalleryImages';
 import { TECHDOWN_MOBILE_GALLERY_IMAGES } from './gallery/techdown/productGalleryImages';
 import { MICROFIBER_MOBILE_GALLERY_IMAGES, MICROFIBER_VARGNATT_DESKTOP_GALLERY_IMAGES, MICROFIBER_BLACK_STUDIO_IMAGES } from './gallery/mikrofiber/mikrofiberProductGalleryImages';
 import { SVALE_MOBILE_GALLERY_IMAGES } from './gallery/svale/svaleProductGalleryImages';
@@ -10,8 +11,8 @@ import { VARGNATT_FULL_IMAGE } from './gallery/vargnattFullImage';
 import { usesDesktopPortraitFrame } from './gallery/desktopPortraitFrame';
 const ASPECT_RATIO_TOLERANCE = 0.015;
 const reportedImages = new Set<string>();
-function originalImages(images: ProductImage[], viewport: 'desktop' | 'mobile', handle: string) {
-  const [width, height] = viewport === 'mobile' ? (handle === 'comfyrobe' ? [3, 4] : [2, 3]) : [4, 5];
+function originalImages(images: ProductImage[], viewport: 'desktop' | 'mobile', handle: string, ratio?: readonly [number, number]) {
+  const [width, height] = ratio ?? (viewport === 'mobile' ? (handle === 'comfyrobe' ? [3, 4] : [2, 3]) : [4, 5]);
   // Allow 1.5% relative ratio deviation; preserve the original dimensions.
   return images.filter(image => {
     // These explicitly selected desktop originals retain their native proportions.
@@ -53,6 +54,9 @@ export function productGallery(product: ShopifyProduct, variant: ProductVariant)
     return { desktop: originalImages(desktop, 'desktop', product.handle), mobile: originalImages(images, 'mobile', product.handle) };
   }
   const desktop = PRODUCT_GALLERY_IMAGE_OVERRIDES[product.handle] ?? product.images.nodes;
-  const mobile = ({ 'utekos-stapper': STAPPER_MOBILE_GALLERY_IMAGES, comfyrobe: COMFYROBE_MOBILE_GALLERY_IMAGES, 'utekos-techdown': TECHDOWN_MOBILE_GALLERY_IMAGES, 'utekos-mikrofiber': MICROFIBER_MOBILE_GALLERY_IMAGES, 'utekos-svale': SVALE_MOBILE_GALLERY_IMAGES })[product.handle] ?? desktop;
-  return { desktop: originalImages(desktop, 'desktop', product.handle), mobile: originalImages(mobile, 'mobile', product.handle) };
+  const isFjellbla = color === 'Fjellblå' && ['utekos-dun', 'utekos-mikrofiber'].includes(product.handle);
+  const mobile = isFjellbla
+    ? FJELLBLA_MOBILE_GALLERY_IMAGES
+    : ({ 'utekos-stapper': STAPPER_MOBILE_GALLERY_IMAGES, comfyrobe: COMFYROBE_MOBILE_GALLERY_IMAGES, 'utekos-techdown': TECHDOWN_MOBILE_GALLERY_IMAGES, 'utekos-mikrofiber': MICROFIBER_MOBILE_GALLERY_IMAGES, 'utekos-svale': SVALE_MOBILE_GALLERY_IMAGES })[product.handle] ?? desktop;
+  return { desktop: originalImages(desktop, 'desktop', product.handle), mobile: originalImages(mobile, 'mobile', product.handle, isFjellbla ? [3, 4] : undefined) };
 }
