@@ -18,7 +18,8 @@
   --knowledge-link: #f0eee9;
   --knowledge-surface: #012622;
   --knowledge-border: #f0eee9;
-  background: var(--night);
+  background-color: #001211;
+  background-image: var(--background-gradient);
   color: #f0eee9;
   font-family: var(--font-google-sans-flex), sans-serif;
   font-optical-sizing: none;
@@ -201,16 +202,8 @@
 .principles {
   padding-block: 3.5rem;
 }
-.story,
-.principles,
-.closing {
-  background: var(--night);
-}
 .promise {
   padding-block: 5rem;
-  background: var(--night);
-  box-shadow: 0 0 0 100vmax var(--night);
-  clip-path: inset(0 -100vmax);
 }
 .page .promiseIntro {
   max-width: 42rem;
@@ -320,9 +313,6 @@
 }
 .moments {
   padding-block: 5rem;
-  background: var(--night);
-  box-shadow: 0 0 0 100vmax var(--night);
-  clip-path: inset(0 -100vmax);
 }
 .page .moments h2 {
   max-width: none;
@@ -353,9 +343,6 @@
 .events,
 .retailer {
   padding-block: 5rem;
-  background: var(--night);
-  box-shadow: 0 0 0 100vmax var(--night);
-  clip-path: inset(0 -100vmax);
 }
 .events {
   display: grid;
@@ -528,9 +515,6 @@
 }
 .closing {
   padding-block: 5rem;
-  background: #012622;
-  box-shadow: 0 0 0 100vmax #012622;
-  clip-path: inset(0 -100vmax);
 }
 .closingCard {
   max-width: 60rem;
