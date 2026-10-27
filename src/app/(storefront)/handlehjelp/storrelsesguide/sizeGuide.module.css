@@ -231,6 +231,9 @@
 .page section[id$="measurements"] > h3 {
   margin: 1.5rem 0 0;
 }
+.page section[id="utekos-measurements"] {
+  padding-block-start: clamp(2rem, 4vw, 3rem);
+}
 .page section[id="faq"] [data-slot="card-title"] > h3 {
   margin: 0;
 }
