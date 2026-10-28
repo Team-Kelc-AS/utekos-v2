@@ -10,6 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SkreddersyVarmenBadge } from "@/components/ui/SkreddersyVarmenBadge";
+import { cn } from "cn";
 
 import Image from "next/image";
 import type { ReactNode } from "react";
@@ -30,6 +32,31 @@ const footerSurface =
   "bg-[#000b0a] bg-[linear-gradient(90deg,#000b0a_0%,#00110f_25%,#001a18_50%,#00110f_75%,#000b0a_100%)]";
 const guideBadgeSurface =
   "bg-[#000d0b] bg-[linear-gradient(90deg,#000d0b_0%,#001a16_25%,#002622_50%,#001a16_75%,#000d0b_100%)]";
+const guideStepHeaderClasses = {
+  standard: "gap-3 px-6 pt-6 pb-9 max-[359px]:pb-5 lg:max-[1199px]:pb-5",
+  stacked: "gap-4 px-6 py-6",
+  warmth: "gap-2 px-5 py-6 sm:px-6",
+} as const;
+
+function GuideAdjustBadge({ stacked = false }: { stacked?: boolean }) {
+  return (
+    <Badge
+      variant="ghost"
+      aria-label="JUSTER. FORM. NYT."
+      className={cn(
+        "h-auto border-0 px-3 py-2 text-[0.7rem] leading-none font-bold tracking-[0.03em]",
+        stacked
+          ? "flex-col items-start gap-1 rounded-xl"
+          : "gap-1.5 rounded-full max-[359px]:gap-1 max-[359px]:px-2 max-[359px]:text-[0.6rem]",
+        guideBadgeSurface,
+      )}
+    >
+      <span className="text-[color:var(--mist)]">JUSTER.</span>
+      <span className="text-[color:var(--mist)]">FORM.</span>
+      <span className="text-primary">NYT.</span>
+    </Badge>
+  );
+}
 
 export const measurementSectionClasses =
   "scroll-mt-28 [&_thead]:bg-[linear-gradient(90deg,#001211,#021715,#001a18,#031f1d,#001a18,#021715,#001211)]! [&_thead_th]:bg-transparent! [&_tbody_tr:nth-child(odd)]:bg-[linear-gradient(90deg,#001211,#010b0a,#001a18,#001f1c,#001a18,#010b0a,#001211)]! [&_tbody_tr:nth-child(even)]:bg-[linear-gradient(135deg,#001a18,#012622,#052b27,#0b302c,#052b27,#012622,#001a18)]! [&_tbody_tr]:hover:bg-[#f0eee9]/5";
@@ -66,31 +93,35 @@ export function SizeOptionCard({
   const actionSpacing = isComfyCard ? "min-h-12 px-5 py-3.5" : "min-h-14 p-5";
   return (
     <Card className={`${isComfyCard ? comfyCardShell : cardShell} ${cardSurface}`} aria-labelledby={id}>
-      <CardHeader className={isComfyCard ? `px-5 py-4 sm:px-6 ${comfyHeaderSurface}` : undefined}>
-        <CardTitle>
+      <CardHeader className={isComfyCard
+        ? `items-center gap-3 px-5 py-4 sm:px-6 ${comfyHeaderSurface}`
+        : "items-center gap-3"}>
+        <CardTitle className="min-w-0 self-center">
           <h3
             id={id}
             className={isComfyCard
               ? "m-0 text-left text-[clamp(1.25rem,1.7vw,1.55rem)] leading-tight font-extrabold"
-              : "m-0 mb-4 text-left text-[clamp(1.4rem,2vw,1.8rem)] leading-[1.15] font-extrabold"}
+              : "m-0 text-left text-[clamp(1.4rem,2vw,1.8rem)] leading-[1.15] font-extrabold"}
           >
             {title}
           </h3>
         </CardTitle>
-      </CardHeader>
-      <CardContent className={isComfyCard ? "flex min-h-0 flex-1 flex-col p-0" : "flex flex-1 flex-col justify-start"}>
-        {image && (
-          <div className="h-[6.5rem] w-full overflow-hidden bg-[#001211] sm:h-28 lg:h-40">
+        <CardAction className="row-span-1 self-center">
+          {image ? (
             <Image
               src={image.src}
               width={image.width}
               height={image.height}
               alt={image.alt}
-              sizes="(max-width: 640px) 160px, (max-width: 1024px) 180px, 240px"
-              className="block h-full w-full object-contain"
+              sizes="(max-width: 640px) 72px, 84px"
+              className="block h-auto w-[4.5rem] object-contain sm:w-[5.25rem]"
             />
-          </div>
-        )}
+          ) : (
+            <GuideAdjustBadge />
+          )}
+        </CardAction>
+      </CardHeader>
+      <CardContent className={isComfyCard ? "flex min-h-0 flex-1 flex-col p-0" : "flex flex-1 flex-col justify-start"}>
         {measurement && (
           <p className="mb-6 text-[clamp(1.15rem,2vw,1.5rem)] leading-[1.4]">
             <strong>{label}:</strong> <span>{measurement}</span>
@@ -200,36 +231,20 @@ export function GuideStep({
   badge?: "standard" | "stacked" | "warmth";
   children: ReactNode;
 }) {
-  const featuredBadge = badge !== "standard";
   return (
     <Card className={`min-w-0 self-start gap-0 rounded-[1.5rem] border-0 p-0 text-foreground shadow-none ring-1 ring-foreground/10 ${cardSurface}`}>
-      <CardHeader className={`gap-4 px-6 py-6 ${featuredBadge
-        ? "items-start"
-        : "items-center max-[359px]:flex max-[359px]:flex-col max-[359px]:items-stretch lg:max-[1199px]:flex lg:max-[1199px]:flex-col lg:max-[1199px]:items-stretch"}`}>
-        <CardTitle className={featuredBadge ? "min-w-0" : undefined}>
+      <CardHeader className={guideStepHeaderClasses[badge]}>
+        <CardTitle className={cn("min-w-0", badge !== "warmth" && "self-center")}>
           <h4 className="m-0 text-left text-xl leading-tight font-extrabold">
             {number ? `${number}. ` : ""}
             {title}
           </h4>
         </CardTitle>
-        <CardAction className={featuredBadge
-          ? undefined
-          : "max-[359px]:order-first max-[359px]:self-end lg:max-[1199px]:order-first lg:max-[1199px]:self-end"}
-        >
+        <CardAction className={cn("row-span-1", badge !== "warmth" && "self-center")}>
           {badge === "warmth" ? (
-            <Badge variant="ghost" className={`h-auto w-24 rounded-xl border-0 px-3 py-2 text-center text-[0.7rem] leading-tight font-bold tracking-[0.03em] whitespace-normal text-primary ${guideBadgeSurface}`}>
-              Skreddersy varmen
-            </Badge>
+            <SkreddersyVarmenBadge size="sm" />
           ) : (
-            <Badge
-              variant="ghost"
-              aria-label="JUSTER. FORM. NYT."
-              className={`h-auto border-0 px-3 py-2 text-[0.7rem] leading-none font-bold tracking-[0.03em] ${badge === "stacked" ? "flex-col items-start gap-1 rounded-xl" : "gap-1.5 rounded-full"} ${guideBadgeSurface}`}
-            >
-              <span className="text-[color:var(--mist)]">JUSTER.</span>
-              <span className="text-[color:var(--mist)]">FORM.</span>
-              <span className="text-primary">NYT.</span>
-            </Badge>
+            <GuideAdjustBadge stacked={badge === "stacked"} />
           )}
         </CardAction>
       </CardHeader>
