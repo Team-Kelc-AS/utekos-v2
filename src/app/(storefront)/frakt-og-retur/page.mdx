@@ -1,9 +1,13 @@
 import styles from "./shipping-returns.module.css";
 import Link from "next/link";
 import { ShippingReturnsSummary } from "@/components/commerce/ShippingReturnsSummary";
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 <header className={styles.header}>
-<p className={styles.eyebrow}>Kundeservice</p>
+<Badge variant="ghost" className={styles.eyebrow}>Kundeservice</Badge>
 
 # Frakt og retur
 
@@ -14,12 +18,19 @@ import { ShippingReturnsSummary } from "@/components/commerce/ShippingReturnsSum
 </p>
 
 <div className={styles.actions}>
-  <a className={styles.primaryLink} href="#slik-returnerer-du">Slik returnerer du</a>
-  <a href="#storrelsesbytte">Bytte størrelse</a>
+  <a className={cn(buttonVariants({ variant: "default", size: "lg" }), styles.primaryLink)} href="#slik-returnerer-du">Slik returnerer du</a>
+  <a className={cn(buttonVariants({ variant: "ghost", size: "lg" }), styles.secondaryLink)} href="#storrelsesbytte">Bytte størrelse</a>
 </div>
 </header>
 
+<Card className={styles.overviewCard}>
+<CardHeader>
+<CardTitle><h2 className={styles.overviewTitle}>Det viktigste først</h2></CardTitle>
+</CardHeader>
+<CardContent>
 <ShippingReturnsSummary className={styles.overview} />
+</CardContent>
+</Card>
 
 <div className={styles.layout}>
 <aside className={styles.sidebar}>
@@ -37,17 +48,22 @@ import { ShippingReturnsSummary } from "@/components/commerce/ShippingReturnsSum
   ]}
 />
 
-<div className={styles.contact}>
-
-## Trenger du hjelp?
+<Card className={styles.contact}>
+<CardHeader>
+<CardTitle><h2>Trenger du hjelp?</h2></CardTitle>
+</CardHeader>
+<CardContent>
 
 [Kontakt Utekos kundeservice](/kontaktskjema), så hjelper vi deg med bestillingen din.
 
 [kundeservice@utekos.no](mailto:kundeservice@utekos.no)<br />
 [40 21 63 43](tel:+4740216343)
 
+</CardContent>
+<CardFooter className={styles.contactFooter}>
 <p className={styles.company}>Utekos drives av KELC AS.<br />Organisasjonsnummer: 925 820 393.</p>
-</div>
+</CardFooter>
+</Card>
 </aside>
 
 <div className={styles.policy}>
@@ -96,17 +112,19 @@ Ender angrefristen på en lørdag, helligdag eller høytidsdag, forlenges den ti
 2. **Pakk varen forsvarlig.** Du oppretter og betaler returfrakten selv ved vanlig retur. Bruk gjerne en sending med sporing, og ta vare på innleveringskvitteringen.
 3. **Send varen til returadressen nedenfor.** Send den uten unødig opphold og senest 14 kalenderdager etter at du meldte fra om at du angrer.
 
-<div className={styles.returnAddress}>
-
-### Returadresse
-
+<Card className={styles.returnAddress}>
+<CardHeader>
+<CardTitle><h3>Returadresse</h3></CardTitle>
+</CardHeader>
+<CardContent>
 <address>
 KELC AS (Utekos)<br />
 Lille Damsgårdsveien 25<br />
 5162 Laksevåg<br />
 Norge
 </address>
-</div>
+</CardContent>
+</Card>
 
 Vil du ha en annen størrelse, eller er det feil på varen? Følg fremgangsmåten for [størrelsesbytte](#storrelsesbytte) eller [reklamasjon](#reklamasjon) før du betaler for returfrakt.
 
@@ -152,7 +170,13 @@ Ved en gyldig reklamasjon dekker Utekos nødvendig returfrakt. Reklamasjon behan
 
 <section id="ofte-stilte-sporsmal" aria-labelledby="faq-heading" className={styles.faq}>
 
+<Card className={styles.faqCard}>
+<CardHeader>
+<CardTitle>
 <h2 id="faq-heading">Ofte stilte spørsmål om frakt og retur</h2>
+</CardTitle>
+</CardHeader>
+<CardContent>
 
 <Accordion>
 <AccordionItem id="Merchant-Center-Shopping-Cost" value="Merchant-Center-Shopping-Cost">
@@ -218,6 +242,8 @@ Ja, ingen produkter i dagens aktive sortiment har produktspesifikke unntak fra a
 </AccordionContent>
 </AccordionItem>
 </Accordion>
+</CardContent>
+</Card>
 </section>
 
 <div className={styles.closing}>

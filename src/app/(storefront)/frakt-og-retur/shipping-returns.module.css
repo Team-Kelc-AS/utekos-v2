@@ -1,10 +1,21 @@
 .page {
+  --policy-deep: #001211;
+  --policy-base: #001a18;
+  --policy-card: #012622;
+  --policy-lift: color-mix(in srgb, var(--policy-card) 80%, var(--green-400));
+  --policy-line: color-mix(in srgb, var(--green-400) 28%, transparent);
+  --policy-primary-gradient: linear-gradient(110deg, color-mix(in srgb, var(--primary) 82%, #010b0a), var(--primary) 56%, color-mix(in srgb, var(--primary) 86%, var(--policy-card)));
   --knowledge-ink: #f0eee9;
   --knowledge-ink-muted: #f0eee9;
   --knowledge-link: #f0eee9;
-  --knowledge-surface: #012622;
-  --knowledge-border: #f0eee9;
-  background: #001a18;
+  --knowledge-surface: var(--policy-card);
+  --knowledge-border: var(--policy-line);
+  --card: var(--policy-card);
+  --card-foreground: #f0eee9;
+  background-color: var(--policy-base);
+  background-image:
+    radial-gradient(circle at 85% 4%, color-mix(in srgb, var(--green-400) 9%, transparent), transparent 32%),
+    linear-gradient(118deg, var(--policy-deep), var(--policy-card) 52%, var(--policy-base));
   color: #f0eee9;
   font-family: var(--font-google-sans-flex), sans-serif;
   font-optical-sizing: none;
@@ -15,46 +26,139 @@
 
 .container { width: min(100% - 3rem, 72rem); margin-inline: auto; }
 .breadcrumbs { padding-block: 1.5rem; }
-.page :is(a, button, summary):focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
-.page :is(section, [data-slot='accordion-item'], h2, h3) { scroll-margin-block-start: 2rem; }
-.header { max-width: 54rem; padding-block: 1.5rem 2.5rem; }
-.page .header h1 { margin: 0; }
-.eyebrow { margin: 0 0 .75rem; }
-.intro { max-width: 62ch; margin-top: 1.25rem; font-size: clamp(1.125rem, 2vw, 1.3rem); }
-.actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; margin-top: 1.75rem; }
-.actions a { display: inline-flex; align-items: center; min-height: 3rem; text-decoration: underline; text-underline-offset: .25em; }
-.actions a:hover { text-decoration-thickness: 2px; }
-.actions .primaryLink { padding: .65rem 1.25rem; border-radius: .4rem; background: #b44701; color: #f0eee9; font-weight: 800; text-decoration: none; }
-.actions .primaryLink:hover { text-decoration: underline; }
+.page :is(a, button, summary):focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.page :is(section, [data-tracking-accordion-item], h2, h3) { scroll-margin-block-start: 2rem; }
 
-.overview { display: grid; gap: 1.5rem; margin: 0 0 3rem; padding-block: 1.5rem; border-block: 1px solid #f0eee9; }
+.header {
+  max-width: 72rem;
+  margin-bottom: 2rem;
+  padding: clamp(1.75rem, 4vw, 3.25rem);
+  border-radius: 1rem;
+  background-color: var(--policy-base);
+  background-image:
+    radial-gradient(circle at 88% 14%, color-mix(in srgb, var(--green-400) 13%, transparent), transparent 45%),
+    linear-gradient(125deg, var(--policy-deep), var(--policy-card) 58%, var(--policy-base));
+  box-shadow: 0 24px 52px #010b0a33;
+}
+.page .header h1 { margin: 0; }
+.page .eyebrow {
+  margin-bottom: .875rem;
+  min-height: 1.75rem;
+  padding-inline: .75rem;
+  border: 0;
+  background-color: var(--policy-card);
+  background-image: linear-gradient(110deg, var(--policy-base), var(--policy-lift));
+  color: #f0eee9;
+  font-size: .75rem;
+  font-weight: 700;
+}
+.intro { max-width: 62ch; margin-top: 1.25rem; font-size: clamp(1.125rem, 2vw, 1.3rem); }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-top: 1.75rem; }
+.actions a { min-height: 3rem; padding-inline: 1.25rem; border-radius: .625rem; font-weight: 700; text-decoration: none; }
+.page .actions .primaryLink { background-color: var(--primary); background-image: var(--policy-primary-gradient); color: #f0eee9; }
+.page .actions .secondaryLink { border: 0; background-color: var(--policy-base); background-image: linear-gradient(110deg, var(--policy-base), var(--policy-card)); box-shadow: inset 0 0 0 .5px var(--policy-line); color: #f0eee9; }
+.actions a:hover { text-decoration: underline; text-underline-offset: .25em; }
+
+.page [data-slot='card'] {
+  --card: var(--policy-card);
+  --card-foreground: #f0eee9;
+  --card-spacing: clamp(1.25rem, 3vw, 2rem);
+  border: 0;
+  background-color: var(--policy-card);
+  background-image: var(--policy-card-gradient, linear-gradient(135deg, var(--policy-base), var(--policy-card) 55%, var(--policy-deep)));
+  box-shadow: inset 0 0 0 .5px var(--policy-line), inset 0 1px 0 color-mix(in srgb, var(--green-400) 12%, transparent), 0 18px 42px #010b0a40;
+  color: #f0eee9;
+  font-size: inherit;
+}
+.page [data-slot='card-title'] { font-weight: 800; }
+.page [data-slot='card-title'] > :is(h2, h3) { margin: 0; font-weight: 800; line-height: 1.25; }
+
+.page .overviewCard {
+  --policy-card-gradient: linear-gradient(130deg, var(--policy-base), var(--policy-lift) 52%, var(--policy-deep));
+  margin-bottom: 3rem;
+}
+.overviewTitle { font-size: clamp(1.25rem, 2vw, 1.6rem); }
+.overview { display: grid; gap: .875rem; margin: 0; }
+.overview > div {
+  min-width: 0;
+  padding: 1.25rem;
+  border-radius: .75rem;
+  background-image: linear-gradient(140deg, color-mix(in srgb, var(--policy-card) 88%, var(--green-400)), var(--policy-base));
+}
+.overview > div:nth-child(2) { background-image: linear-gradient(135deg, var(--policy-deep), var(--policy-card)); }
+.overview > div:nth-child(3) { background-image: linear-gradient(125deg, var(--policy-card), color-mix(in srgb, var(--policy-card) 84%, var(--green-400)), var(--policy-deep)); }
 .overview dt { font-size: .9rem; }
 .overview dd { margin: .3rem 0 0; }
 .overview strong { display: block; font-size: clamp(1.125rem, 2vw, 1.35rem); font-weight: 800; line-height: 1.35; }
 .overview span { display: block; margin-top: .3rem; font-size: .9rem; }
+
 .layout { display: grid; align-items: start; gap: 3rem; padding-bottom: 4rem; }
 .sidebar, .policy { min-width: 0; }
-.page .sidebar nav { margin: 0; }
-.contact { margin-top: 2rem; }
-.page .contact h3 { margin: 0; font-size: 1.25rem; }
+.page .sidebar nav {
+  margin: 0;
+  border: 0;
+  background-color: var(--policy-card);
+  background-image: linear-gradient(148deg, var(--policy-card), var(--policy-base) 70%, var(--policy-deep));
+  box-shadow: inset 0 0 0 .5px var(--policy-line), 0 16px 36px #010b0a30;
+}
+.page .sidebar nav a { text-decoration-color: color-mix(in srgb, #f0eee9 40%, transparent); }
+.page .contact { --policy-card-gradient: linear-gradient(142deg, var(--policy-deep), var(--policy-card) 65%, var(--policy-base)); margin-top: 1.5rem; }
+.page .contact h2 { font-size: 1.25rem; }
 .contact a { display: inline-block; min-height: 2.75rem; align-content: center; }
-.company { margin-top: 1.25rem; font-size: .875rem; }
+.page .contactFooter {
+  border: 0;
+  background-color: var(--policy-deep);
+  background-image: linear-gradient(110deg, var(--policy-deep), var(--policy-base));
+}
+.company { margin: 0; font-size: .875rem; }
+
 .policy > section + section { margin-top: 3.5rem; }
 .policy h2 { margin: 0 0 1rem; font-size: clamp(1.6rem, 3vw, 2.15rem); font-weight: 800; line-height: 1.25; text-wrap: balance; }
 .policy h3 { font-size: 1.3rem; font-weight: 800; line-height: 1.35; }
-.returnAddress { margin-top: 2rem; padding: 1.5rem; border-inline-start: 4px solid #b44701; background: #012622; }
-.returnAddress h3 { margin: 0 0 .75rem; }
+.page .returnAddress {
+  --policy-card-gradient: linear-gradient(135deg, color-mix(in srgb, var(--primary) 8%, var(--policy-base)), var(--policy-card) 58%, var(--policy-deep));
+  margin-block: 2rem;
+  box-shadow: inset .75px 0 0 color-mix(in srgb, var(--primary) 70%, transparent), inset 0 0 0 .5px var(--policy-line), 0 18px 42px #010b0a40;
+}
 .returnAddress address { font-style: normal; }
-.exchange { padding: clamp(1.25rem, 3vw, 2rem); border-radius: .75rem; background: #012622; }
-.faq [data-slot='accordion-item'] { border-bottom: 1px solid #f0eee9; }
-.faq [data-slot='accordion-header'] { margin: 0; }
-.faq [data-slot='accordion-trigger'] { padding-block: 1.1rem; cursor: pointer; text-underline-offset: .25em; }
-.faq [data-slot='accordion-body'] { padding-bottom: 1.5rem; }
-.faq [data-slot='accordion-body'] > p { margin: 0; }
-.closing { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #f0eee9; }
+.exchange {
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border-radius: 1rem;
+  background-color: var(--policy-card);
+  background-image:
+    radial-gradient(circle at 96% 5%, color-mix(in srgb, var(--green-400) 11%, transparent), transparent 47%),
+    linear-gradient(140deg, var(--policy-card), var(--policy-base) 62%, var(--policy-deep));
+  box-shadow: 0 18px 42px #010b0a3d;
+}
+
+.page .faqCard {
+  --policy-card-gradient: linear-gradient(130deg, var(--policy-deep), var(--policy-card) 54%, var(--policy-base));
+  border: 0;
+  box-shadow: 0 18px 42px #010b0a40;
+}
+.faq [data-tracking-accordion-item] { border: 0; box-shadow: inset 0 -.5px var(--policy-line); }
+.faq [data-tracking-accordion-item]:last-child { box-shadow: none; }
+.faq [data-tracking-accordion-item][data-open] { background-image: linear-gradient(90deg, color-mix(in srgb, var(--green-400) 7%, transparent), transparent 70%); }
+.faq [data-tracking-accordion-trigger] { min-height: 4.5rem; padding: 1.125rem 1.25rem; text-underline-offset: .25em; }
+.page .faq [data-tracking-accordion-trigger] > span:last-child {
+  border: 0;
+  background-color: var(--primary);
+  background-image: var(--policy-primary-gradient);
+  box-shadow: inset 0 0 0 .5px color-mix(in srgb, var(--primary) 68%, transparent);
+  color: #f0eee9;
+}
+.faq [role='region'] > div { padding: .25rem 1.25rem 1.5rem; }
+.faq [role='region'] p { margin: 0; }
+.closing {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  border-radius: .75rem;
+  background-image: linear-gradient(130deg, var(--policy-card), var(--policy-base) 60%, var(--policy-deep));
+}
+.closing .company { margin-top: 1.25rem; }
 
 @media (min-width: 42rem) {
-  .overview { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
+  .overview { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (min-width: 62rem) {
@@ -64,6 +168,7 @@
 @media print {
   .sidebar, .actions { display: none; }
   .layout { display: block; }
-  .page { background: #f0eee9; color: #010b0a; --knowledge-ink: #010b0a; --knowledge-link: #010b0a; }
-  .exchange, .returnAddress { background: none; }
+  .page { background: #f0eee9; color: #010b0a; --knowledge-ink: #010b0a; --knowledge-link: #010b0a; --card-foreground: #010b0a; }
+  .page :is(.header, [data-slot='card'], .exchange, .closing) { background: none; box-shadow: none; color: #010b0a; }
+  .page .eyebrow { background: none; color: #010b0a; }
 }
