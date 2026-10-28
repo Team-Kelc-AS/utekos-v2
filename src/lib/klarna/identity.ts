@@ -53,19 +53,24 @@ export function klarnaIdentityConfig() {
   const clientId = process.env.KLARNA_IDENTITY_CLIENT_ID?.trim();
   const key = Buffer.from(process.env.KLARNA_IDENTITY_SESSION_KEY ?? '', 'base64');
   const environment = process.env.NEXT_PUBLIC_KLARNA_ENVIRONMENT?.trim() || 'production';
+  const redirectOrigin = process.env.KLARNA_IDENTITY_REDIRECT_ORIGIN?.trim() || 'https://utekos.no';
+  const redirectUrl = URL.canParse(redirectOrigin) ? new URL(redirectOrigin) : null;
+  const localHttp = process.env.NODE_ENV !== 'production' && redirectUrl?.protocol === 'http:' &&
+    ['localhost', '127.0.0.1'].includes(redirectUrl.hostname);
   if (!clientId || !/^[A-Za-z0-9._-]{8,256}$/.test(clientId) || key.length !== 32 ||
-      !['production', 'playground'].includes(environment)) {
+      !['production', 'playground'].includes(environment) || !redirectUrl ||
+      redirectUrl.origin !== redirectOrigin || (redirectUrl.protocol !== 'https:' && !localHttp)) {
     throw new Error('Klarna identity configuration is incomplete');
   }
   const issuer = environment === 'playground'
     ? 'https://login.playground.klarna.com'
     : 'https://login.klarna.com';
-  return { clientId, key, environment, issuer, scope: KLARNA_IDENTITY_SCOPE };
+  return { clientId, key, environment, issuer, scope: KLARNA_IDENTITY_SCOPE, redirectOrigin };
 }
 
 export function safeReturnTo(value: unknown): string {
   if (typeof value !== 'string' || value.length > 2048 ||
-      !value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return '/konto';
+      !value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return '/';
   return value;
 }
 

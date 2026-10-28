@@ -19,6 +19,7 @@ import { SearchIcon } from "@/components/utekos-icons/SearchIcon";
 import { Suspense } from "react";
 import { googleSansFlex } from "@/lib/fonts";
 import { headerNavigation } from "./navigation";
+import { KlarnaIdentityButton } from "@/components/klarna/KlarnaIdentityButton";
 import styles from "./Header.module.css";
 
 const linkIcons = [GuideIcon, GroupIcon, HeadsetIcon] as const;
@@ -145,7 +146,7 @@ export default function Header() {
             {secondaryLinks}
             {process.env.KLARNA_IDENTITY_ENABLED === 'true' && (
               <li>
-                <Link href="/konto" className={styles.link}>Fortsett med Klarna</Link>
+                <KlarnaIdentityButton fullWidth />
               </li>
             )}
           </HeaderMenu>

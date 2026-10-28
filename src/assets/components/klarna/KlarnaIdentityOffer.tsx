@@ -14,8 +14,8 @@ export function KlarnaIdentityOffer() {
       const frame = requestAnimationFrame(() => setVisible(true));
       return () => cancelAnimationFrame(frame);
     }
-    const observer = new IntersectionObserver(entries => {
-      if (entries.some(entry => entry.isIntersecting)) {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
         setVisible(true);
         observer.disconnect();
       }
@@ -24,7 +24,9 @@ export function KlarnaIdentityOffer() {
     return () => observer.disconnect();
   }, []);
 
-  return <div ref={container} className="w-full" data-klarna-identity-offer>
-    {visible && <KlarnaIdentityButton showDisconnect={false} fullWidth />}
+  return <div className="w-full" data-klarna-identity-offer>
+    <div ref={container} className={visible ? 'w-full' : 'min-h-11 w-full'}>
+      {visible && <KlarnaIdentityButton showDisconnect={false} fullWidth />}
+    </div>
   </div>;
 }

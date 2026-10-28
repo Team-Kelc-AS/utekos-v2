@@ -10,6 +10,9 @@ export async function POST(request: NextRequest) {
   if (!sameOrigin(request)) return NextResponse.json({ error: 'Ugyldig forespørsel.' }, { status: 403, headers: privateHeaders });
   const config = klarnaIdentityConfig();
   if (!config) return NextResponse.json({ error: 'Klarna-innlogging er ikke tilgjengelig.' }, { status: 503, headers: privateHeaders });
+  if (request.nextUrl.origin !== config.redirectOrigin) {
+    return NextResponse.json({ error: 'Denne nettadressen er ikke registrert for Klarna-innlogging.' }, { status: 409, headers: privateHeaders });
+  }
   if (Number(request.headers.get('content-length')) > 4096) return NextResponse.json({ error: 'Forespørselen er for stor.' }, { status: 413, headers: privateHeaders });
   const body = await request.text();
   if (Buffer.byteLength(body) > 4096) return NextResponse.json({ error: 'Forespørselen er for stor.' }, { status: 413, headers: privateHeaders });
@@ -19,7 +22,7 @@ export async function POST(request: NextRequest) {
   const response = NextResponse.json({
     clientId: config.clientId,
     scope: config.scope,
-    redirectUri: `${request.nextUrl.origin}/klarna/identity/callback`,
+    redirectUri: `${config.redirectOrigin}/klarna/identity/callback`,
   }, { headers: privateHeaders });
   response.cookies.set(KLARNA_IDENTITY_STATE_COOKIE, createKlarnaState(returnTo, config.key), {
     httpOnly: true, secure: request.nextUrl.protocol === 'https:', sameSite: 'lax',

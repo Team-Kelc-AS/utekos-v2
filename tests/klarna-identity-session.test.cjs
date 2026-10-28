@@ -40,6 +40,19 @@ test('Klarna identity does not reuse the payment client identifier', () => {
   assert.throws(() => api.klarnaIdentityConfig(), /configuration is incomplete/);
 });
 
+test('Klarna redirects only to the configured origin', () => {
+  assert.equal(identity().klarnaIdentityConfig().redirectOrigin, 'https://utekos.no');
+  assert.equal(identity({
+    KLARNA_IDENTITY_REDIRECT_ORIGIN: 'http://localhost:3000', NODE_ENV: 'development',
+  }).klarnaIdentityConfig().redirectOrigin, 'http://localhost:3000');
+  assert.throws(() => identity({
+    KLARNA_IDENTITY_REDIRECT_ORIGIN: 'http://localhost:3000', NODE_ENV: 'production',
+  }).klarnaIdentityConfig(), /configuration is incomplete/);
+  assert.throws(() => identity({
+    KLARNA_IDENTITY_REDIRECT_ORIGIN: 'http://example.test', NODE_ENV: 'development',
+  }).klarnaIdentityConfig(), /configuration is incomplete/);
+});
+
 test('uses the ID token in the documented Klarna SDK sign-in response', () => {
   const sdk = loadTypeScript('assets/components/klarna/loadKlarnaIdentitySdk.ts');
   const token = 'x'.repeat(100);
@@ -76,11 +89,11 @@ test('Klarna scopes request optional profile data and only signed claims enter t
 
 test('Klarna state is purpose isolated and only keeps local return paths', () => {
   const api = identity();
-  const state = api.createKlarnaState('/konto', key);
-  assert.equal(api.readKlarnaState(state, key).returnTo, '/konto');
+  const state = api.createKlarnaState('/produkter/comfyrobe', key);
+  assert.equal(api.readKlarnaState(state, key).returnTo, '/produkter/comfyrobe');
   assert.equal(api.readKlarnaSession(state), null);
   for (const path of ['https://example.test/', '//example.test/', '/\\example.test/']) {
-    assert.equal(api.safeReturnTo(path), '/konto');
+    assert.equal(api.safeReturnTo(path), '/');
   }
   assert.equal(api.safeReturnTo('/produkter/comfyrobe'), '/produkter/comfyrobe');
 });

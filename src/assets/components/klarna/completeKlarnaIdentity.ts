@@ -9,7 +9,13 @@ export async function completeKlarnaIdentity(idToken: string): Promise<string> {
     body: JSON.stringify({ idToken }),
     signal: AbortSignal.timeout(15000),
   });
-  if (!response.ok) throw new Error('Klarna-identiteten kunne ikke bekreftes. Prøv igjen.');
+  if (!response.ok) {
+    const failure: unknown = await response.json().catch(() => null);
+    const message = failure && typeof failure === 'object' && 'error' in failure && typeof failure.error === 'string'
+      ? failure.error
+      : 'Klarna-identiteten kunne ikke bekreftes. Prøv igjen.';
+    throw new Error(message);
+  }
   const result: unknown = await response.json();
   if (!result || typeof result !== 'object' || !('returnTo' in result) ||
       typeof result.returnTo !== 'string' || !result.returnTo.startsWith('/') ||

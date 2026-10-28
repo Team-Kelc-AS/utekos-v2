@@ -18,6 +18,7 @@ export type KlarnaIdentitySdk = {
       redirectUri: string; scope: string; theme: 'default';
     }) => {
       mount: (container: HTMLElement) => void;
+      attach: (selector: string) => void;
       on(event: 'ready' | 'click', callback: () => Promise<void>): void;
       unmount: () => void;
     };

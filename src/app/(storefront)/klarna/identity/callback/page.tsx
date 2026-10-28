@@ -43,7 +43,7 @@ export default function KlarnaIdentityCallbackPage() {
               .then(response => response.ok ? response.json() as Promise<{ connected: boolean }> : null)
               .catch(() => null);
             if (!active) return;
-            if (status?.connected) finish('/konto');
+            if (status?.connected) finish('/');
             else setError(true);
           }
         });
@@ -55,6 +55,6 @@ export default function KlarnaIdentityCallbackPage() {
 
   return <main className="mx-auto flex min-h-dvh max-w-lg flex-col items-start justify-center gap-4 bg-[#001a18] px-6 text-[#f0eee9]">
     <h1 className="text-2xl font-extrabold">{error ? 'Klarna-innloggingen kunne ikke fullføres' : 'Fullfører med Klarna'}</h1>
-    {error ? <Link href="/konto" className="underline underline-offset-4">Tilbake til innlogging</Link> : <p role="status">Bekrefter identiteten din …</p>}
+    {error ? <Link href="/" className="underline underline-offset-4">Tilbake til butikken</Link> : <p role="status">Bekrefter identiteten din …</p>}
   </main>;
 }

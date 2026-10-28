@@ -78,7 +78,7 @@ export function openCart() {
   publish({ open: true });
   if (!state.cart) void refreshCart();
 }
-export async function changeCart(operation: CartOperation): Promise<boolean> {
+export async function changeCart(operation: CartOperation, options: { openOnSuccess?: boolean } = {}): Promise<boolean> {
   if (state.pending) return false;
   publish({ pending: true, error: null, warnings: [] });
   try {
@@ -91,7 +91,7 @@ export async function changeCart(operation: CartOperation): Promise<boolean> {
         body: JSON.stringify(operation),
       }),
     );
-    publish({ ...result, open: true });
+    publish({ ...result, open: options.openOnSuccess ?? true });
     reportCartMutation(result);
     return true;
   } catch (error) {
