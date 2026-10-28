@@ -21,6 +21,10 @@ const cardSurface =
   "bg-[#001211] bg-[linear-gradient(90deg,#001211,#001a18,#001f1c,#001f1c,#001a18,#001211)]";
 const cardShell =
   "flex h-full min-w-0 flex-col gap-5 rounded-[2rem] p-6 text-[length:inherit] text-foreground ring-1 ring-foreground/10 shadow-none [&_[data-slot=card-content]]:px-0 [&_[data-slot=card-header]]:px-0 [&_p]:my-2 [&_p]:leading-[1.6] [&_ul]:my-0 [&_ol]:my-0 has-data-[slot=card-footer]:pb-6";
+const comfyCardShell =
+  "flex h-full min-w-0 flex-col gap-0 rounded-[1.5rem] p-0 text-foreground ring-1 ring-foreground/10 shadow-none";
+const comfyHeaderSurface =
+  "bg-[#001a18] bg-[linear-gradient(90deg,#001a18_0%,#012622_25%,#06332e_50%,#012622_75%,#001a18_100%)]";
 
 const footerSurface =
   "bg-[#000b0a] bg-[linear-gradient(90deg,#000b0a_0%,#00110f_25%,#001a18_50%,#00110f_75%,#000b0a_100%)]";
@@ -55,46 +59,60 @@ export function SizeOptionCard({
   checkout?: { size: ComfyBuyNowSize; label: string; available: boolean };
   children: ReactNode;
 }) {
+  const isComfyCard = Boolean(image);
   const actionLabel = checkout?.available ? checkout.label : checkout ? "Utsolgt" : "Se tabellen";
+  const actionSpacing = isComfyCard ? "min-h-12 px-5 py-3.5" : "min-h-14 p-5";
   return (
-    <Card className={`${cardShell} ${cardSurface}`} aria-labelledby={id}>
-      <CardHeader>
+    <Card className={`${isComfyCard ? comfyCardShell : cardShell} ${cardSurface}`} aria-labelledby={id}>
+      <CardHeader className={isComfyCard ? `px-5 py-4 sm:px-6 ${comfyHeaderSurface}` : undefined}>
         <CardTitle>
           <h3
             id={id}
-            className="m-0 mb-4 text-center text-[clamp(1.4rem,2vw,1.8rem)] leading-[1.15] font-extrabold"
+            className={isComfyCard
+              ? "m-0 text-left text-[clamp(1.25rem,1.7vw,1.55rem)] leading-tight font-extrabold"
+              : "m-0 mb-4 text-center text-[clamp(1.4rem,2vw,1.8rem)] leading-[1.15] font-extrabold"}
           >
             {title}
           </h3>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col justify-start">
+      <CardContent className={isComfyCard ? "flex min-h-0 flex-1 flex-col p-0" : "flex flex-1 flex-col justify-start"}>
         {image && (
-          <Image
-            src={image.src}
-            width={image.width}
-            height={image.height}
-            alt={image.alt}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="mb-5 h-auto w-full rounded-xl"
-          />
+          <div className="h-[6.5rem] w-full overflow-hidden bg-[#001211] sm:h-28 lg:h-40">
+            <Image
+              src={image.src}
+              width={image.width}
+              height={image.height}
+              alt={image.alt}
+              sizes="(max-width: 640px) 160px, (max-width: 1024px) 180px, 240px"
+              className="block h-full w-full object-contain"
+            />
+          </div>
         )}
         {measurement && (
           <p className="mb-6 text-[clamp(1.15rem,2vw,1.5rem)] leading-[1.4]">
             <strong>{label}:</strong> <span>{measurement}</span>
           </p>
         )}
-        <div className="grow">{children}</div>
+        <div className={isComfyCard
+          ? "flex-1 px-5 py-3 text-base leading-[1.45] sm:px-6 [&_p]:m-0! [&_p]:leading-[1.45]"
+          : "grow"}
+        >
+          {children}
+        </div>
       </CardContent>
-      <CardFooter className={`-mx-2 -mb-2 mt-auto block rounded-2xl border-0 p-0 ${footerSurface}`}>
+      <CardFooter className={isComfyCard
+        ? `mt-auto block rounded-none border-0 p-0 ${footerSurface}`
+        : `-mx-2 -mb-2 mt-auto block rounded-2xl border-0 p-0 ${footerSurface}`}
+      >
         {checkout && !checkout.available ? (
-          <span className="block min-h-14 p-5 text-center text-xl font-extrabold text-foreground" aria-label={`${title} er utsolgt`}>
+          <span className={`block text-center text-xl font-extrabold text-foreground ${actionSpacing}`} aria-label={`${title} er utsolgt`}>
             {actionLabel}
           </span>
         ) : checkout ? (
           <ComfyrobeBuyNowButton
             size={checkout.size}
-            className="block min-h-14 w-full cursor-pointer rounded-[inherit] border-0 bg-transparent p-5 text-center text-xl font-extrabold text-foreground hover:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground disabled:cursor-wait disabled:opacity-60"
+            className={`block w-full cursor-pointer rounded-[inherit] border-0 bg-transparent text-center text-xl font-extrabold text-foreground hover:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground disabled:cursor-wait disabled:opacity-60 ${actionSpacing}`}
           >
             {actionLabel}
           </ComfyrobeBuyNowButton>
@@ -102,7 +120,7 @@ export function SizeOptionCard({
           <a
             href={`#${tableId}`}
             aria-label={`Se tabellen for ${title}`}
-            className="block min-h-14 rounded-[inherit] p-5 text-center text-xl font-extrabold text-foreground no-underline hover:bg-foreground/5 hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+            className={`block rounded-[inherit] text-center text-xl font-extrabold text-foreground no-underline hover:bg-foreground/5 hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground ${actionSpacing}`}
           >
             {actionLabel}
           </a>
@@ -139,7 +157,7 @@ export async function ComfyrobeSizeCard({
     >
       {children}
       {isXs && variant.availableForSale && variant.quantityAvailable !== null && variant.quantityAvailable > 0 && variant.quantityAvailable < 10 && (
-        <p className="mt-4 font-medium">Under 10 igjen på lager.</p>
+        <span className="mt-2 block font-medium">Under 10 igjen på lager.</span>
       )}
     </SizeOptionCard>
   );
