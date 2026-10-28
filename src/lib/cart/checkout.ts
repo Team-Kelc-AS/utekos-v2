@@ -90,6 +90,7 @@ export function checkoutAttributes(
   event: CanonicalBeginCheckout | null,
   facebookLoginId?: string,
   campaign?: CampaignAttribution,
+  flow?: "comfyrobe_buy_now",
 ) {
   const consent = resolveTrackingAuthorization();
   // Facebook's app-scoped ID is accepted only from the verified, encrypted v2
@@ -123,6 +124,7 @@ export function checkoutAttributes(
     ...(event?.checkout_method
       ? [{ key: "utekos_checkout_method", value: event.checkout_method }]
       : []),
+    ...(flow ? [{ key: "utekos_checkout_flow", value: flow }] : []),
   ];
 }
 
@@ -133,8 +135,9 @@ export async function persistCheckoutAttributes(
   facebookLoginId?: string,
   buyerIp?: string,
   campaign?: CampaignAttribution,
+  flow?: "comfyrobe_buy_now",
 ) {
-  const attributes = checkoutAttributes(cart, event, facebookLoginId, campaign);
+  const attributes = checkoutAttributes(cart, event, facebookLoginId, campaign, flow);
   const result = await shopifyFetch<
     {
       cartAttributesUpdate: {

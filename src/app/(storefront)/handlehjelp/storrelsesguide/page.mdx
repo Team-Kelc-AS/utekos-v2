@@ -1,5 +1,5 @@
 {/* page.mdx */}
-import { SizeGuideGrid, SizeOptionCard, GuideNotice, GuideInfoCard, GuideStep, measurementSectionClasses } from './SizeGuideCards';
+import { SizeGuideGrid, SizeOptionCard, ComfyrobeSizeCard, GuideNotice, GuideInfoCard, GuideStep, measurementSectionClasses } from './SizeGuideCards';
 import { Separator } from '@/components/ui/separator';
 
 # Størrelsesguide
@@ -251,29 +251,17 @@ For våre Dun- og Mikrofiber-modeller er størrelsesspranget mellom Medium og La
 Comfyrobe™ har en rektangulær, unisex og bevisst romslig passform, med god plass til å trekkes over våte klær eller en tykk genser. Splitt i sidene og bak sikrer god bevegelsesfrihet, mens den toveis YKK®-glidelåsen gjør ventilasjon og påkledning enkelt. Utstyrt med varme, fôrede sidelommer og en innerlomme for verdisaker.
 
 <SizeGuideGrid>
-<SizeOptionCard id="velg-xs-hvis-" title="XS" measurement="Small." label="Vanlig størrelse" tableId="comfyrobe-measurements">
+<ComfyrobeSizeCard size="xs">
 
-  Den korteste og minst voluminøse Comfyrobe-passformen. Gir romslig komfort uten ekstra lengde og bredde.
+  Comfyrobe™ XS tilsvarer en tradisjonell størrelse S. Denne størrelsen er ideell for deg som vanligvis bruker størrelse S eller er under/rundt 165 cm.
 
-</SizeOptionCard>
+</ComfyrobeSizeCard>
 
-<SizeOptionCard
-  id="velg-ml-hvis-"
-  title="M/L"
-  measurement="Medium."
-  label="Vanlig størrelse"
-  tableId="comfyrobe-measurements"
->
+<ComfyrobeSizeCard size="xl">
 
-  En balansert allværs-passform. Perfekt for deg som vil bruke Comfyrobe rett over vanlige klær eller badetøy, uten behov for et tykt ekstra lag under.
+  Slik Comfyrobe™ er designet, tilsvarer vår XL en tradisjonell L. Denne størrelsen anbefaler vi for deg som er over 185 cm og trenger god lengde, eller for deg rundt 170 cm som har en litt bredere kroppsbygning og ønsker en raus og romslig passform.
 
-</SizeOptionCard>
-
-<SizeOptionCard id="velg-xl-hvis-" title="XL" measurement="Large." label="Vanlig størrelse" tableId="comfyrobe-measurements">
-
-  Velg XL for maksimal dekning rundt kropp, skuldre og hette, eller hvis du simpelthen ønsker en svært overdimensjonert og romslig følelse.
-
-</SizeOptionCard>
+</ComfyrobeSizeCard>
 </SizeGuideGrid>
 
 <section id="comfyrobe-measurements" aria-labelledby="comfyrobe--plaggmål-i-centimeter" className={measurementSectionClasses}>
@@ -286,25 +274,24 @@ Comfyrobe™ har en rektangulær, unisex og bevisst romslig passform, med god pl
 <TableRow>
 <TableHead scope="col">Mål</TableHead>
 <TableHead scope="col">XS</TableHead>
-<TableHead scope="col">M/L</TableHead>
 <TableHead scope="col">XL</TableHead>
 </TableRow>
 </TableHeader>
 <TableBody>
-<TableRow><TableHead scope="row">Total lengde (fra HSP til front)</TableHead><TableCell>97 cm</TableCell><TableCell>105 cm</TableCell><TableCell>113 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Glidelåslengde</TableHead><TableCell>85 cm</TableCell><TableCell>90 cm</TableCell><TableCell>95 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Bredde over bryst</TableHead><TableCell>65 cm</TableCell><TableCell>71 cm</TableCell><TableCell>77 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Ermelengde</TableHead><TableCell>57 cm</TableCell><TableCell>63 cm</TableCell><TableCell>66 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Skulderbredde</TableHead><TableCell>53 cm</TableCell><TableCell>62 cm</TableCell><TableCell>71 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Mansjettbredde</TableHead><TableCell>14 1/2 cm</TableCell><TableCell>18 cm</TableCell><TableCell>18 1/2 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Mansjetthøyde</TableHead><TableCell>6 cm</TableCell><TableCell>6 cm</TableCell><TableCell>6 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Splitt-høyde</TableHead><TableCell>16 cm</TableCell><TableCell>18 cm</TableCell><TableCell>20 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Kragehøyde</TableHead><TableCell>11 cm</TableCell><TableCell>11 cm</TableCell><TableCell>11 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Lommehøyde</TableHead><TableCell>18 cm</TableCell><TableCell>20 cm</TableCell><TableCell>22 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Hettehøyde</TableHead><TableCell>35 cm</TableCell><TableCell>38 cm</TableCell><TableCell>40 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Hettebredde</TableHead><TableCell>27 cm</TableCell><TableCell>30 cm</TableCell><TableCell>32 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Underarmsbredde</TableHead><TableCell>19 cm</TableCell><TableCell>21 cm</TableCell><TableCell>23 cm</TableCell></TableRow>
-<TableRow><TableHead scope="row">Ermehull</TableHead><TableCell>32 cm</TableCell><TableCell>35 cm</TableCell><TableCell>38 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Total lengde (fra HSP til front)</TableHead><TableCell>97 cm</TableCell><TableCell>113 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Glidelåslengde</TableHead><TableCell>85 cm</TableCell><TableCell>95 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Bredde over bryst</TableHead><TableCell>65 cm</TableCell><TableCell>77 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Ermelengde</TableHead><TableCell>57 cm</TableCell><TableCell>66 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Skulderbredde</TableHead><TableCell>53 cm</TableCell><TableCell>71 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Mansjettbredde</TableHead><TableCell>14 1/2 cm</TableCell><TableCell>18 1/2 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Mansjetthøyde</TableHead><TableCell>6 cm</TableCell><TableCell>6 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Splitt-høyde</TableHead><TableCell>16 cm</TableCell><TableCell>20 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Kragehøyde</TableHead><TableCell>11 cm</TableCell><TableCell>11 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Lommehøyde</TableHead><TableCell>18 cm</TableCell><TableCell>22 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Hettehøyde</TableHead><TableCell>35 cm</TableCell><TableCell>40 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Hettebredde</TableHead><TableCell>27 cm</TableCell><TableCell>32 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Underarmsbredde</TableHead><TableCell>19 cm</TableCell><TableCell>23 cm</TableCell></TableRow>
+<TableRow><TableHead scope="row">Ermehull</TableHead><TableCell>32 cm</TableCell><TableCell>38 cm</TableCell></TableRow>
 </TableBody>
 </MeasurementTable>
 </section>

@@ -3,6 +3,7 @@ import type { CanonicalBeginCheckout } from '@/lib/analytics/beginCheckoutEvent'
 import type { Cart, CartResult } from './types';
 import { productionTrackingEnabled, isTrackingOrigin } from '@/lib/tracking/environment';
 import { emitStorefrontAction } from '@/lib/tracking/browser-events';
+import type { ComfyBuyNowSize } from './comfyBuyNow';
 
 export type CheckoutTrackingMethod = 'shopify' | 'klarna';
 type CheckoutPreparer = (cart: Cart, method: CheckoutTrackingMethod) => Promise<CanonicalBeginCheckout | null>;
@@ -27,14 +28,18 @@ export function reportCartView(cart: Cart) {
   if (cart.commerce) emitStorefrontAction('utekos:cart-view', cart);
 }
 
-export async function persistCheckoutPreparation(cart: Cart, method: CheckoutTrackingMethod) {
+export async function persistCheckoutPreparation(
+  cart: Cart,
+  method: CheckoutTrackingMethod,
+  buyNowSize?: ComfyBuyNowSize,
+) {
   const event = await prepareCheckoutTracking(cart, method);
   const campaign = event
     ? (await import('@/lib/analytics/campaignAttributionSessionStore')).resolveCampaignAttribution(window.location.href)
     : undefined;
   const response = await fetch('/api/cart/checkout', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ method, event, ...(campaign ? { campaign } : {}) }),
+    body: JSON.stringify({ method, event, ...(campaign ? { campaign } : {}), ...(buyNowSize ? { buyNowSize } : {}) }),
   });
   const result = await response.json();
   if (!response.ok) throw new Error(result.error || 'Kassen kunne ikke åpnes.');

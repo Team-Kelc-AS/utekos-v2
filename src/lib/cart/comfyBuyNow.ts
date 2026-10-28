@@ -4,3 +4,5 @@ export const comfyBuyNowVariants = {
 } as const;
 
 export type ComfyBuyNowSize = keyof typeof comfyBuyNowVariants;
+
+export const COMFY_BUY_NOW_CART_COOKIE = "utekos_comfy_buy_now_cart";

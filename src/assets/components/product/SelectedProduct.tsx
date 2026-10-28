@@ -25,6 +25,7 @@ import { VariantOptions } from "./VariantOptions";
 import { OsCaravanSizeGuideDialog } from "@/components/size-guide/os-caravan/OsCaravanSizeGuideDialog";
 import { getProductSizeGuideDialogContent } from "@/lib/products/getProductSizeGuideContent";
 import { AddToCart } from "@/components/commerce/AddToCart";
+import { ComfyrobeBuyNowButton } from "@/components/commerce/ComfyrobeBuyNowButton";
 import { KlarnaProductExpressCheckout } from "@/components/klarna/KlarnaProductExpressCheckout";
 import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { CheckMarkIcon } from "@/components/utekos-icons/CheckMarkIcon";
@@ -34,9 +35,6 @@ import { TruckOutlineIcon } from "@/components/utekos-icons/TruckOutlineIcon";
 import { ReturnsOutlineIcon } from "@/components/utekos-icons/ReturnsOutlineIcon";
 import styles from "./product.module.css";
 import commerceStyles from "@/components/commerce/commerce.module.css";
-
-const COMFY_XS_BUYNOW_CHECKOUT_URL = "https://utekos.no/comfy-xs";
-const COMFY_XL_BUYNOW_CHECKOUT_URL = "https://utekos.no/comfy-xl";
 
 export async function SelectedProduct({
   product,
@@ -56,25 +54,17 @@ export async function SelectedProduct({
   const size = variant.selectedOptions.find(
     (option) => optionParam(option.name) === "storrelse",
   )?.value;
-  const comfyCheckoutUrl = isComfyrobe
+  const comfyCheckoutSize = isComfyrobe
     ? size === "XS"
-      ? COMFY_XS_BUYNOW_CHECKOUT_URL
+      ? "xs"
       : size === "XL"
-        ? COMFY_XL_BUYNOW_CHECKOUT_URL
+        ? "xl"
         : null
     : null;
-  const comfyCheckoutHref = comfyCheckoutUrl ? new URL(comfyCheckoutUrl) : null;
-  if (comfyCheckoutHref) {
-    for (const [key, value] of Object.entries(params)) {
-      for (const item of Array.isArray(value) ? value : value === undefined ? [] : [value]) {
-        comfyCheckoutHref.searchParams.append(key, item);
-      }
-    }
-  }
-  const comfyCheckoutButton = comfyCheckoutHref && variant.availableForSale ? (
-    <a href={comfyCheckoutHref.href} className={commerceStyles.primary}>
+  const comfyCheckoutButton = comfyCheckoutSize && variant.availableForSale ? (
+    <ComfyrobeBuyNowButton size={comfyCheckoutSize} className={commerceStyles.primary}>
       Kjøp nå
-    </a>
+    </ComfyrobeBuyNowButton>
   ) : null;
   const title = productTitle(product);
   const images = productGallery(product, variant);

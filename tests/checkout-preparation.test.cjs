@@ -40,6 +40,14 @@ test('a failed handoff emits no begin_checkout and preserves a useful error', as
   assert.equal(api.confirms.length, 0);
 });
 
+test('Comfyrobe buy-now uses the same confirmed event and identifies its isolated cart', async () => {
+  const api = harness();
+  await api.persistCheckoutPreparation(cart, 'shopify', 'xs');
+  assert.deepEqual(api.order, ['prepare', 'attributes', 'confirm']);
+  assert.equal(api.requests[0].buyNowSize, 'xs');
+  assert.equal(api.requests[0].event.event_id, event.event_id);
+});
+
 test('disabled environments never load the tracking runtime or emit production checkout events', async () => {
   const api = harness({ enabled: false });
   await api.persistCheckoutPreparation(cart, 'shopify');

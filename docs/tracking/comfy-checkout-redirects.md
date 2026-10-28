@@ -19,6 +19,15 @@ variant `43959919116536`. Both were read back from Shopify on 2026-10-26.
 
 ## Attribution contract
 
+The Comfyrobe product page and XS/XL size-guide cards now use the one-click
+cart flow. A click creates a separate one-item Shopify cart, applies `COMFYFRI`,
+and obtains Shopify's checkout URL and checkout identity. The storefront saves
+the canonical event ID and attribution as verified cart attributes before it
+emits `begin_checkout` (Meta `InitiateCheckout`) and navigates to checkout.
+This flow does not replace the customer's ordinary cart. The public short URLs
+remain GET redirects for external links; an unconfirmed redirect still does
+not emit a canonical checkout event.
+
 - Vercel preserves the incoming query string. The route preserves marketing
   values and repeated parameters and adds consented Shopify order attributes.
 - Meta, Microsoft, Google, Snapchat, Pinterest, TikTok and X click identifiers

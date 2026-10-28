@@ -14,11 +14,17 @@ import { NextResponse } from "next/dist/server/web/spec-extension/response";
 import { campaignAttributionSchema } from "@/lib/analytics/campaignAttribution";
 import { z } from "zod";
 import { compareCheckoutUrls } from "@/lib/cart/checkout-identity";
+import {
+  COMFY_BUY_NOW_CART_COOKIE,
+  comfyBuyNowVariants,
+} from "@/lib/cart/comfyBuyNow";
+import { COMFY_SHIPPING_CODE } from "@/lib/cart/suggestions";
 
 const preparationSchema = z.strictObject({
   method: z.enum(["shopify", "klarna"]),
   event: z.unknown().nullable(),
   campaign: z.unknown().optional(),
+  buyNowSize: z.enum(["xs", "xl"]).optional(),
 });
 export async function POST(request: NextRequest) {
   if (!sameOrigin(request))
@@ -58,8 +64,15 @@ export async function POST(request: NextRequest) {
       { error: "Ugyldig attribusjon." },
       { status: 400, headers: privateHeaders },
     );
+  if (parsed.data.buyNowSize && parsed.data.method !== "shopify")
+    return NextResponse.json(
+      { error: "Ugyldig betalingsmetode." },
+      { status: 400, headers: privateHeaders },
+    );
   try {
-    const id = request.cookies.get(CART_COOKIE)?.value;
+    const id = request.cookies.get(
+      parsed.data.buyNowSize ? COMFY_BUY_NOW_CART_COOKIE : CART_COOKIE,
+    )?.value;
     const cart = id ? await readCart(id, buyerIp(request)) : null;
     if (!cart?.totalQuantity)
       return NextResponse.json(
@@ -67,6 +80,18 @@ export async function POST(request: NextRequest) {
         { status: 409, headers: privateHeaders },
       );
     const view = await cartView(cart, buyerIp(request));
+    if (parsed.data.buyNowSize) {
+      const variantId = comfyBuyNowVariants[parsed.data.buyNowSize];
+      if (
+        view.totalQuantity !== 1 ||
+        view.lines.length !== 1 ||
+        view.lines[0].variantId !== variantId ||
+        !view.lines[0].available ||
+        !view.discountCodes?.some((code) => code.code.toUpperCase() === COMFY_SHIPPING_CODE)
+      ) {
+        throw new CartError("Kassen ble endret. Prøv igjen.", 409);
+      }
+    }
     let event;
     try {
       event = parseCheckoutEvent(
@@ -100,6 +125,7 @@ export async function POST(request: NextRequest) {
       facebookId,
       buyerIp(request),
       campaign?.data,
+      parsed.data.buyNowSize ? "comfyrobe_buy_now" : undefined,
     );
     const url = new URL(cart.checkoutUrl);
     if (url.protocol !== "https:") throw new Error("Invalid checkout URL");

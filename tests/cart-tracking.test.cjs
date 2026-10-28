@@ -234,6 +234,7 @@ test('Shopify snapshot uses exact ID, operator policy and only verified Facebook
   assert.equal(attrs.get('utekos_ad_id'), 'fixture-ad');
   assert.equal(attrs.get('utekos_campaign_source'), 'meta');
   assert.equal(attrs.get('utekos_page_url'), 'https://utekos.no/produkter/test-product');
+  assert.equal(new Map(api.checkoutAttributes(cart, event, undefined, undefined, 'comfyrobe_buy_now').map(attribute => [attribute.key, attribute.value])).get('utekos_checkout_flow'), 'comfyrobe_buy_now');
   assert.equal(JSON.parse(attrs.get('utekos_consent')).source, 'operator_policy');
   assert.equal(JSON.parse(attrs.get('utekos_product_context_v1'))[0].item_id, '1');
   assert.equal(new Map(api.checkoutAttributes(cart, event).map(attribute => [attribute.key, attribute.value])).get('utekos_facebook_login_id'), '');
