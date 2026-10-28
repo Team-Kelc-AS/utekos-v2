@@ -28,6 +28,8 @@ const comfyHeaderSurface =
 
 const footerSurface =
   "bg-[#000b0a] bg-[linear-gradient(90deg,#000b0a_0%,#00110f_25%,#001a18_50%,#00110f_75%,#000b0a_100%)]";
+const guideBadgeSurface =
+  "bg-[#000d0b] bg-[linear-gradient(90deg,#000d0b_0%,#001a16_25%,#002622_50%,#001a16_75%,#000d0b_100%)]";
 
 export const measurementSectionClasses =
   "scroll-mt-28 [&_thead]:bg-[linear-gradient(90deg,#001211,#021715,#001a18,#031f1d,#001a18,#021715,#001211)]! [&_thead_th]:bg-transparent! [&_tbody_tr:nth-child(odd)]:bg-[linear-gradient(90deg,#001211,#010b0a,#001a18,#001f1c,#001a18,#010b0a,#001211)]! [&_tbody_tr:nth-child(even)]:bg-[linear-gradient(135deg,#001a18,#012622,#052b27,#0b302c,#052b27,#012622,#001a18)]! [&_tbody_tr]:hover:bg-[#f0eee9]/5";
@@ -70,7 +72,7 @@ export function SizeOptionCard({
             id={id}
             className={isComfyCard
               ? "m-0 text-left text-[clamp(1.25rem,1.7vw,1.55rem)] leading-tight font-extrabold"
-              : "m-0 mb-4 text-center text-[clamp(1.4rem,2vw,1.8rem)] leading-[1.15] font-extrabold"}
+              : "m-0 mb-4 text-left text-[clamp(1.4rem,2vw,1.8rem)] leading-[1.15] font-extrabold"}
           >
             {title}
           </h3>
@@ -190,27 +192,45 @@ export function GuideInfoCard({ children }: { children: ReactNode }) {
 export function GuideStep({
   number,
   title,
+  badge = "standard",
   children,
 }: {
   number?: number;
   title: string;
+  badge?: "standard" | "stacked" | "warmth";
   children: ReactNode;
 }) {
+  const featuredBadge = badge !== "standard";
   return (
     <Card className={`min-w-0 self-start gap-0 rounded-[1.5rem] border-0 p-0 text-foreground shadow-none ring-1 ring-foreground/10 ${cardSurface}`}>
-      <CardHeader className="items-center gap-4 px-6 py-6 max-[359px]:flex max-[359px]:flex-col max-[359px]:items-stretch lg:max-[1199px]:flex lg:max-[1199px]:flex-col lg:max-[1199px]:items-stretch">
+      <CardHeader className={`gap-4 px-6 py-6 ${featuredBadge
+        ? "flex flex-col items-stretch"
+        : "items-center max-[359px]:flex max-[359px]:flex-col max-[359px]:items-stretch lg:max-[1199px]:flex lg:max-[1199px]:flex-col lg:max-[1199px]:items-stretch"}`}>
         <CardTitle>
-          <h4 className="m-0 text-xl leading-tight font-extrabold">
+          <h4 className="m-0 text-left text-xl leading-tight font-extrabold">
             {number ? `${number}. ` : ""}
             {title}
           </h4>
         </CardTitle>
-        <CardAction className="max-[359px]:order-first max-[359px]:self-end lg:max-[1199px]:order-first lg:max-[1199px]:self-end">
-          <Badge variant="ghost" aria-label="JUSTER. FORM. NYT." className="h-auto gap-1.5 rounded-full border-0 bg-[#000d0b] bg-[linear-gradient(90deg,#000d0b_0%,#001a16_25%,#002622_50%,#001a16_75%,#000d0b_100%)] px-3 py-2 text-[0.7rem] leading-none font-bold tracking-[0.03em]">
-            <span className="text-[color:var(--mist)]">JUSTER.</span>
-            <span className="text-[color:var(--mist)]">FORM.</span>
-            <span className="text-primary">NYT.</span>
-          </Badge>
+        <CardAction className={featuredBadge
+          ? "order-first self-end"
+          : "max-[359px]:order-first max-[359px]:self-end lg:max-[1199px]:order-first lg:max-[1199px]:self-end"}
+        >
+          {badge === "warmth" ? (
+            <Badge variant="ghost" className={`h-auto rounded-full border-0 px-3 py-2 text-[0.7rem] leading-none font-bold tracking-[0.03em] text-primary ${guideBadgeSurface}`}>
+              Skreddersy varmen
+            </Badge>
+          ) : (
+            <Badge
+              variant="ghost"
+              aria-label="JUSTER. FORM. NYT."
+              className={`h-auto border-0 px-3 py-2 text-[0.7rem] leading-none font-bold tracking-[0.03em] ${badge === "stacked" ? "flex-col items-start gap-1 rounded-xl" : "gap-1.5 rounded-full"} ${guideBadgeSurface}`}
+            >
+              <span className="text-[color:var(--mist)]">JUSTER.</span>
+              <span className="text-[color:var(--mist)]">FORM.</span>
+              <span className="text-primary">NYT.</span>
+            </Badge>
+          )}
         </CardAction>
       </CardHeader>
       <CardFooter className={`block border-0 px-6 py-5 text-base leading-relaxed text-foreground [&_p]:m-0! [&_p]:leading-relaxed ${footerSurface}`}>
