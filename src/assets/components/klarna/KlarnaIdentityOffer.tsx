@@ -25,6 +25,6 @@ export function KlarnaIdentityOffer() {
   }, []);
 
   return <div ref={container} className="w-full" data-klarna-identity-offer>
-    {visible && <KlarnaIdentityButton showDisconnect={false} />}
+    {visible && <KlarnaIdentityButton showDisconnect={false} fullWidth />}
   </div>;
 }

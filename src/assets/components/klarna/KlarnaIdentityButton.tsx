@@ -8,9 +8,10 @@ import { KlarnaMarketingPreferences } from './KlarnaMarketingPreferences';
 type Status = 'loading' | 'ready' | 'pending' | 'connected' | 'unavailable' | 'error';
 type PrepareResponse = { clientId: string; scope: string; redirectUri: string };
 
-export function KlarnaIdentityButton({ returnTo, showDisconnect = true }: {
+export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidth = false }: {
   returnTo?: string;
   showDisconnect?: boolean;
+  fullWidth?: boolean;
 }) {
   const id = useId().replaceAll(':', '');
   const container = useRef<HTMLDivElement>(null);
@@ -85,7 +86,7 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true }: {
   }
 
   if (status === 'unavailable') return null;
-  return <div className="w-full max-w-sm">
+  return <div className={fullWidth ? 'w-full' : 'w-full max-w-sm'}>
     <div ref={container} className={status === 'loading' || status === 'ready' ? 'min-h-11 w-full [&>*]:w-full!' : 'hidden'} />
     {status === 'loading' && <p role="status">Laster Klarna-innlogging …</p>}
     {status === 'pending' && <p role="status">Bekrefter Klarna-innlogging …</p>}

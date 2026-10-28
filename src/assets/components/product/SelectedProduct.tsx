@@ -207,8 +207,8 @@ export async function SelectedProduct({
                 available={variant.availableForSale}
               />
             )}
+            {variant.availableForSale && <KlarnaIdentityOffer />}
           </div>
-          {variant.availableForSale && <KlarnaIdentityOffer />}
           <ul className={styles.trust}>
             {isComfyrobe ? (
               <li className={`${styles.discountTrust} ${styles.desktopDiscount}`}>
