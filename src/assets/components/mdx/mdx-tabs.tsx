@@ -14,7 +14,7 @@ export function MdxTabs({
     // Typeset excludes data-slot subtrees; keep the controls excluded, but let
     // the root and panels expose their article content to the document styles.
     <Tabs defaultValue={defaultValue} typography="inherit" className="my-8 w-full">
-      <TabsList className="mb-6 flex h-auto w-full flex-wrap justify-start gap-2 rounded-xl bg-[#001211] bg-[linear-gradient(90deg,#001211,#001a18,#001f1c,#001f1c,#001a18,#001211)] p-2 ring-1 ring-border">
+      <TabsList className="mb-6 flex h-auto! w-full flex-wrap justify-start gap-2 rounded-xl bg-[#001211] bg-[linear-gradient(90deg,#001211,#001a18,#001f1c,#001f1c,#001a18,#001211)] p-2 ring-1 ring-border">
         {items.map((item) => (
           <TabsTrigger
             key={item.value}
