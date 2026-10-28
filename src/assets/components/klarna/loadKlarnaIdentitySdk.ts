@@ -36,13 +36,34 @@ type KlarnaSdkFactory = (config: {
 const SDK_URL = 'https://js.klarna.com/web-sdk/v2/klarna.mjs';
 let factoryPromise: Promise<KlarnaSdkFactory> | undefined;
 
-export async function loadKlarnaIdentitySdk(clientId: string): Promise<KlarnaIdentitySdk> {
+function withTimeout<T>(promise: Promise<T>, stage: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = window.setTimeout(() => reject(new Error(`Klarna ${stage} timed out`)), 12000);
+    promise.then(
+      value => { window.clearTimeout(timer); resolve(value); },
+      error => { window.clearTimeout(timer); reject(error); },
+    );
+  });
+}
+
+export async function loadKlarnaIdentitySdk(
+  clientId: string,
+  onStage?: (stage: 'sdk-import' | 'sdk-init') => void,
+): Promise<KlarnaIdentitySdk> {
   factoryPromise ??= import(/* webpackIgnore: true */ SDK_URL)
     .then((module: { KlarnaSDK?: KlarnaSdkFactory }) => {
       if (typeof module.KlarnaSDK !== 'function') throw new Error('Klarna Identity SDK is unavailable');
       return module.KlarnaSDK;
     })
     .catch(error => { factoryPromise = undefined; throw error; });
-  const factory = await factoryPromise;
-  return factory({ clientId, locale: 'nb-NO', products: ['IDENTITY'] });
+  onStage?.('sdk-import');
+  let factory: KlarnaSdkFactory;
+  try {
+    factory = await withTimeout(factoryPromise, 'import');
+  } catch (error) {
+    factoryPromise = undefined;
+    throw error;
+  }
+  onStage?.('sdk-init');
+  return withTimeout(factory({ clientId, locale: 'nb-NO', products: ['IDENTITY'] }), 'initialization');
 }

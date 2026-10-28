@@ -20,7 +20,9 @@ export default function KlarnaIdentityCallbackPage() {
         window.location.replace(returnTo);
       }
     };
-    void fetch('/api/identity/klarna/status', { cache: 'no-store' })
+    void fetch('/api/identity/klarna/status', {
+      cache: 'no-store', signal: AbortSignal.timeout(12000),
+    })
       .then(async response => {
         if (!response.ok) throw new Error('Klarna identity unavailable');
         const config: unknown = await response.json();

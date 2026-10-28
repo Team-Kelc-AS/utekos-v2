@@ -6,6 +6,7 @@ import { klarnaIdentityIdToken, loadKlarnaIdentitySdk, type KlarnaIdentitySdk } 
 import { KlarnaMarketingPreferences } from './KlarnaMarketingPreferences';
 
 type Status = 'loading' | 'ready' | 'pending' | 'connected' | 'unavailable' | 'error';
+type LoadingStage = 'status' | 'prepare' | 'sdk-import' | 'sdk-init' | 'mount' | 'provider';
 type PrepareResponse = { clientId: string; scope: string; redirectUri: string };
 
 export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidth = false }: {
@@ -16,6 +17,7 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
   const id = useId().replaceAll(':', '');
   const container = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<Status>('loading');
+  const [stage, setStage] = useState<LoadingStage>('status');
 
   useEffect(() => {
     let active = true;
@@ -29,12 +31,15 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
     window.addEventListener('message', onMessage);
 
     async function setup() {
-      const statusResponse = await fetch('/api/identity/klarna/status', { cache: 'no-store' });
+      const statusResponse = await fetch('/api/identity/klarna/status', {
+        cache: 'no-store', signal: AbortSignal.timeout(12000),
+      });
       if (!statusResponse.ok) throw new Error('Klarna status unavailable');
       const existing: { available: boolean; connected: boolean } = await statusResponse.json();
       if (!active) return;
       if (!existing.available) { setStatus('unavailable'); return; }
       if (existing.connected) { setStatus('connected'); return; }
+      setStage('prepare');
       const prepareResponse = await fetch('/api/identity/klarna/prepare', {
         method: 'POST', credentials: 'same-origin', cache: 'no-store',
         headers: { 'Content-Type': 'application/json' },
@@ -42,8 +47,11 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
       });
       if (!prepareResponse.ok) throw new Error('Klarna preparation unavailable');
       const config: PrepareResponse = await prepareResponse.json();
-      const klarna = await loadKlarnaIdentitySdk(config.clientId);
+      const klarna = await loadKlarnaIdentitySdk(config.clientId, nextStage => {
+        if (active) setStage(nextStage);
+      });
       if (!active || !container.current) return;
+      setStage('mount');
       klarna.Identity.on('signin', async (signinResponse) => {
         if (!active || !clicked) return;
         clicked = false;
@@ -58,7 +66,9 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
           if (active) setStatus(statusResponse?.connected ? 'connected' : 'error');
         }
       });
-      klarna.Identity.on('error', async () => { if (active) setStatus('error'); });
+      klarna.Identity.on('error', async () => {
+        if (active) { setStage('provider'); setStatus('error'); }
+      });
       button = klarna.Identity.button({
         clientType: 'public', id: `utekos-klarna-${id}`, locale: 'nb-NO',
         redirectUri: config.redirectUri, scope: config.scope, theme: 'default',
@@ -86,7 +96,7 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
   }
 
   if (status === 'unavailable') return null;
-  return <div className={fullWidth ? 'w-full' : 'w-full max-w-sm'}>
+  return <div className={fullWidth ? 'w-full' : 'w-full max-w-sm'} data-klarna-stage={stage}>
     <div ref={container} className={status === 'loading' || status === 'ready' ? 'min-h-11 w-full [&>*]:w-full!' : 'hidden'} />
     {status === 'loading' && <p role="status">Laster Klarna-innlogging …</p>}
     {status === 'pending' && <p role="status">Bekrefter Klarna-innlogging …</p>}
