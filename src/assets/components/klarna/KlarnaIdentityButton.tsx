@@ -111,7 +111,6 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
       id={`utekos-klarna-target-${id}`}
       type="button"
       aria-label="Fortsett med Klarna"
-      aria-disabled={status !== 'ready'}
       className={customButton.className}
       onClickCapture={status === 'ready' ? undefined : event => {
         event.preventDefault();
