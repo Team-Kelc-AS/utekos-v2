@@ -71,11 +71,11 @@ export function SectionSocialProof() {
       >
         <div
           aria-hidden
-          className='pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-linear-to-r from-card to-transparent md:w-24'
+          className={cn(styles.edgeFadeStart, 'pointer-events-none absolute inset-y-0 left-0 z-10 w-16 md:w-24')}
         />
         <div
           aria-hidden
-          className='pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-linear-to-l from-card to-transparent md:w-24'
+          className={cn(styles.edgeFadeEnd, 'pointer-events-none absolute inset-y-0 right-0 z-10 w-16 md:w-24')}
         />
 
         <div className={cn(styles.track, 'flex w-max')}>

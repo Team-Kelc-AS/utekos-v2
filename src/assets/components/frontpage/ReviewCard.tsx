@@ -3,20 +3,22 @@ import { cn } from '@/utils/cn'
 import type { Review } from './data/reviews'
 import { initialsFrom } from './utils/initialsFrom'
 import { LocationIcon } from '@/components/utekos-icons'
+import styles from './ReviewCard.module.css'
 
 export function ReviewCard({ review }: { review: Review }) {
   return (
     <article
+      data-tone={review.id % 3}
       className={cn(
-        // Grunnstil: Mørk maritim bakgrunn som skaper kontrast til "card" bakgrunnen.
-        'group relative flex h-full flex-col justify-between rounded-lg border border-foreground/10 bg-night p-6 shadow-lg transition-all duration-400 md:p-7',
-        'hover:-translate-y-1 hover:border-primary/50 hover:bg-night/95 hover:shadow-2xl hover:shadow-primary/10'
+        styles.card,
+        'group relative flex h-full flex-col justify-between overflow-hidden rounded-xl border p-6 transition-[transform,border-color,box-shadow] duration-300 md:p-7'
       )}
     >
       <header className='mb-5 flex items-center justify-between gap-3'>
         <div
-          aria-hidden
-          className='flex gap-0.5 text-primary drop-shadow-sm'
+          role='img'
+          aria-label={`${review.rating} av 5 stjerner`}
+          className='flex gap-0.5 text-review-star drop-shadow-sm'
         >
           {Array.from({ length: Math.round(review.rating) }).map(
             (_, i) => (
@@ -29,7 +31,7 @@ export function ReviewCard({ review }: { review: Review }) {
             )
           )}
         </div>
-        <span className='leading-text-paragraph inline-flex shrink-0 items-center gap-1 font-sans font-semibold text-[10px] tracking-[-0.01em] text-primary'>
+        <span className={cn(styles.productTag, 'leading-text-paragraph inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 font-sans font-semibold text-[10px] tracking-[-0.01em] text-foreground')}>
           Utekos TechDown™
         </span>
       </header>
@@ -48,7 +50,7 @@ export function ReviewCard({ review }: { review: Review }) {
       <footer className='flex items-center gap-3 border-t border-foreground/10 pt-4'>
         <div
           aria-hidden
-          className='flex size-10 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 font-sans font-semibold text-sm text-foreground transition-colors duration-400 group-hover:border-primary/40 group-hover:bg-primary/10 group-hover:text-foreground'
+          className={cn(styles.avatar, 'flex size-10 shrink-0 items-center justify-center rounded-full border font-sans font-semibold text-sm text-foreground')}
         >
           {initialsFrom(review.name)}
         </div>
