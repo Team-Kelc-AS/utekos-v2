@@ -446,6 +446,7 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
+  --mist: oklch(0.8993 0.01 181.38);
   --muted-foreground: oklch(0.556 0 0);
   --magazine-article-card: oklch(0.350674 0.062274 183.5177);
   --magazine-article-card-pill: oklch(0.6787 0.0958 186.35);

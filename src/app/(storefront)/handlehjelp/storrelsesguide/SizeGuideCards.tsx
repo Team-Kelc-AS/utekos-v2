@@ -179,23 +179,23 @@ export function GuideStep({
   children: ReactNode;
 }) {
   return (
-    <Card className={`min-w-0 self-start gap-0 rounded-[2rem] border-0 p-0 text-foreground shadow-none ring-1 ring-foreground/10 ${cardSurface}`}>
-      <CardHeader className="items-center gap-3 px-5 py-4">
+    <Card className={`min-w-0 self-start gap-0 rounded-[1.5rem] border-0 p-0 text-foreground shadow-none ring-1 ring-foreground/10 ${cardSurface}`}>
+      <CardHeader className="items-center gap-4 px-6 py-6 max-[359px]:flex max-[359px]:flex-col max-[359px]:items-stretch lg:max-[1199px]:flex lg:max-[1199px]:flex-col lg:max-[1199px]:items-stretch">
         <CardTitle>
           <h4 className="m-0 text-xl leading-tight font-extrabold">
             {number ? `${number}. ` : ""}
             {title}
           </h4>
         </CardTitle>
-        <CardAction>
-          <Badge variant="ghost" aria-label="JUSTER. FORM. NYT." className="h-auto gap-1 rounded-full bg-[#000b0a] p-1 text-[0.625rem] font-bold tracking-[0.04em]">
-            <span className="pl-1 text-foreground">JUSTER.</span>
-            <span className="text-foreground">FORM.</span>
-            <span className="rounded-full bg-foreground px-1.5 py-0.5 text-primary">NYT.</span>
+        <CardAction className="max-[359px]:order-first max-[359px]:self-end lg:max-[1199px]:order-first lg:max-[1199px]:self-end">
+          <Badge variant="ghost" aria-label="JUSTER. FORM. NYT." className="h-auto gap-1.5 rounded-full border-0 bg-[#000d0b] bg-[linear-gradient(90deg,#000d0b_0%,#001a16_25%,#002622_50%,#001a16_75%,#000d0b_100%)] px-3 py-2 text-[0.7rem] leading-none font-bold tracking-[0.03em]">
+            <span className="text-[color:var(--mist)]">JUSTER.</span>
+            <span className="text-[color:var(--mist)]">FORM.</span>
+            <span className="text-primary">NYT.</span>
           </Badge>
         </CardAction>
       </CardHeader>
-      <CardFooter className={`block border-0 px-5 py-3 text-base leading-relaxed text-foreground [&_p]:m-0! [&_p]:leading-relaxed ${footerSurface}`}>
+      <CardFooter className={`block border-0 px-6 py-5 text-base leading-relaxed text-foreground [&_p]:m-0! [&_p]:leading-relaxed ${footerSurface}`}>
         {children}
       </CardFooter>
     </Card>
