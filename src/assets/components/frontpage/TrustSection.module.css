@@ -1,5 +1,19 @@
 .section {
-  background: #012622;
+  --trust-ink: #010b0a;
+  --trust-deep: #001211;
+  --trust-base: #001a18;
+  --trust-card: #012622;
+  --trust-lift: color-mix(in srgb, var(--trust-card) 78%, var(--green-400));
+  --trust-line: color-mix(in srgb, var(--green-400) 28%, transparent);
+  --trust-mesh-line: color-mix(in srgb, var(--green-400) 9%, transparent);
+  --trust-primary-gradient: linear-gradient(
+    110deg,
+    color-mix(in srgb, var(--primary) 82%, var(--trust-ink)) 0%,
+    var(--primary) 52%,
+    color-mix(in srgb, var(--primary) 88%, var(--trust-card)) 100%
+  );
+  background-color: var(--trust-base);
+  background-image: linear-gradient(105deg, var(--trust-deep), var(--trust-card) 52%, var(--trust-base));
   color: #f0eee9;
   padding: clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 3rem);
   font-family: var(--font-google-sans-flex), sans-serif;
@@ -8,19 +22,28 @@
   font-weight: 500;
 }
 
+main[data-homepage] > section.section {
+  background-color: var(--trust-base);
+  background-image: linear-gradient(105deg, var(--trust-deep), var(--trust-card) 52%, var(--trust-base));
+}
+
 .panel {
   display: grid;
   max-width: 80rem;
   margin-inline: auto;
   overflow: hidden;
-  border: 1px solid #f0eee92e;
+  border: 1px solid var(--trust-line);
   border-radius: 1rem;
+  box-shadow: 0 24px 64px #010b0a47;
 }
 
 .content {
   min-width: 0;
   padding: clamp(1.5rem, 4vw, 3rem);
-  background: #001a18;
+  background-color: var(--trust-base);
+  background-image:
+    radial-gradient(circle at 8% 12%, color-mix(in srgb, var(--green-400) 12%, transparent), transparent 46%),
+    linear-gradient(138deg, var(--trust-base), var(--trust-card) 55%, var(--trust-deep));
 }
 
 .content h2 {
@@ -56,19 +79,31 @@
   min-width: 0;
   width: 88%;
   padding: 1.25rem;
-  border: 1px solid #f0eee933;
+  border: 1px solid var(--trust-line);
   border-radius: 0.75rem;
-  background-image: linear-gradient(#f0eee908 1px, transparent 1px),
-    linear-gradient(90deg, #f0eee908 1px, transparent 1px);
-  background-size: 2.375rem 2.375rem;
+  background-color: var(--card);
+  background-image:
+    linear-gradient(var(--trust-mesh-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--trust-mesh-line) 1px, transparent 1px),
+    radial-gradient(circle at 90% 12%, color-mix(in srgb, var(--green-400) 11%, transparent), transparent 55%),
+    var(--trust-card-gradient);
+  background-size: 2.375rem 2.375rem, 2.375rem 2.375rem, 100% 100%, 100% 100%;
+  box-shadow: 0 16px 36px #010b0a4d;
 }
 
 .shoppingCard {
   --card: #012622;
+  --trust-card-gradient: linear-gradient(132deg, var(--trust-card), var(--trust-lift) 54%, var(--trust-base));
 }
 
 .privacyCard {
   --card: #010b0a;
+  --trust-card-gradient: linear-gradient(
+    142deg,
+    var(--trust-ink),
+    color-mix(in srgb, var(--trust-card) 84%, var(--green-400)) 58%,
+    var(--trust-base)
+  );
   transform: translateY(calc(-1 * var(--card-overlap)));
   margin-left: auto;
 }
@@ -86,12 +121,13 @@
   width: 0.4375rem;
   height: 0.4375rem;
   border-radius: 50%;
-  background: currentColor;
-  opacity: 0.4;
+  background-image: linear-gradient(135deg, var(--trust-card), var(--green-400));
+  box-shadow: 0 0 0 1px var(--trust-line);
+  opacity: 0.55;
 }
 
-.dots span:nth-child(2) { opacity: 0.65; }
-.dots span:nth-child(3) { opacity: 0.9; }
+.dots span:nth-child(2) { opacity: 0.75; }
+.dots span:nth-child(3) { opacity: 1; }
 
 .cardContent {
   display: flex;
@@ -107,12 +143,16 @@
   place-items: center;
   width: 2.375rem;
   height: 2.375rem;
-  border: 1px solid #f0eee933;
+  border: 1px solid var(--trust-line);
   border-radius: 0.5rem;
-  background: #012622;
+  background-color: var(--trust-card);
+  background-image: linear-gradient(135deg, var(--trust-card), var(--trust-base));
 }
 
-.shoppingIcon { background: #f0eee9; }
+.shoppingIcon {
+  border-color: color-mix(in srgb, var(--primary) 60%, transparent);
+  background-image: var(--trust-primary-gradient);
+}
 
 .card h3 {
   font-size: 1.375rem;
@@ -138,19 +178,21 @@
 }
 
 .chat {
-  --primary: #b44701;
   --primary-foreground: #f0eee9;
-  --background: #001a18;
+  --background: var(--trust-base);
   --foreground: #f0eee9;
-  --border: #f0eee933;
+  --border: var(--trust-line);
   display: flex;
   min-width: 0;
   flex-direction: column;
   justify-content: center;
   gap: 2rem;
-  border-top: 1px solid #f0eee92e;
+  border-top: 1px solid var(--trust-line);
   padding: clamp(1.5rem, 4vw, 3rem);
-  background: #010b0a;
+  background-color: var(--trust-ink);
+  background-image:
+    radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--green-400) 12%, transparent), transparent 46%),
+    linear-gradient(154deg, var(--trust-ink), var(--trust-base) 56%, var(--trust-card));
 }
 
 .messageContent { width: 88%; gap: 0.75rem; }
@@ -163,10 +205,20 @@
   padding: 1rem;
   font-size: 1rem;
   line-height: 1.45;
+  color: var(--foreground);
 }
 
-.incoming .bubbleContent { border-top-left-radius: 0.375rem; }
-.outgoing .bubbleContent { border-top-right-radius: 0.375rem; }
+.incoming .bubbleContent {
+  border-top-left-radius: 0.375rem;
+  background-color: var(--trust-card);
+  background-image: linear-gradient(132deg, var(--trust-card), var(--trust-lift) 54%, var(--trust-base));
+}
+.outgoing .bubbleContent {
+  border-top-right-radius: 0.375rem;
+  border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+  background-color: var(--primary);
+  background-image: var(--trust-primary-gradient);
+}
 
 .name {
   display: flex;
@@ -176,19 +228,47 @@
   margin-inline: 1rem;
   border-radius: 2rem;
   padding: 0.25rem 0.625rem;
-  background: #f0eee9;
-  color: #001a18;
+  border: 1px solid var(--trust-line);
+  background-color: var(--trust-card);
+  background-image: linear-gradient(115deg, var(--trust-card), var(--trust-lift), var(--trust-base));
+  box-shadow: 0 5px 14px #010b0a4d;
+  color: var(--foreground);
   font-size: 0.75rem;
 }
 
 .incoming .name { margin-left: auto; }
-.outgoing .name { align-self: flex-start; background: #b44701; color: #f0eee9; }
-.lastMessage { display: flex; align-items: center; gap: 0.75rem; border-color: #f0eee950; }
-.lastMessage svg { flex-shrink: 0; color: #b44701; }
-.reaction { background: #f0eee9; color: #001a18; box-shadow: 0 0 0 3px #010b0a; padding: .125rem .5rem; font-size: .875rem; }
+.incoming .name svg { color: var(--green-400); }
+.outgoing .name {
+  align-self: flex-start;
+  border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+  background-image: var(--trust-primary-gradient);
+}
+.outgoing .lastMessage {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-color: color-mix(in srgb, var(--primary) 38%, transparent);
+  background-color: var(--trust-base);
+  background-image: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--trust-base) 84%, var(--primary)),
+    color-mix(in srgb, var(--trust-card) 82%, var(--primary)) 55%,
+    var(--trust-base)
+  );
+}
+.lastMessage svg { flex-shrink: 0; color: var(--primary); }
+.reaction {
+  border: 1px solid var(--trust-line);
+  background-color: var(--trust-card);
+  background-image: linear-gradient(115deg, var(--trust-card), var(--trust-lift));
+  color: var(--foreground);
+  box-shadow: 0 0 0 3px var(--trust-base);
+  padding: .125rem .5rem;
+  font-size: .875rem;
+}
 .draftStatus { align-self: flex-end; padding-inline: 1rem; color: #f0eee9b3; font-size: .75rem; }
 .cursorAnchor { white-space: nowrap; }
-.cursor { display: inline-block; width: 2px; height: 1.1em; margin-left: 3px; vertical-align: -.15em; background: currentColor; animation: cursorBlink 1s step-end infinite; }
+.cursor { display: inline-block; width: 2px; height: 1.1em; margin-left: 3px; vertical-align: -.15em; background: var(--primary); animation: cursorBlink 1s step-end infinite; }
 @keyframes cursorBlink { 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
 
@@ -206,7 +286,7 @@
 
 @media (min-width: 64rem) {
   .panel { grid-template-columns: 1fr 1fr; }
-  .chat { border-top: 0; border-left: 1px solid #f0eee92e; }
+  .chat { border-top: 0; border-left: 1px solid var(--trust-line); }
 }
 
 @media (max-width: 24rem) {

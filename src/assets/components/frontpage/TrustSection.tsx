@@ -44,7 +44,7 @@ export function TrustSection() {
                 <WindowDots />
                 <div className={styles.cardContent}>
                   <span className={`${styles.icon} ${styles.shoppingIcon}`}>
-                    <BagOutlineIcon tone='orange' size={22} />
+                    <BagOutlineIcon tone='light' size={22} />
                   </span>
                   <div>
                     <CardTitle><h3>En trygg handel</h3></CardTitle>
