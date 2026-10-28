@@ -3,11 +3,13 @@ import "server-only";
 
 import {
   Card,
+  CardAction,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 import Image from "next/image";
 import type { ReactNode } from "react";
@@ -177,18 +179,25 @@ export function GuideStep({
   children: ReactNode;
 }) {
   return (
-    <Card className={`my-5 ${cardShell} ${cardSurface}`}>
-      <CardHeader>
+    <Card className={`min-w-0 self-start gap-0 rounded-[2rem] border-0 p-0 text-foreground shadow-none ring-1 ring-foreground/10 ${cardSurface}`}>
+      <CardHeader className="items-center gap-3 px-5 py-4">
         <CardTitle>
-          <h4 className="m-0 mb-2 text-xl leading-tight font-extrabold">
+          <h4 className="m-0 text-xl leading-tight font-extrabold">
             {number ? `${number}. ` : ""}
             {title}
           </h4>
         </CardTitle>
+        <CardAction>
+          <Badge variant="ghost" aria-label="JUSTER. FORM. NYT." className="h-auto gap-1 rounded-full bg-[#000b0a] p-1 text-[0.625rem] font-bold tracking-[0.04em]">
+            <span className="pl-1 text-foreground">JUSTER.</span>
+            <span className="text-foreground">FORM.</span>
+            <span className="rounded-full bg-foreground px-1.5 py-0.5 text-primary">NYT.</span>
+          </Badge>
+        </CardAction>
       </CardHeader>
-      <CardContent>
-        <div className="grow">{children}</div>
-      </CardContent>
+      <CardFooter className={`block border-0 px-5 py-3 text-base leading-relaxed text-foreground [&_p]:m-0! [&_p]:leading-relaxed ${footerSurface}`}>
+        {children}
+      </CardFooter>
     </Card>
   );
 }
