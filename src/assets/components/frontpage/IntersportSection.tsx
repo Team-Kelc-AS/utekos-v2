@@ -1,14 +1,14 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { googleSansFlex } from '@/lib/fonts';
+import { retailers, retailerPath } from '@/lib/retailers';
 import { IntersportAnimation } from './IntersportAnimation';
 import styles from './IntersportSection.module.css';
 
-const mapsUrl = 'https://www.google.com/maps/place/INTERSPORT/@60.389279,5.2774875,16z/data=!4m6!3m5!1s0x463cfc74b2fdcbe3:0x610e4e94951a1998!8m2!3d60.389279!4d5.2864997!16s%2Fg%2F1ttdlkr4?entry=ttu&g_ep=EgoyMDI1MTAyNi4wIKXMDSoASAFQAw%3D%3D';
-
 export function IntersportSection() {
   return (
-    <section aria-labelledby="intersport-laksevag-heading" className={`${googleSansFlex.variable} ${styles.section}`}>
+    <section aria-labelledby="dealer-store-heading" className={`${googleSansFlex.variable} ${styles.section}`}>
       <IntersportAnimation>
         <div className={styles.glow} aria-hidden />
         <div className={styles.inner}>
@@ -21,19 +21,21 @@ export function IntersportSection() {
                 <div key={`spark-${index}`} data-intersport-spark className={styles.spark} style={{ left: index * 2, top: index * 2 }} />
               ))}
             </div>
-            <div data-intersport-logo className={styles.logoBox}>
-              <Image src="/Intersport_logo.svg" alt="Intersport logo" width={1024} height={112} className={styles.logo} />
-            </div>
+            {retailers.map((retailer) => (
+              <Link key={retailer.slug} href={retailerPath(retailer)} prefetch={false} data-intersport-logo className={styles.logoBox}>
+                <Image src={retailer.logo.src} alt={retailer.name} width={retailer.logo.width} height={retailer.logo.height} className={styles.logo} />
+              </Link>
+            ))}
           </div>
           <div data-intersport-content className={styles.content}>
-            <h2 id="intersport-laksevag-heading">Sjekk ut Utekos på Intersport Laksevåg!</h2>
+            <h2 id="dealer-store-heading">Sjekk ut Utekos i butikk</h2>
             <p>
-              Se, prøve og kjenne på <strong>Utekos TechDown™</strong> hos våre gode venner på Intersport Laksevåg. Ta turen innom for å bli en av de første som får oppleve den neste generasjonen av Utekos!
+              Nå kan du se, prøve og kjenne på <strong>Utekos TechDown™</strong> hos en av våre dyktige forhandlere. Ta turen innom og bli blant de første som opplever neste generasjon Utekos!
             </p>
-            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className={styles.directions}>
-              Vis vei til butikken
+            <Link href="/forhandlere" prefetch={false} className={styles.directions}>
+              Se alle forhandlere
               <span className={styles.arrow} aria-hidden><ArrowRight size={16} /></span>
-            </a>
+            </Link>
           </div>
         </div>
       </IntersportAnimation>

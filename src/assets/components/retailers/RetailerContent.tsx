@@ -38,7 +38,7 @@ export function RetailerContact({ retailer }: { retailer: Retailer }) {
 
 export function RetailerCard({ retailer }: { retailer: Retailer }) {
   return (
-    <article className={styles.card} aria-labelledby={`${retailer.slug}-heading`}>
+    <article className={styles.card} aria-labelledby={`${retailer.slug}-heading`} data-card-logo-surface={retailer.logo.cardSurface}>
       <Image {...retailer.image} alt={retailer.image.alt} sizes="(min-width: 1024px) 30vw, 90vw" className={styles.entranceImage} />
       <RetailerLogo retailer={retailer} />
       <div className={styles.cardBody}>

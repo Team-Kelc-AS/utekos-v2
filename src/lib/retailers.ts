@@ -13,7 +13,7 @@ export type Retailer = Readonly<{
   placeId: string;
   description: string;
   image: { src: string; width: number; height: number; alt: string };
-  logo: { src: string; width: number; height: number; lightSurface?: boolean };
+  logo: { src: string; width: number; height: number; lightSurface?: boolean; cardSurface?: "foreground" };
 }>;
 
 export const retailerHeading = "Hvor kan du kjøpe Utekos i butikk?";
@@ -55,7 +55,7 @@ export const retailers: readonly Retailer[] = [
     placeId: "ChIJjVLtiF9ZPEYRyzDbjoTMijE",
     description: "Hos Os Caravan & Fritid finner du Utekos TechDown™. Besøk butikken i Industrivegen 2 på Os, og ta kontakt før turen for å høre hvilke størrelser og farger de har inne.",
     image: { src: "/images/partnere/os-caravan-inngang.webp", width: 1440, height: 1800, alt: "Inngangen til Os Caravan med bobiler foran bygningen" },
-    logo: { src: "/logo-os-caravan.svg", width: 1372, height: 398 },
+    logo: { src: "/logo-os-caravan.svg", width: 1372, height: 398, cardSurface: "foreground" },
   },
 ];
 

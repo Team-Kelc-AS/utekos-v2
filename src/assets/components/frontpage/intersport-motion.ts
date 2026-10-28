@@ -11,7 +11,7 @@ const sparks = [
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function observeIntersport(root: HTMLElement) {
-  const logo = root.querySelector<HTMLElement>("[data-intersport-logo]")!;
+  const logos = [...root.querySelectorAll<HTMLElement>("[data-intersport-logo]")];
   const content = root.querySelector<HTMLElement>("[data-intersport-content]")!;
   const controls: ReturnType<typeof animate>[] = [];
   let played = false;
@@ -22,7 +22,7 @@ export function observeIntersport(root: HTMLElement) {
     controls.length = 0;
     delete root.dataset.motion;
     root.style.transform = "none";
-    for (const element of [logo, content]) {
+    for (const element of [...logos, content]) {
       element.style.opacity = "1";
       element.style.transform = "none";
     }
@@ -44,7 +44,7 @@ export function observeIntersport(root: HTMLElement) {
     root.dataset.motion = "playing";
 
     controls.push(
-      animate(logo, {
+      ...logos.map((logo, index) => animate(logo, {
         opacity: [0, 1],
         transform: [
           "translateX(-140%) scaleX(1.2) rotate(-15deg)",
@@ -54,13 +54,13 @@ export function observeIntersport(root: HTMLElement) {
       }, {
         duration: 1.45,
         ease: [ease],
-        opacity: { duration: 1.45 * 0.38, ease },
-        transform: { duration: 1.45, ease: [ease], times: [0, 0.38, 1] },
-      }),
+        opacity: { duration: 1.45 * 0.38, delay: index * 0.18, ease },
+        transform: { duration: 1.45, delay: index * 0.18, ease: [ease], times: [0, 0.38, 1] },
+      })),
       animate(root, { transform: [-4, 4, -3, 3, 0].map((x) => `translateX(${x}px)`) },
         { duration: 0.28, delay: 0.48, ease: ["easeInOut"] }),
       animate(content, { opacity: [0, 1], transform: ["translateY(30px)", "translateY(0px)"] },
-        { duration: 0.78, delay: 0.66, ease }),
+        { duration: 0.78, delay: 0.84, ease }),
     );
 
     for (const [kind, values] of [["smoke", smoke], ["spark", sparks]] as const) {
