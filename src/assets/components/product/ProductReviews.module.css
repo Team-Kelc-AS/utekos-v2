@@ -14,6 +14,36 @@
   flex-wrap: wrap;
   gap: 1rem;
 }
+.storeSummary {
+  margin-top: 0.5rem;
+  border-top: 0;
+  padding-block: 0.25rem;
+}
+.storeOverview {
+  flex-wrap: nowrap;
+  gap: 0.75rem;
+}
+.storeSummaryLeft {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+.storeSummaryRating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.storeAverage {
+  color: #f0eee9cc;
+  font-size: 0.875rem;
+  font-weight: 300;
+  white-space: nowrap;
+}
+.storeSummary .logo {
+  flex-shrink: 0;
+}
 .panel .rating {
   margin: 0.25rem 0 0;
   font-size: 0.9375rem;
@@ -119,6 +149,10 @@
 }
 .storeReviewLink {
   color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+.storeReviewLink:hover {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }

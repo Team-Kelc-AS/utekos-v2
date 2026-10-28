@@ -129,6 +129,13 @@ export async function SelectedProduct({
               className={styles.wishlistButton}
             />
           </div>
+          {isComfyrobe && (
+            <div className={`${styles.reviewSummary} ${styles.comfyReviewSummary}`}>
+              <Suspense fallback={null}>
+                <StoreReviewSummary />
+              </Suspense>
+            </div>
+          )}
           <div className={styles.price}>
             <strong>{formatMoney(variant.price)}</strong>
             {compare && <del>{formatMoney(compare)}</del>}
@@ -236,11 +243,13 @@ export async function SelectedProduct({
               />
             </div>
           )}
-          <div className={styles.reviewSummary}>
-            <Suspense fallback={null}>
-              {isComfyrobe ? <StoreReviewSummary /> : <ProductReviews productId={product.id} />}
-            </Suspense>
-          </div>
+          {!isComfyrobe && (
+            <div className={styles.reviewSummary}>
+              <Suspense fallback={null}>
+                <ProductReviews productId={product.id} />
+              </Suspense>
+            </div>
+          )}
           <ProductDescription
             handle={product.handle}
             descriptionHtml={product.descriptionHtml}

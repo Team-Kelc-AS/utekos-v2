@@ -67,13 +67,23 @@ export async function StoreReviewSummary() {
   await io();
   const data = await getJudgeMeStoreReviews();
   if (!data || data.reviews.length === 0) return null;
+  const average = data.reviews.length === data.count
+    ? data.reviews.reduce((sum, review) => sum + review.rating, 0) / data.count
+    : null;
+  const formattedAverage = average?.toLocaleString('nb-NO', { maximumFractionDigits: 1 });
 
   return (
-    <section className={styles.panel} aria-label="Butikkomtaler fra Judge.me">
-      <div className={styles.overview}>
-        <div>
-          <strong>Kundeomtaler</strong>
-          <p className={styles.rating}>{data.count} {data.count === 1 ? 'butikkomtale' : 'butikkomtaler'} · <a href="#butikkomtaler" className={styles.storeReviewLink}>Les omtalene</a></p>
+    <section className={`${styles.panel} ${styles.storeSummary}`} aria-label="Kundeomtaler fra Judge.me">
+      <div className={`${styles.overview} ${styles.storeOverview}`}>
+        <div className={styles.storeSummaryLeft}>
+          <a href="#kundeomtaler" className={styles.storeReviewLink}>Kundeomtaler</a>
+          {average !== null && (
+            <span className={styles.storeSummaryRating}>
+              <Stars rating={average} />
+              <span className={styles.storeAverage} aria-hidden="true">{formattedAverage}/5</span>
+              <span className="sr-only">Gjennomsnitt {formattedAverage} av 5 stjerner basert på {data.count} kundeomtaler</span>
+            </span>
+          )}
         </div>
         <Image src="/logo-judgme.svg" alt="Judge.me" width={1187} height={224} className={styles.logo} />
       </div>
@@ -87,10 +97,10 @@ export async function StoreReviewList() {
   if (!data || data.reviews.length === 0) return null;
 
   return (
-    <section id="butikkomtaler" className={`${styles.panel} ${styles.reviewPanel}`} aria-label="Butikkomtaler om Utekos fra Judge.me" data-journey-section="reviews" data-review-scope="store">
+    <section id="kundeomtaler" className={`${styles.panel} ${styles.reviewPanel}`} aria-label="Kundeomtaler om Utekos fra Judge.me" data-journey-section="reviews" data-review-scope="store">
       <h2 className={styles.heading}>Kundeomtaler</h2>
       {data.reviews.length < data.count && <p className={styles.partial}>Viser {data.reviews.length} av {data.count} omtaler.</p>}
-      <ul className={styles.list} tabIndex={0} aria-label="Les butikkomtalene">
+      <ul className={styles.list} tabIndex={0} aria-label="Les kundeomtalene">
         <ReviewItems reviews={data.reviews} verifiedLabel="Bekreftet kunde" />
       </ul>
     </section>

@@ -291,6 +291,9 @@
   /* Reserve the streamed rating panel, including its padding and border. */
   min-height: 7rem;
 }
+.reviewSummary.comfyReviewSummary {
+  min-height: 3.5rem;
+}
 .detailBody ul {
   padding-left: 1.25rem;
   list-style: disc;
