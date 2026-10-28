@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 const sizeClasses = {
-  sm: "w-28",
+  sm: "w-24",
   md: "w-36",
   lg: "w-48",
 } as const;
