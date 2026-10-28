@@ -28,7 +28,7 @@ export function IntersportSection() {
             ))}
           </div>
           <div data-intersport-content className={styles.content}>
-            <h2 id="dealer-store-heading">Sjekk ut Utekos i butikk</h2>
+            <h2 id="dealer-store-heading">Sjekk ut Utekos i butikk!</h2>
             <p>
               Nå kan du se, prøve og kjenne på <strong>Utekos TechDown™</strong> hos en av våre dyktige forhandlere. Ta turen innom og bli blant de første som opplever neste generasjon Utekos!
             </p>

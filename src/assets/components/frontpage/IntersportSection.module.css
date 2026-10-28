@@ -68,7 +68,9 @@
 
 @media (min-width: 1024px) {
   .animation { padding: 6rem 3rem 9rem; }
+  .content { padding-inline: 0; }
   .content h2 { font-size: 3rem; }
+  .content p { max-width: 64rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
