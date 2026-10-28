@@ -57,10 +57,13 @@ test('uses the ID token in the documented Klarna SDK sign-in response', () => {
   const sdk = loadTypeScript('assets/components/klarna/loadKlarnaIdentitySdk.ts');
   const token = 'x'.repeat(100);
   assert.equal(sdk.klarnaIdentityIdToken({
-    user_account_profile: { email: 'untrusted@example.test' },
-    user_account_linking: { user_account_linking_id_token: token },
+    customerProfile: { email: 'untrusted@example.test' },
+    idToken: token,
   }), token);
-  assert.throws(() => sdk.klarnaIdentityIdToken({ idToken: token }), /missing an ID token/);
+  assert.throws(() => sdk.klarnaIdentityIdToken({
+    user_account_linking: { user_account_linking_id_token: token },
+  }), /missing an ID token/);
+  assert.throws(() => sdk.klarnaIdentityIdToken({ customerProfile: { email: 'untrusted@example.test' } }), /missing an ID token/);
 });
 
 test('Klarna scopes request optional profile data and only signed claims enter the session', async () => {

@@ -1,11 +1,11 @@
 'use client';
 
 export type KlarnaIdentitySignInResponse = {
-  user_account_linking: { user_account_linking_id_token: string };
+  idToken: string;
 };
 
 export function klarnaIdentityIdToken(response: KlarnaIdentitySignInResponse): string {
-  const token = response?.user_account_linking?.user_account_linking_id_token;
+  const token = response?.idToken;
   if (typeof token !== 'string' || token.length < 100 || token.length > 12000) {
     throw new Error('Klarna sign-in response is missing an ID token');
   }
