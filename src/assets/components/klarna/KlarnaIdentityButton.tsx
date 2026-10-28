@@ -111,8 +111,12 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
       id={`utekos-klarna-target-${id}`}
       type="button"
       aria-label="Fortsett med Klarna"
+      aria-disabled={status !== 'ready'}
       className={customButton.className}
-      disabled={status !== 'ready'}
+      onClickCapture={status === 'ready' ? undefined : event => {
+        event.preventDefault();
+        event.stopPropagation();
+      }}
     >{customButton.children}</button> : <div ref={container} className={status === 'loading' || status === 'ready' ? 'min-h-11 w-full [&>*]:w-full!' : 'hidden'} />}
     {status === 'loading' && <p role="status">Laster Klarna-innlogging …</p>}
     {status === 'pending' && <p role="status">Bekrefter Klarna-innlogging …</p>}

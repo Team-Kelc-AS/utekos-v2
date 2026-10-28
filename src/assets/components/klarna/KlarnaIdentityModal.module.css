@@ -73,6 +73,10 @@
   cursor: not-allowed;
 }
 
+.action[aria-disabled="true"] {
+  cursor: wait;
+}
+
 .action span,
 .actionLogo,
 .mobileContent {
