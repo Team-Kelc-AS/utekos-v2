@@ -7,7 +7,7 @@ import styles from './privacy.module.css'
 
 # Personvern
 
-<p>Sist oppdatert: <time dateTime="2026-10-08">8. oktober 2026</time></p>
+<p>Sist oppdatert: <time dateTime="2026-10-28">28. oktober 2026</time></p>
 
 </header>
 
@@ -23,6 +23,7 @@ import styles from './privacy.module.css'
   { id: 'overforinger', label: 'Behandling utenfor EØS' },
   { id: 'rettigheter', label: 'Dine rettigheter og valg' },
   { id: 'facebook-innlogging', label: 'Facebook-innlogging og sletting' },
+  { id: 'klarna-innlogging', label: 'Klarna-innlogging' },
   { id: 'profilering-barn', label: 'Profilering, automatiserte avgjørelser og barn' },
   { id: 'sikkerhet', label: 'Sikkerhet og dataminimering' },
   { id: 'endringer', label: 'Endringer i erklæringen' },
@@ -130,10 +131,10 @@ Vi deler bare opplysninger når det er nødvendig for formålet, når du har sam
 
 - **Vercel:** Hosting, nettverksbeskyttelse og tekniske logger. Web Analytics og Speed Insights er cookieløse og aggregerte tjenester, men Utekos aktiverer dem likevel først etter statistikksamtykke.
 - **Shopify:** Nettbutikk, produkter, handlekurv, checkout, kundekonto og ordre. Shopify er normalt databehandler for butikkdriften, men kan være selvstendig behandlingsansvarlig for egne forbrukertjenester, som Shop og enkelte personaliserte funksjoner.
-- **Klarna og andre betalingsaktører:** Betalingsbehandling, kredittvurdering der det er relevant, transaksjonsstatus og svindelforebygging. Betalingsaktøren har egen personvernerklæring og kan være selvstendig behandlingsansvarlig.
+- **Klarna og andre betalingsaktører:** Betalingsbehandling, kredittvurdering der det er relevant, transaksjonsstatus og svindelforebygging. Klarna kan også bekrefte identitet når du selv velger «Fortsett med Klarna». Betalingsaktøren har egen personvernerklæring og kan være selvstendig behandlingsansvarlig.
 - **Supabase:** Database for nødvendige leads, samtykkebevis, attribusjon, behandlingsaudit og ordre-/analysegrunnlag. Den aktive databasen er plassert i EU-regionen Stockholm.
 - **Resend:** Utsending av kundeservice, ventelistevarsler og påminnelser om påbegynt checkout fra regionen eu-west-1 (Irland). Åpnings- og klikksporing er deaktivert. Signaturverifiserte webhooks brukes for leveringsstatus, retur og klage; vi lagrer bare leverandør-ID, hendelsestype og tidspunkt fra disse hendelsene, ikke rå payload, adresse, emne eller checkout-lenke. Resend opplyser at kontodata, e-postmetadata og logger kan lagres i USA.
-- **Google, Meta og Microsoft:** Tagstyring, analyse, annonsemåling, attribusjon, målgrupper og annonsering. Nettleser- og serverhendelser kan inneholde annonseidentifikatorer og attribusjonsdata.
+- **Google, Meta, Microsoft, Pinterest og Snapchat:** Tagstyring, analyse, annonsemåling, attribusjon, målgrupper og annonsering. Nettleser- og serverhendelser kan inneholde annonseidentifikatorer og attribusjonsdata.
 - **Google Maps Platform:** Åpningstider på forhandlersidene hentes fra Google Places på serveren. Disse oppslagene inneholder butikkens sted-ID, ikke kontaktopplysninger fra skjemaet eller besøkendes nettleseridentifikatorer. Når du følger en kartlenke, åpner du Google Maps. Se [Googles personvernregler](https://policies.google.com/privacy).
 - **YouTube:** Videoavspilling. Innebygde videoer kan laste ressurser og lagring fra YouTube når videoflaten vises.
 
@@ -203,6 +204,10 @@ Fristene nedenfor er maksimumsfrister. Vi sletter tidligere når formålet er op
 <td>Kryptert e-postadresse og kryptert checkout-gjenopprettingslenke maksimalt 90 dager. Resend-ID og dataminimerte leveringshendelser kan beholdes som teknisk statusaudit inntil 14 måneder.</td>
 </tr>
 <tr>
+<td>Frivillig Klarna-innlogging med lagrede preferanser</td>
+<td>Kontaktprofil uten lagrede markedsføringsvalg utløper etter ett døgn. Når du lagrer valgene dine, er fristen normalt maksimalt 180 dager etter siste lagring. Ved utløp fjernes preferanser og øvrige kontaktfelt; minimal e-post kan beholdes kortere tid videre dersom den trengs for å fullføre avmelding i Shopify. Handlekurvstatus maksimalt 30 dager etter siste endring eller til samtykket trekkes tilbake.</td>
+</tr>
+<tr>
 <td>Ordre og regnskap</td>
 <td>Primærdokumentasjon 5 år etter regnskapsårets slutt; sekundærdokumentasjon 3,5 år.</td>
 </tr>
@@ -267,6 +272,18 @@ Opplysningene i denne valgfrie identitetskoblingen slettes automatisk senest 180
 3. Vi kan be om rimelig identitetsbekreftelse. Den aktuelle Facebook-innloggingskoblingen og tilhørende direkte identifikatorer slettes innen 30 dager, og du får bekreftelse når forespørselen er ferdig behandlet.
 
 Fjerning i Facebook stopper fremtidig tilgang fra appen, men erstatter ikke en slettingsforespørsel til Utekos for opplysninger som allerede er mottatt. Kjøps-, regnskaps- eller kundeserviceopplysninger som behandles på et annet lovlig grunnlag følger sine egne lagringsfrister.
+
+</section>
+
+<section id="klarna-innlogging" aria-labelledby="klarna-innlogging-heading">
+
+<h2 id="klarna-innlogging-heading">Klarna-innlogging</h2>
+
+Når du selv velger «Fortsett med Klarna», ber vi Klarna om fornavn, etternavn, bekreftet e-postadresse, bekreftet telefonnummer, fødselsdato, fakturaadresse, leveringsadresse, land og språkpreferanse. Klarna viser hvilke opplysninger du blir bedt om å dele før du bekrefter innloggingen. Du kan velge å avbryte. Vi mottar bare feltene Klarna faktisk deler. Utekos kontrollerer Klarnas signerte identitetsbevis på serveren og oppretter en kryptert innloggingskapsel med de feltene Klarna faktisk deler. Kapselen utløper etter høyst 24 timer. En midlertidig kapsel som knytter sammen starten og slutten av innloggingen utløper etter høyst 10 minutter. De delte profilfeltene lagres også i en privat Supabase-profil som utløper etter ett døgn hvis du ikke lagrer egne valg hos Utekos. Innloggingen slår ikke på markedsføring.
+
+E-postadressen kan fylles inn i Shopify-kassen når du selv velger å gå til betaling. Innloggingen oppretter ikke automatisk en Shopify-kundekonto. Klarnas valg om å dele profil med Utekos er atskilt fra Utekos' valg om markedsføring. Etter innlogging kan du frivillig lagre ønsket Comfyrobe™-passform, favorittfarge og interesser. Tre separate valg gjelder tilbud på e-post, påminnelser om forlatt handlekurv og matching av handlinger til annonser hos Meta, Google, Microsoft, Pinterest og Snapchat. Vi lagrer hva du valgte, når og hvilken tekst du fikk se. Med e-postvalg på kan Shopify motta markedsføringsstatus og Utekos-tagger for interesse, passform og farge. Med annonsevalget på kan senere serverhendelser inneholde en intern Utekos-ID og hashverdier av de tilgjengelige feltene, som e-post, telefon, fornavn, etternavn, fødselsdato, by, postnummer og land. Google kan i tillegg få land og postnummer i klartekst når en komplett delt adresse brukes til matching, slik Googles adresseformat krever. Leverandørenes API-er støtter ulike felt; vi deler ikke nasjonalt ID-nummer eller en markør for Klarna-bruk. Kunder med kjent fødselsdato under 18 år berikes ikke fra denne profilen for annonser. Erklært passform, farge og interesser sendes ikke som annonseidentifikatorer eller egne målgrupper. Med kurvvalg på lagrer vi varevariant, valgte alternativer og antall fra handlekurven. Du kan endre valgene samme sted etter innlogging.
+
+Vi ber ikke om nasjonalt ID-nummer i denne funksjonen. Du kan logge ut fra Utekos via Klarna-innloggingen i menyen, og du kan handle uten Klarna-innlogging. Du styrer Klarnas egen innlogging og datadeling hos Klarna.
 
 </section>
 

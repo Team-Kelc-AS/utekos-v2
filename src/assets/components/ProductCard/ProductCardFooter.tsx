@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { CardFooter } from "@/components/ui/card";
 import { DunReservationButton } from "@/components/reservations/DunReservationButton";
 import type { DunSelection } from "@/lib/reservations/dun";
-import { KlarnaProductExpressCheckout } from "@/components/klarna/KlarnaProductExpressCheckout";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
@@ -71,9 +70,6 @@ export function ProductCardFooter({
             )}
           </Button>
         </CardFooter>
-      )}
-      {available && (
-        <KlarnaProductExpressCheckout handle={handle} variantId={variantId} />
       )}
     </div>
   );

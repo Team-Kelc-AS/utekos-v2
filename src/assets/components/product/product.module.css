@@ -255,20 +255,14 @@
   flex-shrink: 0;
 }
 .purchaseActions {
-  --klarna-button-height: 56px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
 }
 .purchaseActions > button {
-  height: calc(var(--klarna-button-height) - 2px);
-  min-height: calc(var(--klarna-button-height) - 2px);
-  margin-block: 1px;
+  height: 48px;
   padding-block: 0;
   border: 0;
-  border-radius: 9999px;
-  font-weight: 500;
 }
 .trust {
   display: grid;
@@ -605,8 +599,11 @@ main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion
   min-height: 44px;
 }
 .sticky button {
+  height: 48px;
   white-space: nowrap;
-  border-radius: 9999px;
+  padding-block: 0;
+  border: 0;
+  border-radius: 8px;
   font-weight: 500;
 }
 .productSkeleton {

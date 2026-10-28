@@ -9,6 +9,7 @@ export type CartLine = {
   title: string;
   handle: string;
   variantTitle: string;
+  selectedOptions: { name: string; value: string }[];
   available: boolean;
   image: ProductImage | null;
   total: Money;

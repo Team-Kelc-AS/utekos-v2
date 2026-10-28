@@ -92,6 +92,7 @@ export async function cartView(
         title: productTitle(product),
         handle: product.handle,
         variantTitle: l.merchandise.title,
+        selectedOptions: l.merchandise.selectedOptions,
         available: l.merchandise.availableForSale,
         image: l.merchandise.image,
         total: l.cost.totalAmount,

@@ -1,10 +1,12 @@
 import 'server-only';
+import { createHash } from 'node:crypto';
 import { isWebCrawler } from './webCrawler';
 import { isIP } from 'node:net';
 import { getVercelOidcToken } from '@vercel/oidc';
 import { geolocation, ipAddress } from '@vercel/functions/headers';
 import type { NextRequest } from 'next/server';
 import { FACEBOOK_SESSION_COOKIE, readSession } from '@/lib/facebook-login/session';
+import { KLARNA_IDENTITY_SESSION_COOKIE, klarnaIdentityConfig, readKlarnaSession } from '@/lib/klarna/identity';
 import { BRIDGE_URL, isBridgeOperation, isCallbackOperation } from './bridge-contract';
 import { productionTrackingEnabled, isTrackingOrigin } from './environment';
 import { isMetaCrawler, isBrowserTelemetryOperation } from './metaCrawler';
@@ -66,7 +68,9 @@ export async function forwardTrackingRequest(request: NextRequest) {
   if (!isBridgeOperation(operation)) return failure(404, 'unknown_operation', requestId);
   const callback = isCallbackOperation(operation);
   // Payment/webhook continuity is independent of the browser marketing switch.
-  const enabled = callback ? process.env.VERCEL_ENV === 'production' : productionTrackingEnabled();
+  const identityProfileOperation = operation === '/api/identity/klarna/prospect';
+  const enabled = callback || identityProfileOperation
+    ? process.env.VERCEL_ENV === 'production' : productionTrackingEnabled();
   if (!enabled || !isTrackingOrigin(origin)) return failure(403, 'tracking_environment_disabled', requestId);
   // Discard crawler telemetry before reading bodies, identity or obtaining OIDC.
   // This is not an authorization bypass: callbacks and commerce APIs remain unchanged.
@@ -100,6 +104,15 @@ export async function forwardTrackingRequest(request: NextRequest) {
     const geo = geolocation(request);
     const ip = ipAddress(request);
     const facebookLoginId = verifiedFacebookLoginId(request);
+    let klarnaIdentityKey: string | undefined;
+    if (operation.startsWith('/api/events/')) {
+      try {
+        const session = readKlarnaSession(request.cookies.get(KLARNA_IDENTITY_SESSION_COOKIE)?.value);
+        const config = session ? klarnaIdentityConfig() : null;
+        if (session && config) klarnaIdentityKey = createHash('sha256')
+          .update(`${config.issuer}\0${session.subject}`).digest('hex');
+      } catch { console.error('klarna_event_identity_unavailable'); }
+    }
     const deploySha = process.env.VERCEL_GIT_COMMIT_SHA;
     const context = {
       publicOrigin: origin, environment: 'production', requestId,
@@ -111,6 +124,7 @@ export async function forwardTrackingRequest(request: NextRequest) {
       ...(geo.postalCode ? { postalCode: geo.postalCode } : {}),
       ...(geo.countryRegion ? { regionCode: geo.countryRegion } : {}),
       ...(facebookLoginId ? { facebookLoginId } : {}),
+      ...(klarnaIdentityKey ? { klarnaIdentityKey } : {}),
     };
     const token = await getVercelOidcToken({ audience: BRIDGE_URL });
     const upstream = await fetch(BRIDGE_URL, {

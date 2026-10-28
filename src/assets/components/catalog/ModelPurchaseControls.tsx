@@ -20,7 +20,6 @@ import { dunSelection } from "@/lib/reservations/dun";
 import type { CanonicalCommerceValue } from "@/lib/analytics/canonicalCommerceItem";
 import type { variantHref } from "@/lib/products/variants";
 import { emitStorefrontAction } from "@/lib/tracking/browser-events";
-import { DeferredModelKlarna } from "./DeferredModelKlarna";
 import styles from "./model-purchase.module.css";
 
 type Props = {
@@ -208,11 +207,6 @@ export function ModelPurchaseControls({
                 available={available}
                 label="Legg i handlekurv"
                 unavailableLabel={selected ? undefined : "Legg i handlekurv"}
-              />
-              <DeferredModelKlarna
-                handle={product.handle}
-                variantId={selected?.id ?? ""}
-                disabled={!available || pending}
               />
             </>
           )}

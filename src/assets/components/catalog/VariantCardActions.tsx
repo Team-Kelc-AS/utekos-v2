@@ -6,7 +6,6 @@ import { BagOutlineIcon } from "@/components/utekos-icons/BagOutlineIcon";
 import { Button } from "@/components/ui/button";
 import { DunReservationButton } from "@/components/reservations/DunReservationButton";
 import type { DunSelection } from "@/lib/reservations/dun";
-import { KlarnaProductExpressCheckout } from "@/components/klarna/KlarnaProductExpressCheckout";
 import { Loader2 } from "lucide-react";
 import styles from "./ProductOverview.module.css";
 import { useState } from "react";
@@ -75,11 +74,6 @@ export function VariantCardActions({
               : unavailableLabel}
         </span>
       </Button>
-      {available && (
-        <div className={styles.klarna} aria-label={`Betal ${title} med Klarna`}>
-          <KlarnaProductExpressCheckout handle={handle} variantId={variantId} />
-        </div>
-      )}
     </div>
   );
 }

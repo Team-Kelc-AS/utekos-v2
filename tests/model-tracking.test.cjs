@@ -55,7 +55,6 @@ function harness({ waitlist = false, handle = 'test' } = {}) {
     '@/lib/products/money': { formatMoney: money => money.amount },
     '@/lib/reservations/dun': { dunSelection: variant => ({ variantId: variant.id }) },
     '@/lib/tracking/browser-events': { emitStorefrontAction: (name, detail) => actions.push({ name, detail }) },
-    './DeferredModelKlarna': { DeferredModelKlarna: 'DeferredModelKlarna' },
     './model-purchase.module.css': { default: {} },
   };
   const source = fs.readFileSync('src/assets/components/catalog/ModelPurchaseControls.tsx', 'utf8');
@@ -85,7 +84,7 @@ function harness({ waitlist = false, handle = 'test' } = {}) {
   };
 }
 
-test('inline choice commits one canonical variant selection and aligns both links, commerce, image, price and purchase IDs', () => {
+test('inline choice commits one canonical variant selection and aligns links, commerce, image, price and purchase ID', () => {
   const h = harness();
   assert.equal(h.actions.length, 0, 'preview/hydration is not an explicit selection');
   h.choose('Large');
@@ -101,7 +100,6 @@ test('inline choice commits one canonical variant selection and aligns both link
   assert.ok(h.nodes().filter(node => node.type === 'Link').every(node => node.props.href === '/produkter/test?variant=4'));
   assert.equal(h.nodes().find(node => node.type === 'Image').props.src, '/variant-4.webp');
   assert.equal(h.nodes().find(node => node.type === 'AddToCart').props.variantId, id);
-  assert.equal(h.nodes().find(node => node.type === 'DeferredModelKlarna').props.variantId, id);
   assert.equal(h.actions.length, 1, 'effect replay must not duplicate the committed change');
   assert.equal(h.actions[0].name, 'utekos:variant-selection-confirmed');
   assert.equal(h.actions[0].detail.variant_id, id);
@@ -124,7 +122,6 @@ test('subsequent choices keep missing-image links correct and report each new av
   assert.equal(h.actions[2].detail.variant_id, h.variants[0].id);
   assert.equal(h.actions[2].detail.availability, 'unavailable');
   assert.equal(h.nodes().find(node => node.type === 'AddToCart').props.available, false);
-  assert.equal(h.nodes().find(node => node.type === 'DeferredModelKlarna').props.disabled, true);
 });
 
 test('Dun reserves only an unavailable exact selection and sells available variants normally', () => {

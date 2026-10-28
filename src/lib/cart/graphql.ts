@@ -25,12 +25,13 @@ export type RawCart = {
   discountCodes?: { code: string; applicable: boolean }[];
   id: string;
   checkoutUrl: string;
+  buyerIdentity?: { email: string | null };
   totalQuantity: number;
   cost: { subtotalAmount: Money; totalAmount: Money };
   lines: CursorConnection<RawLine>;
 };
 export const LINE_FIELDS = `id quantity cost { totalAmount { amount currencyCode } } merchandise { __typename ... on ProductVariant { id title availableForSale currentlyNotInStock quantityAvailable taxable sku barcode price { amount currencyCode } compareAtPrice { amount currencyCode } selectedOptions { name value } image { url altText width height } product { id handle title vendor productType collections(first: 100) { nodes { id title } pageInfo { hasNextPage endCursor } } } } }`;
-export const CART_FIELDS = `id checkoutUrl totalQuantity discountCodes { code applicable } cost { subtotalAmount { amount currencyCode } totalAmount { amount currencyCode } } lines(first: 100) { nodes { ${LINE_FIELDS} } pageInfo { hasNextPage endCursor } }`;
+export const CART_FIELDS = `id checkoutUrl buyerIdentity { email } totalQuantity discountCodes { code applicable } cost { subtotalAmount { amount currencyCode } totalAmount { amount currencyCode } } lines(first: 100) { nodes { ${LINE_FIELDS} } pageInfo { hasNextPage endCursor } }`;
 
 export async function cartRequest<T>(
   query: string,

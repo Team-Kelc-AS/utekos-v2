@@ -41,19 +41,6 @@ for (const [engineName, engine] of Object.entries({ chromium, webkit })) {
             return route.fulfill({ json: { checkoutUrl: new URL('/__cart-footer-fixture-checkout', baseURL).href } });
           }
           if (url.pathname === '/__cart-footer-fixture-checkout') return route.fulfill({ contentType: 'text/html', body: '<h1>Fixture checkout</h1>' });
-          if (url.pathname === '/api/klarna/client-config') return route.fulfill({ json: { client_id: 'klarna_live_client_fixture', environment: 'production' } });
-          if (url.href.startsWith('https://x.klarnacdn.net/kp/')) {
-            return route.fulfill({ contentType: 'application/javascript', body: `
-              window.Klarna = window.Klarna || {};
-              window.Klarna.Payments = { Buttons: { init: () => ({ load: (options, ready) => {
-                const button = document.createElement('button');
-                button.textContent = 'Betal med Klarna';
-                document.querySelector(options.container).append(button);
-                ready({ show_form: true });
-              } }) } };
-              window.klarnaAsyncCallback?.();
-            ` });
-          }
           if (url.href.startsWith('https://js.klarna.com/web-sdk/')) {
             return route.fulfill({ contentType: 'application/javascript', body: `
               window.Klarna = window.Klarna || {};
@@ -83,15 +70,16 @@ for (const [engineName, engine] of Object.entries({ chromium, webkit })) {
         await refresh();
         const footer = page.locator('[data-slot="drawer-footer"]');
         await footer.getByText('Delsum', { exact: true }).waitFor();
-        await footer.getByRole('button', { name: 'Betal med Klarna', exact: true }).waitFor();
+        assert.equal(await footer.getByRole('button', { name: 'Betal med Klarna', exact: true }).count(), 0);
         await page.waitForFunction(() => window.cartPlacementRefreshes > 0);
 
         const geometry = await footer.evaluate(element => {
           const r = element.getBoundingClientRect();
-          const button = element.querySelector('button').getBoundingClientRect();
+          const checkoutButton = element.querySelector('button[aria-label^="Gå til kassen"]');
+          const button = checkoutButton.getBoundingClientRect();
           const placement = element.querySelector('klarna-placement');
           return {
-            bottom: r.bottom, gap: getComputedStyle(element.querySelector('button').parentElement).gap,
+            bottom: r.bottom, gap: getComputedStyle(checkoutButton.parentElement).gap,
             padding: getComputedStyle(element).padding, buttonHeight: button.height,
             amount: placement.dataset.purchaseAmount, theme: placement.dataset.theme,
             overflow: element.scrollWidth > element.clientWidth,
@@ -112,9 +100,8 @@ for (const [engineName, engine] of Object.entries({ chromium, webkit })) {
           page.waitForRequest(request => new URL(request.url()).pathname === '/api/cart' && request.method() === 'POST'),
           page.getByRole('button', { name: 'Øk antall for Comfyrobe™', exact: true }).click(),
         ]);
-        await page.waitForFunction(() => document.querySelector('[data-slot="drawer-footer"] button')?.disabled);
+        await page.waitForFunction(() => document.querySelector('[data-slot="drawer-footer"] button[aria-label^="Behandler bestilling"]')?.disabled);
         assert.equal(await footer.getByRole('button', { name: 'Behandler bestilling...', exact: true }).isDisabled(), true);
-        assert.equal(await footer.getByRole('button', { name: 'Betal med Klarna', exact: true }).evaluate(element => Boolean(element.closest('[inert]'))), true);
         assert.equal(checkoutRequests, 0);
         cart = { ...cart, totalQuantity: 2, subtotal: money(1398), total: money(1398), lines: [{ ...cart.lines[0], quantity: 2, total: money(1398) }] };
         assert.equal(typeof finishMutation, 'function');
@@ -126,7 +113,6 @@ for (const [engineName, engine] of Object.entries({ chromium, webkit })) {
         await refresh();
         await footer.getByRole('alert').waitFor();
         assert.equal(await footer.getByRole('button', { name: /Fjern utsolgte varer/ }).isDisabled(), true);
-        assert.equal(await footer.getByRole('button', { name: 'Betal med Klarna', exact: true }).evaluate(element => Boolean(element.closest('[inert]'))), true);
 
         cart = { ...cart, total: money(1258.2), requiresStandardCheckout: true, discountCodes: [{ code: 'FIXTURE', applicable: true }], lines: cart.lines.map(line => ({ ...line, available: true })) };
         await refresh();
