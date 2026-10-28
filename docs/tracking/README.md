@@ -4,6 +4,8 @@ Oppdatert 10. oktober 2026. **V2 overtar butikkfronten; `utekos-headless` er pen
 
 Les [status og verifikasjon](STATUS-2026-10-10.md), [stegvis plan](MIGRATION-PLAN.md) og [hendelsesmatrisen](migration-matrix.md). Historiske JSON-rapporter og headless-commits i denne mappen er kildeproveniens eller daterte øyeblikksbilder; de overstyrer ikke dagens status.
 
+Se også [Vercel Web Analytics for handelshendelser](vercel-web-analytics-commerce.md) for den lokale projeksjonen av `add_to_cart`, `begin_checkout` og `purchase` og egne publiseringskontroller.
+
 ## Observert produksjonsstatus
 
 - Backend og v2 er i produksjon. [Dagens statusrapport](STATUS-2026-10-10.md) er autoritativ for konkrete releases, API-mottak og gjenstående kontroller.

@@ -9,6 +9,7 @@ import { BRIDGE_URL, isBridgeOperation, isCallbackOperation } from './bridge-con
 import { productionTrackingEnabled, isTrackingOrigin } from './environment';
 import { isMetaCrawler, isBrowserTelemetryOperation } from './metaCrawler';
 import { CANONICAL_EVENT_BRIDGE_TIMEOUT_MS } from './timeouts';
+import { scheduleVercelCommerceEvent } from './vercelCommerceEvents';
 
 const REQUEST_HEADERS = [
   'origin', 'referer', 'content-type', 'authorization', 'sec-fetch-site',
@@ -126,6 +127,7 @@ export async function forwardTrackingRequest(request: NextRequest) {
     }
     for (const value of upstream.headers.getSetCookie()) responseHeaders.append('set-cookie', value);
     responseHeaders.set('x-utekos-storefront-request-id', requestId);
+    scheduleVercelCommerceEvent(operation, upstream.status, raw, request, ip && isIP(ip) ? ip : undefined);
     return new Response(upstream.body, { status: upstream.status, headers: responseHeaders });
   } catch (error) {
     // Never include payload, full URL, credentials, or personal data in logs.

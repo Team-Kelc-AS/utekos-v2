@@ -14,7 +14,7 @@ const acceptedAt = '2026-10-07T12:00:00.000Z';
 const pageViewId = 'cfb9c40a-4be3-44bc-84a7-bdcd85f5e4c1';
 
 function harness({ entry = 'lib/tracking/backend.ts', env = {}, incoming, authorization, tokenFailure = false, networkFailure = false, respond, globals = {} } = {}) {
-  const sends = [], audiences = [], sessions = [], errors = [];
+  const sends = [], audiences = [], sessions = [], errors = [], projections = [];
   const source = loadTypeScript(entry, {
     env: { ...production, ...env },
     mocks: {
@@ -24,6 +24,7 @@ function harness({ entry = 'lib/tracking/backend.ts', env = {}, incoming, author
       './internalJourneyContext': { stripInternalJourneyContext: event => { const copy = { ...event }; delete copy.journey_id; delete copy.previous_page_view_id; return copy; } },
       '@vercel/oidc': { getVercelOidcToken: async options => { audiences.push(options); if (tokenFailure) throw new Error('fixture OIDC unavailable'); return 'fixture-oidc-token'; } },
       '@vercel/functions/headers': { ipAddress: () => '2001:db8::10', geolocation: () => ({ city: 'Tønsberg', country: 'NO', countryRegion: '39', postalCode: '3100' }) },
+      './vercelCommerceEvents': { scheduleVercelCommerceEvent: (...args) => projections.push(args) },
       '@/lib/facebook-login/session': { FACEBOOK_SESSION_COOKIE: 'utekos_v2_fb_session', readSession: (token, purpose) => { sessions.push({ token, purpose }); return token === 'verified-fixture-session' ? { userId: '123456' } : undefined; } },
       'next/dist/server/request/headers': { headers: async () => new Headers(incoming ?? { origin: ORIGIN, referer: `${ORIGIN}/produkter/utekos-dun`, 'user-agent': 'Fixture browser', cookie: '_fbp=fb.1.fixture; _epik=pinterest-fixture; utekos_v2_fb_session=verified-fixture-session' }) },
       'next/dist/server/web/spec-extension/request': { NextRequest },
@@ -37,7 +38,7 @@ function harness({ entry = 'lib/tracking/backend.ts', env = {}, incoming, author
       return respond ? respond({ url, init, envelope, body }, sends.length) : Response.json({ status: 'accepted' }, { status: 202 });
     },
   });
-  return { ...source, sends, audiences, sessions, errors };
+  return { ...source, sends, audiences, sessions, errors, projections };
 }
 function request(path = '/api/events/page-view', { origin = ORIGIN, method = 'POST', body = '{"event_name":"page_view"}', headers = {} } = {}) {
   return new NextRequest(`${origin}${path}`, {
@@ -179,6 +180,21 @@ test('callback continuity ignores browser marketing toggle but never accepts pre
   const preview = harness({ env: { VERCEL_ENV: 'preview' } });
   assert.equal((await preview.forwardTrackingRequest(request('/api/shopify/webhooks/orders-paid'))).status, 403);
   assert.equal(preview.sends.length, 0);
+});
+
+test('only accepted storefront commerce requests are offered to Vercel projection', async () => {
+  const payload = JSON.stringify({ event_name: 'add_to_cart', consent: { analytics: 'granted' }, custom_data: { currency: 'NOK', value: 845 } });
+  const accepted = harness();
+  assert.equal((await accepted.forwardTrackingRequest(request('/api/events/add-to-cart', { body: payload }))).status, 202);
+  assert.equal(accepted.projections.length, 1);
+  assert.equal(accepted.projections[0][0], '/api/events/add-to-cart');
+  assert.equal(accepted.projections[0][1], 202);
+  assert.equal(accepted.projections[0][4], '2001:db8::10');
+
+  const duplicate = harness({ respond: () => Response.json({ status: 'duplicate' }, { status: 200 }) });
+  assert.equal((await duplicate.forwardTrackingRequest(request('/api/events/begin-checkout', { body: payload }))).status, 200);
+  assert.equal(duplicate.projections.length, 1);
+  assert.equal(duplicate.projections[0][1], 200);
 });
 
 test('response status, multiple cookies, callback CORS and collector receipt headers survive', async () => {
