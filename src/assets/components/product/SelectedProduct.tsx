@@ -27,6 +27,7 @@ import { getProductSizeGuideDialogContent } from "@/lib/products/getProductSizeG
 import { AddToCart } from "@/components/commerce/AddToCart";
 import { ComfyrobeBuyNowButton } from "@/components/commerce/ComfyrobeBuyNowButton";
 import { KlarnaProductExpressCheckout } from "@/components/klarna/KlarnaProductExpressCheckout";
+import { KlarnaIdentityOffer } from "@/components/klarna/KlarnaIdentityOffer";
 import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { CheckMarkIcon } from "@/components/utekos-icons/CheckMarkIcon";
 import { DiscountCodeReveal } from "./DiscountCodeReveal";
@@ -216,6 +217,7 @@ export async function SelectedProduct({
                 />
               )}
           </div>
+          {variant.availableForSale && <KlarnaIdentityOffer />}
           <ul className={styles.trust}>
             {isComfyrobe ? (
               <li className={`${styles.discountTrust} ${styles.desktopDiscount}`}>

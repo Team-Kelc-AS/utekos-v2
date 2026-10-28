@@ -186,3 +186,40 @@ export async function persistCheckoutAttributes(
     throw new CartError("Kassen kunne ikke bekreftes. Prøv igjen.", 409);
   }
 }
+
+export async function prefillKlarnaCheckoutEmail(
+  cartId: string,
+  checkoutUrl: string,
+  email: string,
+  buyerIp?: string,
+): Promise<void> {
+  const result = await shopifyFetch<{
+    cartBuyerIdentityUpdate: {
+      cart: { id: string; checkoutUrl: string; buyerIdentity: { email: string | null } } | null;
+      userErrors: { message: string }[];
+      warnings: { message: string }[];
+    };
+  }, { cartId: string; buyerIdentity: { email: string } }>({
+    query: `mutation KlarnaCheckoutEmail($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+      cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+        cart { id checkoutUrl buyerIdentity { email } }
+        userErrors { message }
+        warnings { message }
+      }
+    }`,
+    variables: { cartId, buyerIdentity: { email } },
+    buyerIp,
+    cache: 'no-store',
+  });
+  const payload = result.cartBuyerIdentityUpdate;
+  if (!payload.cart || payload.cart.id !== cartId ||
+      payload.cart.buyerIdentity.email !== email ||
+      payload.userErrors.length || payload.warnings.length) {
+    throw new CartError('E-postadressen kunne ikke fylles inn i kassen. Prøv igjen.', 409);
+  }
+  if (payload.cart.checkoutUrl !== checkoutUrl) {
+    // Checkout correlation is captured before this write. A changed URL needs
+    // a fresh preparation and tracking snapshot rather than a stale redirect.
+    throw new CartError('Kassen ble oppdatert. Prøv igjen.', 409);
+  }
+}

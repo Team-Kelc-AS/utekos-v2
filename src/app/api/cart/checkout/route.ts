@@ -7,7 +7,9 @@ import { buyerIp, privateHeaders, sameOrigin } from "@/lib/cart/request";
 import {
   parseCheckoutEvent,
   persistCheckoutAttributes,
+  prefillKlarnaCheckoutEmail,
 } from "@/lib/cart/checkout";
+import { KLARNA_IDENTITY_SESSION_COOKIE, readKlarnaSession } from '@/lib/klarna/identity';
 
 import { NextRequest } from "next/dist/server/web/spec-extension/request";
 import { NextResponse } from "next/dist/server/web/spec-extension/response";
@@ -127,6 +129,25 @@ export async function POST(request: NextRequest) {
       campaign?.data,
       parsed.data.buyNowSize ? "comfyrobe_buy_now" : undefined,
     );
+    let klarnaSession = null;
+    if (parsed.data.method === 'shopify') {
+      try {
+        klarnaSession = readKlarnaSession(request.cookies.get(KLARNA_IDENTITY_SESSION_COOKIE)?.value);
+      } catch {
+        console.warn('klarna_identity_config_invalid');
+      }
+    }
+    if (klarnaSession && !cart.buyerIdentity?.email) {
+      try {
+        await prefillKlarnaCheckoutEmail(cart.id, cart.checkoutUrl, klarnaSession.email, buyerIp(request));
+      } catch {
+        console.warn('klarna_identity_checkout_prefill_failed');
+        const reread = await readCart(cart.id, buyerIp(request));
+        if (!reread || reread.checkoutUrl !== cart.checkoutUrl) {
+          throw new CartError('Kassen ble oppdatert. Prøv igjen.', 409);
+        }
+      }
+    }
     const url = new URL(cart.checkoutUrl);
     if (url.protocol !== "https:") throw new Error("Invalid checkout URL");
     return NextResponse.json(

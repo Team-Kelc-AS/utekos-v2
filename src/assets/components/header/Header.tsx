@@ -143,6 +143,11 @@ export default function Header() {
             }
           >
             {secondaryLinks}
+            {process.env.KLARNA_IDENTITY_ENABLED === 'true' && (
+              <li>
+                <Link href="/konto" className={styles.link}>Fortsett med Klarna</Link>
+              </li>
+            )}
           </HeaderMenu>
         </div>
       </div>
