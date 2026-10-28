@@ -24,8 +24,8 @@ export function prospectCartSnapshot(cart: Cart): CartSnapshot {
 
 export async function forwardKlarnaProspect(
   request: NextRequest,
-  session: KlarnaIdentitySession,
-  input: { action: 'state' } | { action: 'cart'; cart: CartSnapshot } | {
+  session: Omit<KlarnaIdentitySession, 'expiresAt'>,
+  input: { action: 'login' } | { action: 'state' } | { action: 'cart'; cart: CartSnapshot } | {
     action: 'save'; emailMarketing: boolean; cartReminders: boolean; adMatching: boolean;
     comfyrobeSize: 'XS' | 'XL' | null;
     favoriteColor: 'Vargnatt' | 'Fjellblå' | 'Havdyp' | 'Fjellnatt' | null;
