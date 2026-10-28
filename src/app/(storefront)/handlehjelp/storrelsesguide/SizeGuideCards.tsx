@@ -198,7 +198,7 @@ export async function ComfyrobeSizeCard({
 
 export function GuideNotice({ children }: { children: ReactNode }) {
   return (
-    <aside className="my-8 flex flex-nowrap items-start gap-5 rounded-3xl bg-[#cb5005] bg-(image:--comfyrobe-banner-gradient) p-6 text-xl leading-normal text-foreground [&_p]:m-0 [&_strong]:font-medium">
+    <aside className="my-8 flex flex-nowrap items-start gap-5 rounded-3xl bg-[#cb5005] bg-(image:--comfyrobe-banner-gradient) p-6 text-xl leading-normal text-foreground [&_p]:m-0! [&_strong]:font-medium">
       <Image
         src="/images/size-guide/listen.svg"
         width={35}
