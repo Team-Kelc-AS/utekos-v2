@@ -106,6 +106,15 @@ function freshBackup(value: string | undefined, nowMs: number): string | undefin
     nowMs - createdAt <= META_IDENTIFIER_MAX_AGE_MS ? value : undefined
 }
 
+function observedIdentifier(value: string | undefined, nowMs: number): string | undefined {
+  const createdAt = metaIdentifierTimestamp(value)
+  // A browser cookie can still exist after its embedded creation time is
+  // older than one cookie lifetime. Only storage backups expire by that age.
+  return createdAt !== undefined && createdAt <= nowMs + 5 * 60 * 1000 ?
+      value
+    : undefined
+}
+
 function getMetaStorage(name: 'sessionStorage' | 'localStorage'): Storage | undefined {
   try {
     return window[name]
@@ -256,6 +265,8 @@ function denyInFlightEvent<E extends MetaAttributionEvent>(event: E): E {
 }
 
 function preserveFirstMetaIdentifiers(input: {
+  capturedFbc: string | undefined
+  capturedFbp: string | undefined
   currentPage: boolean
   fbc: string | undefined
   fbp: string | undefined
@@ -269,8 +280,16 @@ function preserveFirstMetaIdentifiers(input: {
   }
 
   const nowMs = Date.now()
-  fbc = freshBackup(fbc, nowMs)
-  fbp = freshBackup(fbp, nowMs)
+  const observedFbc = observedIdentifier(fbc, nowMs)
+  const observedFbp = observedIdentifier(fbp, nowMs)
+  fbc = observedFbc &&
+    (observedFbc === readCookie('_fbc') || observedFbc === input.capturedFbc) ?
+      observedFbc
+    : freshBackup(observedFbc, nowMs)
+  fbp = observedFbp &&
+    (observedFbp === readCookie('_fbp') || observedFbp === input.capturedFbp) ?
+      observedFbp
+    : freshBackup(observedFbp, nowMs)
   const session = readMetaIdentifierStorage('sessionStorage', META_IDENTIFIER_SESSION_KEY, nowMs)
   const durable = readMetaIdentifierStorage('localStorage', META_IDENTIFIER_LOCAL_KEY, nowMs)
   // The same click retains its first full fbc value. A genuinely newer click
@@ -556,6 +575,8 @@ export async function enrichCanonicalEventWithMetaAttribution<
     matchingFbc(event.browser_id?.fbc)
   let fbp = identifiers.fbp ?? readCookie('_fbp')
   ;({ fbc, fbp } = preserveFirstMetaIdentifiers({
+    capturedFbc: event.browser_id?.fbc,
+    capturedFbp: event.browser_id?.fbp,
     currentPage,
     fbc,
     fbp,
@@ -570,7 +591,8 @@ export async function enrichCanonicalEventWithMetaAttribution<
     // A completed older event must never roll back a newer navigation's cache.
     // Persist only the SDK value still present on the same current page. URL
     // precedence and preservation of other providers' click IDs stay centralized.
-    if (currentPage && readCookie('_fbc') === fbc) {
+    if (currentPage && readCookie('_fbc') === fbc &&
+      freshBackup(fbc, Date.now())) {
       resolveClickIds(newerClick ? withoutFbclid(pageUrl) : pageUrl,
         undefined, undefined, undefined, { fbclid })
     }

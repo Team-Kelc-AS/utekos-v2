@@ -337,6 +337,48 @@ test('Pixel waits for SDK config before sending the original click', async t => 
   assert.ok(sent.cookie.includes(`_fbp=${fbp}`));
 });
 
+test('a live old _fbc cookie survives PageView and commerce without becoming a durable backup', async t => {
+  const old = Date.now() - 174 * 24 * 60 * 60 * 1000;
+  const fbc = `fb.1.${old}.LiveOldClick`;
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', { metaCookie: fbc });
+  await api.waitFor('page_view');
+  await api.waitFor('view_item');
+  await api.page.evaluate(value => {
+    UtekosTrackingHarness.emitStorefrontAction('utekos:cart-mutation-confirmed', {
+      id: 'old-cookie-mutation', event_time: new Date().toISOString(),
+      cart_id: 'gid://shopify/Cart/fixture',
+      changes: [{ event_name: 'add_to_cart', commerce: value }],
+    });
+  }, commerce());
+  await api.waitFor('add_to_cart');
+  const [pageView, viewItem, addToCart] = [
+    api.events('page_view')[0], api.events('view_item')[0], api.events('add_to_cart')[0],
+  ];
+  for (const event of [pageView, viewItem, addToCart]) {
+    assert.ok(event.browser_id?.fbc?.startsWith(fbc), event.event_name);
+    assert.equal(event.click_id?.fbclid, 'LiveOldClick');
+  }
+  await api.page.waitForFunction(id => __pixelIdentity.some(call => call.id === id), addToCart.event_id);
+  const pixel = await api.page.evaluate(id => __pixelIdentity.find(call => call.id === id), addToCart.event_id);
+  assert.ok(pixel.cookie.includes(`_fbc=${fbc}`));
+  const before = await api.page.evaluate(() => ({
+    cookie: document.cookie,
+    backup: JSON.parse(localStorage.getItem('utekos_meta_identifiers_v2') ?? '{}').fbc,
+  }));
+  assert.ok(before.cookie.includes(`_fbc=${fbc}`));
+  assert.equal(before.backup, undefined, 'an old creation timestamp does not extend storage backup life');
+
+  await api.page.context().clearCookies({ name: '_fbc' });
+  await api.page.evaluate(() => {
+    history.pushState({}, '', '/produkter/test-product?variant=1');
+    dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await api.waitFor('page_view', 2);
+  const later = api.events('page_view')[1];
+  assert.equal(later.browser_id?.fbc, undefined);
+  assert.equal(later.click_id?.fbclid, undefined);
+});
+
 test('Pixel keeps an old click out of the SDK queue when a new click arrives', async t => {
   const first = Date.now() - 10000;
   const fbc = `fb.1.${first}.FirstClick`;
