@@ -71,6 +71,7 @@
   if (typeof state.canonicalEventListening === 'undefined') {
     state.canonicalEventListening = false
   }
+  if (!state.reportedSkipReasons) state.reportedSkipReasons = {}
 
   w.__utekosMetaPixelState = state
 
@@ -108,6 +109,38 @@
     })
   }
 
+  function reportPixelSkip(reason) {
+    if (state.reportedSkipReasons[reason]) return
+    state.reportedSkipReasons[reason] = true
+    if (typeof w.fetch !== 'function') return
+
+    // Match the existing first-party client.error contract without exposing IDs.
+    var body = JSON.stringify({
+      event: 'client_error',
+      level: 'error',
+      data: {
+        source: 'window_error',
+        operation: 'caught',
+        message: 'meta.pixel.skipped: ' + reason
+      },
+      context: { pathname: w.location.pathname }
+    })
+    try {
+      w.fetch('/api/log', {
+        body: body,
+        headers: { 'content-type': 'application/json' },
+        keepalive: true,
+        method: 'POST'
+      }).then(function (response) {
+        if (!response.ok) console.warn('[tracking] meta_pixel_skip_log_failed')
+      }).catch(function () {
+        console.warn('[tracking] meta_pixel_skip_log_failed')
+      })
+    } catch {
+      console.warn('[tracking] meta_pixel_skip_log_failed')
+    }
+  }
+
   function skipPendingSdkEvent(key, reason) {
     var entry = pendingSdkEvents[key]
     if (!entry) return
@@ -120,6 +153,7 @@
       skipped: reason
     }
     state.sent[key] = true
+    reportPixelSkip(reason)
   }
 
   function shouldWaitForFbc() {
@@ -593,6 +627,7 @@
         skipped: 'different_live_meta_identity'
       }
       state.sent[eventKey] = true
+      reportPixelSkip('different_live_meta_identity')
       return
     }
 

@@ -362,6 +362,10 @@ test('Pixel keeps an old click out of the SDK queue when a new click arrives', a
   assert.equal(state.dispatch?.skipped, 'different_live_meta_identity', JSON.stringify(state));
   assert.equal(state.queued, false);
   assert.ok(api.events('page_view')[0].browser_id.fbc.startsWith(fbc), 'CAPI event retains the first click');
+  const skipLogs = api.requests.filter(request => request.path === '/api/log' &&
+    request.body?.data?.message === 'meta.pixel.skipped: different_live_meta_identity');
+  assert.equal(skipLogs.length, 1);
+  assert.equal(JSON.stringify(skipLogs[0].body).includes(fbc), false);
 });
 
 test('Pixel does not attach a later click to a PageView without fbc', async t => {
@@ -408,6 +412,9 @@ test('Pixel leaves delivery to CAPI when SDK readiness cannot be verified', asyn
   const calls = await api.page.evaluate(id => __pixelIdentity.filter(call => call.id === id), event.event_id);
   assert.deepEqual(calls, []);
   assert.equal(api.events('page_view').length, 1);
+  const skipLogs = api.requests.filter(request => request.path === '/api/log' &&
+    request.body?.data?.message === 'meta.pixel.skipped: pixel_sdk_readiness_unverifiable');
+  assert.equal(skipLogs.length, 1);
 });
 
 test('Pixel does not release a queued event after marketing withdrawal', async t => {
