@@ -443,12 +443,14 @@ test('proxy keeps the matching genuine click when duplicate _fbc cookies disagre
     const fbp = `fb.1.${observedAt}.BrowserId`
     for (const values of [[matching, other], [other, matching]]) {
       const request = new NextRequest('https://utekos.no/?fbclid=MatchingClick', {
-        headers: { accept: 'text/html', cookie: `${values.map(value => `_fbc=${value}`).join('; ')}; _fbp=${fbp}` },
+        headers: { accept: 'text/html', cookie: `${values.map(value => `_fbc=${value}`).join('; ')}; session=first; session=second; _fbp=${fbp}` },
       })
       const response = proxy(request)
       const captured = request.cookies.get('_fbc')?.value
       assert.match(captured ?? '', new RegExp(`^fb\\.1\\.${observedAt}\\.MatchingClick(?:\\.|$)`))
       assert.equal(response.cookies.get('_fbc'), undefined, 'the existing click must not be reminted')
+      assert.match(request.headers.get('cookie') ?? '', /session=first; session=second/, 'other cookies keep their original order and values')
+      assert.match(response.headers.get('x-middleware-request-cookie') ?? '', /session=first; session=second/, 'rendering receives both unrelated cookies')
     }
     const malformed = new NextRequest('https://utekos.no/produkter', {
       headers: { accept: 'text/html', cookie: `_fbc=${matching}; _fbc=%ZZ; _fbp=${fbp}` },

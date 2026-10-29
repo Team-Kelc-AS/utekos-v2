@@ -53,6 +53,7 @@ export function captureProxyMetaCookies(
     metaCookiePattern.test(value) && encodeURIComponent(value).length <= 3800
   )
   const cookieHeader = request.headers.get('cookie')
+  let requestCookieChanged = false
   const selectCookie = (name: '_fbp' | '_fbc') => {
     const observed = readCookieValues(cookieHeader, name)
     const valid = [...new Set(observed.values.filter(validCookie))]
@@ -63,6 +64,7 @@ export function captureProxyMetaCookies(
     // NextRequest.cookies collapses same-name entries before get/getAll. Use
     // the raw header, then pass only the unambiguous value to rendering.
     if (observed.count > 1 || (observed.count > 0 && !selected)) {
+      requestCookieChanged = true
       if (selected) request.cookies.set(name, selected)
       else request.cookies.delete(name)
     }
@@ -99,11 +101,26 @@ export function captureProxyMetaCookies(
     }
 
     for (const cookie of cookies) {
+      requestCookieChanged = true
       request.cookies.set(cookie.name, cookie.value)
     }
     return cookies
   } catch {
     console.error('[tracking] proxy_meta_capture_failed')
     return []
+  } finally {
+    if (requestCookieChanged && cookieHeader !== null) {
+      // RequestCookies.set serializes its whole name-keyed map. Restore all
+      // unrelated raw Cookie entries, including duplicate names, for rendering.
+      const entries = cookieHeader.split(';').map(part => part.trim()).filter(part => {
+        const separator = part.indexOf('=')
+        return part && (separator < 1 || !['_fbp', '_fbc'].includes(part.slice(0, separator).trim()))
+      })
+      for (const name of ['_fbp', '_fbc'] as const) {
+        const value = request.cookies.get(name)?.value
+        if (value) entries.push(`${name}=${encodeURIComponent(value)}`)
+      }
+      request.headers.set('cookie', entries.join('; '))
+    }
   }
 }
