@@ -102,17 +102,24 @@
     },
     "src/lib/analytics/metaClientParameterBuilder.ts": {
       "baseSha256": "d0fa890b605c7b29bb3274838046864dcd5c10bf3030764dd4d877a22190db9a",
-      "sha256": "fe6c888f5855d01b2231903ab932f8ebc849941b79a433c8f4735afb2275c5a5",
-      "reason": "Await one shared Meta SDK collection before first PageView and checkout; preserve delayed in-app fbc and its timestamp. Bound an unavailable native bridge to five seconds or pagehide, read live cookies at fallback, retain late results without replay or overlapping SDK calls. Offline Chromium/WebKit regressions cover delayed recovery, immediate checkout, IP latency, timeout and pagehide. The five-second bound is application policy, not a Meta guarantee.",
+      "sha256": "81a642cc9967051f1aa9a26527c33df94dd32c75508431fccc1930c1b9083bb8",
+      "reason": "Await one shared Meta SDK collection before first PageView and checkout; preserve delayed in-app fbc and its timestamp. Bound an unavailable native bridge to five seconds or pagehide, read live cookies at fallback, retain late results without replay or overlapping SDK calls. Offline Chromium/WebKit regressions cover delayed recovery, immediate checkout, IP latency, timeout and pagehide. The five-second bound is application policy, not a Meta guarantee. Reviewed 2026-10-29: skip stale page URLs before invoking the cookie-writing SDK; reconcile cookies after a late native response or marketing consent withdrawal. Skip SDK collection when the current URL contains an oversized or malformed fbclid because the SDK also reads window.location.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "src/lib/analytics/metaClientParameterBuilder.ts"
     },
     "src/lib/analytics/enrichCanonicalEventWithMetaAttribution.ts": {
       "baseSha256": "a7a23089813850e759931a0005c347b503309cff0d62ba9d49d00c19af0eecda",
-      "sha256": "227bf4e443868a9bd5bbc5c214dcf12e47806ceb364b495f0e27c2ffe8efe9a9",
-      "reason": "Align canonical fbclid and durable click cache with the actual SDK fbc, preserve the complete fbc timestamp and other provider IDs, and retain explicit URL click precedence. Same-page/live-cookie guards prevent late events from rolling back a newer navigation cache. Server fallback receives only a currently observed URL click, never remints an expired stored raw click, and conflicting fallback fbc is omitted. Offline Chromium/WebKit regressions cover recovery, checkout, restored cookies, navigation ordering and unavailable-cookie fallbacks.",
+      "sha256": "b542f635837b62cc7d038b59f898abfee3c32ea5bff315cfaed35fe565b9dea5",
+      "reason": "Align canonical fbclid and durable click cache with the actual SDK fbc, preserve the complete fbc timestamp and other provider IDs, and retain explicit URL click precedence. Same-page/live-cookie guards prevent late events from rolling back a newer navigation cache. Server fallback receives only a currently observed URL click, never remints an expired stored raw click, and conflicting fallback fbc is omitted. Offline Chromium/WebKit regressions cover recovery, checkout, restored cookies, navigation ordering and unavailable-cookie fallbacks. Reviewed 2026-10-29: consent-gated byte-exact 90-day browser backup, new-click precedence across tabs, delayed-event chronology, URL attribution and stale SDK completion guards. Reject oversized or malformed URL fbclid without dropping an existing valid fbc; sanitize server-fallback URL while retaining the factual canonical page URL.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "src/lib/analytics/enrichCanonicalEventWithMetaAttribution.ts"
+    },
+    "src/lib/analytics/clickIdSessionStore.ts": {
+      "baseSha256": "05b379e85e6abbf15ac16b8c987333e7e0aaad4487f6384920c3b37c1054243a",
+      "sha256": "ae43c6d2db6df12799451091ba03bed94dd9223496e46068a29c21d278d94b4d",
+      "reason": "Reviewed 2026-10-29: clear stored marketing click IDs when marketing consent is withdrawn; browser tests verify cookie and storage cleanup. Reject URL and stored Meta fbclid longer than the SDK's 500-character limit, and repair invalid prior session/local values without changing other provider IDs or the durable timestamp.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/clickIdSessionStore.ts"
     },
     "src/lib/analytics/checkoutConsentSnapshot.ts": {
       "baseSha256": "1c7d397f4313d76c923a8fefafac9cdddd09c5337f341db9fae4b988591a6b08",

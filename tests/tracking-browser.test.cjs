@@ -14,7 +14,8 @@ let browser, safari, bundle, previewBundle;
 
 async function buildHarness(environment) {
   const result = await esbuild.build({
-    stdin: { contents: `export {reportNavigation,attachCommerceTracking,prepareCanonicalCheckout,confirmCheckoutTracking} from './src/lib/tracking/runtime';
+    stdin: { contents: `export {reportNavigation,attachCommerceTracking,prepareCanonicalCheckout,confirmCheckoutTracking,createBrowserEvent,dispatchEvent} from './src/lib/tracking/runtime';
+      export {enrichCanonicalEventWithMetaAttribution} from './src/lib/analytics/enrichCanonicalEventWithMetaAttribution';
       export {observeStorefront,observeTrackedPage} from './src/lib/tracking/dom-observers';
       export {emitStorefrontAction} from './src/lib/tracking/browser-events';
       export {createCanonicalGenerateLead,buildGenerateLeadDataLayerEvent} from './src/lib/analytics/generateLeadEvent';
@@ -113,12 +114,15 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, deferObservers = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, storedClicks, metaCookie, metaFbpCookie, metaCookiesBlocked = false, metaContextFbc } = {}) {
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, deferObservers = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, metaFirstIpDelay = 0, storedClicks, storedDurableClicks, metaCookie, metaFbpCookie, metaCookiesBlocked = false, metaContextFbc, metaContextFbp = 'fb.1.1700000000000.123456789' } = {}) {
   const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block', userAgent });
   t.after(() => context.close());
   if (storedClicks) await context.addInitScript(identifiers => {
     if (!sessionStorage.getItem('utekos_click_ids')) sessionStorage.setItem('utekos_click_ids', JSON.stringify(identifiers));
   }, storedClicks);
+  if (storedDurableClicks) await context.addInitScript(identifiers => {
+    if (!localStorage.getItem('utekos_click_ids_v1')) localStorage.setItem('utekos_click_ids_v1', JSON.stringify({ identifiers, updatedAt: new Date().toISOString() }));
+  }, storedDurableClicks);
   if (metaAndroidResponse) await context.addInitScript(response => {
     const OriginalXHR = window.XMLHttpRequest;
     window.__androidBridgeCalls = 0;
@@ -142,6 +146,7 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
   if (metaFbpCookie) await context.addCookies([{ name: '_fbp', value: metaFbpCookie, domain: '.utekos.no', path: '/' }]);
   if (metaCookiesBlocked) await context.addInitScript(() => Object.defineProperty(document, 'cookie', { get: () => '', set: () => {} }));
   const requests = [], forbidden = [], errors = [];
+  let metaIpCalls = 0;
   t.after(() => { assert.deepEqual(forbidden, [], 'every external request must have an explicit offline fixture'); assert.deepEqual(errors, [], 'no uncaught browser errors'); });
   await context.route('**/*', async route => {
     const request = route.request(); const url = new URL(request.url());
@@ -169,12 +174,13 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
       let json; try { json = JSON.parse(body); } catch { json = body; }
       requests.push({ path: url.pathname, body: json });
       if (url.pathname === '/api/meta/client-ip') {
-        if (metaIpDelay) await new Promise(resolve => setTimeout(resolve, metaIpDelay));
+        const delay = ++metaIpCalls === 1 ? metaFirstIpDelay || metaIpDelay : metaIpDelay;
+        if (delay) await new Promise(resolve => setTimeout(resolve, delay));
         return route.fulfill({ json: { client_ip_address: '192.0.2.1' } });
       }
       if (url.pathname === '/api/meta/parameter-context') return route.fulfill({
         headers: metaContextFbc ? { 'Set-Cookie': `_fbc=${metaContextFbc}; Domain=.utekos.no; Path=/` } : {},
-        json: { fbp: 'fb.1.1700000000000.123456789', ...(metaContextFbc ? { fbc: metaContextFbc } : {}) },
+        json: { fbp: metaContextFbp, ...(metaContextFbc ? { fbc: metaContextFbc } : {}) },
       });
       return route.fulfill({ status: 202, json: { status: 'accepted' } });
     }
@@ -474,13 +480,14 @@ test(`Meta recovered click replaces stale raw click through checkout (webkit=${s
 }
 
 test('Meta restored cookie takes precedence over stale raw storage, while a new URL click wins both', async t => {
-  const cookie = 'fb.1.1700000000000.OfflineRestoredClick';
+  const timestamp = Date.now();
+  const cookie = `fb.1.${timestamp}.OfflineRestoredClick`;
   const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
     metaCookie: cookie, storedClicks: { fbclid: 'OfflinePreviousClick' },
   });
   await api.waitFor('page_view');
   assert.equal(api.events('page_view')[0].click_id.fbclid, 'OfflineRestoredClick');
-  assert.equal(api.events('page_view')[0].browser_id.fbc.split('.')[2], '1700000000000');
+  assert.equal(api.events('page_view')[0].browser_id.fbc.split('.')[2], String(timestamp));
   await api.page.evaluate(() => { history.pushState({}, '', '/produkter/test-product?fbclid=OfflineNewUrlClick'); dispatchEvent(new PopStateEvent('popstate')); });
   await api.waitFor('page_view', 2);
   const current = api.events('page_view')[1];
@@ -489,11 +496,94 @@ test('Meta restored cookie takes precedence over stale raw storage, while a new 
   assert.equal(await api.page.evaluate(() => JSON.parse(sessionStorage.getItem('utekos_click_ids')).fbclid), 'OfflineNewUrlClick');
 });
 
+for (const invalidFbclid of ['X'.repeat(501), '%ZZ']) {
+test(`Meta rejects invalid URL fbclid without losing a valid click (${invalidFbclid.length > 500 ? 'oversized' : 'malformed'})`, async t => {
+  const cookie = `fb.1.${Date.now()}.OfflineValidClick`;
+  const api = await fixture(t, `https://utekos.no/produkter/test-product?fbclid=${invalidFbclid}`, { metaCookie: cookie });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.browser_id.fbc, cookie);
+  assert.equal(event.click_id.fbclid, 'OfflineValidClick');
+  const persisted = await api.page.evaluate(() => ({
+    session: JSON.parse(sessionStorage.getItem('utekos_click_ids'))?.fbclid,
+    cookie: document.cookie,
+  }));
+  assert.equal(persisted.session, 'OfflineValidClick');
+  assert.ok(persisted.cookie.includes(`_fbc=${cookie}`));
+  assert.ok(event.page_url.includes('fbclid='), 'canonical page URL remains the observed URL');
+  assert.ok(api.requests.some(r => r.path === '/api/meta/parameter-context' && !new URL(r.body.page_url).searchParams.has('fbclid')),
+    'server fallback receives a URL without the invalid click');
+});
+test(`Meta invalid URL fbclid is not stored or sent without a prior cookie (${invalidFbclid.length > 500 ? 'oversized' : 'malformed'})`, async t => {
+  const api = await fixture(t, `https://utekos.no/produkter/test-product?fbclid=${invalidFbclid}`, {
+    storedClicks: { fbclid: 'Y'.repeat(501), ttclid: 'OfflineTikTokClick' },
+    storedDurableClicks: { fbclid: 'Y'.repeat(501), epik: 'OfflinePinterestClick' },
+    metaContextFbp: `fb.1.${Date.now()}.123456789`,
+  });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.browser_id?.fbc, undefined);
+  assert.equal(event.click_id?.fbclid, undefined);
+  assert.equal(event.click_id?.ttclid, 'OfflineTikTokClick');
+  assert.equal(event.click_id?.epik, 'OfflinePinterestClick');
+  assert.ok(event.browser_id?.fbp, 'Meta browser ID still arrives through the server fallback');
+  const persisted = await api.page.evaluate(() => ({
+    session: JSON.parse(sessionStorage.getItem('utekos_click_ids')),
+    durable: JSON.parse(localStorage.getItem('utekos_click_ids_v1')),
+  }));
+  assert.equal(persisted.session.fbclid, undefined);
+  assert.equal(persisted.durable.identifiers.fbclid, undefined);
+  assert.equal(persisted.durable.identifiers.epik, 'OfflinePinterestClick');
+  assert.ok(api.requests.some(r => r.path === '/api/meta/parameter-context' && !new URL(r.body.page_url).searchParams.has('fbclid')),
+    'server fallback receives a URL without the invalid click');
+});
+}
+
+test('Meta accepts a 500-character URL click at the SDK boundary', async t => {
+  const click = 'Z'.repeat(500);
+  const api = await fixture(t, `https://utekos.no/produkter/test-product?fbclid=${click}`);
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.click_id.fbclid, click);
+  assert.equal(event.browser_id.fbc.split('.')[3], click);
+});
+
+test('Meta chooses the first literal fbclid query key over an earlier encoded key', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?%66bclid=EncodedKeyClick&fbclid=LiteralClick');
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.click_id.fbclid, 'LiteralClick');
+  assert.equal(event.browser_id.fbc.split('.')[3], 'LiteralClick');
+  assert.equal(await api.page.evaluate(() => JSON.parse(sessionStorage.getItem('utekos_click_ids')).fbclid), 'LiteralClick');
+});
+
+for (const invalidFirst of ['%ZZ', '%20%20']) {
+test(`Meta rejects an invalid first literal fbclid even when a later duplicate is valid (${invalidFirst})`, async t => {
+  const api = await fixture(t, `https://utekos.no/produkter/test-product?fbclid=${invalidFirst}&fbclid=LaterClick`, {
+    metaContextFbp: `fb.1.${Date.now()}.123456789`,
+  });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.click_id?.fbclid, undefined);
+  assert.equal(event.browser_id?.fbc, undefined);
+  assert.ok(event.browser_id?.fbp);
+  assert.equal(await api.page.evaluate(() => JSON.parse(sessionStorage.getItem('utekos_click_ids'))?.fbclid), undefined);
+});
+}
+
+test('Meta accepts an encoded percent sign as an opaque click byte', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=%25ZZ');
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.click_id.fbclid, '%ZZ');
+  assert.equal(event.browser_id.fbc.split('.')[3], '%ZZ');
+});
+
 for (const safariMode of [false, true]) {
 for (const cookieMutation of ['deleted', 'reminted']) {
 test(`Meta preserves first PageView identifiers when browser cookies are ${cookieMutation} before product view (webkit=${safariMode})`, async t => {
-  const fbc = 'fb.1.1700000000000.OfflineLandingClick.AQQCAQMC';
-  const fbp = 'fb.1.1700000000000.123456789.AQQCAQMC';
+  const fbc = `fb.1.${Date.now()}.OfflineLandingClick.AQQCAQMC`;
+  const fbp = `fb.1.${Date.now()}.123456789.AQQCAQMC`;
   const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineLandingClick', {
     deferCommerce: true, deferObservers: true, metaCookie: fbc, metaFbpCookie: fbp, safariMode,
   });
@@ -508,8 +598,9 @@ test(`Meta preserves first PageView identifiers when browser cookies are ${cooki
       document.cookie = '_fbc=; Domain=.utekos.no; Path=/; Max-Age=0';
       document.cookie = '_fbp=; Domain=.utekos.no; Path=/; Max-Age=0';
     } else {
-      document.cookie = '_fbc=fb.1.1700000005000.OfflineLandingClick.AQYCAQMC; Domain=.utekos.no; Path=/';
-      document.cookie = '_fbp=fb.1.1700000005000.987654321.AQYCAQMC; Domain=.utekos.no; Path=/';
+      const remintedAt = Date.now() + 1000;
+      document.cookie = `_fbc=fb.1.${remintedAt}.OfflineLandingClick.AQYCAQMC; Domain=.utekos.no; Path=/`;
+      document.cookie = `_fbp=fb.1.${remintedAt}.987654321.AQYCAQMC; Domain=.utekos.no; Path=/`;
     }
     return document.cookie;
   }, cookieMutation);
@@ -529,8 +620,8 @@ test(`Meta preserves first PageView identifiers when browser cookies are ${cooki
 
 for (const safariMode of [false, true]) {
 test(`Meta preserves the first click timestamp across a document navigation after cookie loss (webkit=${safariMode})`, async t => {
-  const fbc = 'fb.1.1700000000000.OfflineLandingClick.AQQCAQMC';
-  const fbp = 'fb.1.1700000000000.123456789.AQQCAQMC';
+  const fbc = `fb.1.${Date.now()}.OfflineLandingClick.AQQCAQMC`;
+  const fbp = `fb.1.${Date.now()}.123456789.AQQCAQMC`;
   const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineLandingClick', {
     deferObservers: true, metaCookie: fbc, metaFbpCookie: fbp, safariMode,
   });
@@ -552,11 +643,42 @@ test(`Meta preserves the first click timestamp across a document navigation afte
 });
 }
 
+for (const safariMode of [false, true]) {
+test(`Meta restores the original full identifiers in a new tab after cookie loss (webkit=${safariMode})`, async t => {
+  const timestamp = Date.now();
+  const fbc = `fb.1.${timestamp}.OfflineLandingClick.AQQCAQMC`;
+  const fbp = `fb.1.${timestamp}.123456789.AQQCAQMC`;
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineLandingClick', {
+    metaCookie: fbc, metaFbpCookie: fbp, safariMode,
+  });
+  await api.waitFor('page_view');
+  assert.equal(api.events('page_view')[0].browser_id.fbc, fbc);
+  assert.equal(await api.page.evaluate(() => JSON.parse(localStorage.getItem('utekos_meta_identifiers_v2')).fbc), fbc);
+  await api.page.evaluate(() => {
+    document.cookie = '_fbc=; Domain=.utekos.no; Path=/; Max-Age=0';
+    document.cookie = '_fbp=; Domain=.utekos.no; Path=/; Max-Age=0';
+  });
+  const context = api.page.context();
+  await api.page.close();
+  const second = await context.newPage();
+  await second.goto('https://utekos.no/produkter/test-product');
+  await second.waitForFunction(() => window.dataLayer.some(entry => entry?.event === 'page_view'));
+  await second.waitForFunction(() => window.__pixelIdentity.some(entry => entry.name === 'PageView'));
+  const latest = api.events('page_view').at(-1);
+  assert.equal(latest.browser_id.fbc, fbc);
+  assert.equal(latest.browser_id.fbp, fbp);
+  const pixelCookie = await second.evaluate(() => window.__pixelIdentity.find(entry => entry.name === 'PageView')?.cookie);
+  assert.ok(pixelCookie.includes(`_fbc=${fbc}`));
+  assert.ok(pixelCookie.includes(`_fbp=${fbp}`));
+});
+}
+
 test('Meta session backup yields to a new URL click on the next document', async t => {
+  const timestamp = Date.now();
   const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineOldClick', {
     deferObservers: true,
-    metaCookie: 'fb.1.1700000000000.OfflineOldClick.AQQCAQMC',
-    metaFbpCookie: 'fb.1.1700000000000.123456789.AQQCAQMC',
+    metaCookie: `fb.1.${timestamp}.OfflineOldClick.AQQCAQMC`,
+    metaFbpCookie: `fb.1.${timestamp}.123456789.AQQCAQMC`,
   });
   await api.waitFor('page_view');
   await api.page.evaluate(() => {
@@ -569,6 +691,205 @@ test('Meta session backup yields to a new URL click on the next document', async
   assert.equal(current.click_id.fbclid, 'OfflineNewClick');
   assert.match(current.browser_id.fbc, /\.OfflineNewClick\./);
   assert.ok(!current.browser_id.fbc.includes('OfflineOldClick'));
+  assert.equal(await api.page.evaluate(() => JSON.parse(localStorage.getItem('utekos_meta_identifiers_v2')).fbc), current.browser_id.fbc);
+});
+
+test('marketing withdrawal clears Meta backups, click storage and first-party cookies', async t => {
+  const timestamp = Date.now();
+  const fbc = `fb.1.${timestamp}.OfflineLandingClick.AQQCAQMC`;
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineLandingClick', {
+    metaCookie: fbc, metaFbpCookie: `fb.1.${timestamp}.123456789.AQQCAQMC`,
+  });
+  await api.waitFor('page_view');
+  const state = await api.page.evaluate(async () => {
+    const event = dataLayer.find(entry => entry?.event === 'page_view').canonical_event;
+    await UtekosTrackingHarness.enrichCanonicalEventWithMetaAttribution({
+      ...event, consent: { ...event.consent, marketing: 'denied' },
+    });
+    return {
+      cookie: document.cookie,
+      local: localStorage.getItem('utekos_meta_identifiers_v2'),
+      session: sessionStorage.getItem('utekos_meta_identifiers_v1'),
+      rawLocal: localStorage.getItem('utekos_click_ids_v1'),
+      rawSession: sessionStorage.getItem('utekos_click_ids'),
+    };
+  });
+  assert.equal(state.local, null);
+  assert.equal(state.session, null);
+  assert.equal(state.rawLocal, null);
+  assert.equal(state.rawSession, null);
+  assert.ok(!state.cookie.includes('_fbc='));
+  assert.ok(!state.cookie.includes('_fbp='));
+  await api.page.evaluate(() => { history.replaceState({}, '', '/produkter/test-product'); UtekosTrackingHarness.reportNavigation(); });
+  await api.waitFor('page_view', 2);
+  assert.equal(api.events('page_view')[1].browser_id?.fbc, undefined, 'regrant without a new click cannot revive withdrawn identity');
+});
+
+test('marketing withdrawal during native Meta collection leaves no late cookie or Meta ID', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
+    metaBackupDelay: 450, storedClicks: { fbclid: 'OfflinePreviousClick' },
+  });
+  await api.page.waitForFunction(() => window.__metaBackupCalls === 1);
+  const denied = await api.page.evaluate(async () => {
+    const current = UtekosTrackingHarness.createBrowserEvent('page_view', {});
+    return UtekosTrackingHarness.enrichCanonicalEventWithMetaAttribution({
+      ...current, consent: { ...current.consent, marketing: 'denied' },
+    });
+  });
+  assert.equal(denied.consent.marketing, 'denied');
+  assert.equal(denied.browser_id, undefined);
+  assert.equal(denied.click_id, undefined);
+  await api.page.waitForTimeout(650);
+  const state = await api.page.evaluate(() => ({
+    cookies: document.cookie,
+    durable: localStorage.getItem('utekos_meta_identifiers_v2'),
+    session: sessionStorage.getItem('utekos_meta_identifiers_v1'),
+  }));
+  assert.ok(!state.cookies.includes('_fbc='));
+  assert.ok(!state.cookies.includes('_fbp='));
+  assert.equal(state.durable, null);
+  assert.equal(state.session, null);
+  for (const event of api.events('page_view')) {
+    assert.equal(event.browser_id?.fbc, undefined);
+    assert.equal(event.browser_id?.fbp, undefined);
+  }
+});
+
+for (const record of ['{invalid', JSON.stringify({ fbc: 'fb.1.1700000000000.ExpiredClick.AQQCAQMC' })]) {
+test(`Meta ignores ${record === '{invalid' ? 'malformed' : 'expired'} durable backup and captures a fresh URL click`, async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product');
+  await api.waitFor('page_view');
+  await api.page.evaluate(value => {
+    localStorage.setItem('utekos_meta_identifiers_v2', value);
+    sessionStorage.removeItem('utekos_meta_identifiers_v1');
+    document.cookie = '_fbc=; Domain=.utekos.no; Path=/; Max-Age=0';
+  }, record);
+  await api.page.reload();
+  await api.waitFor('page_view');
+  assert.equal(api.events('page_view').length, 2);
+  assert.equal(api.events('page_view')[1].browser_id?.fbc, undefined);
+  await api.page.goto('https://utekos.no/produkter/test-product?fbclid=OfflineFreshClick');
+  await api.waitFor('page_view');
+  assert.equal(api.events('page_view').length, 3);
+  assert.match(api.events('page_view')[2].browser_id.fbc, /\.OfflineFreshClick\./);
+});
+}
+
+test('restoring a durable Meta identifier does not extend its original 90-day expiry', async t => {
+  const originalTime = Date.now() - 89 * 24 * 60 * 60 * 1000;
+  const fbc = `fb.1.${originalTime}.OfflineAgedClick.AQQCAQMC`;
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product');
+  await api.waitFor('page_view');
+  await api.page.evaluate(value => {
+    localStorage.setItem('utekos_meta_identifiers_v2', JSON.stringify({ fbc: value }));
+    sessionStorage.removeItem('utekos_meta_identifiers_v1');
+    document.cookie = '_fbc=; Domain=.utekos.no; Path=/; Max-Age=0';
+  }, fbc);
+  await api.page.reload();
+  await api.waitFor('page_view');
+  assert.equal(api.events('page_view').at(-1).browser_id.fbc, fbc);
+  const firstExpiry = (await api.page.context().cookies()).find(cookie => cookie.name === '_fbc').expires;
+  assert.ok(firstExpiry <= (originalTime + 90 * 24 * 60 * 60 * 1000) / 1000 + 1);
+  await api.page.evaluate(() => UtekosTrackingHarness.dispatchEvent(UtekosTrackingHarness.createBrowserEvent('page_view', {})));
+  await api.waitFor('page_view', 2);
+  const nextExpiry = (await api.page.context().cookies()).find(cookie => cookie.name === '_fbc').expires;
+  assert.ok(nextExpiry <= firstExpiry + 1, 'later events cannot refresh the original click lifetime');
+});
+
+test('an older event dispatched after a new URL click cannot roll back the current cookie', async t => {
+  const timestamp = Date.now();
+  const fbc = `fb.1.${timestamp}.OfflineOldClick.AQQCAQMC`;
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineOldClick', { metaCookie: fbc });
+  await api.waitFor('page_view');
+  const oldEvent = await api.page.evaluate(() => UtekosTrackingHarness.createBrowserEvent('page_view', {}));
+  await api.page.evaluate(() => {
+    history.pushState({}, '', '/produkter/test-product?fbclid=OfflineNewClick');
+    dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await api.waitFor('page_view', 2);
+  const newFbc = api.events('page_view')[1].browser_id.fbc;
+  assert.match(newFbc, /\.OfflineNewClick\./);
+  await api.page.evaluate(event => UtekosTrackingHarness.dispatchEvent(event), oldEvent);
+  await api.waitFor('page_view', 3);
+  assert.equal(api.events('page_view')[2].browser_id.fbc, fbc);
+  assert.ok((await api.page.evaluate(() => document.cookie)).includes(`_fbc=${newFbc}`));
+});
+
+test('an old tab URL cannot overwrite a newer tab click, while a fresh navigation wins', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineTabAClick');
+  await api.waitFor('page_view');
+  const tabA = api.page;
+  const tabB = await tabA.context().newPage();
+  await tabB.goto('https://utekos.no/produkter/test-product?fbclid=OfflineTabBClick');
+  await tabB.waitForFunction(() => window.dataLayer.some(entry => entry?.event === 'page_view'));
+  await tabB.waitForFunction(() => localStorage.getItem('utekos_meta_identifiers_v2')?.includes('OfflineTabBClick'));
+  const tabBFbc = JSON.parse(await tabB.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2'))).fbc;
+  assert.match(tabBFbc, /\.OfflineTabBClick\./);
+
+  await tabA.evaluate(() => UtekosTrackingHarness.dispatchEvent(UtekosTrackingHarness.createBrowserEvent('page_view', {})));
+  await api.waitFor('page_view', 2);
+  const oldTabEvent = api.events('page_view').at(-1);
+  assert.equal(oldTabEvent.browser_id.fbc, tabBFbc);
+  assert.equal(oldTabEvent.click_id.fbclid, 'OfflineTabBClick');
+  assert.equal(new URL(oldTabEvent.page_url).searchParams.has('fbclid'), false);
+  assert.ok((await tabA.evaluate(() => document.cookie)).includes(`_fbc=${tabBFbc}`));
+  assert.equal(JSON.parse(await tabA.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2'))).fbc, tabBFbc);
+
+  await tabA.evaluate(() => {
+    history.pushState({}, '', '/produkter/test-product?fbclid=OfflineTabCClick');
+    dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await api.waitFor('page_view', 3);
+  const freshEvent = api.events('page_view').at(-1);
+  assert.equal(freshEvent.click_id.fbclid, 'OfflineTabCClick');
+  assert.equal(new URL(freshEvent.page_url).searchParams.get('fbclid'), 'OfflineTabCClick');
+  assert.match(freshEvent.browser_id.fbc, /\.OfflineTabCClick\./);
+  assert.equal(JSON.parse(await tabB.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2'))).fbc, freshEvent.browser_id.fbc);
+});
+
+test('an A landing created before B keeps its genuine URL click without inheriting B fbc', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineTabALanding', {
+    metaFirstIpDelay: 2200,
+  });
+  await api.page.waitForFunction(() => document.cookie.includes('OfflineTabALanding'));
+  assert.equal(api.events('page_view').length, 0, 'A remains in flight before B arrives');
+  const tabB = await api.page.context().newPage();
+  await tabB.goto('https://utekos.no/produkter/test-product?fbclid=OfflineTabBClick');
+  await tabB.waitForFunction(() => localStorage.getItem('utekos_meta_identifiers_v2')?.includes('OfflineTabBClick'));
+  const tabBFbc = JSON.parse(await tabB.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2'))).fbc;
+  await api.waitFor('page_view');
+  const landing = api.events('page_view').find(event => new URL(event.page_url).searchParams.get('fbclid') === 'OfflineTabALanding');
+  assert.ok(landing, 'the earlier A landing retains its real URL observation');
+  assert.equal(landing.click_id.fbclid, 'OfflineTabALanding');
+  assert.equal(landing.browser_id?.fbc, undefined, 'A cannot inherit later B fbc');
+  assert.ok(Date.parse(landing.event_time) < Number(tabBFbc.split('.')[2]));
+  assert.ok((await api.page.evaluate(() => document.cookie)).includes(`_fbc=${tabBFbc}`));
+});
+
+test('late native recovery in an old tab cannot undo a newer click in another tab', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
+    metaBackupDelay: 6500, storedClicks: { fbclid: 'OfflinePreviousClick' },
+  });
+  await api.page.waitForFunction(() => window.__metaBackupCalls === 1);
+  const tabB = await api.page.context().newPage();
+  await tabB.goto('https://utekos.no/produkter/test-product?fbclid=OfflineTabBClick');
+  await tabB.waitForFunction(() => localStorage.getItem('utekos_meta_identifiers_v2')?.includes('OfflineTabBClick'));
+  const tabBFbc = JSON.parse(await tabB.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2'))).fbc;
+  await api.page.waitForTimeout(6700);
+  assert.ok((await api.page.evaluate(() => document.cookie)).includes(`_fbc=${tabBFbc}`));
+  assert.equal(JSON.parse(await api.page.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2'))).fbc, tabBFbc);
+  const tabAEvents = () => api.events('page_view').filter(event => !event.page_url.includes('OfflineTabBClick'));
+  assert.equal(tabAEvents().length, 1);
+  assert.equal(tabAEvents()[0].browser_id?.fbc, undefined, 'A event created before B must not inherit B fbc');
+  assert.equal(tabAEvents()[0].click_id?.fbclid, undefined, 'old raw storage cannot stand in for A fbc');
+  assert.ok(Date.parse(tabAEvents()[0].event_time) < Number(tabBFbc.split('.')[2]));
+
+  await api.page.evaluate(() => UtekosTrackingHarness.dispatchEvent(UtekosTrackingHarness.createBrowserEvent('page_view', {})));
+  await api.waitFor('page_view', 2);
+  assert.equal(tabAEvents().length, 2);
+  assert.equal(tabAEvents()[1].browser_id.fbc, tabBFbc, 'a new A event after B may carry B');
+  assert.equal(tabAEvents()[1].click_id.fbclid, 'OfflineTabBClick');
+  assert.ok((await api.page.evaluate(() => document.cookie)).includes(`_fbc=${tabBFbc}`));
 });
 
 test('Meta late native collection preserves a newer navigation click', async t => {

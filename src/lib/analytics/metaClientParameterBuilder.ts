@@ -6,6 +6,7 @@ import { mapMetaClientParameterContext } from './mapMetaClientParameterContext'
 import { metaClientIpResponseSchema } from './metaClientIpContract'
 import { shouldCollectMetaClientIp } from './shouldCollectMetaClientIp'
 import { extractFbclidFromFbc } from './extractFbclidFromFbc'
+import { readObservedMetaFbclid } from './metaFbclid'
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 
 function marketingAllowed() {
@@ -18,6 +19,8 @@ const META_CLIENT_IP_TIMEOUT_MS = 2500
 const META_COLLECTION_TIMEOUT_MS = 5000
 let completedPageUrl: string | undefined
 let hasCollectedClientIpForDocument = false
+let collectionEpoch = 0
+let reconcileRevokedCollection: (() => void) | undefined
 type Collection = {
   pageUrl: string
   pending: boolean
@@ -28,6 +31,7 @@ let collection: Collection | undefined
 type EnsureMetaClientParameterContextInput = {
   consent: ConsentSnapshot
   pageUrl: string
+  onStaleCompletion?: () => void
 }
 
 export type MetaClientParameterContext = {
@@ -87,6 +91,7 @@ function readPersistedIdentifiers(): MetaClientParameterContext {
 }
 
 function startCollection(input: EnsureMetaClientParameterContextInput): Collection {
+  const startedAtEpoch = collectionEpoch
   const active: Collection = {
     pageUrl: input.pageUrl,
     pending: true,
@@ -114,6 +119,9 @@ function startCollection(input: EnsureMetaClientParameterContextInput): Collecti
 
     void (async () => {
       const builder = await loadClientParamBuilder()
+      // An older event must not feed its URL to an SDK that writes cookies.
+      if (startedAtEpoch !== collectionEpoch) return {}
+      if (window.location.href !== input.pageUrl) return readPersistedIdentifiers()
       const shouldCollectClientIp =
         !hasCollectedClientIpForDocument &&
         shouldCollectMetaClientIp(input.pageUrl, process.env.NODE_ENV)
@@ -123,10 +131,19 @@ function startCollection(input: EnsureMetaClientParameterContextInput): Collecti
       const clientIpAddress = shouldCollectClientIp
         ? getConsentedClientIpAddress(input.consent)
         : undefined
-      const parameters = await builder.processAndCollectAllParams(
-        input.pageUrl,
-        clientIpAddress ? () => clientIpAddress : undefined
-      )
+      let parameters: Awaited<ReturnType<ClientParamBuilder['processAndCollectAllParams']>>
+      try {
+        parameters = await builder.processAndCollectAllParams(
+          input.pageUrl,
+          clientIpAddress ? () => clientIpAddress : undefined
+        )
+      } finally {
+        // Native click recovery can finish after consent was withdrawn. The
+        // SDK writes cookies internally, so reconcile after its last write.
+        if (startedAtEpoch !== collectionEpoch) reconcileRevokedCollection?.()
+        else input.onStaleCompletion?.()
+      }
+      if (startedAtEpoch !== collectionEpoch) return {}
       if (parameters._fbi) hasCollectedClientIpForDocument = true
       completedPageUrl = input.pageUrl
       return mapMetaClientParameterContext(parameters)
@@ -136,6 +153,13 @@ function startCollection(input: EnsureMetaClientParameterContextInput): Collecti
     )
   })
   return active
+}
+
+export function revokeMetaClientParameterContext(reconcile: () => void) {
+  collectionEpoch++
+  reconcileRevokedCollection = reconcile
+  completedPageUrl = undefined
+  collection = undefined
 }
 
 export async function ensureMetaClientParameterContext(
@@ -149,6 +173,11 @@ export async function ensureMetaClientParameterContext(
     return {}
   }
 
+  if (window.location.href !== input.pageUrl) return readPersistedIdentifiers()
+
+  const observedClick = readObservedMetaFbclid(input.pageUrl)
+  if (observedClick.invalid) return readPersistedIdentifiers()
+
   if (collection?.pending) {
     const active = collection
     const identifiers = await active.ready
@@ -160,7 +189,7 @@ export async function ensureMetaClientParameterContext(
   }
 
   const currentIdentifiers = readPersistedIdentifiers()
-  const urlFbclid = new URL(input.pageUrl).searchParams.get('fbclid')
+  const urlFbclid = observedClick.value
   if (
     completedPageUrl === input.pageUrl &&
     currentIdentifiers.fbp &&

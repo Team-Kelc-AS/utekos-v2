@@ -374,3 +374,55 @@ test('production document proxy captures genuine URL click once and retains brow
     }
   }
 })
+
+test('proxy isolates malformed cookies and never passes an oversized URL click to Meta builder', () => {
+  const saved = {
+    enabled: process.env.NEXT_PUBLIC_TRACKING_ENABLED,
+    publicEnv: process.env.NEXT_PUBLIC_VERCEL_ENV,
+    serverEnv: process.env.VERCEL_ENV,
+  }
+  try {
+    process.env.NEXT_PUBLIC_TRACKING_ENABLED = 'true'
+    process.env.NEXT_PUBLIC_VERCEL_ENV = 'production'
+    process.env.VERCEL_ENV = 'production'
+    const request = new NextRequest('https://utekos.no/?fbclid=ValidNewClick', {
+      headers: { accept: 'text/html', cookie: `_fbc=${'x'.repeat(3900)}; _fbp=${'y'.repeat(3900)}` },
+    })
+    const response = proxy(request)
+    assert.match(response.cookies.get('_fbc')?.value ?? '', /\.ValidNewClick(?:\.|$)/)
+    assert.ok(response.cookies.get('_fbp')?.value)
+    assert.equal(request.cookies.get('_fbc')?.value, response.cookies.get('_fbc')?.value)
+    const malformed = proxy(new NextRequest('https://utekos.no/?fbclid=AnotherValidClick', {
+      headers: { accept: 'text/html', cookie: '_fbc=garbage; _fbp=not-a-meta-cookie' },
+    }))
+    assert.match(malformed.cookies.get('_fbc')?.value ?? '', /\.AnotherValidClick(?:\.|$)/)
+    assert.ok(malformed.cookies.get('_fbp')?.value)
+    const invalidUrl = proxy(new NextRequest(`https://utekos.no/?fbclid=${'z'.repeat(501)}`, {
+      headers: { accept: 'text/html' },
+    }))
+    assert.equal(invalidUrl.cookies.get('_fbc'), undefined)
+    assert.ok(invalidUrl.cookies.get('_fbp')?.value)
+    const malformedUrl = proxy(new NextRequest('https://utekos.no/?fbclid=%ZZ', {
+      headers: { accept: 'text/html' },
+    }))
+    assert.equal(malformedUrl.cookies.get('_fbc'), undefined)
+    assert.ok(malformedUrl.cookies.get('_fbp')?.value)
+    const encodedKey = proxy(new NextRequest('https://utekos.no/?%66bclid=EncodedKeyClick&fbclid=LiteralClick', {
+      headers: { accept: 'text/html' },
+    }))
+    assert.match(encodedKey.cookies.get('_fbc')?.value ?? '', /\.LiteralClick(?:\.|$)/)
+    const invalidFirst = proxy(new NextRequest('https://utekos.no/?fbclid=%ZZ&fbclid=LaterClick', {
+      headers: { accept: 'text/html' },
+    }))
+    assert.equal(invalidFirst.cookies.get('_fbc'), undefined)
+  } finally {
+    for (const [key, value] of Object.entries({
+      NEXT_PUBLIC_TRACKING_ENABLED: saved.enabled,
+      NEXT_PUBLIC_VERCEL_ENV: saved.publicEnv,
+      VERCEL_ENV: saved.serverEnv,
+    })) {
+      if (value === undefined) delete process.env[key]
+      else process.env[key] = value
+    }
+  }
+})
