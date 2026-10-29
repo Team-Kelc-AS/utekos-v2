@@ -127,6 +127,8 @@
       "source": "src/lib/analytics/server/captureProxyMetaCookies.ts",
       "target": "src/lib/analytics/server/captureProxyMetaCookies.ts",
       "sourceSha256": "6c2936329d6226614a3e59dfcffa4f3155043e23e46926d8bf4f3f51b3524279",
+      "reviewedTargetSha256": "18202ad7797b21645cfed8725da8e857f1477af6695856d2b92d08639dd30187",
+      "reason": "Reviewed 2026-10-29: isolate malformed or oversized Meta cookies so a valid URL fbclid is still captured, and remove an oversized or malformed URL fbclid before passing the URL to Parameter Builder. Original source hash retained.",
       "adapted": false
     },
     {

@@ -1,3 +1,5 @@
+import { isValidMetaFbclid, readObservedMetaFbclid } from './metaFbclid'
+
 const CLICK_ID_SESSION_KEY = 'utekos_click_ids'
 const CLICK_ID_LOCAL_KEY = 'utekos_click_ids_v1'
 const CLICK_ID_LOCAL_TTL_MS = 90 * 24 * 60 * 60 * 1000
@@ -17,6 +19,7 @@ let ephemeralSnapchatClickId: string | undefined
 type StorageLike = {
   getItem(key: string): string | null
   setItem(key: string, value: string): void
+  removeItem?(key: string): void
 }
 
 type DurableClickIdRecord = {
@@ -31,6 +34,7 @@ function readClickIdsFromSearchParams(
 
   for (const parameter of CLICK_ID_PARAMETERS) {
     if (parameter === 'sc_click_id') continue
+    if (parameter === 'fbclid') continue
     const value = searchParams.get(parameter)?.trim()
     if (value) identifiers[parameter] = value
   }
@@ -70,6 +74,10 @@ function sanitizeClickIds(
   for (const parameter of CLICK_ID_PARAMETERS) {
     const value = (parsed as Record<string, unknown>)[parameter]
     if (typeof value !== 'string') continue
+    if (parameter === 'fbclid') {
+      if (isValidMetaFbclid(value)) identifiers[parameter] = value
+      continue
+    }
 
     if (parameter === 'sc_click_id' && value.length > 0) {
       identifiers[parameter] = value
@@ -79,6 +87,27 @@ function sanitizeClickIds(
   }
 
   return identifiers
+}
+
+function hasInvalidStoredMetaClick(parsed: unknown): boolean {
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return false
+  const value = (parsed as Record<string, unknown>).fbclid
+  return value !== undefined &&
+    (typeof value !== 'string' || !isValidMetaFbclid(value))
+}
+
+function repairStoredClickIds(
+  storage: StorageLike,
+  key: string,
+  identifiers: Record<string, string>,
+  updatedAt?: string
+) {
+  try {
+    if (Object.keys(identifiers).length === 0) storage.removeItem?.(key)
+    else storage.setItem(key, JSON.stringify(updatedAt ? { identifiers, updatedAt } : identifiers))
+  } catch {
+    // Privacy-mode storage can reject writes after a successful read.
+  }
 }
 
 function readPersistedClickIds(
@@ -91,7 +120,10 @@ function readPersistedClickIds(
     const raw = storage.getItem(key)
     if (!raw) return {}
 
-    return sanitizeClickIds(JSON.parse(raw))
+    const parsed: unknown = JSON.parse(raw)
+    const identifiers = sanitizeClickIds(parsed)
+    if (hasInvalidStoredMetaClick(parsed)) repairStoredClickIds(storage, key, identifiers)
+    return identifiers
   } catch {
     return {}
   }
@@ -123,7 +155,11 @@ function readDurableClickIds(
     if (!Number.isFinite(updatedAtMs)) return {}
     if (nowMs - updatedAtMs > CLICK_ID_LOCAL_TTL_MS) return {}
 
-    return sanitizeClickIds(record.identifiers)
+    const identifiers = sanitizeClickIds(record.identifiers)
+    if (hasInvalidStoredMetaClick(record.identifiers)) {
+      repairStoredClickIds(storage, CLICK_ID_LOCAL_KEY, identifiers, record.updatedAt)
+    }
+    return identifiers
   } catch {
     return {}
   }
@@ -203,6 +239,8 @@ export function resolveClickIds(
   const fromUrl = readClickIdsFromSearchParams(
     new URL(pageUrl).searchParams
   )
+  const observedMetaClick = readObservedMetaFbclid(pageUrl).value
+  if (observedMetaClick) fromUrl.fbclid = observedMetaClick
   const fromObserved = sanitizeClickIds({
     ...(ephemeralSnapchatClickId ?
       { sc_click_id: ephemeralSnapchatClickId }
@@ -255,6 +293,20 @@ export function resolveClickIds(
 
 export function clearEphemeralSnapchatClickId() {
   ephemeralSnapchatClickId = undefined
+}
+
+export function clearStoredClickIds() {
+  clearEphemeralSnapchatClickId()
+  for (const [storage, key] of [
+    [getDefaultSessionStorage(), CLICK_ID_SESSION_KEY],
+    [getDefaultLocalStorage(), CLICK_ID_LOCAL_KEY]
+  ] as const) {
+    try {
+      storage?.removeItem?.(key)
+    } catch {
+      // Storage may be unavailable after marketing consent is withdrawn.
+    }
+  }
 }
 
 export function clearStoredSnapchatClickId(
