@@ -45,27 +45,34 @@ let contextSequence: Promise<void> = Promise.resolve()
 let firstFbc: string | undefined
 let firstFbp: string | undefined
 let continuityReported = false
+let ambiguousCookieReported = false
 let observedPageUrl: string | undefined
 let observedPageAtMs = 0
 let consentEpoch = 0
 let metaConsentRevoked = false
 const locallyObservedFbc = new Set<string>()
 
-function readCookie(name: string): string | undefined {
-  if (!marketingAllowed()) return undefined
+function readCookieValues(name: string): string[] {
+  if (!marketingAllowed()) return []
   const prefix = `${name}=`
-  const candidate = document.cookie
-    .split('; ')
-    .find(cookie => cookie.startsWith(prefix))
-  const value = candidate?.slice(prefix.length)
-
-  if (!value) return undefined
-
-  try {
-    return decodeURIComponent(value)
-  } catch {
-    return undefined
+  const values: string[] = []
+  for (const part of document.cookie.split(';')) {
+    const candidate = part.trim()
+    if (!candidate.startsWith(prefix)) continue
+    try {
+      const value = decodeURIComponent(candidate.slice(prefix.length))
+      if (value) values.push(value)
+    } catch {
+      // Keep the conflict visible to readback and the Pixel identity guard.
+      values.push('')
+    }
   }
+  return values
+}
+
+function readCookie(name: string): string | undefined {
+  const values = [...new Set(readCookieValues(name))]
+  return values.length === 1 ? values[0] : undefined
 }
 
 function writeMetaCookie(name: '_fbc' | '_fbp', value: string): boolean {
@@ -83,9 +90,13 @@ function writeMetaCookie(name: '_fbc' | '_fbp', value: string): boolean {
     : ''
   const secure = window.location.protocol === 'https:' ? '; Secure' : ''
   try {
-    document.cookie =
-      `${name}=${encodeURIComponent(value)}; Path=/; ` +
-      `Max-Age=${remainingSeconds}; SameSite=Lax${domain}${secure}`
+    const cookie = `${name}=${encodeURIComponent(value)}; Path=/; ` +
+      `Max-Age=${remainingSeconds}; SameSite=Lax${secure}`
+    document.cookie = `${cookie}${domain}`
+    if (readCookie(name) === value) return true
+    // A host-only cookie can coexist with the domain cookie. Align that
+    // scope only for this already validated event identity.
+    if (domain) document.cookie = cookie
     return readCookie(name) === value
   } catch {
     return false
@@ -450,6 +461,25 @@ export async function enrichCanonicalEventWithMetaAttribution<
   } = {}
   const pageUrl = event.page_url ?? window.location.href
   const observedUrlFbclid = readObservedMetaFbclid(pageUrl).value
+  const liveFbcValues = [...new Set(readCookieValues('_fbc').filter(value =>
+    observedIdentifier(value, Date.now()) !== undefined
+  ))]
+  if (window.location.href === pageUrl && !observedUrlFbclid &&
+    !event.browser_id?.fbc && liveFbcValues.length > 1) {
+    if (!ambiguousCookieReported) {
+      ambiguousCookieReported = true
+      reportClientCaughtError(new Error('meta_fbc_cookie_ambiguous'), 'meta.identifier_continuity')
+    }
+    const browserIds = { ...event.browser_id }
+    const clickIds = { ...event.click_id }
+    delete browserIds.fbc
+    delete clickIds.fbclid
+    return {
+      ...event,
+      browser_id: Object.keys(browserIds).length ? browserIds : undefined,
+      click_id: Object.keys(clickIds).length ? clickIds : undefined
+    }
+  }
   let urlFbclid = observedUrlFbclid
   if (window.location.href === pageUrl && observedPageUrl !== pageUrl) {
     observedPageUrl = pageUrl

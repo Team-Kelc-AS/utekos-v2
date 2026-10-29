@@ -81,12 +81,15 @@ async function scenario(browser, kind) {
     const errors = [];
     page.on('pageerror', error => errors.push(String(error)));
     await page.goto('https://utekos.no/__pixel_sdk_probe__');
-    const identifiers = await page.evaluate(() => {
+    const identifiers = await page.evaluate(scenarioKind => {
       const timestamp = Date.now() - 5000;
       const fbc = `fb.1.${timestamp}.SyntheticClickA`;
       const fbp = `fb.1.${timestamp}.SyntheticBrowserA`;
       document.cookie = `_fbc=${fbc}; Path=/`;
       document.cookie = `_fbp=${fbp}; Path=/`;
+      if (scenarioKind === 'duplicate-aligned') {
+        document.cookie = `_fbc=${fbc}; Domain=.utekos.no; Path=/`;
+      }
       window.dataLayer = [{
         event: 'page_view',
         event_id: 'sdk-probe-A',
@@ -100,7 +103,13 @@ async function scenario(browser, kind) {
         },
       }];
       return { fbc, fbp };
-    });
+    }, kind);
+
+    if (kind === 'duplicate-aligned') {
+      const values = await page.evaluate(() =>
+        document.cookie.split('; ').filter(cookie => cookie.startsWith('_fbc=')));
+      assert.equal(values.length, 2, 'both host and domain cookie scopes are present');
+    }
 
     await page.addScriptTag({ content: pixelScript });
     await page.waitForFunction(() =>
@@ -172,7 +181,7 @@ async function scenario(browser, kind) {
 async function main() {
   const browser = await chromium.launch({ headless: true });
   try {
-    for (const kind of ['stable-click', 'new-click', 'async-queue']) {
+    for (const kind of ['stable-click', 'duplicate-aligned', 'new-click', 'async-queue']) {
       const result = await scenario(browser, kind);
       process.stdout.write(`${result.kind}: ${result.pixelRequests} intercepted Pixel request(s); ${result.blockedHosts.length} other external host(s) blocked\n`);
     }
