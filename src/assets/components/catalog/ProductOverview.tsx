@@ -16,7 +16,7 @@ import { parsePage } from "@/lib/catalog/pagination";
 import { productOverviewRows } from "@/lib/catalog/overview";
 import { getProductListing } from "@/lib/shopify/getProductListing";
 import { getProduct } from "@/lib/shopify/getProduct";
-import { VariantCard, SvaleGuideCard } from "./VariantCard";
+import { VariantCard } from "./VariantCard";
 import { ProductRowsMotion } from "./ProductRowsMotion";
 import styles from "./ProductOverview.module.css";
 
@@ -71,11 +71,6 @@ export async function ProductOverview({ searchParams }: CategoryPageProps) {
                     />
                   </CarouselItem>
                 ))}
-                {row.id === "svale" && (
-                  <CarouselItem className={styles.slide}>
-                    <SvaleGuideCard />
-                  </CarouselItem>
-                )}
               </CarouselContent>
               <CarouselPrevious
                 aria-label="Forrige variant"

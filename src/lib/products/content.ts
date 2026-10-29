@@ -1,5 +1,4 @@
 export type ProductPageHandle =
-  | "utekos-svale"
   | "utekos-techdown"
   | "utekos-mikrofiber"
   | "utekos-dun"
@@ -46,45 +45,6 @@ export type ProductPageContent = {
 };
 
 export const PRODUCT_PAGE_CONTENT = {
-  "utekos-svale": {
-    description: {
-      title: "Utekos Svale™",
-      lead: "Opplev kompromissløs utendørs komfort",
-      blocks: [
-        {
-          paragraphs: [
-            "Utekos Svale™ er er bygget med samme banebrytende design som Utekos TechDown™, men skreddersydd for å tiltre rollen som multihybrid-plagget for overgangssesongene og sene høst- og sommerkvelder på terrassen, ved bobilen eller som tilskuer på en av høstens mange kalde fotballkamper. Med sitt beskyttende Luméa™-skall og den fukttolerante CloudWeave™-isolasjonen, gir Svale deg en mobil varmekilde som fjerner behovet for omfattende planlegging.",
-          ],
-        },
-        {
-          title: "Utvidet temperaturspekter.",
-          paragraphs: [
-            "Svale puster enklere og forhindrer at du overopphetes når gradestokken kryper oppover, noe som gjør den perfekt for aktive høstkvelder rundt bålpannen eller vårkvelder i båten.",
-          ],
-        },
-        {
-          title: "Økt smidighet",
-          paragraphs: [
-            "Plagget draperer seg mykere og tettere rundt kroppen, noe som gir en enda mer uanstrengt og fri følelse når du beveger deg.",
-          ],
-        },
-        {
-          title: "Optimal for lag-på-lag",
-          paragraphs: [
-            "Den slankere profilen gjør det enda enklere å tilpasse varmen med en tykk ullgenser under på de dagene været er uforutsigbart.",
-          ],
-        },
-        {
-          title: "Juster etter dine behov",
-          paragraphs: [
-            "Fulldekket modus: Maksimal, soveposelignende beskyttelse for uforstyrret ro og dyp avslapning.",
-            "Parkas-modus: En romslig, mellomlang parkas for normal bruk og hverdagsaktiviteter.",
-            "Oppfestet modus: Gå fra fulldekket modus til bli mobil og tilbake igjen, med  og minimal konfigurasjon.",
-          ],
-        },
-      ],
-    },
-  },
   "utekos-techdown": {
     description: {
       title: "Utekos TechDown™",
@@ -893,20 +853,10 @@ export const PRODUCT_PAGE_CONTENT = {
   },
 } as const satisfies Record<ProductPageHandle, ProductPageContent>;
 
-const SVALE_PRODUCT_PAGE_CONTENT: ProductPageContent = {
-  description: PRODUCT_PAGE_CONTENT["utekos-svale"].description,
-  accordion: PRODUCT_PAGE_CONTENT["utekos-techdown"].accordion,
-};
-
 export function getProductPageContent(
   handle: string | null | undefined,
 ): ProductPageContent | undefined {
   if (!handle) return undefined;
-
-  // Use Svale's own description while retaining the shared detail sections.
-  if (handle === "utekos-svale") {
-    return SVALE_PRODUCT_PAGE_CONTENT;
-  }
 
   return PRODUCT_PAGE_CONTENT[handle as ProductPageHandle];
 }

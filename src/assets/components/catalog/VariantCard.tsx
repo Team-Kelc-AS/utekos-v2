@@ -20,8 +20,7 @@ const sizes = '(min-width: 1328px) 302px, (min-width: 1280px) 25vw, (min-width: 
 export function VariantCard({ card, eager = false }: { card: OverviewCard; eager?: boolean }) {
   const { product, variant, title, image, color } = card;
   const href = variantHref(product.handle, variant, product.variants.nodes);
-  const gender = variant.selectedOptions.find(option => optionParam(option.name) === 'kjonn')?.value
-    ?? (product.handle === 'utekos-svale' ? 'Unisex' : null);
+  const gender = variant.selectedOptions.find(option => optionParam(option.name) === 'kjonn')?.value;
   const colorSheet = productVariantColorSheet(product.handle, variant);
   const front = <div className={styles.front}>
     <Link href={href} prefetch={false} className={styles.imageLink} aria-label={`Se ${title}`}>
@@ -44,21 +43,5 @@ export function VariantCard({ card, eager = false }: { card: OverviewCard; eager
   </div>;
   return <Card className={styles.card} data-variant-card={variant.id} data-tracking-commerce={JSON.stringify(productCommerce(product, variant))} data-color={color} aria-label={title}>
     {colorSheet ? <ProductCardFlip label={title} back={<ProductCardColorSheet sheet={colorSheet} />}>{front}</ProductCardFlip> : front}
-  </Card>;
-}
-
-export function SvaleGuideCard() {
-  return <Card className={styles.card} data-guide-card="svale">
-    <Image src="/Svale_Hoodie_1000x1500.webp" alt="Hetten på Utekos Svale" width={1000} height={1500}
-      className={styles.image} sizes={sizes} />
-    <CardContent className={styles.content}>
-      <CardHeader className={styles.cardHeader}>
-        <CardTitle><h3 className={styles.title}>Utekos Svale</h3></CardTitle>
-      </CardHeader>
-      <div className={styles.guideActions}>
-        <Link href="/handlehjelp/storrelsesguide" className={styles.guideLink}>Størrelsesguide</Link>
-        <Link href="/produkter/utekos-svale" className={styles.detailLink}>Se Utekos Svale</Link>
-      </div>
-    </CardContent>
   </Card>;
 }

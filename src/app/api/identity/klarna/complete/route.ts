@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { privateHeaders, sameOrigin } from '@/lib/cart/request';
 import {
   KLARNA_IDENTITY_SESSION_COOKIE, KLARNA_IDENTITY_STATE_COOKIE,
-  createKlarnaSession, klarnaIdentityConfig, klarnaSessionMaxAge,
+  createKlarnaSession, klarnaIdentityConfig, klarnaIdentityVerificationFailure, klarnaSessionMaxAge,
   readKlarnaState, verifyKlarnaIdToken,
 } from '@/lib/klarna/identity';
 import { forwardKlarnaProspect } from '@/lib/klarna/prospect';
@@ -27,8 +27,13 @@ export async function POST(request: NextRequest) {
   let identity: Awaited<ReturnType<typeof verifyKlarnaIdToken>>;
   try {
     identity = await verifyKlarnaIdToken(input.data.idToken, config.clientId, config.issuer);
-  } catch {
-    const response = NextResponse.json({ error: 'Klarna-identiteten kunne ikke bekreftes. Prøv igjen.' }, { status: 401, headers: privateHeaders });
+  } catch (error) {
+    const failure = klarnaIdentityVerificationFailure(error);
+    console.warn('klarna_identity_verification_failed', failure);
+    const response = NextResponse.json({
+      error: 'Klarna-identiteten kunne ikke bekreftes. Prøv igjen.',
+      code: failure.code,
+    }, { status: 401, headers: privateHeaders });
     response.cookies.set(KLARNA_IDENTITY_STATE_COOKIE, '', {
       httpOnly: true, secure: request.nextUrl.protocol === 'https:', sameSite: 'lax',
       path: '/api/identity/klarna', maxAge: 0,

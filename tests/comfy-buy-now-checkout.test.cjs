@@ -18,7 +18,7 @@ function cartFor(size, available = true) {
     checkout: { checkout_id: 'checkout-fixture', creation_revision: 'checkout_rev_fixture' },
     checkoutUrl: 'https://kasse.utekos.no/checkouts/checkout-fixture',
     totalQuantity: 1,
-    lines: [{ variantId: variants[size], available }],
+    lines: [{ handle: 'comfyrobe', variantId: variants[size], available }],
     discountCodes: [{ code: 'COMFYFRI', applicable: false }],
     commerce: { currency: 'NOK', value: 845, items: [{ item_id: variants[size] }] },
   };
@@ -75,6 +75,7 @@ test('checkout preparation reads the isolated buy-now cart and rejects another v
     'next/dist/server/web/spec-extension/response': { NextResponse },
     '@/lib/cart/server': { CART_COOKIE: 'utekos_cart', CartError, readCart: async id => { calls.push(['read', id]); return cart; }, cartView: async raw => raw },
     '@/lib/cart/checkout': { parseCheckoutEvent: value => value, persistCheckoutAttributes: async (...args) => calls.push(['attributes', ...args]) },
+    '@/lib/klarna/identity': { KLARNA_IDENTITY_SESSION_COOKIE: 'klarna', readKlarnaSession: () => null },
     '@/lib/facebook-login/session': { FACEBOOK_SESSION_COOKIE: 'facebook', readSession: () => null },
   } });
   const request = size => new NextRequest('https://utekos.no/api/cart/checkout', {
@@ -90,5 +91,10 @@ test('checkout preparation reads the isolated buy-now cart and rejects another v
 
   const rejected = await api.POST(request('xl'));
   assert.equal(rejected.status, 409);
+  assert.equal(calls.filter(call => call[0] === 'attributes').length, 1);
+  cart.lines[0].handle = 'utekos-svale';
+  const retired = await api.POST(request('xs'));
+  assert.equal(retired.status, 409);
+  assert.match((await retired.json()).error, /utgått modell/);
   assert.equal(calls.filter(call => call[0] === 'attributes').length, 1);
 });

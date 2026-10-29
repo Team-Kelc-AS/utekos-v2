@@ -15,7 +15,7 @@ const variant = (size, availableForSale = true) => ({
 test('product sitemap only describes the video on the canonical page default variant', () => {
   const medium = variant('Middels');
   const large = variant('Stor');
-  const product = { handle: 'utekos-svale', variants: { nodes: [medium, large] } };
+  const product = { handle: 'utekos-techdown', variants: { nodes: [medium, large] } };
   const entries = getProductSitemapVideos(product);
   assert.equal(entries.length, 1);
   assert.equal(entries[0].content_loc, productVariantVideo(product.handle, large).src);
@@ -32,7 +32,7 @@ test('products and default variants without a film do not advertise another vari
 
 test('sitemap and player share existing local posters without invented dates', () => {
   const sources = [...Object.values(homeVideos)];
-  for (const handle of ['utekos-svale', 'utekos-techdown']) {
+  for (const handle of ['utekos-techdown']) {
     for (const size of ['Middels', 'Stor', 'Større']) sources.push(productVariantVideo(handle, variant(size)));
   }
   for (const source of sources) {

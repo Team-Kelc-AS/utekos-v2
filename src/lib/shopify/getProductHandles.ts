@@ -1,3 +1,4 @@
+import { isPublicProduct } from '@/lib/products/publicProduct';
 import 'server-only';
 
 import { shopifyFetch } from './client';
@@ -29,7 +30,7 @@ export async function getProductHandles(): Promise<string[]> {
     });
 
     for (const { handle } of products.nodes) {
-      handles.add(handle);
+      if (isPublicProduct(handle)) handles.add(handle);
     }
 
     if (!products.pageInfo.hasNextPage) {

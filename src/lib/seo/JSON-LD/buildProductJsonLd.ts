@@ -14,7 +14,6 @@ import { productOfferPolicies } from './productPolicies';
 import { utekosTechDown } from './techdown/UtekosTechDown';
 import { utekosMikrofiber } from './mikrofiber/UtekosMikrofiber';
 import { utekosDun } from './dun/UtekosDun';
-import { utekosSvale } from './svale/UtekosSvale';
 import { comfyrobe } from './comfyrobe/Comfyrobe';
 import { stapper } from './stapper/Stapper';
 
@@ -25,7 +24,6 @@ const definitions = new Map<string, Definition>([
   ['utekos-techdown', { product: utekosTechDown, variants: utekosTechDown.hasVariant }],
   ['utekos-mikrofiber', { product: utekosMikrofiber, variants: utekosMikrofiber.hasVariant }],
   ['utekos-dun', { product: utekosDun, variants: utekosDun.hasVariant }],
-  ['utekos-svale', { product: utekosSvale, variants: utekosSvale.hasVariant }],
   ['comfyrobe', { product: comfyrobe, variants: comfyrobe.hasVariant }],
   ['utekos-stapper', { product: stapper, variants: [stapper] }],
 ]);

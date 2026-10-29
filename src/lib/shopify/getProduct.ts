@@ -1,3 +1,4 @@
+import { isPublicProduct } from '@/lib/products/publicProduct';
 import 'server-only';
 import { completeConnection } from './completeConnection';
 import { cacheLife } from 'next/dist/server/use-cache/cache-life';
@@ -17,6 +18,7 @@ type ProductResponse = Omit<ShopifyProduct, 'options'> & {
 
 export async function getProduct(handle: string): Promise<ShopifyProduct | null> {
   'use cache';
+  if (!isPublicProduct(handle)) return null;
   cacheTag('shopify:products', `shopify:product:${handle}`);
   const { product } = await shopifyFetch<{ product: ProductResponse | null }, { handle: string }>({
     query: PRODUCT_QUERY, variables: { handle },

@@ -84,7 +84,7 @@ export function ProductCard({
       aria-label={label}
     >
       <CardContent
-        className={`relative overflow-hidden rounded-t-xl bg-night p-0 ${product.handle === "utekos-svale" ? styles.svaleImage : ""}`}
+        className="relative overflow-hidden rounded-t-xl bg-night p-0"
       >
         {colorSheet ? (
           <ProductCardFlip label={label} video={video} back={<ProductCardColorSheet sheet={colorSheet} />}>

@@ -168,7 +168,7 @@ export function getProductSizeGuideDialogContent(product: {
     title: 'Størrelsesguide',
     ...(family === 'techdown' ? {
       description: 'Velg mellom Middels, Stor og Større. Start med høyderådet, og sammenlign gjerne målene med et plagg du allerede har. Alle mål er i centimeter.',
-      tableAriaLabel: `Måletabell for ${product.handle === 'utekos-svale' ? 'Svale' : 'TechDown'}-størrelser`,
+      tableAriaLabel: 'Måletabell for TechDown-størrelser',
       tableCaption: `Mål for ${name} i Middels, Stor og Større`
     } : {})
   }

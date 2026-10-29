@@ -215,13 +215,13 @@ test("public URLs use stable readable options and omit a proven constant Unisex 
     variants.variantHref("utekos-techdown", siblings[1], siblings),
     "/produkter/utekos-techdown?farge=havdyp&storrelse=storre",
   );
-  const svale = {
+  const sizeOnly = {
     ...variant(3, "Stor"),
     selectedOptions: [{ name: "Size", value: "Stor" }],
   };
   assert.equal(
-    variants.variantHref("utekos-svale", svale, [svale]),
-    "/produkter/utekos-svale?storrelse=stor",
+    variants.variantHref("utekos-techdown", sizeOnly, [sizeOnly]),
+    "/produkter/utekos-techdown?storrelse=stor",
   );
 });
 

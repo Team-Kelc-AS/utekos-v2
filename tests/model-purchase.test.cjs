@@ -54,5 +54,5 @@ test('model pricing retains the exact Shopify money range', () => {
 
 test('camping keeps exactly four model handles in the approved order', () => {
   const { categories } = loadTypeScript('lib/catalog/categories.ts');
-  assert.deepEqual(Array.from(categories['camping-og-bobil'].source.handles), ['utekos-svale', 'utekos-techdown', 'utekos-mikrofiber', 'utekos-dun']);
+  assert.deepEqual(Array.from(categories['camping-og-bobil'].source.handles), ['utekos-techdown', 'utekos-mikrofiber', 'utekos-dun']);
 });
