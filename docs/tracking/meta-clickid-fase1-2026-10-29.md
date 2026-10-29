@@ -533,8 +533,15 @@ kodet nøkkel, og bekrefter at gyldig eksisterende `_fbc` beholdes mens
 faktisk `page_url` bevares. Den installerte Meta-klientpakken v1.3.2
 avviser over 500 tegn og kan kaste på ugyldig percent-koding; dette er
 kilden til grensen. Backendkandidaten hadde samme reproduserte feil og
-får en semantisk lik validering før Parameter Builder. Denne kandidaten
-er ennå ikke pushet, bygget fullstendig eller publisert.
+fikk en semantisk lik validering før Parameter Builder. Denne kandidaten
+er pushet som [storefrontutkast PR #4](https://github.com/Team-Kelc-AS/utekos-v2/pull/4)
+med nøyaktig ti filer inkludert denne rapporten; den er ikke slått sammen
+eller publisert. Vercel preview `dpl_33dkunEPvBmgQJdjM8ebwBoHTiGS`
+kompilerte, men stoppet ved sidegenerering med
+`Missing environment variable: SHOPIFY_STORE_DOMAIN` for
+`/produkter/[handle]`. De berørte Shopify-filene og `src/app` er uendrede
+fra base; dette er en preview-miljøbegrensning, ikke en bestått full build
+eller påvist ClickID-regresjon.
 [Meta Pixel-referanse](https://developers.facebook.com/documentation/meta-pixel/reference/)
 og [Meta CAPI-parametere for fbp/fbc](https://developers.facebook.com/documentation/ads-commerce/conversions-api/parameters/fbp-and-fbc/)
 er kilder til denne grensen.
