@@ -410,6 +410,32 @@ test('Pixel leaves delivery to CAPI when SDK readiness cannot be verified', asyn
   assert.equal(api.events('page_view').length, 1);
 });
 
+test('Pixel does not release a queued event after marketing withdrawal', async t => {
+  const timestamp = Date.now() - 10000;
+  const api = await fixture(t, undefined, {
+    metaCookie: `fb.1.${timestamp}.ConsentClick`,
+    metaFbpCookie: `fb.1.${timestamp}.ConsentBrowser`,
+    pixelConfigLockMs: 1400,
+  });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(await api.page.evaluate(() => fbq.instance.locks.isLocked()), true);
+  await api.page.evaluate(async () => {
+    const current = dataLayer.find(entry => entry?.event === 'page_view').canonical_event;
+    await UtekosTrackingHarness.enrichCanonicalEventWithMetaAttribution({
+      ...current, consent: { ...current.consent, marketing: 'denied' },
+    });
+    window.__utekosConsentReloading = true;
+  });
+  await api.page.waitForTimeout(1700);
+  const state = await api.page.evaluate(id => ({
+    calls: __pixelIdentity.filter(call => call.id === id),
+    queued: fbq.queue.some(call => call[4]?.eventID === id),
+  }), event.event_id);
+  assert.deepEqual(state.calls, []);
+  assert.equal(state.queued, false);
+});
+
 for (const safariMode of [false, true]) {
   const engine = safariMode ? 'WebKit' : 'Chromium';
   test(`${engine}: cold Google initialization after 500 ms enriches first events without delaying Pixel`, async t => {
