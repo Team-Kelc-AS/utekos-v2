@@ -114,7 +114,7 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, deferObservers = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, metaFirstIpDelay = 0, storedClicks, storedDurableClicks, metaCookie, metaFbpCookie, metaCookiesBlocked = false, metaContextFbc, metaContextFbp = 'fb.1.1700000000000.123456789' } = {}) {
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, deferObservers = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, metaFirstIpDelay = 0, storedClicks, storedDurableClicks, metaCookie, metaFbpCookie, metaCookiesBlocked = false, metaContextFbc, metaContextFbp = 'fb.1.1700000000000.123456789', pixelConfigLockMs = 0, pixelReadinessSignal = true } = {}) {
   const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block', userAgent });
   t.after(() => context.close());
   if (storedClicks) await context.addInitScript(identifiers => {
@@ -169,7 +169,7 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
       </script></body></html>` });
     if (url.origin === 'https://utekos.no' && url.pathname === '/tracking-browser-fixture.js') return route.fulfill({ contentType: 'application/javascript', body: preview ? previewBundle : bundle });
     if (url.origin === 'https://utekos.no' && url.pathname === '/analytics/meta-pixel-canonical-v1.js') return route.fulfill({ contentType: 'application/javascript', body: pixel });
-    if (url.href === 'https://connect.facebook.net/en_US/fbevents.js') return route.fulfill({ contentType: 'application/javascript', body: `var f=window.fbq;f.callMethod=function(){window.__pixelCalls.push(Array.from(arguments));window.__pixelIdentity.push({name:arguments[2],id:arguments[4]?.eventID,cookie:document.cookie})};for(var a of f.queue.splice(0))f.callMethod.apply(null,a);` });
+    if (url.href === 'https://connect.facebook.net/en_US/fbevents.js') return route.fulfill({ contentType: 'application/javascript', body: `var f=window.fbq;var locked=${pixelConfigLockMs}>0;if(${pixelReadinessSignal})f.instance={locks:{isLocked:function(){return locked}}};f.callMethod=function(){if(locked){f.queue.push(arguments);return}window.__pixelCalls.push(Array.from(arguments));window.__pixelIdentity.push({name:arguments[2],id:arguments[4]?.eventID,cookie:document.cookie})};for(var a of f.queue.splice(0))f.callMethod.apply(null,a);if(locked)setTimeout(function(){locked=false;for(var a of f.queue.splice(0))f.callMethod.apply(null,a)},${pixelConfigLockMs});` });
     if (url.origin === 'https://utekos.no' && url.pathname.startsWith('/api/')) {
       let json; try { json = JSON.parse(body); } catch { json = body; }
       requests.push({ path: url.pathname, body: json });
@@ -316,6 +316,131 @@ test('Pixel browser signal and collector retain identical canonical identity wit
   assert.equal(browserEvent.event_time, pages[0].event_time);
   assert.equal(pages[0].consent.source, 'operator_policy');
   assert.equal(pages[0].browser_id.ga_client_id, '123.456');
+});
+
+test('Pixel waits for SDK config before sending the original click', async t => {
+  const first = Date.now() - 10000;
+  const fbc = `fb.1.${first}.FirstClick`;
+  const fbp = `fb.1.${first}.FirstBrowser`;
+  const api = await fixture(t, undefined, { metaCookie: fbc, metaFbpCookie: fbp, pixelConfigLockMs: 1400 });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  const before = await api.page.evaluate(id => ({
+    locked: fbq.instance.locks.isLocked(),
+    calls: __pixelIdentity.filter(call => call.id === id),
+  }), event.event_id);
+  assert.equal(before.locked, true);
+  assert.deepEqual(before.calls, []);
+  await api.page.waitForFunction(id => __pixelIdentity.some(call => call.id === id), event.event_id);
+  const sent = await api.page.evaluate(id => __pixelIdentity.find(call => call.id === id), event.event_id);
+  assert.ok(sent.cookie.includes(`_fbc=${fbc}`));
+  assert.ok(sent.cookie.includes(`_fbp=${fbp}`));
+});
+
+test('Pixel keeps an old click out of the SDK queue when a new click arrives', async t => {
+  const first = Date.now() - 10000;
+  const fbc = `fb.1.${first}.FirstClick`;
+  const fbp = `fb.1.${first}.FirstBrowser`;
+  const api = await fixture(t, undefined, { metaCookie: fbc, metaFbpCookie: fbp, pixelConfigLockMs: 1400 });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.ok(event.browser_id.fbc.startsWith(fbc));
+  assert.equal(await api.page.evaluate(() => fbq.instance.locks.isLocked()), true);
+  await api.page.evaluate(() => {
+    const second = Date.now();
+    document.cookie = `_fbc=fb.1.${second}.SecondClick; Path=/`;
+    document.cookie = `_fbp=fb.1.${second}.SecondBrowser; Path=/`;
+  });
+  await api.page.waitForTimeout(1700);
+  const state = await api.page.evaluate(id => ({
+    calls: __pixelIdentity.filter(call => call.id === id),
+    queued: fbq.queue.some(call => call[4]?.eventID === id),
+    dispatch: __utekosMetaPixelState.dispatches[`PageView:${id}`],
+    cookie: document.cookie,
+  }), event.event_id);
+  assert.deepEqual(state.calls, [], JSON.stringify(state));
+  assert.equal(state.dispatch?.skipped, 'different_live_meta_identity', JSON.stringify(state));
+  assert.equal(state.queued, false);
+  assert.ok(api.events('page_view')[0].browser_id.fbc.startsWith(fbc), 'CAPI event retains the first click');
+  const skipLogs = api.requests.filter(request => request.path === '/api/log' &&
+    request.body?.data?.message === 'meta.pixel.skipped: different_live_meta_identity');
+  assert.equal(skipLogs.length, 1);
+  assert.equal(JSON.stringify(skipLogs[0].body).includes(fbc), false);
+});
+
+test('Pixel does not attach a later click to a PageView without fbc', async t => {
+  const api = await fixture(t, undefined, { pixelConfigLockMs: 1400 });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.browser_id.fbc, undefined);
+  await api.page.evaluate(() => {
+    document.cookie = `_fbc=fb.1.${Date.now()}.LaterClick; Path=/`;
+  });
+  await api.page.waitForFunction(id =>
+    __utekosMetaPixelState.dispatches[`PageView:${id}`]?.skipped === 'different_live_meta_identity', event.event_id);
+  const calls = await api.page.evaluate(id => __pixelIdentity.filter(call => call.id === id), event.event_id);
+  assert.deepEqual(calls, []);
+});
+
+test('Pixel observes a second tab cookie change before releasing the first tab event', async t => {
+  const first = Date.now() - 10000;
+  const fbc = `fb.1.${first}.FirstTabClick`;
+  const fbp = `fb.1.${first}.FirstTabBrowser`;
+  const api = await fixture(t, undefined, { metaCookie: fbc, metaFbpCookie: fbp, pixelConfigLockMs: 3000 });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(await api.page.evaluate(() => fbq.instance.locks.isLocked()), true);
+  const second = await api.page.context().newPage();
+  await second.goto('https://utekos.no/produkter/test-product?variant=2');
+  await second.evaluate(() => {
+    const clickTime = Date.now();
+    document.cookie = `_fbc=fb.1.${clickTime}.SecondTabClick; Path=/`;
+    document.cookie = `_fbp=fb.1.${clickTime}.SecondTabBrowser; Path=/`;
+  });
+  await api.page.waitForFunction(id =>
+    __utekosMetaPixelState.dispatches[`PageView:${id}`]?.skipped === 'different_live_meta_identity', event.event_id);
+  const calls = await api.page.evaluate(id => __pixelIdentity.filter(call => call.id === id), event.event_id);
+  assert.deepEqual(calls, []);
+});
+
+test('Pixel leaves delivery to CAPI when SDK readiness cannot be verified', async t => {
+  const api = await fixture(t, undefined, { pixelReadinessSignal: false });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  await api.page.waitForFunction(id =>
+    __utekosMetaPixelState.dispatches[`PageView:${id}`]?.skipped === 'pixel_sdk_readiness_unverifiable', event.event_id);
+  const calls = await api.page.evaluate(id => __pixelIdentity.filter(call => call.id === id), event.event_id);
+  assert.deepEqual(calls, []);
+  assert.equal(api.events('page_view').length, 1);
+  const skipLogs = api.requests.filter(request => request.path === '/api/log' &&
+    request.body?.data?.message === 'meta.pixel.skipped: pixel_sdk_readiness_unverifiable');
+  assert.equal(skipLogs.length, 1);
+});
+
+test('Pixel does not release a queued event after marketing withdrawal', async t => {
+  const timestamp = Date.now() - 10000;
+  const api = await fixture(t, undefined, {
+    metaCookie: `fb.1.${timestamp}.ConsentClick`,
+    metaFbpCookie: `fb.1.${timestamp}.ConsentBrowser`,
+    pixelConfigLockMs: 1400,
+  });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(await api.page.evaluate(() => fbq.instance.locks.isLocked()), true);
+  await api.page.evaluate(async () => {
+    const current = dataLayer.find(entry => entry?.event === 'page_view').canonical_event;
+    await UtekosTrackingHarness.enrichCanonicalEventWithMetaAttribution({
+      ...current, consent: { ...current.consent, marketing: 'denied' },
+    });
+    window.__utekosConsentReloading = true;
+  });
+  await api.page.waitForTimeout(1700);
+  const state = await api.page.evaluate(id => ({
+    calls: __pixelIdentity.filter(call => call.id === id),
+    queued: fbq.queue.some(call => call[4]?.eventID === id),
+  }), event.event_id);
+  assert.deepEqual(state.calls, []);
+  assert.equal(state.queued, false);
 });
 
 for (const safariMode of [false, true]) {

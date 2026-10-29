@@ -71,12 +71,90 @@
   if (typeof state.canonicalEventListening === 'undefined') {
     state.canonicalEventListening = false
   }
+  if (!state.reportedSkipReasons) state.reportedSkipReasons = {}
 
   w.__utekosMetaPixelState = state
 
   var pendingFbcEvents = {}
+  var pendingSdkEvents = {}
+  var pendingSdkStartedAt = {}
+  var observedEventIdentity = {}
+  var MAX_PENDING_SDK_EVENTS = 128
+  var MAX_PENDING_SDK_WAIT_MS = 10000
   var fbcWaitStartedAt = null
   var fbcPagehideListening = false
+
+  function pixelSdkReadiness() {
+    if (typeof w.fbq !== 'function' ||
+        typeof w.fbq.callMethod !== 'function') return 'pending'
+
+    // fbevents.js can keep events queued after script.onload while config loads.
+    // Fail closed if its internal readiness signal changes in a future SDK.
+    var locks = w.fbq.instance && w.fbq.instance.locks
+    if (!locks || typeof locks.isLocked !== 'function') return 'unknown'
+    try {
+      var locked = locks.isLocked()
+      if (typeof locked !== 'boolean') return 'unknown'
+      return locked ? 'pending' : 'ready'
+    } catch {
+      return 'unknown'
+    }
+  }
+
+  function flushPendingSdkEvents() {
+    Object.keys(pendingSdkEvents).forEach(function (key) {
+      var entry = pendingSdkEvents[key]
+      delete pendingSdkEvents[key]
+      dispatch(entry)
+    })
+  }
+
+  function reportPixelSkip(reason) {
+    if (state.reportedSkipReasons[reason]) return
+    state.reportedSkipReasons[reason] = true
+    if (typeof w.fetch !== 'function') return
+
+    // Match the existing first-party client.error contract without exposing IDs.
+    var body = JSON.stringify({
+      event: 'client_error',
+      level: 'error',
+      data: {
+        source: 'window_error',
+        operation: 'caught',
+        message: 'meta.pixel.skipped: ' + reason
+      },
+      context: { pathname: w.location.pathname }
+    })
+    try {
+      w.fetch('/api/log', {
+        body: body,
+        headers: { 'content-type': 'application/json' },
+        keepalive: true,
+        method: 'POST'
+      }).then(function (response) {
+        if (!response.ok) console.warn('[tracking] meta_pixel_skip_log_failed')
+      }).catch(function () {
+        console.warn('[tracking] meta_pixel_skip_log_failed')
+      })
+    } catch {
+      console.warn('[tracking] meta_pixel_skip_log_failed')
+    }
+  }
+
+  function skipPendingSdkEvent(key, reason) {
+    var entry = pendingSdkEvents[key]
+    if (!entry) return
+    delete pendingSdkEvents[key]
+    delete pendingSdkStartedAt[key]
+    delete observedEventIdentity[key]
+    state.dispatches[key] = {
+      eventId: entry.event_id,
+      eventName: metaEventNameForEntry(entry),
+      skipped: reason
+    }
+    state.sent[key] = true
+    reportPixelSkip(reason)
+  }
 
   function shouldWaitForFbc() {
     if (readCookie('_fbc')) return false
@@ -110,12 +188,47 @@
 
       try {
         return decodeURIComponent(candidate.slice(prefix.length))
-      } catch (_error) {
+      } catch {
         return null
       }
     }
 
     return null
+  }
+
+  function cookieValues(name) {
+    var prefix = name + '='
+    var parts = d.cookie ? d.cookie.split(';') : []
+    var values = []
+
+    for (var index = 0; index < parts.length; index += 1) {
+      var candidate = parts[index].replace(/^\s+|\s+$/g, '')
+      if (candidate.indexOf(prefix) !== 0) continue
+      try {
+        values.push(decodeURIComponent(candidate.slice(prefix.length)))
+      } catch {
+        values.push(null)
+      }
+    }
+
+    return values
+  }
+
+  function cookieMatchesIdentity(name, expected) {
+    var values = cookieValues(name)
+    if (expected === null) return values.length === 0
+    if (values.length === 0) return false
+    return values.every(function (value) { return value === expected })
+  }
+
+  function hasDifferentLiveMetaIdentity(ids) {
+    // The Pixel transport reads live cookies, not browser_id on this event.
+    // Duplicate cookie names can have different Domain/Path scopes; SDK
+    // selection is not guaranteed to match our first-value cookie reader.
+    return (
+      !cookieMatchesIdentity('_fbc', ids.fbc) ||
+      !cookieMatchesIdentity('_fbp', ids.fbp)
+    )
   }
 
   function hasMarketingConsent() {
@@ -169,9 +282,13 @@
       state.scriptStatus = 'loading'
       script.onload = function () {
         state.scriptStatus = 'loaded'
+        flushPendingSdkEvents()
       }
       script.onerror = function () {
         state.scriptStatus = 'failed'
+        Object.keys(pendingSdkEvents).forEach(function (key) {
+          skipPendingSdkEvent(key, 'pixel_sdk_unavailable')
+        })
       }
       firstScript = d.getElementsByTagName('script')[0]
 
@@ -491,6 +608,29 @@
     eventKey = metaEventName + ':' + entry.event_id
     if (state.sent[eventKey]) return
 
+    if (!observedEventIdentity[eventKey]) {
+      var eventIds = canonicalEvent.browser_id
+      observedEventIdentity[eventKey] = {
+        fbc: eventIds ? eventIds.fbc || null : readCookie('_fbc') || null,
+        fbp: eventIds ? eventIds.fbp || null : readCookie('_fbp') || null
+      }
+    }
+
+    if (hasDifferentLiveMetaIdentity(observedEventIdentity[eventKey])) {
+      delete pendingFbcEvents[eventKey]
+      delete pendingSdkEvents[eventKey]
+      delete pendingSdkStartedAt[eventKey]
+      delete observedEventIdentity[eventKey]
+      state.dispatches[eventKey] = {
+        eventId: entry.event_id,
+        eventName: metaEventName,
+        skipped: 'different_live_meta_identity'
+      }
+      state.sent[eventKey] = true
+      reportPixelSkip('different_live_meta_identity')
+      return
+    }
+
     if (!finishWaiting && shouldWaitForFbc()) {
       pendingFbcEvents[eventKey] = entry
       if (!fbcPagehideListening) {
@@ -505,6 +645,38 @@
       return
     }
     delete pendingFbcEvents[eventKey]
+
+    // Keep events outside the SDK's own queue until its config lock is open.
+    // The last cookie check and fbq call then happen in the same JS task.
+    var readiness = pixelSdkReadiness()
+    if (readiness === 'unknown') {
+      pendingSdkEvents[eventKey] = entry
+      skipPendingSdkEvent(eventKey, 'pixel_sdk_readiness_unverifiable')
+      return
+    }
+    if (readiness === 'pending') {
+      pendingSdkEvents[eventKey] = entry
+      if (!pendingSdkStartedAt[eventKey]) {
+        pendingSdkStartedAt[eventKey] = Date.now()
+      }
+      if (state.scriptStatus === 'failed') {
+        skipPendingSdkEvent(eventKey, 'pixel_sdk_unavailable')
+        return
+      }
+      if (Date.now() - pendingSdkStartedAt[eventKey] >=
+          MAX_PENDING_SDK_WAIT_MS) {
+        skipPendingSdkEvent(eventKey, 'pixel_sdk_ready_timeout')
+        return
+      }
+      var pendingKeys = Object.keys(pendingSdkEvents)
+      if (pendingKeys.length > MAX_PENDING_SDK_EVENTS) {
+        skipPendingSdkEvent(pendingKeys[0], 'pixel_sdk_queue_limit')
+      }
+      return
+    }
+    delete pendingSdkEvents[eventKey]
+    delete pendingSdkStartedAt[eventKey]
+    delete observedEventIdentity[eventKey]
 
     data = eventData(entry.event, canonicalEvent)
     if (data === null) return
@@ -597,6 +769,7 @@
     if (!state.initialized) installPixel(externalId)
     syncPixelConsent()
 
+    flushPendingSdkEvents()
     scanDataLayer()
     Object.keys(pendingFbcEvents).forEach(function (key) {
       dispatch(pendingFbcEvents[key])
