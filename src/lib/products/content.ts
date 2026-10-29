@@ -677,16 +677,16 @@ export const PRODUCT_PAGE_CONTENT = {
   comfyrobe: {
     description: {
       title: "Comfyrobe™",
-      lead: "Varig kvalitet.",
+      lead: "Comfyrobe™er selve innbegrepet av mykhet. Utformet med avlange, sofistikerte proporsjoner.",
       blocks: [
         {
           paragraphs: [
-            "En tidløs robe nøye utformet av de fineste fibrene. Tilbyr enestående mykhet, varme og uanstrengt eleganse til alle fire årstider.",
+            "Den er utført i Bergen med et unikt, teksturert uttrykk, og hevet til nye høyder med den ikoniske SherpaCore-innsiden, samt en elegant glidelåssdetalj for en signaturlignende finish. Jakken henter sin inspirasjon fra Carbis Bay, men skiller seg med sin tidløse PANTONE Sky Captain og moteriktig passform. Kjennetegnes av sin stående krage og ermner med bevisst avkortet lengde som gir silhuetten et moderne uttrykk, og sikrer kompromissløs funksjonalitet i hverdagen. Resultatet er en forfinet tolkning av kompromissløs komfort i materialisktisk form. Slik legemliggjør den Utekos sin forståelse av eleganse, med avslappede, komfortable linjer og en uanstrengt sofistikert silhuett. Selve inngrepet av mykhet, varme og beskyttelse til alle fire årstider.",
           ],
         },
         {
           paragraphs: [
-            "Plagget er er nedtonet og raffinert. Den ledige unisex-passformen med senket skuldersøm gir upåklagelig bevegelsesfrihet. Mansjettene kan strammes for å eliminere kjølig luftstøm rundt håndleddene. Splittene nederst gir ekstra steglengde når du er i bevegelse. Det slitesterke ytterstoffet i HydroGuard™ er både vanntett og vindtett.",
+            "Plagget er er nedtonet og raffinert. Den ledige unisex-passformen med senket skuldersøm gir  god bevegelsesfrihet. Mansjettene kan strammes for å eliminere kjølig luftstøm rundt håndleddene. Splittene nederst gir ekstra steglengde når du er i bevegelse. Det slitesterke ytterstoffet i HydroGuard™ er både vanntett og vindtett.",
           ],
         },
         {
@@ -701,15 +701,16 @@ export const PRODUCT_PAGE_CONTENT = {
             "Solid toveis YKK®-glidelås for enkel temperaturregulering.",
             "Fôrede ytterlommer med høy komfort.",
             "Romslig hette som beskytter mot vind og kulde.",
-            "Splitt bak for optimal bevegelsesfrihet.",
+            "Splitt i falden bak gir optimal bevegelsesfrihet.",
             "Mobillomme på innsiden for trygg oppbevaring av verdisaker.",
-            "Rent og stilfullt design som passer både i naturen og i byen.",
+            "Ermene avsluttes med integrerte borrelåsstropper,",
+            "som gjør det raskt å justere åpningen mot vær og vind",
             "Maskinvask på 30 °C med lignende farger. ",
           ],
         },
         {
           paragraphs: [
-            "Enten du sitter i båten på en kjølig kveld, slapper av på campingen eller nyter morgenkaffen utendørs, gjør Comfyrobe™ opplevelsen varmere og mer behagelig.",
+            "Enten du sitter i båten på en kjølig kveld, slapper av på campingen eller trenger et pent, varmt ytterplagg med litt lengde til å bruke utenpå dressen; Comfyrobe™ gjør både opplevelsen varmere og bekymringsfri.",
           ],
         },
       ],
