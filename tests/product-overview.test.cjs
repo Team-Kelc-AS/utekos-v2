@@ -43,13 +43,8 @@ const row = (rows, rowId) => rows.find(item => item.id === rowId);
 
 test('the original row order, exact variant assignments, labels and image files are preserved', () => {
   const rows = productOverviewRows(catalogue());
-  assert.deepEqual(Array.from(rows, item => item.id), ['svale', 'techdown', 'color-Vargnatt', 'color-Fjellblå', 'comfyrobe']);
+  assert.deepEqual(Array.from(rows, item => item.id), ['techdown', 'color-Vargnatt', 'color-Fjellblå', 'comfyrobe']);
   const expected = [
-    ['svale', 'Utekos Svale', [
-      [11, 'Utekos Svale Middels', '/Svale_1.webp'],
-      [12, 'Utekos Svale Stor', '/Svale_2.webp'],
-      [13, 'Utekos Svale Større', '/Svale_3.webp'],
-    ]],
     ['techdown', 'Utekos TechDown™', [
       [23, 'Utekos TechDown™ Stor', '/TechDown_2000x3000_2.webp'],
       [24, 'Utekos TechDown™ Større', '/TechDown_2000x3000_8.webp'],
@@ -82,12 +77,12 @@ test('the original row order, exact variant assignments, labels and image files 
   }
 });
 
-test('all 19 variants retain their exact product, price and availability, including sold-out Liten', () => {
+test('all 16 active variants retain their exact product, price and availability, including sold-out Liten', () => {
   const products = catalogue();
   const cards = flatten(productOverviewRows(products));
-  assert.equal(cards.length, 19);
-  assert.equal(new Set(cards.map(card => card.variant.id)).size, 19);
-  for (const product of products) for (const variant of product.variants.nodes) {
+  assert.equal(cards.length, 16);
+  assert.equal(new Set(cards.map(card => card.variant.id)).size, 16);
+  for (const product of products.filter(product => product.handle !== 'utekos-svale')) for (const variant of product.variants.nodes) {
     const card = cards.find(card => card.variant.id === variant.id);
     assert.equal(card.product, product);
     assert.equal(card.variant, variant);
@@ -118,7 +113,7 @@ test('missing or ambiguous size/color combinations are omitted without selecting
   const dun = products.find(product => product.handle === 'utekos-dun');
   dun.variants.nodes.push(variant(98, 'Medium', 'Vargnatt'));
   const rows = productOverviewRows(products);
-  assert.deepEqual(Array.from(row(rows, 'svale').cards, card => card.variant.id), [12, 13].map(id));
+  assert.equal(row(rows, 'svale'), undefined);
   assert.deepEqual(Array.from(row(rows, 'techdown').cards, card => card.variant.id), [23, 24, 22].map(id));
   assert.deepEqual(Array.from(row(rows, 'color-Vargnatt').cards, card => card.variant.id), [32, 41, 42].map(id));
   assert.equal(flatten(rows).some(card => [11, 21, 31, 98, 99].map(id).includes(card.variant.id)), false);
@@ -135,7 +130,7 @@ test('Comfyrobe labels map to Shopify XS, M and XL without inferring other sizes
 test('curated images keep original dimensions and accessories use their own media', () => {
   const products = catalogue();
   const cards = flatten(productOverviewRows(products));
-  for (const [number, width, height] of [[31, 2000, 3000], [41, 2000, 3000], [42, 1333, 2000], [11, 1000, 1500]]) {
+  for (const [number, width, height] of [[31, 2000, 3000], [41, 2000, 3000], [42, 1333, 2000]]) {
     const card = cards.find(card => card.variant.id === id(number));
     assert.equal(card.image.width, width);
     assert.equal(card.image.height, height);

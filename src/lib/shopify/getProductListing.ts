@@ -1,3 +1,4 @@
+import { isPublicProduct } from '@/lib/products/publicProduct';
 import "server-only";
 
 import { cache } from "react";
@@ -51,7 +52,7 @@ async function getConnection(
       throw new Error(
         `Required Storefront collection unavailable: ${collection}`,
       );
-    return data.collection.products;
+    return { ...data.collection.products, nodes: data.collection.products.nodes.filter(product => isPublicProduct(product.handle)) };
   }
 
   const data = await shopifyFetch<
@@ -61,11 +62,12 @@ async function getConnection(
     query: PRODUCT_LIST_QUERY,
     variables: { first: PAGE_SIZE, after },
   });
-  return data.products;
+  return { ...data.products, nodes: data.products.nodes.filter(product => isPublicProduct(product.handle)) };
 }
 
 async function getSummary(handle: string): Promise<ProductSummary | null> {
   "use cache";
+  if (!isPublicProduct(handle)) return null;
   cacheTag("shopify:products", `shopify:product:${handle}`);
   const { product } = await shopifyFetch<
     { product: ProductSummary | null },

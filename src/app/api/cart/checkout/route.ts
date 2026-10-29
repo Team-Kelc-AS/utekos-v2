@@ -1,3 +1,4 @@
+import { isPublicProduct } from '@/lib/products/publicProduct';
 import { CART_COOKIE, CartError, cartView, readCart } from "@/lib/cart/server";
 import {
   FACEBOOK_SESSION_COOKIE,
@@ -82,6 +83,9 @@ export async function POST(request: NextRequest) {
         { status: 409, headers: privateHeaders },
       );
     const view = await cartView(cart, buyerIp(request));
+    if (view.lines.some(line => !isPublicProduct(line.handle))) {
+      throw new CartError("Handlekurven inneholder en utgått modell. Fjern den før du går til kassen.", 409);
+    }
     if (parsed.data.buyNowSize) {
       const variantId = comfyBuyNowVariants[parsed.data.buyNowSize];
       if (

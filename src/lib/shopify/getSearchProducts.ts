@@ -1,3 +1,4 @@
+import { isPublicProduct } from '@/lib/products/publicProduct';
 import "server-only";
 
 import { assertProductHandles } from "@/lib/catalog/categories";
@@ -16,7 +17,9 @@ export async function getSearchProducts(): Promise<ProductSummary[]> {
       { first: number; after: string | null }
     >({ query: PRODUCT_LIST_QUERY, variables: { first: 100, after } });
     assertProductHandles(data.products.nodes.map(({ handle }) => handle));
-    for (const product of data.products.nodes) products.set(product.handle, product);
+    for (const product of data.products.nodes) {
+      if (isPublicProduct(product.handle)) products.set(product.handle, product);
+    }
     if (!data.products.pageInfo.hasNextPage) return [...products.values()];
     const cursor = data.products.pageInfo.endCursor;
     if (!cursor || cursors.has(cursor)) throw new Error("Shopify search pagination did not advance");

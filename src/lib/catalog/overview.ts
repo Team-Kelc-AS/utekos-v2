@@ -8,11 +8,6 @@ type Definition = { id: string; handle: string; label: string; color?: string; c
 // Exact ordering, display labels and image assignments from headless's
 // helpChooseCarouselConfig. A missing size/color must never select a substitute.
 const definitions: Definition[] = [
-  { id: 'svale', handle: 'utekos-svale', label: 'Utekos Svale', cards: [
-    { size: 'Middels', image: '/Svale_1.webp' },
-    { size: 'Stor', image: '/Svale_2.webp' },
-    { size: 'Større', image: '/Svale_3.webp' },
-  ] },
   { id: 'techdown', handle: 'utekos-techdown', label: 'Utekos TechDown™', color: 'Havdyp', cards: [
     { size: 'Stor', image: '/TechDown_2000x3000_2.webp' },
     { size: 'Større', image: '/TechDown_2000x3000_8.webp' },

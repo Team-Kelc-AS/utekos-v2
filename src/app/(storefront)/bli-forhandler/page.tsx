@@ -43,7 +43,7 @@ export default function BecomeDealerPage() {
               <h2 id="product-heading">La kundene oppleve Utekos</h2>
               <p>
                 I butikken kan kundene se, prøve og kjenne på Utekos TechDown™
-                eller Utekos Svale™ før de velger størrelse og farge.
+                før de velger størrelse og farge.
               </p>
             </section>
             <section aria-labelledby="collaboration-heading">

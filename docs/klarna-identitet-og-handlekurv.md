@@ -2,6 +2,26 @@
 
 Status 28. oktober 2026. Dette dokumentet skiller dokumentert leverandørkapasitet fra det som faktisk er aktivert i Utekos.
 
+### Feilsøking 29. oktober: avvist ID-token
+
+Meldingen «Klarna-identiteten kunne ikke bekreftes. Prøv igjen.» brukes ved feil i
+serverens ID-tokenvalidering, etter at SDK-et har returnert et token. Den tidligere
+feilhåndteringen skjulte årsaken. Offentlig OIDC discovery og JWKS ble kontrollert
+for produksjon og playground; konfigurerte issuer- og JWKS-adresser samsvarer.
+
+En lokal rettelse behandler `null` som manglende verdi for valgfrie, signerte
+profilfelt og adressefelt. Tidligere avviste slike felt hele identiteten. Påkrevd
+subjekt og verifisert e-post, signatur, audience, issuer og tokenets tidsgrenser
+kontrolleres fortsatt. Regresjonstester bruker også reelt signerte testtoken og
+avviser feil signatur, audience, issuer og utløpte token.
+
+Valideringsfeil får nå en serverlogg med hendelsen
+`klarna_identity_verification_failed` og en fast feilkode. Ved claim-feil logges
+bare feltnavn, aldri verdier, persondata eller token. API-et returnerer feilkoden
+sammen med den eksisterende meldingen. Dette gjør neste feil mulig å avgrense.
+Det er ikke bekreftet at `null` var årsaken i det rapporterte produksjonsforsøket;
+rettelsen er foreløpig lokal og en reell ende-til-ende-innlogging gjenstår.
+
 ## Plassering og virkning i v2
 
 - Produktsider og handlekurven viser direkte innloggingsknapper fra Klarna Web SDK. Etter et vellykket trykk på «Legg i handlekurven» på produktsiden åpnes den vedlagte Utekos + Klarna-modalen. Modalens CTA er koblet direkte til Klarna Web SDK, og lukking viser handlekurven. Det finnes ingen egen `/konto`-side i denne lokale endringen. På kjøpsflatene vises ikke Klarna Express-knappen ved siden av innloggingen. Vanlig kasseflyt beholder Klarna som betalingsmulighet.
@@ -42,3 +62,20 @@ Klarna anbefaler plassering ved innlogging/kontoopprettelse og preutfylling i ka
 - `KLARNA_IDENTITY_ENABLED` styrer v2-funksjonen. Produksjonsmiljø, godkjent klient, redirect-URL, scopes og sign-in må kontrolleres hos Klarna for aktivering.
 - Migrasjonene til og med `20261028103827_identity_prospect_locale.sql` er brukt i tilkoblet Supabase og lest tilbake. Filnavnene samsvarer med migrasjonsversjonene hos leverandøren. V2 og backend er rullet ut 28. oktober 2026; en reell Klarna-innlogging, profilskriving, Shopify-synk og mottak hos annonseleverandørene er ennå ikke verifisert.
 - `resolveTrackingAuthorization()` i v2 gir `operator_policy` som `granted`; dette er ikke et individuelt samtykke for Klarna-profildata. Det må ikke brukes som bevis for kundeeksport eller e-post.
+
+### Releasekontroll 29. oktober
+
+Svale er tatt ut av butikkens produktutvalg, søk, sitemap, produktinnhold,
+mediekoblinger og kjøpslogikk. Direkte produktlesing avvises og gamle kurver
+med Svale stanses før checkout. Den gamle produktadressen videresendes permanent
+til `/produkter`. Den feilstavede `/handlehjelp/sammeligne-modeller` videresendes
+permanent til den eksisterende `/handlehjelp/sammenlign-modeller`.
+
+Den lokale rabatt-rutens løse `s` er fjernet; gjeldende `origin/main` hadde allerede
+riktig rutekode. Lokale rapportsnapshots under `outputs` er utelatt fra appens
+typekontroll. Releasegrenen bygger fra `81fce5e` uten øvrige lokale endringer.
+Produksjonsbygg, typekontroll, ESLint og 81 målrettede tester består. HTTP-kontroll
+av ferdig bygg bekrefter begge redirects (308), sammenligningssiden (200) og
+Comfyrobe (200). De 27 øvrige feilene i den brede CJS-suiten ble gjentatt mot
+uendret `origin/main` (testmocks/bildeforutsetninger). Reell Klarna-innlogging
+med kundens identitetssteg må fortsatt kontrolleres etter publisering.

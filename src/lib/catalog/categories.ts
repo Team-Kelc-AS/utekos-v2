@@ -45,7 +45,6 @@ export const categories = {
     source: {
       kind: "selection",
       handles: [
-        "utekos-svale",
         "utekos-techdown",
         "utekos-mikrofiber",
         "utekos-dun",
@@ -80,7 +79,7 @@ export const categories = {
     label: "Terrasse",
     title: "Varmeplagg til terrassen",
     description:
-      "Se Utekos-plagg til terrasseliv og rolige stunder ute. Sammenlign Svale, TechDown™, Dun™ og Comfyrobe™.",
+      "Se Utekos-plagg til terrasseliv og rolige stunder ute. Sammenlign TechDown™, Dun™ og Comfyrobe™.",
     intro:
       "Å sitte lenge ute handler om å fange og holde på kroppens egenvarme, uten at det blir klamt. Ulike vindforhold og temperaturer krever ulik isolasjon. Her har vi samlet Utekos-plaggene som er konstruert for terrassebruk – fra pustende mellomlag for sensommeren, til tykkere tekstiler som stenger kulden helt ute.",
     guidanceTitle: "Finn et plagg til uteplassen",
@@ -109,7 +108,7 @@ export const categories = {
     ],
     source: {
       kind: "selection",
-      handles: ["utekos-svale", "utekos-techdown", "utekos-dun"],
+      handles: ["utekos-techdown", "utekos-dun"],
     },
   },
 } as const;

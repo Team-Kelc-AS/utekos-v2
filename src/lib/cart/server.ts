@@ -1,3 +1,4 @@
+import { isPublicProduct } from '@/lib/products/publicProduct';
 import "server-only";
 
 import type { Cart } from "./types";
@@ -93,7 +94,7 @@ export async function cartView(
         handle: product.handle,
         variantTitle: l.merchandise.title,
         selectedOptions: l.merchandise.selectedOptions,
-        available: l.merchandise.availableForSale,
+        available: isPublicProduct(product.handle) && l.merchandise.availableForSale,
         image: l.merchandise.image,
         total: l.cost.totalAmount,
         commerce: cartLineCommerce(

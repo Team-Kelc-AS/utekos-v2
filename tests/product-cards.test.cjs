@@ -70,7 +70,7 @@ test('an empty catalogue stays empty; failed reads and stalled cursors are not d
   ]).getProductCards(), /pagination did not advance/);
 });
 
-test('homepage starts with Svale Middels, Stor, Større, then TechDown, Mikrofiber and Comfyrobe', () => {
+test('homepage excludes retired Svale and orders TechDown, Mikrofiber and Comfyrobe', () => {
   const { homeProducts } = loadTypeScript('lib/catalog/homeProducts.ts');
   const card = (handle, size) => ({ product: { handle }, variant: variant(1, { selectedOptions: [{ name: 'Størrelse', value: size }] }) });
   const cards = [
@@ -80,7 +80,6 @@ test('homepage starts with Svale Middels, Stor, Større, then TechDown, Mikrofib
   ];
   const before = cards.slice();
   assert.deepEqual(Array.from(homeProducts(cards), card => `${card.product.handle}/${card.variant.selectedOptions[0].value}`), [
-    'utekos-svale/Middels', 'utekos-svale/Stor', 'utekos-svale/Større',
     'utekos-techdown/Middels', 'utekos-techdown/Stor', 'utekos-techdown/Større',
     'utekos-mikrofiber/Medium', 'comfyrobe/XL',
   ]);

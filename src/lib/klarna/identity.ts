@@ -15,13 +15,17 @@ export const KLARNA_IDENTITY_SCOPE = [
 const SESSION_SECONDS = 60 * 60 * 24;
 const STATE_SECONDS = 10 * 60;
 
+// An undisclosed optional claim must not invalidate the authenticated identity.
+const optionalClaim = <T extends z.ZodType>(schema: T) =>
+  z.preprocess(value => value === null ? undefined : value, schema.optional());
+
 const addressSchema = z.object({
-  street_address: z.string().max(160).optional(),
-  street_address2: z.string().max(160).optional(),
-  postal_code: z.string().max(20).optional(),
-  city: z.string().max(100).optional(),
-  region: z.string().max(100).optional(),
-  country: z.string().regex(/^[A-Z]{2}$/i).optional(),
+  street_address: optionalClaim(z.string().max(160)),
+  street_address2: optionalClaim(z.string().max(160)),
+  postal_code: optionalClaim(z.string().max(20)),
+  city: optionalClaim(z.string().max(100)),
+  region: optionalClaim(z.string().max(100)),
+  country: optionalClaim(z.string().regex(/^[A-Z]{2}$/i)),
 });
 const tokenBirthDateSchema = z.union([
   z.iso.date(),
@@ -123,6 +127,33 @@ export const klarnaSessionMaxAge = SESSION_SECONDS;
 export const klarnaStateMaxAge = STATE_SECONDS;
 
 const jwks = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
+
+class KlarnaProfileClaimsError extends Error {
+  constructor(readonly fields: string[]) {
+    super('Klarna ID token profile claims are invalid');
+  }
+}
+
+export function klarnaIdentityVerificationFailure(error: unknown) {
+  if (error instanceof KlarnaProfileClaimsError) {
+    return { code: 'KLARNA_PROFILE_INVALID', fields: error.fields };
+  }
+  const codes = [
+    'ERR_JWT_EXPIRED', 'ERR_JWT_CLAIM_VALIDATION_FAILED', 'ERR_JWT_INVALID',
+    'ERR_JWS_INVALID', 'ERR_JWS_SIGNATURE_VERIFICATION_FAILED',
+    'ERR_JOSE_ALG_NOT_ALLOWED', 'ERR_JWKS_TIMEOUT', 'ERR_JWKS_NO_MATCHING_KEY',
+    'ERR_JWKS_MULTIPLE_MATCHING_KEYS', 'ERR_JWKS_INVALID',
+    'ERR_JOSE_GENERIC', 'ERR_JOSE_NOT_SUPPORTED',
+  ];
+  if (error && typeof error === 'object' && 'code' in error &&
+      typeof error.code === 'string' && codes.includes(error.code)) {
+    const claim = 'claim' in error && typeof error.claim === 'string' &&
+      ['iss', 'aud', 'exp', 'iat', 'nbf'].includes(error.claim) ? error.claim : undefined;
+    return { code: error.code, ...(claim ? { claim } : {}) };
+  }
+  return { code: 'KLARNA_VERIFICATION_FAILED' };
+}
+
 export async function verifyKlarnaIdToken(idToken: string, clientId: string, issuer: string) {
   if (idToken.length > 12000) throw new Error('Invalid Klarna ID token');
   let keySet = jwks.get(issuer);
@@ -142,18 +173,20 @@ export async function verifyKlarnaIdToken(idToken: string, clientId: string, iss
     sub: z.string().min(1).max(300),
     email: z.email().max(320),
     email_verified: z.literal(true),
-    given_name: z.string().max(80).optional(),
-    family_name: z.string().max(80).optional(),
-    phone: z.string().regex(/^\+[1-9][0-9]{6,14}$/).optional(),
-    phone_verified: z.boolean().optional(),
-    date_of_birth: tokenBirthDateSchema.optional(),
-    billing_address: addressSchema.optional(),
-    shipping_address: addressSchema.optional(),
-    address: addressSchema.optional(),
-    country: z.string().regex(/^[A-Z]{2}$/i).optional(),
-    locale: z.string().regex(/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/).max(35).optional(),
+    given_name: optionalClaim(z.string().max(80)),
+    family_name: optionalClaim(z.string().max(80)),
+    phone: optionalClaim(z.string().regex(/^\+[1-9][0-9]{6,14}$/)),
+    phone_verified: optionalClaim(z.boolean()),
+    date_of_birth: optionalClaim(tokenBirthDateSchema),
+    billing_address: optionalClaim(addressSchema),
+    shipping_address: optionalClaim(addressSchema),
+    address: optionalClaim(addressSchema),
+    country: optionalClaim(z.string().regex(/^[A-Z]{2}$/i)),
+    locale: optionalClaim(z.string().regex(/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/).max(35)),
   }).safeParse(payload);
-  if (!parsed.success) throw new Error('Klarna ID token lacks a verified email');
+  if (!parsed.success) {
+    throw new KlarnaProfileClaimsError([...new Set(parsed.error.issues.map(issue => String(issue.path[0])))]);
+  }
   return {
     subject: parsed.data.sub,
     email: parsed.data.email,

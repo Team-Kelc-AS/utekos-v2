@@ -1,3 +1,4 @@
+import { isPublicProduct } from '@/lib/products/publicProduct';
 import type { ProductVariant, ShopifyProduct } from '@/lib/shopify/product-types';
 import { slugifyVariantOption } from './slugifyVariantOption';
 import { resolveTechDownSizeValue } from './techDownSizes';
@@ -6,7 +7,7 @@ const optionNames: Record<string, string> = { 'Størrelse': 'storrelse', Size: '
 export function optionParam(name: string) { return optionNames[name] ?? null; }
 export function optionLabel(name: string) { return optionParam(name) === 'storrelse' ? 'Størrelse' : name; }
 export function publicVariants<T extends ProductVariant>(product: { handle: string; variants: { nodes: T[] } }) {
-  return product.variants.nodes;
+  return isPublicProduct(product.handle) ? product.variants.nodes : [];
 }
 function preferred(variants: ProductVariant[]) {
   return variants.find(v => v.availableForSale && v.selectedOptions.some(o => optionParam(o.name) === 'storrelse' && o.value === 'Stor')) ?? variants.find(v => v.availableForSale) ?? variants[0];

@@ -54,6 +54,7 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      { source: "/produkter/utekos-svale", destination: "/produkter", permanent: true },
       {
         source: "/gaveguide",
         destination: "/handlehjelp/klarna",

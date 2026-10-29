@@ -5,7 +5,6 @@ import { COMFYROBE_MOBILE_GALLERY_IMAGES } from './gallery/comfyrobeProductGalle
 import { FJELLBLA_MOBILE_GALLERY_IMAGES } from './gallery/fjellblaMobileGalleryImages';
 import { TECHDOWN_MOBILE_GALLERY_IMAGES } from './gallery/techdown/productGalleryImages';
 import { MICROFIBER_MOBILE_GALLERY_IMAGES, MICROFIBER_VARGNATT_DESKTOP_GALLERY_IMAGES, MICROFIBER_BLACK_STUDIO_IMAGES } from './gallery/mikrofiber/mikrofiberProductGalleryImages';
-import { SVALE_MOBILE_GALLERY_IMAGES } from './gallery/svale/svaleProductGalleryImages';
 import { STAPPER_MOBILE_GALLERY_IMAGES } from './gallery/stapper/stapperDesktopImages';
 import { VARGNATT_FULL_IMAGE } from './gallery/vargnattFullImage';
 import { usesDesktopPortraitFrame } from './gallery/desktopPortraitFrame';
@@ -61,6 +60,6 @@ export function productGallery(product: ShopifyProduct, variant: ProductVariant)
   const isFjellbla = color === 'Fjellblå' && ['utekos-dun', 'utekos-mikrofiber'].includes(product.handle);
   const mobile = isFjellbla
     ? FJELLBLA_MOBILE_GALLERY_IMAGES
-    : ({ 'utekos-stapper': STAPPER_MOBILE_GALLERY_IMAGES, comfyrobe: COMFYROBE_MOBILE_GALLERY_IMAGES, 'utekos-techdown': TECHDOWN_MOBILE_GALLERY_IMAGES, 'utekos-mikrofiber': MICROFIBER_MOBILE_GALLERY_IMAGES, 'utekos-svale': SVALE_MOBILE_GALLERY_IMAGES })[product.handle] ?? desktop;
+    : ({ 'utekos-stapper': STAPPER_MOBILE_GALLERY_IMAGES, comfyrobe: COMFYROBE_MOBILE_GALLERY_IMAGES, 'utekos-techdown': TECHDOWN_MOBILE_GALLERY_IMAGES, 'utekos-mikrofiber': MICROFIBER_MOBILE_GALLERY_IMAGES })[product.handle] ?? desktop;
   return { desktop: originalImages(desktop, 'desktop', product.handle), mobile: originalImages(mobile, 'mobile', product.handle, isFjellbla ? [3, 4] : undefined) };
 }

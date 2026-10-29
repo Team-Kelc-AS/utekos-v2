@@ -14,8 +14,6 @@ const variant = (color, size = 'Medium') => ({ selectedOptions: [
 test('each product color resolves its exact supplied sheet independently of size', () => {
   const cases = [
     ['utekos-techdown', 'Havdyp', 'MARITIME_BLUE'],
-    ['utekos-svale', undefined, 'MARITIME_BLUE_MOONSTUCK'],
-    ['utekos-svale', 'Havdyp', 'MARITIME_BLUE_MOONSTUCK'],
     ['utekos-dun', 'Vargnatt', 'ANTHRACITE'],
     ['utekos-mikrofiber', 'Vargnatt', 'ANTHRACITE'],
     ['utekos-dun', 'Fjellblå', 'PATRIOT_BLUE'],
@@ -32,7 +30,7 @@ test('each product color resolves its exact supplied sheet independently of size
 });
 
 test('Comfyrobe, accessories and unknown colors do not receive a substitute sheet', () => {
-  for (const handle of ['comfyrobe', 'utekos-stapper', 'unknown-product']) {
+  for (const handle of ['comfyrobe', 'utekos-stapper', 'utekos-svale', 'unknown-product']) {
     for (const color of ['Havdyp', 'Vargnatt', 'Fjellnatt', 'Fjellblå', undefined]) {
       assert.equal(productVariantColorSheet(handle, variant(color)), undefined);
     }
