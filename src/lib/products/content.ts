@@ -677,7 +677,7 @@ export const PRODUCT_PAGE_CONTENT = {
   comfyrobe: {
     description: {
       title: "Comfyrobe™",
-      lead: "Comfyrobe™er selve innbegrepet av mykhet. Utformet med avlange, sofistikerte proporsjoner.",
+      lead: "Comfyrobe™ er selve innbegrepet av mykhet. Utformet med avlange, sofistikerte proporsjoner.",
       blocks: [
         {
           paragraphs: [
