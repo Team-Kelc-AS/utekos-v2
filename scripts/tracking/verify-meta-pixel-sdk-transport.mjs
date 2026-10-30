@@ -122,7 +122,7 @@ async function scenario(browser, kind) {
     assert.equal(configRequested, true, 'Pixel config was requested');
     assert.equal(await page.evaluate(() => fbq.instance.locks.isLocked()), true);
 
-    if (kind === 'async-queue' || kind === 'async-queue-two-events') {
+    if (kind.startsWith('async-queue')) {
       await page.evaluate(() => {
         fbq.instance.asyncParamFetchers.set('probe_hold', {
           request: new Promise(resolve => { window.__releaseAsyncProbe = resolve; }),
@@ -154,19 +154,32 @@ async function scenario(browser, kind) {
 
     releaseConfig();
 
-    if (kind === 'async-queue' || kind === 'async-queue-two-events') {
+    if (kind.startsWith('async-queue')) {
       await page.waitForFunction(() =>
         !fbq.instance.locks.isLocked() &&
         fbq.instance.eventQueue.length === 1 &&
         __utekosMetaPixelState.dispatches['PageView:sdk-probe-A']);
-      const secondIdentifiers = await page.evaluate(twoEvents => {
+      const mutationPage = kind === 'async-queue-other-tab'
+        ? await context.newPage()
+        : page;
+      if (mutationPage !== page) {
+        await mutationPage.goto('https://utekos.no/__pixel_sdk_probe__');
+      }
+      const secondIdentifiers = await mutationPage.evaluate(scenarioKind => {
+        if (scenarioKind === 'async-queue-cookie-deleted') {
+          document.cookie = '_fbc=; Path=/; Max-Age=0';
+          document.cookie = '_fbp=; Path=/; Max-Age=0';
+          return null;
+        }
         const timestamp = Date.now() + 1000;
         const fbc = `fb.1.${timestamp}.SyntheticClickB`;
         const fbp = `fb.1.${timestamp}.SyntheticBrowserB`;
-        const scope = twoEvents ? 'Domain=.utekos.no; Path=/' : 'Path=/';
+        const scope = scenarioKind === 'async-queue-two-events'
+          ? 'Domain=.utekos.no; Path=/'
+          : 'Path=/';
         document.cookie = `_fbc=${fbc}; ${scope}`;
         document.cookie = `_fbp=${fbp}; ${scope}`;
-        if (twoEvents) {
+        if (scenarioKind === 'async-queue-two-events') {
           window.dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
             detail: {
               event: 'page_view',
@@ -183,7 +196,7 @@ async function scenario(browser, kind) {
           }));
         }
         return { fbc, fbp };
-      }, kind === 'async-queue-two-events');
+      }, kind);
       if (kind === 'async-queue-two-events') {
         await page.waitForFunction(() =>
           __utekosMetaPixelState.dispatches['PageView:sdk-probe-B']);
@@ -245,6 +258,8 @@ async function main() {
       'missing-cookie',
       'async-queue',
       'async-queue-two-events',
+      'async-queue-other-tab',
+      'async-queue-cookie-deleted',
     ]) {
       const result = await scenario(browser, kind);
       process.stdout.write(`${result.kind}: ${result.pixelRequests} intercepted Pixel request(s); ${result.blockedHosts.length} other external host(s) blocked\n`);
