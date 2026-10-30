@@ -6,8 +6,8 @@ Kontrollert 30. oktober 2026. Dette dokumentet skiller bekreftet lagring fra syn
 
 | Ledd | Kode | Ansvar |
 | --- | --- | --- |
-| Skjema | `src/assets/components/klarna/KlarnaMarketingPreferences.tsx` | shadcn/Base UI, lukket som standard, eksplisitt lagring, validerte svar, feil og ny forespørsel |
-| Utseende | `KlarnaMarketingPreferences.module.css`, `src/assets/components/ui/Accordion.tsx`, `accordion.module.css` | Utekos-palett, kontrollert chevron, tekstbryting og plass til ikon |
+| Skjema | `src/assets/components/klarna/KlarnaMarketingPreferences.tsx` | shadcn/Base UI, enkel preferanseside, eksplisitt lagring og validerte svar. Meny og produktinngang bruker Questionnaire i modal; besvart profil skjuler produktinngangen |
+| Utseende | `KlarnaMarketingPreferences.module.css`, `KlarnaPreferencesAccess.tsx`, `KlarnaPreferencesQuestionnaire.tsx` | Produktvariantens eksisterende gradient og kantfarger, kompakt inngang under størrelsesguide, sentrert modal og trinnvis skjema |
 | Nettbutikkens API | `src/app/api/identity/klarna/prospect/route.ts` | Same-origin, størrelsesgrense, streng validering, kryptert innloggingssesjon og serverlest handlekurv |
 | Backend-kall | `src/lib/klarna/prospect.ts` | Identitet fra den verifiserte sesjonen, Vercel OIDC-bro til backend |
 | Database | Backend: `src/lib/customer-account/handleKlarnaProspect.ts` | Transaksjon og identitetslås, profil, samtykkehistorikk og handlekurvkopi |
@@ -58,7 +58,7 @@ pnpm run typecheck
 pnpm run build
 ```
 
-Nettlesertestene bruker testdata og avskjærer skrivekall. De kontrollerer lukket standardtilstand, tastatur, eksakt tekst, 320/390/768/1440 px, 200 % tekststørrelse, gjeninnlasting, tomt/ugyldig API-svar, lagringsfeil og ventende Shopify-synk. Chromium og WebKit inngår. De dokumenterer UI og kontrakt, ikke virkelig innlogging eller provider-levering.
+Nettlesertestene bruker testdata og avskjærer skrivekall. De kontrollerer kompakt produktinngang, tastatur, eksakt tekst, 320/390/1440 px, 200 % tekststørrelse, gjeninnlasting, tomt/ugyldig API-svar, lagringsfeil og ventende Shopify-synk. Chromium og WebKit inngår. Uvedkommende tredjepartsskript er isolert fra UI-testene; Klarnas faktiske Express-knapp kontrolleres separat i produksjon. De dokumenterer UI og kontrakt, ikke virkelig innlogging eller provider-levering.
 
 Backend:
 
@@ -69,3 +69,11 @@ KLARNA_PROFILE_DATABASE_TEST=1 NODE_OPTIONS='--conditions=react-server' node --e
 ```
 
 Databasetesten er eksplisitt påslått, bruker en unik syntetisk identitet, og rydder etter seg. Den bekrefter faktisk lagring/gjenlesing av passform, farge, interesser og samtykker, én profil ved gjentatt innlogging, ingen doble kvitteringer, serverlest kurvformat, sletting ved tilbaketrekking, og at en simulert Shopify-feil ikke skjuler en allerede lagret transaksjon. E-postsamtykke forblir av; testen sender ingen e-post og oppretter ingen Shopify-abonnent.
+
+## Ny preferanseflyt 30. oktober 2026
+
+- `/handlehjelp/preferanser` viser et enkelt skjema etter innlogging. Lenke ligger under Handlehjelp; en innlogget kunde med lagrede valg får også lenke rett under kundeserviceadressen.
+- Meny åpner den eksisterende shadcn Questionnaire-komponenten i Dialog. Fire trinn: passform, farge, interesser og samtykker. Alle av-valg kan lagres. Ingen automatisk innsending eller åpning. Utlogging er bevart i meny og preferanseside.
+- En liten inngang under størrelsesguiden vises bare for innloggede kunder som ikke har svart. Etter bekreftet lagring skjules den, også etter gjeninnlasting og når alle samtykker er av. Kjøpsområdet bruker Klarna Express for innloggede kunder der varen/kurven støtter denne kassen.
+- Camping og Bobil er separate valg. Ny UI tillater seks interesser. Den tidligere kombinerte nøkkelen beholdes bare for eldre åpne klienter; den gjøres aldri automatisk om til to svar. Ingen eksisterende kundes interesse er omskrevet.
+- Felles klienttilstand og skjema finnes i `src/lib/klarna/preferences-client.ts` og `src/lib/klarna/preferences.ts`. Innlogging venter på lagret profil før en redigerbar form vises. Backendlagringen og de øvrige aktiveringsgatene ovenfor gjelder fortsatt.
