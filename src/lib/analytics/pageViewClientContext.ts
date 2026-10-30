@@ -1,8 +1,8 @@
 import type { ConsentSnapshot } from './pageViewEvent'
 import { resolveClickIds } from './clickIdSessionStore'
 import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAuthorization'
-import { extractFbclidFromFbc } from './extractFbclidFromFbc'
 import { readObservedMetaFbclid } from './metaFbclid'
+import { selectMetaFbcCookie } from './selectMetaFbcCookie'
 
 const metaCookiePattern = /^fb\.\d+\.\d{13}\.[^;\s]+$/
 
@@ -11,21 +11,22 @@ function readMetaCookie(
   name: '_fbc' | '_fbp',
   fbclid?: string
 ): string | undefined {
-  const values = new Set<string>()
+  const values: string[] = []
   for (const part of cookieHeader.split(';')) {
     const separator = part.indexOf('=')
     if (separator < 1 || part.slice(0, separator).trim() !== name) continue
     try {
       const value = decodeURIComponent(part.slice(separator + 1).trim())
-      if (value.length <= 3800 && metaCookiePattern.test(value) &&
-        (name !== '_fbc' || !fbclid || extractFbclidFromFbc(value) === fbclid)) {
-        values.add(value)
+      if (value.length <= 3800 && metaCookiePattern.test(value)) {
+        values.push(value)
       }
     } catch {
       // A malformed duplicate does not hide an unambiguous valid value.
     }
   }
-  return values.size === 1 ? values.values().next().value : undefined
+  if (name === '_fbc') return selectMetaFbcCookie(values, fbclid)
+  const unique = [...new Set(values)]
+  return unique.length === 1 ? unique[0] : undefined
 }
 
 function parseCookies(

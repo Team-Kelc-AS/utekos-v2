@@ -7,6 +7,7 @@ import { metaClientIpResponseSchema } from './metaClientIpContract'
 import { shouldCollectMetaClientIp } from './shouldCollectMetaClientIp'
 import { extractFbclidFromFbc } from './extractFbclidFromFbc'
 import { readObservedMetaFbclid } from './metaFbclid'
+import { selectMetaFbcCookie } from './selectMetaFbcCookie'
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
 
 function marketingAllowed() {
@@ -78,15 +79,20 @@ async function getConsentedClientIpAddress(
 
 function readPersistedIdentifiers(): MetaClientParameterContext {
   const cookies: Record<string, string> = {}
+  const fbcValues: string[] = []
   for (const entry of document.cookie.split(/;\s*/)) {
     const separator = entry.indexOf('=')
     if (separator < 0) continue
     const name = entry.slice(0, separator)
     if (!['_fbc', '_fbp', '_fbi'].includes(name)) continue
     try {
-      cookies[name] = decodeURIComponent(entry.slice(separator + 1))
+      const value = decodeURIComponent(entry.slice(separator + 1))
+      if (name === '_fbc') fbcValues.push(value)
+      else cookies[name] = value
     } catch { /* Ignore malformed cookies; never synthesize an identifier. */ }
   }
+  const fbc = selectMetaFbcCookie(fbcValues)
+  if (fbc) cookies._fbc = fbc
   return mapMetaClientParameterContext(cookies)
 }
 

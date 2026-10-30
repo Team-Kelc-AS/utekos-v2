@@ -462,6 +462,20 @@ test('proxy keeps the matching genuine click when duplicate _fbc cookies disagre
     })
     proxy(ambiguous)
     assert.equal(ambiguous.cookies.get('_fbc'), undefined, 'no click may be guessed from cookie order')
+    const sameClickLater = `fb.1.${observedAt + 1000}.MatchingClick`
+    for (const values of [[matching, sameClickLater], [sameClickLater, matching]]) {
+      const request = new NextRequest('https://utekos.no/produkter?fbclid=MatchingClick', {
+        headers: { accept: 'text/html', cookie: values.map(value => `_fbc=${value}`).join('; ') },
+      })
+      const response = proxy(request)
+      assert.match(request.cookies.get('_fbc')?.value ?? '',
+        new RegExp(`^fb\\.1\\.${observedAt}\\.MatchingClick(?:\\.|$)`),
+        'same-click duplicates retain the earliest captured timestamp')
+      const responseCookie = response.cookies.get('_fbc')?.value
+      if (responseCookie) assert.match(responseCookie,
+        new RegExp(`^fb\\.1\\.${observedAt}\\.MatchingClick(?:\\.|$)`),
+        'an SDK suffix must not change the original click time')
+    }
   } finally {
     for (const [key, value] of Object.entries({
       NEXT_PUBLIC_TRACKING_ENABLED: saved.enabled,

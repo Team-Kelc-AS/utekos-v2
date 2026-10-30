@@ -127,8 +127,8 @@
       "source": "src/lib/analytics/server/captureProxyMetaCookies.ts",
       "target": "src/lib/analytics/server/captureProxyMetaCookies.ts",
       "sourceSha256": "6c2936329d6226614a3e59dfcffa4f3155043e23e46926d8bf4f3f51b3524279",
-      "reviewedTargetSha256": "83c8844eb3f8fabfb9ede067309f3074f41b8dbfc0f6f81fe22936b6e5e14714",
-      "reason": "Reviewed 2026-10-29: isolate malformed or oversized Meta cookies and invalid URL fbclid before Parameter Builder. Read the raw Cookie header because NextRequest collapses duplicate names; retain only an unambiguous cookie or the value matching an observed URL click. Restore unrelated raw cookies after RequestCookies rewrites its name-keyed map. Original source hash retained.",
+      "reviewedTargetSha256": "4f21e8ac2b783c96ed7b67a8cd1e5ad78113b2d1d5fadf5af75b00e9bcf1f9af",
+      "reason": "Reviewed 2026-10-30: isolate malformed or oversized Meta cookies and invalid URL fbclid before Parameter Builder. Read the raw Cookie header because NextRequest collapses duplicate names; retain the earliest timestamp for one genuine click or the value matching an observed URL click, without guessing between different clicks. Restore unrelated raw cookies after RequestCookies rewrites its name-keyed map. Original source hash retained.",
       "adapted": false
     },
     {

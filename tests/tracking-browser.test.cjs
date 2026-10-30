@@ -363,6 +363,35 @@ test('a clicked PageView keeps the matching timestamp across host and domain _fb
   assert.ok(delivered.cookie.split('; ').filter(part => part.startsWith('_fbc=')).every(part => part.includes('MatchingClick')));
 });
 
+test('same-click host and domain cookies retain the earliest original click time', async t => {
+  const observedAt = Date.now() - 24 * 60 * 60 * 1000;
+  const original = `fb.1.${observedAt}.MatchingClick`;
+  const later = `fb.1.${observedAt + 1000}.MatchingClick`;
+  for (const [hostCookie, domainCookie] of [[original, later], [later, original]]) {
+    for (const initial of [
+      'https://utekos.no/produkter/test-product?fbclid=MatchingClick',
+      'https://utekos.no/produkter/test-product',
+    ]) {
+      const api = await fixture(t, initial, {
+        metaHostFbcCookie: hostCookie,
+        metaCookie: domainCookie,
+        metaFbpCookie: `fb.1.${observedAt}.BrowserId.AQQCAQMC`,
+      });
+      await api.waitFor('page_view');
+      const event = api.events('page_view')[0];
+      assert.equal(event.browser_id?.fbc?.split('.')[2], String(observedAt));
+      await api.page.waitForFunction(id => __utekosMetaPixelState.dispatches[`PageView:${id}`], event.event_id);
+      const delivered = await api.page.evaluate(id => ({
+        pixel: __pixelIdentity.filter(call => call.id === id),
+        fbcCookies: document.cookie.split('; ').filter(part => part.startsWith('_fbc=')),
+        dispatch: __utekosMetaPixelState.dispatches[`PageView:${id}`],
+      }), event.event_id);
+      assert.equal(delivered.pixel.length, 1, JSON.stringify({ delivered, browserId: event.browser_id }));
+      assert.ok(delivered.fbcCookies.every(cookie => cookie.includes(String(observedAt))));
+    }
+  }
+});
+
 test('the first clicked PageView delivers the same identity to Pixel without preexisting _fbp', async t => {
   const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=FirstClick');
   await api.waitFor('page_view');

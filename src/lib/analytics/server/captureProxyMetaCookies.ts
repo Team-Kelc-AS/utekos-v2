@@ -5,6 +5,7 @@ import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAutho
 import { ensureCanonicalMetaBrowserIds } from './ensureCanonicalMetaBrowserIds'
 import { readObservedMetaFbclid } from '../metaFbclid'
 import { extractFbclidFromFbc } from '../extractFbclidFromFbc'
+import { selectMetaFbcCookie } from '../selectMetaFbcCookie'
 
 const observedFbclidSchema = z.string().check(z.minLength(1), z.maxLength(500))
 const observedCookieSchema = z.string().check(z.minLength(1), z.maxLength(3800))
@@ -60,7 +61,9 @@ export function captureProxyMetaCookies(
     const eligible = name === '_fbc' && observedFbclid ?
       valid.filter(value => extractFbclidFromFbc(value) === observedFbclid)
     : valid
-    const selected = eligible.length === 1 ? eligible[0] : undefined
+    const selected = name === '_fbc' ?
+      selectMetaFbcCookie(valid, observedFbclid)
+    : eligible.length === 1 ? eligible[0] : undefined
     // NextRequest.cookies collapses same-name entries before get/getAll. Use
     // the raw header, then pass only the unambiguous value to rendering.
     if (observed.count > 1 || (observed.count > 0 && !selected)) {

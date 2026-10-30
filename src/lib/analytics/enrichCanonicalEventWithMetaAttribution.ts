@@ -8,6 +8,7 @@ import type { CanonicalClickIds } from './canonicalSignalContract'
 import { clearStoredClickIds, resolveClickIds } from './clickIdSessionStore'
 import { extractFbclidFromFbc } from './extractFbclidFromFbc'
 import { readObservedMetaFbclid } from './metaFbclid'
+import { selectMetaFbcCookie } from './selectMetaFbcCookie'
 import { browserFirstPartyExternalIdStore } from './firstPartyExternalId'
 import { metaParameterContextResponseSchema } from './metaParameterContextContract'
 import { ensureMetaClientParameterContext, revokeMetaClientParameterContext } from './metaClientParameterBuilder'
@@ -72,7 +73,13 @@ function readCookieValues(name: string): string[] {
 
 function readCookie(name: string): string | undefined {
   const values = [...new Set(readCookieValues(name))]
+  if (name === '_fbc') return selectMetaFbcCookie(values)
   return values.length === 1 ? values[0] : undefined
+}
+
+function allCookieValuesMatch(name: string, value: string): boolean {
+  const values = readCookieValues(name)
+  return values.length > 0 && values.every(candidate => candidate === value)
 }
 
 function writeMetaCookie(name: '_fbc' | '_fbp', value: string): boolean {
@@ -93,11 +100,11 @@ function writeMetaCookie(name: '_fbc' | '_fbp', value: string): boolean {
     const cookie = `${name}=${encodeURIComponent(value)}; Path=/; ` +
       `Max-Age=${remainingSeconds}; SameSite=Lax${secure}`
     document.cookie = `${cookie}${domain}`
-    if (readCookie(name) === value) return true
+    if (allCookieValuesMatch(name, value)) return true
     // A host-only cookie can coexist with the domain cookie. Align that
     // scope only for this already validated event identity.
     if (domain) document.cookie = cookie
-    return readCookie(name) === value
+    return allCookieValuesMatch(name, value)
   } catch {
     return false
   }
@@ -320,8 +327,8 @@ function preserveFirstMetaIdentifiers(input: {
   firstFbp = fbp
   saveMetaIdentifierStorage('localStorage', META_IDENTIFIER_LOCAL_KEY, fbc, fbp, nowMs)
   saveMetaIdentifierStorage('sessionStorage', META_IDENTIFIER_SESSION_KEY, fbc, fbp, nowMs)
-  const fbcNeedsRestore = Boolean(fbc && readCookie('_fbc') !== fbc)
-  const fbpNeedsRestore = Boolean(fbp && readCookie('_fbp') !== fbp)
+  const fbcNeedsRestore = Boolean(fbc && !allCookieValuesMatch('_fbc', fbc))
+  const fbpNeedsRestore = Boolean(fbp && !allCookieValuesMatch('_fbp', fbp))
   const restoredFbc = !fbcNeedsRestore || (fbc !== undefined && writeMetaCookie('_fbc', fbc))
   const restoredFbp = !fbpNeedsRestore || (fbp !== undefined && writeMetaCookie('_fbp', fbp))
   if ((fbcNeedsRestore || fbpNeedsRestore) && !continuityReported) {
@@ -465,7 +472,8 @@ export async function enrichCanonicalEventWithMetaAttribution<
     observedIdentifier(value, Date.now()) !== undefined
   ))]
   if (window.location.href === pageUrl && !observedUrlFbclid &&
-    !event.browser_id?.fbc && liveFbcValues.length > 1) {
+    !event.browser_id?.fbc && liveFbcValues.length > 1 &&
+    !selectMetaFbcCookie(liveFbcValues)) {
     if (!ambiguousCookieReported) {
       ambiguousCookieReported = true
       reportClientCaughtError(new Error('meta_fbc_cookie_ambiguous'), 'meta.identifier_continuity')
@@ -600,9 +608,9 @@ export async function enrichCanonicalEventWithMetaAttribution<
   }
 
   const currentPage = window.location.href === pageUrl
-  let fbc = matchingFbc(identifiers.fbc) ??
-    (currentPage ? matchingFbc(readCookie('_fbc')) : undefined) ??
-    matchingFbc(event.browser_id?.fbc)
+  const collectedFbc = matchingFbc(identifiers.fbc) ??
+    (currentPage ? matchingFbc(readCookie('_fbc')) : undefined)
+  let fbc = chooseFbc(collectedFbc, matchingFbc(event.browser_id?.fbc), urlFbclid)
   let fbp = identifiers.fbp ?? readCookie('_fbp')
   ;({ fbc, fbp } = preserveFirstMetaIdentifiers({
     capturedFbc: event.browser_id?.fbc,
