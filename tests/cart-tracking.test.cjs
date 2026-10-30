@@ -195,11 +195,16 @@ test('failed or lost mutation responses never fabricate accepted deltas and are 
 });
 
 class CartError extends Error { constructor(message, status = 422) { super(message); this.status = status; } }
-function checkoutHarness(handler = async () => { throw new Error('Unexpected Shopify request'); }) {
+function checkoutHarness(handler = async () => { throw new Error('Unexpected Shopify request'); }, consent) {
   return loadTypeScript('lib/cart/checkout.ts', { env: { VERCEL_ENV: 'production' }, mocks: {
     '@/lib/validation/zodMini': require('zod/mini'),
     './error': { CartError },
     '@/lib/shopify/client': { shopifyFetch: handler },
+    ...(consent ? {
+      '@/lib/consent/resolveTrackingAuthorization': {
+        resolveTrackingAuthorization: () => consent,
+      },
+    } : {}),
   } });
 }
 function beginEvent(cart = makeCart([makeLine(1, '800')])) {
@@ -262,6 +267,17 @@ test('checkout without a browser event refreshes one observed Meta cookie pair',
   ).map(attribute => [attribute.key, attribute.value]));
   assert.equal(ambiguous.has('_fbc'), false);
   assert.equal(ambiguous.has('fbclid'), false);
+
+  const denied = checkoutHarness(undefined, {
+    analytics: 'granted', marketing: 'denied', preferences: 'granted',
+    source: 'cookiebot', version: '1',
+  });
+  const deniedAttributes = new Map(denied.checkoutAttributes(
+    cart, null, undefined, undefined, undefined, cookieHeader,
+  ).map(attribute => [attribute.key, attribute.value]));
+  assert.equal(deniedAttributes.has('_fbc'), false);
+  assert.equal(deniedAttributes.has('_fbp'), false);
+  assert.equal(deniedAttributes.has('fbclid'), false);
 
   const event = {
     ...beginEvent(cart),
