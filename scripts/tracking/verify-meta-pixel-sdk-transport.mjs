@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+import { chromium, webkit } from 'playwright';
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 
@@ -143,13 +143,32 @@ async function scenario(browser, kind) {
       });
     }
 
-    if (kind === 'missing-cookie') {
+    if (['missing-cookie', 'transient-missing-cookie', 'missing-then-new-click'].includes(kind)) {
       await page.evaluate(() => {
         document.cookie = '_fbc=; Path=/; Max-Age=0';
       });
     }
 
     releaseConfig();
+
+    if (kind === 'transient-missing-cookie' || kind === 'missing-then-new-click') {
+      await page.waitForFunction(() => !fbq.instance.locks.isLocked());
+      await delay(350);
+      assert.equal(
+        await page.evaluate(() => __utekosMetaPixelState.sent['PageView:sdk-probe-A']),
+        undefined,
+        'the missing cookie remains eligible for restoration',
+      );
+      await page.evaluate(({ scenarioKind, fbc }) => {
+        if (scenarioKind === 'transient-missing-cookie') {
+          document.cookie = `_fbc=${fbc}; Path=/`;
+        } else {
+          const timestamp = Date.now() + 1000;
+          document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/`;
+          document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/`;
+        }
+      }, { scenarioKind: kind, fbc: identifiers.fbc });
+    }
 
     if (kind === 'async-queue') {
       await page.waitForFunction(() =>
@@ -164,7 +183,7 @@ async function scenario(browser, kind) {
       });
     }
 
-    if (['new-click', 'new-click-other-tab', 'missing-cookie'].includes(kind)) {
+    if (['new-click', 'new-click-other-tab', 'missing-cookie', 'missing-then-new-click'].includes(kind)) {
       await page.waitForFunction(() =>
         __utekosMetaPixelState.dispatches['PageView:sdk-probe-A']?.skipped ===
         'different_live_meta_identity');
@@ -191,21 +210,28 @@ async function scenario(browser, kind) {
 }
 
 async function main() {
-  const browser = await chromium.launch({ headless: true });
-  try {
-    for (const kind of [
+  for (const [name, browserType, kinds] of [
+    ['chromium', chromium, [
       'stable-click',
       'duplicate-aligned',
       'new-click',
       'new-click-other-tab',
       'missing-cookie',
+      'transient-missing-cookie',
+      'missing-then-new-click',
       'async-queue',
-    ]) {
-      const result = await scenario(browser, kind);
-      process.stdout.write(`${result.kind}: ${result.pixelRequests} intercepted Pixel request(s); ${result.blockedHosts.length} other external host(s) blocked\n`);
+    ]],
+    ['webkit', webkit, ['transient-missing-cookie', 'missing-then-new-click']],
+  ]) {
+    const browser = await browserType.launch({ headless: true });
+    try {
+      for (const kind of kinds) {
+        const result = await scenario(browser, kind);
+        process.stdout.write(`${name} ${result.kind}: ${result.pixelRequests} intercepted Pixel request(s); ${result.blockedHosts.length} other external host(s) blocked\n`);
+      }
+    } finally {
+      await browser.close();
     }
-  } finally {
-    await browser.close();
   }
 }
 

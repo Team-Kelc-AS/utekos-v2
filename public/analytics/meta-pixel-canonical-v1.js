@@ -76,6 +76,7 @@
   w.__utekosMetaPixelState = state
 
   var pendingFbcEvents = {}
+  var pendingIdentityStartedAt = {}
   var pendingSdkEvents = {}
   var pendingSdkStartedAt = {}
   var observedEventIdentity = {}
@@ -146,6 +147,7 @@
     if (!entry) return
     delete pendingSdkEvents[key]
     delete pendingSdkStartedAt[key]
+    delete pendingIdentityStartedAt[key]
     delete observedEventIdentity[key]
     state.dispatches[key] = {
       eventId: entry.event_id,
@@ -219,6 +221,39 @@
     if (expected === null) return values.length === 0
     if (values.length === 0) return false
     return values.every(function (value) { return value === expected })
+  }
+
+  function shouldWaitForMissingIdentity(key, ids) {
+    var fbcValues = cookieValues('_fbc')
+    var fbpValues = cookieValues('_fbp')
+    var missing =
+      (ids.fbc !== null && fbcValues.length === 0) ||
+      (ids.fbp !== null && fbpValues.length === 0)
+    var conflicting =
+      (ids.fbc === null ? fbcValues.length > 0 :
+        fbcValues.some(function (value) { return value !== ids.fbc })) ||
+      (ids.fbp === null ? fbpValues.length > 0 :
+        fbpValues.some(function (value) { return value !== ids.fbp }))
+
+    if (!missing || conflicting) {
+      delete pendingIdentityStartedAt[key]
+      return false
+    }
+    if (!pendingIdentityStartedAt[key]) pendingIdentityStartedAt[key] = Date.now()
+    if (Date.now() - pendingIdentityStartedAt[key] < 3000) return true
+    delete pendingIdentityStartedAt[key]
+    return false
+  }
+
+  function queuePendingFbcEvent(key, entry) {
+    pendingFbcEvents[key] = entry
+    if (fbcPagehideListening) return
+    fbcPagehideListening = true
+    w.addEventListener('pagehide', function () {
+      Object.keys(pendingFbcEvents).forEach(function (pendingKey) {
+        dispatch(pendingFbcEvents[pendingKey], true)
+      })
+    })
   }
 
   function hasDifferentLiveMetaIdentity(ids) {
@@ -616,8 +651,17 @@
       }
     }
 
+    // A matching first-party cookie can reappear after the canonical event
+    // was captured. Wait briefly, but never cross over to a different click.
+    if (!finishWaiting &&
+        shouldWaitForMissingIdentity(eventKey, observedEventIdentity[eventKey])) {
+      queuePendingFbcEvent(eventKey, entry)
+      return
+    }
+
     if (hasDifferentLiveMetaIdentity(observedEventIdentity[eventKey])) {
       delete pendingFbcEvents[eventKey]
+      delete pendingIdentityStartedAt[eventKey]
       delete pendingSdkEvents[eventKey]
       delete pendingSdkStartedAt[eventKey]
       delete observedEventIdentity[eventKey]
@@ -632,19 +676,11 @@
     }
 
     if (!finishWaiting && shouldWaitForFbc()) {
-      pendingFbcEvents[eventKey] = entry
-      if (!fbcPagehideListening) {
-        fbcPagehideListening = true
-        // Release queued events if the visitor leaves before restoration.
-        w.addEventListener('pagehide', function () {
-          Object.keys(pendingFbcEvents).forEach(function (key) {
-            dispatch(pendingFbcEvents[key], true)
-          })
-        })
-      }
+      queuePendingFbcEvent(eventKey, entry)
       return
     }
     delete pendingFbcEvents[eventKey]
+    delete pendingIdentityStartedAt[eventKey]
 
     // Keep events outside the SDK's own queue until its config lock is open.
     // The last cookie check and fbq call then happen in the same JS task.

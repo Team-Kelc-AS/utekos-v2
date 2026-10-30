@@ -462,6 +462,43 @@ test('a live old _fbc cookie survives PageView and commerce without becoming a d
   assert.equal(later.click_id?.fbclid, undefined);
 });
 
+test('Pixel sends a held event when its exact missing click cookie returns', async t => {
+  const timestamp = Date.now() - 5000;
+  const fbc = `fb.1.${timestamp}.RestoredClick`;
+  const fbp = `fb.1.${timestamp}.RestoredBrowser`;
+  const api = await fixture(t, undefined, { metaCookie: fbc, metaFbpCookie: fbp });
+  await api.waitFor('page_view');
+  const eventId = 'held-cookie-restoration';
+  const missing = await api.page.evaluate(id => {
+    const original = dataLayer.find(entry => entry?.event === 'page_view');
+    document.cookie = '_fbc=; Domain=.utekos.no; Path=/; Max-Age=0';
+    dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+      detail: {
+        ...original,
+        event_id: id,
+        canonical_event: { ...original.canonical_event, event_id: id },
+      },
+    }));
+    return document.cookie;
+  }, eventId);
+  assert.ok(!missing.includes('_fbc='));
+  await api.page.waitForTimeout(350);
+  const before = await api.page.evaluate(id => ({
+    sent: __utekosMetaPixelState.sent[`PageView:${id}`],
+    pixel: __pixelIdentity.some(entry => entry.id === id),
+  }), eventId);
+  assert.equal(before.sent, undefined);
+  assert.equal(before.pixel, false);
+
+  await api.page.evaluate(value => {
+    document.cookie = `_fbc=${value}; Domain=.utekos.no; Path=/`;
+  }, fbc);
+  await api.page.waitForFunction(id => __pixelIdentity.some(entry => entry.id === id), eventId);
+  const pixel = await api.page.evaluate(id => __pixelIdentity.find(entry => entry.id === id), eventId);
+  assert.ok(pixel.cookie.includes(`_fbc=${fbc}`));
+  assert.ok(pixel.cookie.includes(`_fbp=${fbp}`));
+});
+
 test('Pixel keeps an old click out of the SDK queue when a new click arrives', async t => {
   const first = Date.now() - 10000;
   const fbc = `fb.1.${first}.FirstClick`;
