@@ -1,6 +1,6 @@
 import "server-only";
 
-import frontPageImage from "../../../../public/corporate/brand/img/Comfyrobe_Desktop.webp";
+import frontPageImage from "../../../../public/images/products/comfyrobe/tre-marine-comfyrobe-hero.webp";
 import comfyrobeMobileImage from "../../../../public/corporate/brand/img/Comfyrobe_Mobile_Hero.webp";
 import comfyrobePortraitImage from "../../../../public/corporate/brand/img/Comfyrobe1534x2000.webp";
 import { getImageProps } from "next/image";
@@ -83,7 +83,7 @@ export function HeroSection() {
             </a>
             <a
               href="https://kasse.utekos.no/cart/43959919116536:1?channel=buy_button"
-              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-(image:--background-image-comfyrobe-gradient) px-5 font-sans text-base font-semibold text-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
+              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-(image:--background-gradient) px-5 font-sans text-base font-semibold text-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
             >
               Kjøp XL
             </a>
