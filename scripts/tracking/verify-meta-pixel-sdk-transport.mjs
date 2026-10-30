@@ -10,7 +10,8 @@ import { chromium, webkit } from 'playwright';
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 const pixelScript = fs.readFileSync(
-  path.join(scriptDirectory, '../../public/analytics/meta-pixel-canonical-v1.js'),
+  process.env.META_PIXEL_SCRIPT_PATH ??
+    path.join(scriptDirectory, '../../public/analytics/meta-pixel-canonical-v1.js'),
   'utf8',
 );
 const pixelId = /var PIXEL_ID = '(\d+)'/.exec(pixelScript)?.[1];
@@ -132,7 +133,7 @@ async function scenario(browser, kind) {
     assert.equal(configRequested, true, 'Pixel config was requested');
     assert.equal(await page.evaluate(() => fbq.instance.locks.isLocked()), true);
 
-    if (kind === 'async-queue') {
+    if (kind.startsWith('async-queue')) {
       await page.evaluate(() => {
         fbq.instance.asyncParamFetchers.set('probe_hold', {
           request: new Promise(resolve => { window.__releaseAsyncProbe = resolve; }),
@@ -183,17 +184,27 @@ async function scenario(browser, kind) {
       }, { scenarioKind: kind, fbc: identifiers.fbc });
     }
 
-    if (kind === 'async-queue') {
+    if (kind.startsWith('async-queue')) {
       await page.waitForFunction(() =>
         !fbq.instance.locks.isLocked() &&
         fbq.instance.eventQueue.length === 1 &&
         __utekosMetaPixelState.dispatches['PageView:sdk-probe-A']);
-      await page.evaluate(() => {
+      const clickPage = kind === 'async-queue-other-tab'
+        ? await context.newPage()
+        : page;
+      if (clickPage !== page) {
+        await clickPage.goto('https://utekos.no/__pixel_sdk_probe__');
+      }
+      await clickPage.evaluate(navigate => {
         const timestamp = Date.now() + 1000;
+        if (navigate) {
+          history.pushState({}, '', '/produkter/test-product?fbclid=SyntheticClickB');
+        }
         document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/`;
         document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/`;
-        window.__releaseAsyncProbe('ready');
-      });
+      }, kind === 'async-queue-navigation');
+      await page.waitForFunction(() => document.cookie.includes('SyntheticClickB'));
+      await page.evaluate(() => window.__releaseAsyncProbe('ready'));
     }
 
     if (['new-click', 'new-click-other-tab', 'missing-cookie', 'missing-then-new-click'].includes(kind)) {
@@ -234,6 +245,7 @@ async function scenario(browser, kind) {
 }
 
 async function main() {
+  const selectedKinds = process.env.META_PIXEL_SCENARIOS?.split(',');
   for (const [name, browserType, kinds] of [
     ['chromium', chromium, [
       'stable-click',
@@ -244,12 +256,20 @@ async function main() {
       'transient-missing-cookie',
       'missing-then-new-click',
       'async-queue',
+      'async-queue-other-tab',
+      'async-queue-navigation',
     ]],
-    ['webkit', webkit, ['transient-missing-cookie', 'missing-then-new-click']],
+    ['webkit', webkit, [
+      'transient-missing-cookie',
+      'missing-then-new-click',
+      'async-queue-other-tab',
+      'async-queue-navigation',
+    ]],
   ]) {
     const browser = await browserType.launch({ headless: true });
     try {
       for (const kind of kinds) {
+        if (selectedKinds && !selectedKinds.includes(kind)) continue;
         const result = await scenario(browser, kind);
         process.stdout.write(`${name} ${result.kind}: ${result.pixelRequests} intercepted Pixel request(s); ${result.openBridgeRequests} intercepted OpenBridge request(s); ${result.blockedHosts.length} other external host(s) blocked\n`);
       }
