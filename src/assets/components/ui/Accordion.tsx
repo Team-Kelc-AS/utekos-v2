@@ -30,7 +30,7 @@ const Accordion = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <BaseAccordion.Root
     ref={ref}
-    className={cn("flex flex-col w-full", className)}
+    className={cn("flex min-w-0 w-full flex-col", className)}
     {...props}
   />
 ));
@@ -39,7 +39,7 @@ Accordion.displayName = "Accordion";
 interface AccordionItemProps extends React.ComponentPropsWithoutRef<
   typeof BaseAccordion.Item
 > {
-  variant?: "flush" | "card" | "navigation";
+  variant?: "flush" | "card" | "navigation" | "settings";
 }
 
 const AccordionItem = React.forwardRef<
@@ -48,10 +48,12 @@ const AccordionItem = React.forwardRef<
 >(({ className, variant = "flush", ...props }, ref) => (
   <BaseAccordion.Item
     ref={ref}
-    data-tracking-accordion-item={variant === "navigation" ? undefined : ""}
+    data-tracking-accordion-item={variant === "navigation" || variant === "settings" ? undefined : ""}
     className={cn(
+      "min-w-0",
       variant !== "navigation" && "transition-all duration-300 ease-out",
       variant === "navigation" && styles.navigationItem,
+      variant === "settings" && styles.settingsItem,
       variant === "flush" &&
         "border-b border-[#f0eee9]/15 last:border-b-0 data-panel-open:border-[#f0eee9]/30",
       variant === "card" &&
@@ -66,7 +68,7 @@ AccordionItem.displayName = "AccordionItem";
 interface AccordionTriggerProps extends React.ComponentPropsWithoutRef<
   typeof BaseAccordion.Trigger
 > {
-  variant?: "default" | "navigation";
+  variant?: "default" | "navigation" | "settings";
   iconStyle?: "chevron" | "plus-minus";
   badge?: string | React.ReactNode;
   headingLevel?: 2 | 3 | 4 | 5 | 6;
@@ -92,24 +94,25 @@ const AccordionTrigger = React.forwardRef<
   ) => (
     <BaseAccordion.Header
       render={React.createElement(`h${headingLevel}`)}
-      className="flex m-0"
+      className="m-0 flex min-w-0 w-full"
     >
       <BaseAccordion.Trigger
         ref={ref}
-        data-tracking-accordion-trigger={variant === "navigation" ? undefined : ""}
+        data-tracking-accordion-trigger={variant === "navigation" || variant === "settings" ? undefined : ""}
         className={cn(
-          variant === "navigation" ? styles.navigationTrigger : "group flex flex-1 items-center justify-between py-5 text-[#f0eee9] text-left transition-all hover:text-[#f0eee9]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001715] disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
-          variant !== "navigation" && typography === "default" && "font-semibold",
+          "min-w-0 w-full",
+          variant === "settings" ? styles.settingsTrigger : variant === "navigation" ? styles.navigationTrigger : "group flex flex-1 items-center justify-between gap-3 py-5 text-[#f0eee9] text-left transition-all hover:text-[#f0eee9]/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001715] disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+          variant === "default" && typography === "default" && "font-semibold",
           className,
         )}
         {...props}
       >
-        {variant === "navigation" ? (
+        {variant === "navigation" || variant === "settings" ? (
           <><span>{children}</span><ChevronDown aria-hidden="true" /></>
         ) : <>
-        <div className="flex items-center gap-3 pr-4">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <span className={cn(
-            "text-[#f0eee9] group-hover:text-white transition-colors duration-200",
+            "min-w-0 break-words text-[#f0eee9] group-hover:text-white transition-colors duration-200",
             typography === "default" && "text-lg md:text-xl font-bold tracking-tight",
           )}>
             {children}
@@ -141,7 +144,7 @@ AccordionTrigger.displayName = "AccordionTrigger";
 interface AccordionContentProps extends React.ComponentPropsWithoutRef<
   typeof BaseAccordion.Panel
 > {
-  variant?: "default" | "navigation";
+  variant?: "default" | "navigation" | "settings";
   className?: string;
   typography?: "default" | "inherit";
 }
@@ -153,13 +156,14 @@ const AccordionContent = React.forwardRef<
   <BaseAccordion.Panel
     ref={ref}
     className={cn(
-      variant === "navigation" ? styles.navigationPanel : "overflow-hidden transition-all data-ending-style:h-0 data-starting-style:h-0",
+      "min-w-0",
+      variant === "settings" ? styles.settingsPanel : variant === "navigation" ? styles.navigationPanel : "overflow-hidden transition-all data-ending-style:h-0 data-starting-style:h-0",
       typography === "default" && "text-[#f0eee9]/85 text-base leading-relaxed",
       className,
     )}
     {...props}
   >
-    <div className={variant === "navigation" ? styles.navigationContent : cn("pb-6 pt-1", typography === "default" && "font-normal")}>{children}</div>
+    <div className={variant === "settings" ? styles.settingsContent : variant === "navigation" ? styles.navigationContent : cn("pb-6 pt-1", typography === "default" && "font-normal")}>{children}</div>
   </BaseAccordion.Panel>
 ));
 AccordionContent.displayName = "AccordionContent";

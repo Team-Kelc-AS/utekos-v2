@@ -157,8 +157,8 @@ main[data-product-theme] {
 
 main[data-product-theme]
   :is(
-    [data-variant],
-    [data-variant]:hover,
+    [data-variant]:not([data-slot]),
+    [data-variant]:not([data-slot]):hover,
     [data-tracking-accordion-trigger],
     [data-tracking-accordion-trigger]:is(:hover, :active),
     [data-tracking-accordion-trigger] > span:last-child,
