@@ -99,8 +99,11 @@ async function scenario(browser, kind) {
       const timestamp = Date.now() - 5000;
       const fbc = `fb.1.${timestamp}.SyntheticClickA.ABcD1234`;
       const fbp = `fb.1.${timestamp}.SyntheticBrowserA`;
-      document.cookie = `_fbc=${fbc}; Path=/`;
-      document.cookie = `_fbp=${fbp}; Path=/`;
+      const domain = scenarioKind === 'async-queue-domain-other-tab'
+        ? '; Domain=.utekos.no'
+        : '';
+      document.cookie = `_fbc=${fbc}; Path=/${domain}`;
+      document.cookie = `_fbp=${fbp}; Path=/${domain}`;
       if (scenarioKind === 'duplicate-aligned') {
         document.cookie = `_fbc=${fbc}; Domain=.utekos.no; Path=/`;
       }
@@ -189,21 +192,30 @@ async function scenario(browser, kind) {
         !fbq.instance.locks.isLocked() &&
         fbq.instance.eventQueue.length === 1 &&
         __utekosMetaPixelState.dispatches['PageView:sdk-probe-A']);
-      const clickPage = kind === 'async-queue-other-tab'
+      const clickPage =
+        kind === 'async-queue-other-tab' ||
+        kind === 'async-queue-domain-other-tab'
         ? await context.newPage()
         : page;
       if (clickPage !== page) {
         await clickPage.goto('https://utekos.no/__pixel_sdk_probe__');
       }
-      await clickPage.evaluate(navigate => {
+      await clickPage.evaluate(scenarioKind => {
         const timestamp = Date.now() + 1000;
-        if (navigate) {
+        if (scenarioKind === 'async-queue-navigation') {
           history.pushState({}, '', '/produkter/test-product?fbclid=SyntheticClickB');
         }
-        document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/`;
-        document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/`;
-      }, kind === 'async-queue-navigation');
+        const domain = scenarioKind === 'async-queue-domain-other-tab'
+          ? '; Domain=.utekos.no'
+          : '';
+        document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/${domain}`;
+        document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/${domain}`;
+      }, kind);
       await page.waitForFunction(() => document.cookie.includes('SyntheticClickB'));
+      if (kind === 'async-queue-domain-other-tab') {
+        const cookies = await page.evaluate(() => document.cookie);
+        assert.equal(cookies.includes('SyntheticClickA'), false);
+      }
       await page.evaluate(() => window.__releaseAsyncProbe('ready'));
     }
 
@@ -257,12 +269,14 @@ async function main() {
       'missing-then-new-click',
       'async-queue',
       'async-queue-other-tab',
+      'async-queue-domain-other-tab',
       'async-queue-navigation',
     ]],
     ['webkit', webkit, [
       'transient-missing-cookie',
       'missing-then-new-click',
       'async-queue-other-tab',
+      'async-queue-domain-other-tab',
       'async-queue-navigation',
     ]],
   ]) {
