@@ -29,7 +29,7 @@ export async function forwardKlarnaProspect(
     action: 'save'; emailMarketing: boolean; cartReminders: boolean; adMatching: boolean;
     comfyrobeSize: 'XS' | 'XL' | null;
     favoriteColor: 'Vargnatt' | 'Fjellblå' | 'Havdyp' | 'Fjellnatt' | null;
-    interests: ('camping-og-bobil' | 'hytte' | 'terrasse' | 'glamping')[];
+    interests: ('camping-og-bobil' | 'hytte' | 'terrasse' | 'glamping' | 'annet')[];
     cart: CartSnapshot;
   },
 ) {

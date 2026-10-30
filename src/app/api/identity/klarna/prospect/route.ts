@@ -14,7 +14,7 @@ const inputSchema = z.discriminatedUnion('action', [
     emailMarketing: z.boolean(), cartReminders: z.boolean(), adMatching: z.boolean(),
     comfyrobeSize: z.enum(['XS', 'XL']).nullable(),
     favoriteColor: z.enum(['Vargnatt', 'Fjellblå', 'Havdyp', 'Fjellnatt']).nullable(),
-    interests: z.array(z.enum(['camping-og-bobil', 'hytte', 'terrasse', 'glamping'])).max(4),
+    interests: z.array(z.enum(['camping-og-bobil', 'hytte', 'terrasse', 'glamping', 'annet'])).max(5),
   }),
 ]);
 
