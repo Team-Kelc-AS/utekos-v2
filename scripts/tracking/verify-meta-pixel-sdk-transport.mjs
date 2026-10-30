@@ -192,34 +192,66 @@ async function scenario(browser, kind) {
         !fbq.instance.locks.isLocked() &&
         fbq.instance.eventQueue.length === 1 &&
         __utekosMetaPixelState.dispatches['PageView:sdk-probe-A']);
-      const clickPage =
-        kind === 'async-queue-other-tab' ||
-        kind === 'async-queue-domain-other-tab'
-        ? await context.newPage()
-        : page;
-      if (clickPage !== page) {
-        await clickPage.goto('https://utekos.no/__pixel_sdk_probe__');
-      }
-      await clickPage.evaluate(scenarioKind => {
-        const timestamp = Date.now() + 1000;
-        if (scenarioKind === 'async-queue-navigation') {
-          history.pushState({}, '', '/produkter/test-product?fbclid=SyntheticClickB');
+      if (kind === 'async-queue-consent-change') {
+        assert.equal(pixelRequests.filter(request => request.eventId === 'sdk-probe-A').length, 0,
+          'SDK event is queued before consent withdrawal');
+        await page.evaluate(() => {
+          fbq('consent', 'revoke');
+          document.cookie = '_fbc=; Path=/; Max-Age=0';
+          document.cookie = '_fbp=; Path=/; Max-Age=0';
+          window.__utekosConsentReloading = true;
+        });
+        await page.evaluate(() => window.__releaseAsyncProbe('ready'));
+        await delay(350);
+        const dispatched = pixelRequests.filter(request => request.eventId === 'sdk-probe-A');
+        assert.equal(dispatched.length, 1, 'event consented before withdrawal completes once');
+        assert.equal(dispatched[0].fbc, identifiers.fbc);
+        assert.equal(dispatched[0].fbp, identifiers.fbp);
+        await page.evaluate(() => {
+          const timestamp = Date.now() + 1000;
+          document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/`;
+          document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/`;
+          fbq('consent', 'grant');
+        });
+      } else {
+        const clickPage =
+          kind === 'async-queue-other-tab' ||
+          kind === 'async-queue-domain-other-tab'
+          ? await context.newPage()
+          : page;
+        if (clickPage !== page) {
+          await clickPage.goto('https://utekos.no/__pixel_sdk_probe__');
         }
-        const domain = scenarioKind === 'async-queue-domain-other-tab'
-          ? '; Domain=.utekos.no'
-          : '';
-        document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/${domain}`;
-        document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/${domain}`;
-      }, kind);
-      await page.waitForFunction(() => document.cookie.includes('SyntheticClickB'));
-      if (kind === 'async-queue-domain-other-tab') {
-        const cookies = await page.evaluate(() => document.cookie);
-        assert.equal(cookies.includes('SyntheticClickA'), false);
+        await clickPage.evaluate(scenarioKind => {
+          const timestamp = Date.now() + 1000;
+          if (scenarioKind === 'async-queue-navigation') {
+            history.pushState({}, '', '/produkter/test-product?fbclid=SyntheticClickB');
+          }
+          const domain = scenarioKind === 'async-queue-domain-other-tab'
+            ? '; Domain=.utekos.no'
+            : '';
+          document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/${domain}`;
+          document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/${domain}`;
+        }, kind);
+        await page.waitForFunction(() => document.cookie.includes('SyntheticClickB'));
+        if (kind === 'async-queue-domain-other-tab') {
+          const cookies = await page.evaluate(() => document.cookie);
+          assert.equal(cookies.includes('SyntheticClickA'), false);
+        }
+        await page.evaluate(() => window.__releaseAsyncProbe('ready'));
       }
-      await page.evaluate(() => window.__releaseAsyncProbe('ready'));
     }
 
-    if (['new-click', 'new-click-other-tab', 'missing-cookie', 'missing-then-new-click'].includes(kind)) {
+    if (kind === 'async-queue-consent-change') {
+      await delay(500);
+      const dispatched = pixelRequests.filter(request => request.eventId === 'sdk-probe-A');
+      assert.equal(dispatched.length, 1, 'regrant does not replay the queued event');
+      assert.equal(dispatched[0].fbc, identifiers.fbc);
+      assert.equal(dispatched[0].fbp, identifiers.fbp);
+      assert.ok(openBridgeRequests.filter(request => request.eventId === 'sdk-probe-A').every(request =>
+        request.fbc === identifiers.fbc && request.fbp === identifiers.fbp),
+      'OpenBridge retains the event-time identity after consent changes');
+    } else if (['new-click', 'new-click-other-tab', 'missing-cookie', 'missing-then-new-click'].includes(kind)) {
       await page.waitForFunction(() =>
         __utekosMetaPixelState.dispatches['PageView:sdk-probe-A']?.skipped ===
         'different_live_meta_identity');
@@ -271,6 +303,7 @@ async function main() {
       'async-queue-other-tab',
       'async-queue-domain-other-tab',
       'async-queue-navigation',
+      'async-queue-consent-change',
     ]],
     ['webkit', webkit, [
       'transient-missing-cookie',
@@ -278,6 +311,7 @@ async function main() {
       'async-queue-other-tab',
       'async-queue-domain-other-tab',
       'async-queue-navigation',
+      'async-queue-consent-change',
     ]],
   ]) {
     const browser = await browserType.launch({ headless: true });
