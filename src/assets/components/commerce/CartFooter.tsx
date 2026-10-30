@@ -4,7 +4,7 @@ import { checkout } from "@/lib/cart/client";
 import type { Cart } from "@/lib/cart/types";
 import { formatMoney } from "@/lib/products/money";
 import { KlarnaCartCreditPromotion } from "@/assets/components/klarna/KlarnaCartCreditPromotion";
-import { KlarnaIdentityOffer } from "@/components/klarna/KlarnaIdentityOffer";
+import { KlarnaConnectedCartExpress } from "@/components/klarna/KlarnaConnectedExpress";
 import styles from "./commerce.module.css";
 
 export default function CartFooter({ cart, pending }: { cart: Cart; pending: boolean }) {
@@ -28,7 +28,6 @@ export default function CartFooter({ cart, pending }: { cart: Cart; pending: boo
         <span>{subtotal}</span>
       </div>
       <KlarnaCartCreditPromotion total={cart.total} />
-      <KlarnaIdentityOffer />
       <div className={styles.checkoutActions}>
         <button
           type="button"
@@ -39,6 +38,7 @@ export default function CartFooter({ cart, pending }: { cart: Cart; pending: boo
         >
           {disabledReason ?? (pending ? "Behandler..." : "Gå til kassen")}
         </button>
+        {!cart.requiresStandardCheckout && <KlarnaConnectedCartExpress disabled={hasUnavailableLines || pending} />}
       </div>
     </div>
   );

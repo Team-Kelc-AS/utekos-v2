@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { completeKlarnaIdentity } from './completeKlarnaIdentity';
 import { klarnaIdentityIdToken, loadKlarnaIdentitySdk, type KlarnaIdentitySdk } from './loadKlarnaIdentitySdk';
-import { KlarnaMarketingPreferences } from './KlarnaMarketingPreferences';
+import { refreshKlarnaPreferences } from '@/lib/klarna/preferences-client';
 
 type Status = 'loading' | 'ready' | 'pending' | 'connected' | 'unavailable' | 'unsupported-origin' | 'error';
 type LoadingStage = 'status' | 'prepare' | 'sdk-import' | 'sdk-init' | 'mount' | 'provider';
@@ -30,6 +30,7 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
     const onMessage = (event: MessageEvent) => {
       if (event.origin === window.location.origin && event.data === 'utekos:klarna-connected' && active) {
         setStatus('connected');
+        void refreshKlarnaPreferences();
       }
     };
     window.addEventListener('message', onMessage);
@@ -43,7 +44,8 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
       if (!active) return;
       if (!existing.available) { setStatus('unavailable'); return; }
       if (!existing.originSupported) { setStatus('unsupported-origin'); return; }
-      if (existing.connected) { setStatus('connected'); return; }
+      if (existing.connected) { setStatus('connected');
+        void refreshKlarnaPreferences(); return; }
       setStage('prepare');
       const prepareResponse = await fetch('/api/identity/klarna/prepare', {
         method: 'POST', credentials: 'same-origin', cache: 'no-store',
@@ -63,7 +65,7 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
         setStatus('pending');
         try {
           await completeKlarnaIdentity(klarnaIdentityIdToken(signinResponse));
-          if (active) setStatus('connected');
+          if (active) { setStatus('connected'); void refreshKlarnaPreferences(); }
         } catch (error) {
           const statusResponse = await fetch('/api/identity/klarna/status', { cache: 'no-store' })
             .then(response => response.ok ? response.json() as Promise<{ connected: boolean }> : null)
@@ -120,7 +122,6 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
     {status === 'loading' && <p role="status">Laster Klarna-innlogging …</p>}
     {status === 'pending' && <p role="status">Bekrefter Klarna-innlogging …</p>}
     {status === 'connected' && <div className="space-y-2">
-      <KlarnaMarketingPreferences />
       {showDisconnect && <button type="button" onClick={() => { void disconnect(); }} className="underline underline-offset-4">Logg ut fra Utekos</button>}
     </div>}
     {status === 'unsupported-origin' && <p role="status">Denne nettadressen er ikke registrert for Klarna-innlogging. <a href="https://utekos.no/" className="underline underline-offset-4">Fortsett på utekos.no</a>.</p>}

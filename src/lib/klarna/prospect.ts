@@ -1,4 +1,5 @@
 import 'server-only';
+import type { PreferenceWrite } from './preferences';
 
 import { NextRequest } from 'next/server';
 import type { Cart } from '@/lib/cart/types';
@@ -26,12 +27,9 @@ export async function forwardKlarnaProspect(
   request: NextRequest,
   session: Omit<KlarnaIdentitySession, 'expiresAt'>,
   input: { action: 'login' } | { action: 'state' } | { action: 'cart'; cart: CartSnapshot } | {
-    action: 'save'; emailMarketing: boolean; cartReminders: boolean; adMatching: boolean;
-    comfyrobeSize: 'XS' | 'XL' | null;
-    favoriteColor: 'Vargnatt' | 'Fjellblå' | 'Havdyp' | 'Fjellnatt' | null;
-    interests: ('camping-og-bobil' | 'hytte' | 'terrasse' | 'glamping' | 'annet')[];
+    action: 'save';
     cart: CartSnapshot;
-  },
+  } & PreferenceWrite,
 ) {
   const config = klarnaIdentityConfig();
   if (!config) throw new Error('Klarna identity unavailable');
