@@ -1,0 +1,109 @@
+.theme {
+  --background: #012622;
+  --foreground: #f0eee9;
+  --card: #012622;
+  --card-foreground: #f0eee9;
+  --popover: #012622;
+  --popover-foreground: #f0eee9;
+  --muted: #001a18;
+  --muted-foreground: color-mix(in srgb, #f0eee9 75%, transparent);
+  --accent: #001a18;
+  --accent-foreground: #f0eee9;
+  --border: color-mix(in srgb, #f0eee9 18%, transparent);
+  --input: color-mix(in srgb, #f0eee9 35%, transparent);
+  --primary: #b44701;
+  --primary-foreground: #f0eee9;
+  --ring: #b44701;
+  min-width: 0;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.theme[data-klarna-preferences] {
+  width: 100%;
+  margin-top: 12px;
+}
+.theme [data-slot='field'],
+.theme [data-slot='field-content'],
+.theme [data-slot='field-set'],
+.theme [data-slot='field-label'] {
+  min-width: 0;
+}
+.theme [data-slot='field-legend'] {
+  font-weight: 800;
+}
+.theme [data-slot='field-description'] {
+  font-weight: 500;
+}
+.theme [data-slot='field-label'] {
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.theme [data-slot='checkbox'] {
+  margin-top: 3px;
+}
+.intro,
+.privacy {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+.intro {
+  margin: 0 0 24px;
+}
+.form,
+.feedback {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 20px;
+}
+.interests {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 144px), 1fr));
+  gap: 8px;
+}
+.interest {
+  align-items: flex-start;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.interest:has([data-checked]) {
+  background: var(--muted);
+  border-color: var(--primary);
+}
+.consents {
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.consents > [data-slot='field'] {
+  min-height: 44px;
+  gap: 12px;
+}
+.privacy {
+  font-size: 0.8125rem;
+}
+.privacy a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.status {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.6;
+}
+.status svg {
+  margin-top: 3px;
+}
+.spinner {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
+}

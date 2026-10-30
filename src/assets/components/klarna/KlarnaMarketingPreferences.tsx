@@ -1,24 +1,39 @@
 'use client';
 
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import { z } from 'zod';
+import { Check, LoaderCircle } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/Accordion';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import styles from './KlarnaMarketingPreferences.module.css';
 
-type Interest = 'camping-og-bobil' | 'hytte' | 'terrasse' | 'glamping';
-type Preferences = {
-  emailMarketing: boolean;
-  cartReminders: boolean;
-  adMatching: boolean;
-  comfyrobeSize: 'XS' | 'XL' | null;
-  favoriteColor: 'Vargnatt' | 'Fjellblå' | 'Havdyp' | 'Fjellnatt' | null;
-  interests: Interest[];
-};
+const preferenceSchema = z.object({
+  emailMarketing: z.boolean(), cartReminders: z.boolean(), adMatching: z.boolean(),
+  comfyrobeSize: z.enum(['XS', 'XL']).nullable(),
+  favoriteColor: z.enum(['Vargnatt', 'Fjellblå', 'Havdyp', 'Fjellnatt']).nullable(),
+  interests: z.array(z.enum(['camping-og-bobil', 'hytte', 'terrasse', 'glamping'])).max(4),
+});
+type Preferences = z.infer<typeof preferenceSchema>;
 const empty: Preferences = {
   emailMarketing: false, cartReminders: false, adMatching: false,
   comfyrobeSize: null, favoriteColor: null, interests: [],
 };
-const interestLabels: Record<Interest, string> = {
-  'camping-og-bobil': 'Camping og bobil', hytte: 'Hytte', terrasse: 'Terrasse', glamping: 'Glamping',
-};
-const interests = Object.keys(interestLabels) as Interest[];
+const interestOptions = [
+  { value: 'camping-og-bobil', label: 'Camping og bobil' },
+  { value: 'hytte', label: 'Hytte' },
+  { value: 'terrasse', label: 'Terrasse' },
+  { value: 'glamping', label: 'Glamping' },
+] as const;
+const sizeOptions = [
+  { value: '', label: 'Ikke valgt' }, { value: 'XS', label: 'S/XS' }, { value: 'XL', label: 'L/XXL' },
+];
+const colorOptions = [
+  { value: '', label: 'Ikke valgt' },
+  ...['Vargnatt', 'Fjellblå', 'Havdyp', 'Fjellnatt'].map(value => ({ value, label: value })),
+];
 
 async function requestPreferences(input: { action: 'state' } | ({ action: 'save' } & Preferences)) {
   const response = await fetch('/api/identity/klarna/prospect', {
@@ -27,26 +42,32 @@ async function requestPreferences(input: { action: 'state' } | ({ action: 'save'
     body: JSON.stringify(input), signal: AbortSignal.timeout(15000),
   });
   if (!response.ok) throw new Error(`Preference request failed: ${response.status}`);
-  return response.json() as Promise<{ profile?: Preferences | null; saved?: boolean }>;
+  const result: unknown = await response.json();
+  return input.action === 'state'
+    ? z.object({ profile: preferenceSchema.nullable() }).parse(result)
+    : z.object({ saved: z.literal(true), shopifySync: z.enum(['complete', 'pending']).optional() }).parse(result);
 }
 
 export function KlarnaMarketingPreferences() {
+  const id = useId();
   const [value, setValue] = useState<Preferences>(empty);
   const [status, setStatus] = useState<'loading' | 'ready' | 'saving' | 'saved' | 'error'>('loading');
   const [loaded, setLoaded] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const [syncPending, setSyncPending] = useState(false);
   const editVersion = useRef(0);
+
   useEffect(() => {
     let active = true;
     void requestPreferences({ action: 'state' }).then(result => {
-      if (active) {
+      if (active && 'profile' in result) {
         setValue(result.profile ?? empty);
         setLoaded(true);
         setStatus('ready');
       }
     }).catch(() => { if (active) setStatus('error'); });
     return () => { active = false; };
-  }, []);
+  }, [loadAttempt]);
 
   function changeValue(update: (current: Preferences) => Preferences) {
     editVersion.current++;
@@ -56,69 +77,100 @@ export function KlarnaMarketingPreferences() {
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (status === 'saving') return;
+    if (!loaded || status === 'saving') return;
     const savingVersion = editVersion.current;
     setStatus('saving');
     try {
       const result = await requestPreferences({ action: 'save', ...value });
-      if (result.saved !== true) throw new Error('Preference save was not confirmed');
+      if (!('saved' in result)) throw new Error('Preference save was not confirmed');
+      setSyncPending(result.shopifySync === 'pending');
       setStatus(editVersion.current === savingVersion ? 'saved' : 'ready');
     } catch { setStatus('error'); }
   }
 
-  return <details open={open} onToggle={event => setOpen(event.currentTarget.open)} className="mt-3 rounded-lg border border-[var(--surface-border)] p-3 text-sm">
-    <summary className="cursor-pointer font-semibold">Mine preferanser og samtykker</summary>
-    {status === 'loading' && <p role="status" className="mt-3">Henter valgene dine …</p>}
-    {!loaded && status === 'error' && <p role="alert" className="mt-3">Valgene kunne ikke hentes. Last siden på nytt og prøv igjen.</p>}
-    {loaded && <form onSubmit={event => { void save(event); }} className="mt-3 space-y-4">
-      <div>
-        <label htmlFor="klarna-comfyrobe-size" className="block font-medium">Foretrukket Comfyrobe™-passform</label>
-        <select id="klarna-comfyrobe-size" value={value.comfyrobeSize ?? ''}
-          onChange={event => changeValue(current => ({ ...current, comfyrobeSize: event.target.value === 'XS' || event.target.value === 'XL' ? event.target.value : null }))}
-          className="mt-1 w-full rounded border border-[var(--outline)] bg-[var(--surface-container)] p-2">
-          <option value="">Ikke valgt</option><option value="XS">S/XS</option><option value="XL">L/XXL</option>
-        </select>
-      </div>
-      <div>
-        <label htmlFor="klarna-favorite-color" className="block font-medium">Favorittfarge fra utvalget vårt</label>
-        <select id="klarna-favorite-color" value={value.favoriteColor ?? ''}
-          onChange={event => changeValue(current => ({ ...current, favoriteColor:
-            event.target.value === 'Vargnatt' || event.target.value === 'Fjellblå' ||
-            event.target.value === 'Havdyp' || event.target.value === 'Fjellnatt' ? event.target.value : null }))}
-          className="mt-1 w-full rounded border border-[var(--outline)] bg-[var(--surface-container)] p-2">
-          <option value="">Ikke valgt</option>
-          <option value="Vargnatt">Vargnatt</option><option value="Fjellblå">Fjellblå</option>
-          <option value="Havdyp">Havdyp</option><option value="Fjellnatt">Fjellnatt</option>
-        </select>
-      </div>
-      <fieldset>
-        <legend className="font-medium">Dette er jeg interessert i</legend>
-        <div className="mt-1 grid grid-cols-2 gap-2">
-          {interests.map(interest => <label key={interest} className="flex items-center gap-2">
-            <input type="checkbox" checked={value.interests.includes(interest)} onChange={event => changeValue(current => ({
-              ...current, interests: event.target.checked ? [...current.interests, interest] : current.interests.filter(item => item !== interest),
-            }))} />{interestLabels[interest]}
-          </label>)}
-        </div>
-      </fieldset>
-      <fieldset className="space-y-3">
-        <legend className="font-medium">Velg hvordan Utekos kan bruke opplysningene dine</legend>
-        <label className="flex items-start gap-2"><input type="checkbox" checked={value.emailMarketing}
-          onChange={event => changeValue(current => ({ ...current, emailMarketing: event.target.checked }))} />
-          <span>Send meg tilbud og produktnyheter på e-post.</span></label>
-        <label className="flex items-start gap-2"><input type="checkbox" checked={value.cartReminders}
-          onChange={event => changeValue(current => ({ ...current, cartReminders: event.target.checked }))} />
-          <span>Send meg påminnelse på e-post hvis jeg forlater handlekurven.</span></label>
-        <label className="flex items-start gap-2"><input type="checkbox" checked={value.adMatching}
-          onChange={event => changeValue(current => ({ ...current, adMatching: event.target.checked }))} />
-          <span>Bruk opplysninger jeg deler via Klarna til å matche handlingene mine for annonser hos Meta, Google, Microsoft, Pinterest og Snapchat. Det kan omfatte hashet e-post, telefon, navn, fødselsdato og sted. Google kan få land og postnummer i klartekst ved adressematching.</span></label>
-      </fieldset>
-      <p className="text-xs opacity-80">Valgene er frivillige og kan endres her senere. Innlogging alene gir ikke markedsføringssamtykke. <a href="/personvern#klarna-innlogging" className="underline underline-offset-2">Les om personvern</a>.</p>
-      <button type="submit" disabled={status === 'saving'} className="rounded bg-[#b44701] px-4 py-2 font-semibold text-[#f0eee9] disabled:opacity-60">
-        {status === 'saving' ? 'Lagrer …' : 'Lagre valgene mine'}
-      </button>
-      {status === 'saved' && <p role="status">Valgene er lagret.</p>}
-      {status === 'error' && <p role="alert">Valgene kunne ikke hentes eller lagres. Prøv igjen.</p>}
-    </form>}
-  </details>;
+  return (
+    <div data-klarna-preferences className={styles.theme}>
+      <Accordion defaultValue={[]}>
+        <AccordionItem value="preferences" variant="settings">
+          <AccordionTrigger variant="settings" typography="inherit">Mine preferanser og samtykker</AccordionTrigger>
+          <AccordionContent variant="settings" typography="inherit">
+            <p className={styles.intro}>Gjør Utekos litt mer relevant for deg. Alle valgene er frivillige.</p>
+            {status === 'loading' && <p role="status" className={styles.status}>Henter valgene dine …</p>}
+            {!loaded && status === 'error' && <div className={styles.feedback}>
+              <p role="alert">Valgene kunne ikke hentes. Prøv igjen.</p>
+              <Button type="button" variant="outline" className="min-h-11" onClick={() => {
+                setStatus('loading'); setLoadAttempt(current => current + 1);
+              }}>Hent valgene på nytt</Button>
+            </div>}
+            {loaded && <form onSubmit={event => { void save(event); }} className={styles.form}>
+              <FieldGroup>
+                <FieldSet>
+                  <FieldLegend>Litt om deg</FieldLegend>
+                  <Field>
+                    <FieldLabel htmlFor={`${id}-size`}>Foretrukket Comfyrobe™-passform</FieldLabel>
+                    <Select items={sizeOptions} value={value.comfyrobeSize ?? ''} onValueChange={next => {
+                      changeValue(current => ({ ...current, comfyrobeSize: next === 'XS' || next === 'XL' ? next : null }));
+                    }}>
+                      <SelectTrigger id={`${id}-size`} className="min-h-11 w-full"><SelectValue /></SelectTrigger>
+                      <SelectContent className={styles.theme} alignItemWithTrigger={false}>
+                        <SelectGroup>{sizeOptions.map(option => <SelectItem key={option.value} value={option.value} className="min-h-11">{option.label}</SelectItem>)}</SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor={`${id}-color`}>Favorittfarge fra utvalget vårt</FieldLabel>
+                    <Select items={colorOptions} value={value.favoriteColor ?? ''} onValueChange={next => {
+                      changeValue(current => ({ ...current, favoriteColor:
+                        next === 'Vargnatt' || next === 'Fjellblå' || next === 'Havdyp' || next === 'Fjellnatt' ? next : null }));
+                    }}>
+                      <SelectTrigger id={`${id}-color`} className="min-h-11 w-full"><SelectValue /></SelectTrigger>
+                      <SelectContent className={styles.theme} alignItemWithTrigger={false}>
+                        <SelectGroup>{colorOptions.map(option => <SelectItem key={option.value} value={option.value} className="min-h-11">{option.label}</SelectItem>)}</SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                </FieldSet>
+                <FieldSet>
+                  <FieldLegend>Dette er jeg interessert i</FieldLegend>
+                  <div className={styles.interests}>
+                    {interestOptions.map(interest => <Field key={interest.value} orientation="horizontal" className={styles.interest}>
+                      <Checkbox id={`${id}-${interest.value}`} checked={value.interests.includes(interest.value)} onCheckedChange={checked => changeValue(current => ({
+                        ...current, interests: checked ? [...current.interests, interest.value] : current.interests.filter(item => item !== interest.value),
+                      }))} />
+                      <FieldLabel htmlFor={`${id}-${interest.value}`}>{interest.label}</FieldLabel>
+                    </Field>)}
+                  </div>
+                </FieldSet>
+                <FieldSet className={styles.consents}>
+                  <FieldLegend>Hvordan kan Utekos bruke opplysningene dine?</FieldLegend>
+                  <Field orientation="horizontal">
+                    <Checkbox id={`${id}-email`} checked={value.emailMarketing} onCheckedChange={checked => changeValue(current => ({ ...current, emailMarketing: checked }))} />
+                    <FieldContent><FieldLabel htmlFor={`${id}-email`}>Send meg tilbud og produktnyheter på e-post.</FieldLabel></FieldContent>
+                  </Field>
+                  <Field orientation="horizontal">
+                    <Checkbox id={`${id}-cart`} aria-describedby={`${id}-cart-help`} checked={value.cartReminders} onCheckedChange={checked => changeValue(current => ({ ...current, cartReminders: checked }))} />
+                    <FieldContent>
+                      <FieldLabel htmlFor={`${id}-cart`}>Send meg påminnelse på e-post hvis jeg forlater handlekurven.</FieldLabel>
+                      <FieldDescription id={`${id}-cart-help`}>Du kan lagre ønsket nå. Påminnelser er ikke aktivert ennå.</FieldDescription>
+                    </FieldContent>
+                  </Field>
+                  <Field orientation="horizontal">
+                    <Checkbox id={`${id}-ads`} checked={value.adMatching} onCheckedChange={checked => changeValue(current => ({ ...current, adMatching: checked }))} />
+                    <FieldContent><FieldLabel htmlFor={`${id}-ads`}>Utekos kan bruke mine Klarna-opplysninger til å vise personlig tilpasset innhold.</FieldLabel></FieldContent>
+                  </Field>
+                </FieldSet>
+              </FieldGroup>
+              <p className={styles.privacy}>Du kan endre valgene her senere. Innlogging alene gir ikke markedsføringssamtykke. <a href="/personvern#klarna-innlogging">Les om personvern</a>.</p>
+              <Button type="submit" disabled={status === 'saving'} className="min-h-11 w-full whitespace-normal">
+                {status === 'saving' && <LoaderCircle aria-hidden="true" className={styles.spinner} />}
+                {status === 'saving' ? 'Lagrer …' : 'Lagre valgene mine'}
+              </Button>
+              {status === 'saved' && <p role="status" className={styles.status}><Check aria-hidden="true" className="size-4 shrink-0" /><span>Valgene er lagret.{syncPending ? ' E-postvalget venter på synkronisering.' : ''}</span></p>}
+              {status === 'error' && <p role="alert" className={styles.status}>Valgene kunne ikke lagres. Prøv igjen.</p>}
+            </form>}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
 }

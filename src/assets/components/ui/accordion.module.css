@@ -7,6 +7,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  min-width: 0;
   min-height: 56px;
   padding: 16px;
   border: 1px solid #f0eee91a;
@@ -21,6 +22,58 @@
     background-color 180ms ease-out,
     border-color 180ms ease-out,
     transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.navigationTrigger > span,
+.settingsTrigger > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.settingsItem {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+.settingsTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 16px;
+  border-radius: 14px;
+  color: var(--foreground);
+  font: inherit;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+}
+.settingsTrigger svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform 180ms ease-out;
+}
+.settingsTrigger[data-panel-open] svg {
+  transform: rotate(180deg);
+}
+.settingsTrigger:hover {
+  background: var(--muted);
+}
+.settingsTrigger:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -3px;
+}
+.settingsPanel {
+  height: var(--accordion-panel-height);
+  overflow: hidden;
+  transition: height 180ms ease-out;
+}
+.settingsPanel[data-starting-style],
+.settingsPanel[data-ending-style] {
+  height: 0;
+}
+.settingsContent {
+  padding: 4px 16px 16px;
 }
 .navigationTrigger svg {
   width: 20px;
@@ -81,6 +134,8 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .settingsTrigger svg,
+  .settingsPanel,
   .navigationTrigger,
   .navigationTrigger svg,
   .navigationPanel,
