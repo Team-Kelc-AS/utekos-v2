@@ -173,6 +173,7 @@ test('signed-in customers retain a logout action in the menu and preference page
     await product(f.page);
     await f.page.getByRole('button', { name: 'Åpne meny', exact: true }).click();
     const menu = f.page.getByRole('dialog', { name: 'Meny', exact: true });
+    await menu.getByRole('button', { name: 'Logg ut fra Utekos', exact: true }).waitFor();
     assert.equal(await menu.getByRole('button', { name: 'Logg ut fra Utekos', exact: true }).isVisible(), true);
     await f.page.goto(new URL('/handlehjelp/preferanser', baseURL).href);
     await f.page.locator('main').getByRole('button', { name: 'Logg ut fra Utekos', exact: true }).click();

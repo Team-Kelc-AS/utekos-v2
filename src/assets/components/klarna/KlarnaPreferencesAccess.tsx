@@ -120,7 +120,7 @@ export function KlarnaSavedPreferencesLink({
 export function KlarnaMenuPreferences() {
   const { connected } = useKlarnaPreferences();
   return (
-    <div className="flex flex-col gap-2">
+    <div className={`${styles.theme} flex flex-col gap-2`}>
       <KlarnaPreferencesButton menu />
       {connected && <KlarnaDisconnectButton />}
     </div>
