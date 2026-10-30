@@ -26,6 +26,8 @@ async function fixture(engine, { width = 390, profile = null, connected = true, 
     if (path === '/api/identity/klarna/complete') { state.connected = true; return route.fulfill({ json: { returnTo: '/handlehjelp/preferanser' } }); }
     if (path === '/api/identity/klarna/prepare') return route.fulfill({ json: { clientId: 'klarna_live_client_fixture', scope: 'openid email', redirectUri: new URL('/klarna/identity/callback', baseURL).href } });
     if (request.url().startsWith('https://js.klarna.com/web-sdk/v2/klarna.mjs')) return route.fulfill({ contentType: 'text/javascript', headers: { 'access-control-allow-origin': '*' }, body: `export async function KlarnaSDK(){const events={};return {Identity:{on(name,fn){events[name]=fn},button(){const callbacks={};return {on(name,fn){callbacks[name]=fn},mount(host){const button=document.createElement('button');button.type='button';button.textContent='Fortsett med Klarna';button.onclick=async()=>{callbacks.click?.();await events.signin?.({idToken:'fixture-token-'.repeat(10)})};host.replaceChildren(button);callbacks.ready?.()},unmount(){}}}}}}` });
+    // Exercise storefront code and explicit Klarna fixtures without executing unrelated third-party widgets.
+    if (request.resourceType() === 'script' && new URL(request.url()).origin !== new URL(baseURL).origin) return route.fulfill({ contentType: 'application/javascript', body: '' });
     if (!['GET', 'HEAD'].includes(request.method()) || request.resourceType() === 'ping') return route.fulfill({ status: 204 });
     return route.continue();
   });
