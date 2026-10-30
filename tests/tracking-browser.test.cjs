@@ -114,7 +114,7 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, deferObservers = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, metaFirstIpDelay = 0, storedClicks, storedDurableClicks, metaCookie, metaFbpCookie, metaCookiesBlocked = false, metaContextFbc, metaContextFbp = 'fb.1.1700000000000.123456789', pixelConfigLockMs = 0, pixelReadinessSignal = true } = {}) {
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, deferObservers = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, metaFirstIpDelay = 0, storedClicks, storedDurableClicks, metaCookie, metaHostFbcCookie, metaFbpCookie, metaCookiesBlocked = false, metaContextFbc, metaContextFbp = 'fb.1.1700000000000.123456789', pixelConfigLockMs = 0, pixelReadinessSignal = true } = {}) {
   const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block', userAgent });
   t.after(() => context.close());
   if (storedClicks) await context.addInitScript(identifiers => {
@@ -142,6 +142,7 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
       }
     };
   }, metaAndroidResponse);
+  if (metaHostFbcCookie) await context.addCookies([{ name: '_fbc', value: metaHostFbcCookie, domain: 'utekos.no', path: '/' }]);
   if (metaCookie) await context.addCookies([{ name: '_fbc', value: metaCookie, domain: '.utekos.no', path: '/' }]);
   if (metaFbpCookie) await context.addCookies([{ name: '_fbp', value: metaFbpCookie, domain: '.utekos.no', path: '/' }]);
   if (metaCookiesBlocked) await context.addInitScript(() => Object.defineProperty(document, 'cookie', { get: () => '', set: () => {} }));
@@ -335,6 +336,130 @@ test('Pixel waits for SDK config before sending the original click', async t => 
   const sent = await api.page.evaluate(id => __pixelIdentity.find(call => call.id === id), event.event_id);
   assert.ok(sent.cookie.includes(`_fbc=${fbc}`));
   assert.ok(sent.cookie.includes(`_fbp=${fbp}`));
+});
+
+test('a clicked PageView keeps the matching timestamp across host and domain _fbc cookies', async t => {
+  const observedAt = Date.now() - 24 * 60 * 60 * 1000;
+  const prior = `fb.1.${observedAt - 1000}.OtherClick`;
+  const matching = `fb.1.${observedAt}.MatchingClick`;
+  const fbp = `fb.1.${observedAt}.BrowserId.AQQCAQMC`;
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=MatchingClick', {
+    metaHostFbcCookie: prior,
+    metaCookie: matching,
+    metaFbpCookie: fbp,
+  });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.click_id?.fbclid, 'MatchingClick');
+  assert.ok(event.browser_id?.fbc?.startsWith(matching), JSON.stringify(event.browser_id));
+  assert.equal(event.browser_id.fbc.split('.')[2], String(observedAt), 'existing click time must survive');
+  await api.page.waitForFunction(id => __utekosMetaPixelState.dispatches[`PageView:${id}`], event.event_id);
+  const delivered = await api.page.evaluate(id => ({
+    pixel: __pixelIdentity.filter(call => call.id === id),
+    cookie: document.cookie,
+    dispatch: __utekosMetaPixelState.dispatches[`PageView:${id}`],
+  }), event.event_id);
+  assert.equal(delivered.pixel.length, 1, JSON.stringify({ ...delivered, browserId: event.browser_id }));
+  assert.ok(delivered.cookie.split('; ').filter(part => part.startsWith('_fbc=')).every(part => part.includes('MatchingClick')));
+});
+
+test('same-click host and domain cookies retain the earliest original click time', async t => {
+  const observedAt = Date.now() - 24 * 60 * 60 * 1000;
+  const original = `fb.1.${observedAt}.MatchingClick`;
+  const later = `fb.1.${observedAt + 1000}.MatchingClick`;
+  for (const [hostCookie, domainCookie] of [[original, later], [later, original]]) {
+    for (const initial of [
+      'https://utekos.no/produkter/test-product?fbclid=MatchingClick',
+      'https://utekos.no/produkter/test-product',
+    ]) {
+      const api = await fixture(t, initial, {
+        metaHostFbcCookie: hostCookie,
+        metaCookie: domainCookie,
+        metaFbpCookie: `fb.1.${observedAt}.BrowserId.AQQCAQMC`,
+      });
+      await api.waitFor('page_view');
+      const event = api.events('page_view')[0];
+      assert.equal(event.browser_id?.fbc?.split('.')[2], String(observedAt));
+      await api.page.waitForFunction(id => __utekosMetaPixelState.dispatches[`PageView:${id}`], event.event_id);
+      const delivered = await api.page.evaluate(id => ({
+        pixel: __pixelIdentity.filter(call => call.id === id),
+        fbcCookies: document.cookie.split('; ').filter(part => part.startsWith('_fbc=')),
+        dispatch: __utekosMetaPixelState.dispatches[`PageView:${id}`],
+      }), event.event_id);
+      assert.equal(delivered.pixel.length, 1, JSON.stringify({ delivered, browserId: event.browser_id }));
+      assert.ok(delivered.fbcCookies.every(cookie => cookie.includes(String(observedAt))));
+    }
+  }
+});
+
+test('the first clicked PageView delivers the same identity to Pixel without preexisting _fbp', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=FirstClick');
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  await api.page.waitForFunction(id => __utekosMetaPixelState.dispatches[`PageView:${id}`], event.event_id);
+  const delivered = await api.page.evaluate(id => ({
+    pixel: __pixelIdentity.filter(call => call.id === id),
+    cookies: document.cookie,
+    dispatch: __utekosMetaPixelState.dispatches[`PageView:${id}`],
+  }), event.event_id);
+  assert.equal(event.click_id?.fbclid, 'FirstClick');
+  assert.equal(delivered.pixel.length, 1, JSON.stringify({ ...delivered, browserId: event.browser_id }));
+  assert.ok(delivered.cookies.includes(`_fbc=${event.browser_id.fbc}`));
+  assert.ok(delivered.cookies.includes(`_fbp=${event.browser_id.fbp}`));
+});
+
+test('a PageView without a click does not guess between distinct live _fbc cookies', async t => {
+  const observedAt = Date.now() - 24 * 60 * 60 * 1000;
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', {
+    metaHostFbcCookie: `fb.1.${observedAt}.FirstClick`,
+    metaCookie: `fb.1.${observedAt + 1}.SecondClick`,
+  });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.browser_id?.fbc, undefined);
+  assert.equal(event.click_id?.fbclid, undefined);
+});
+
+test('a live old _fbc cookie survives PageView and commerce without becoming a durable backup', async t => {
+  const old = Date.now() - 174 * 24 * 60 * 60 * 1000;
+  const fbc = `fb.1.${old}.LiveOldClick`;
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product', { metaCookie: fbc });
+  await api.waitFor('page_view');
+  await api.waitFor('view_item');
+  await api.page.evaluate(value => {
+    UtekosTrackingHarness.emitStorefrontAction('utekos:cart-mutation-confirmed', {
+      id: 'old-cookie-mutation', event_time: new Date().toISOString(),
+      cart_id: 'gid://shopify/Cart/fixture',
+      changes: [{ event_name: 'add_to_cart', commerce: value }],
+    });
+  }, commerce());
+  await api.waitFor('add_to_cart');
+  const [pageView, viewItem, addToCart] = [
+    api.events('page_view')[0], api.events('view_item')[0], api.events('add_to_cart')[0],
+  ];
+  for (const event of [pageView, viewItem, addToCart]) {
+    assert.ok(event.browser_id?.fbc?.startsWith(fbc), event.event_name);
+    assert.equal(event.click_id?.fbclid, 'LiveOldClick');
+  }
+  await api.page.waitForFunction(id => __pixelIdentity.some(call => call.id === id), addToCart.event_id);
+  const pixel = await api.page.evaluate(id => __pixelIdentity.find(call => call.id === id), addToCart.event_id);
+  assert.ok(pixel.cookie.includes(`_fbc=${fbc}`));
+  const before = await api.page.evaluate(() => ({
+    cookie: document.cookie,
+    backup: JSON.parse(localStorage.getItem('utekos_meta_identifiers_v2') ?? '{}').fbc,
+  }));
+  assert.ok(before.cookie.includes(`_fbc=${fbc}`));
+  assert.equal(before.backup, undefined, 'an old creation timestamp does not extend storage backup life');
+
+  await api.page.context().clearCookies({ name: '_fbc' });
+  await api.page.evaluate(() => {
+    history.pushState({}, '', '/produkter/test-product?variant=1');
+    dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await api.waitFor('page_view', 2);
+  const later = api.events('page_view')[1];
+  assert.equal(later.browser_id?.fbc, undefined);
+  assert.equal(later.click_id?.fbclid, undefined);
 });
 
 test('Pixel keeps an old click out of the SDK queue when a new click arrives', async t => {

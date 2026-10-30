@@ -4,6 +4,8 @@ import * as z from '@/lib/validation/zodMini'
 import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAuthorization'
 import { ensureCanonicalMetaBrowserIds } from './ensureCanonicalMetaBrowserIds'
 import { readObservedMetaFbclid } from '../metaFbclid'
+import { extractFbclidFromFbc } from '../extractFbclidFromFbc'
+import { selectMetaFbcCookie } from '../selectMetaFbcCookie'
 
 const observedFbclidSchema = z.string().check(z.minLength(1), z.maxLength(500))
 const observedCookieSchema = z.string().check(z.minLength(1), z.maxLength(3800))
@@ -15,6 +17,22 @@ const cookieSchema = z.strictObject({
     .number()
     .check(z.int(), z.minimum(1), z.maximum(7776000))
 })
+
+function readCookieValues(header: string | null, name: '_fbp' | '_fbc') {
+  const values: string[] = []
+  let count = 0
+  for (const part of header?.split(';') ?? []) {
+    const separator = part.indexOf('=')
+    if (separator < 1 || part.slice(0, separator).trim() !== name) continue
+    count++
+    try {
+      values.push(decodeURIComponent(part.slice(separator + 1).trim()))
+    } catch {
+      // A malformed duplicate cannot hide another usable cookie.
+    }
+  }
+  return { values, count }
+}
 
 export function captureProxyMetaCookies(
   request: NextRequest
@@ -31,16 +49,36 @@ export function captureProxyMetaCookies(
       console.warn('[tracking] proxy_meta_identifier_skipped', { field: 'fbclid' })
     }
   }
-  const observedFbp = request.cookies.get('_fbp')?.value
-  const observedFbc = request.cookies.get('_fbc')?.value
   const validCookie = (value: string | undefined) => Boolean(
     value && observedCookieSchema.safeParse(value).success &&
     metaCookiePattern.test(value) && encodeURIComponent(value).length <= 3800
   )
-  const fbp = validCookie(observedFbp) ? observedFbp : undefined
-  const fbc = validCookie(observedFbc) ? observedFbc : undefined
-  if (observedFbp && !fbp) console.warn('[tracking] proxy_meta_identifier_skipped', { field: '_fbp' })
-  if (observedFbc && !fbc) console.warn('[tracking] proxy_meta_identifier_skipped', { field: '_fbc' })
+  const cookieHeader = request.headers.get('cookie')
+  let requestCookieChanged = false
+  const selectCookie = (name: '_fbp' | '_fbc') => {
+    const observed = readCookieValues(cookieHeader, name)
+    const valid = [...new Set(observed.values.filter(validCookie))]
+    const eligible = name === '_fbc' && observedFbclid ?
+      valid.filter(value => extractFbclidFromFbc(value) === observedFbclid)
+    : valid
+    const selected = name === '_fbc' ?
+      selectMetaFbcCookie(valid, observedFbclid)
+    : eligible.length === 1 ? eligible[0] : undefined
+    // NextRequest.cookies collapses same-name entries before get/getAll. Use
+    // the raw header, then pass only the unambiguous value to rendering.
+    if (observed.count > 1 || (observed.count > 0 && !selected)) {
+      requestCookieChanged = true
+      if (selected) request.cookies.set(name, selected)
+      else request.cookies.delete(name)
+    }
+    if (observed.count && !selected &&
+      (valid.length === 0 || eligible.length > 1 || !observedFbclid)) {
+      console.warn('[tracking] proxy_meta_identifier_skipped', { field: name })
+    }
+    return selected
+  }
+  const fbp = selectCookie('_fbp')
+  const fbc = selectCookie('_fbc')
 
   try {
     const captured = ensureCanonicalMetaBrowserIds({
@@ -66,11 +104,26 @@ export function captureProxyMetaCookies(
     }
 
     for (const cookie of cookies) {
+      requestCookieChanged = true
       request.cookies.set(cookie.name, cookie.value)
     }
     return cookies
   } catch {
     console.error('[tracking] proxy_meta_capture_failed')
     return []
+  } finally {
+    if (requestCookieChanged && cookieHeader !== null) {
+      // RequestCookies.set serializes its whole name-keyed map. Restore all
+      // unrelated raw Cookie entries, including duplicate names, for rendering.
+      const entries = cookieHeader.split(';').map(part => part.trim()).filter(part => {
+        const separator = part.indexOf('=')
+        return part && (separator < 1 || !['_fbp', '_fbc'].includes(part.slice(0, separator).trim()))
+      })
+      for (const name of ['_fbp', '_fbc'] as const) {
+        const value = request.cookies.get(name)?.value
+        if (value) entries.push(`${name}=${encodeURIComponent(value)}`)
+      }
+      request.headers.set('cookie', entries.join('; '))
+    }
   }
 }

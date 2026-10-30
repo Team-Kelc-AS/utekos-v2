@@ -55,7 +55,7 @@ export function readBrowserReporterContext(
   pageUrl ??= window.location.href
   const consent = getConsentSnapshot()
   const metaAudience = readBrowserMetaAudience(consent)
-  const browserId = extractBrowserIds(document.cookie, consent)
+  const browserId = extractBrowserIds(document.cookie, consent, pageUrl)
   const clickId =
     consent.marketing === 'granted' ?
       extractClickIds(pageUrl, document.cookie, true)
