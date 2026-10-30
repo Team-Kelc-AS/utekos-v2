@@ -159,6 +159,22 @@ async function scenario(browser, kind) {
         !fbq.instance.locks.isLocked() &&
         fbq.instance.eventQueue.length === 1 &&
         __utekosMetaPixelState.dispatches['PageView:sdk-probe-A']);
+      if (kind === 'async-queue-consent-revoked') {
+        await page.evaluate(() => {
+          window.__utekosConsentReloading = true;
+          fbq('consent', 'revoke');
+          window.__releaseAsyncProbe('ready');
+        });
+        await delay(500);
+        // Characterize the SDK's post-enqueue behavior. This is not a
+        // consent-withdrawal guarantee for a live storefront.
+        const requests = pixelRequests.filter(request => request.eventId === 'sdk-probe-A');
+        assert.equal(requests.length, 1);
+        assert.equal(requests[0].fbc, identifiers.fbc);
+        assert.equal(requests[0].fbp, identifiers.fbp);
+        assert.deepEqual(errors, [], 'no uncaught browser errors');
+        return { kind, pixelRequests: pixelRequests.length, blockedHosts: [...new Set(blocked.map(url => url.split('/')[0]))] };
+      }
       const mutationPage = kind === 'async-queue-other-tab'
         ? await context.newPage()
         : page;
@@ -166,6 +182,9 @@ async function scenario(browser, kind) {
         await mutationPage.goto('https://utekos.no/__pixel_sdk_probe__');
       }
       const secondIdentifiers = await mutationPage.evaluate(scenarioKind => {
+        if (scenarioKind === 'async-queue-navigation') {
+          history.pushState({}, '', '/__pixel_sdk_probe__/next');
+        }
         if (scenarioKind === 'async-queue-cookie-deleted') {
           document.cookie = '_fbc=; Path=/; Max-Age=0';
           document.cookie = '_fbp=; Path=/; Max-Age=0';
@@ -260,6 +279,8 @@ async function main() {
       'async-queue-two-events',
       'async-queue-other-tab',
       'async-queue-cookie-deleted',
+      'async-queue-navigation',
+      'async-queue-consent-revoked',
     ]) {
       const result = await scenario(browser, kind);
       process.stdout.write(`${result.kind}: ${result.pixelRequests} intercepted Pixel request(s); ${result.blockedHosts.length} other external host(s) blocked\n`);
