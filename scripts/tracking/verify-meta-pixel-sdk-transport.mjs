@@ -181,6 +181,23 @@ async function scenario(browser, kind) {
       });
     }
 
+    if (kind === 'consent-withdrawn-before-sdk-ready') {
+      await page.evaluate(() => {
+        const original = dataLayer[0];
+        window.dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+          detail: {
+            ...original,
+            event_id: 'sdk-probe-consent-denied',
+            canonical_event: {
+              ...original.canonical_event,
+              event_id: 'sdk-probe-consent-denied',
+              consent: { marketing: 'denied' },
+            },
+          },
+        }));
+      });
+    }
+
     releaseConfig();
 
     if (['transient-missing-cookie', 'missing-then-new-click',
@@ -278,6 +295,13 @@ async function scenario(browser, kind) {
       assert.equal(pixelRequests.filter(request => request.eventId === 'sdk-probe-A').length, 0,
         'a late Pixel scan must not attach click B to an older event without event-time IDs');
       assert.equal(openBridgeRequests.filter(request => request.eventId === 'sdk-probe-A').length, 0);
+    } else if (kind === 'consent-withdrawn-before-sdk-ready') {
+      await page.waitForFunction(() =>
+        __utekosMetaPixelState.dispatches['PageView:sdk-probe-A']?.skipped ===
+        'marketing_consent_withdrawn');
+      await delay(500);
+      assert.equal(pixelRequests.filter(request => request.eventId === 'sdk-probe-A').length, 0);
+      assert.equal(openBridgeRequests.filter(request => request.eventId === 'sdk-probe-A').length, 0);
     } else if (['new-click', 'new-click-other-tab', 'missing-cookie', 'missing-then-new-click',
       'missing-fbp', 'missing-fbp-then-new-click'].includes(kind)) {
       await page.waitForFunction(() =>
@@ -336,6 +360,7 @@ async function main() {
       'async-queue-domain-other-tab',
       'async-queue-navigation',
       'async-queue-consent-change',
+      'consent-withdrawn-before-sdk-ready',
     ]],
     ['webkit', webkit, [
       'late-event-no-id',
@@ -347,6 +372,7 @@ async function main() {
       'async-queue-domain-other-tab',
       'async-queue-navigation',
       'async-queue-consent-change',
+      'consent-withdrawn-before-sdk-ready',
     ]],
   ]) {
     const browser = await browserType.launch({ headless: true });

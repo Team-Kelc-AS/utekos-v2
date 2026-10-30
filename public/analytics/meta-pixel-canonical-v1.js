@@ -158,6 +158,33 @@
     reportPixelSkip(reason)
   }
 
+  function cancelPendingMarketingEvents() {
+    var keys = Object.keys(pendingFbcEvents).concat(
+      Object.keys(pendingSdkEvents)
+    )
+    var cancelled = false
+
+    keys.forEach(function (key) {
+      var entry = pendingFbcEvents[key] || pendingSdkEvents[key]
+      if (!entry || state.sent[key]) return
+
+      delete pendingFbcEvents[key]
+      delete pendingIdentityStartedAt[key]
+      delete pendingSdkEvents[key]
+      delete pendingSdkStartedAt[key]
+      delete observedEventIdentity[key]
+      state.dispatches[key] = {
+        eventId: entry.event_id,
+        eventName: metaEventNameForEntry(entry),
+        skipped: 'marketing_consent_withdrawn'
+      }
+      state.sent[key] = true
+      cancelled = true
+    })
+
+    if (cancelled) reportPixelSkip('marketing_consent_withdrawn')
+  }
+
   function shouldWaitForFbc() {
     if (readCookie('_fbc')) return false
     var hasClick = /(?:^|[?&])fbclid=[^&]+/.test(
@@ -629,16 +656,16 @@
     var eventKey
     var data
 
-    if (
-      !canonicalEvent ||
-      !metaEventName ||
-      !canonicalEvent.consent ||
-      canonicalEvent.consent.marketing !== 'granted' ||
-      w.__utekosConsentReloading
-    )
-      return
+    if (!canonicalEvent || !canonicalEvent.consent) return
     if (entry.event_id !== canonicalEvent.event_id) return
     if (entry.event !== canonicalEvent.event_name) return
+    if (canonicalEvent.consent.marketing === 'denied') {
+      cancelPendingMarketingEvents()
+      return
+    }
+    if (!metaEventName ||
+        canonicalEvent.consent.marketing !== 'granted' ||
+        w.__utekosConsentReloading) return
 
     eventKey = metaEventName + ':' + entry.event_id
     if (state.sent[eventKey]) return

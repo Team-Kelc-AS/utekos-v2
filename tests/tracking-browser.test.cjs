@@ -606,6 +606,78 @@ test('Pixel does not release a queued event after marketing withdrawal', async t
   assert.equal(state.queued, false);
 });
 
+test('Pixel cancels a queued event when a canonical event withdraws marketing consent', async t => {
+  const timestamp = Date.now() - 10000;
+  const api = await fixture(t, undefined, {
+    metaCookie: `fb.1.${timestamp}.ConsentClick`,
+    metaFbpCookie: `fb.1.${timestamp}.ConsentBrowser`,
+    pixelConfigLockMs: 1400,
+  });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(await api.page.evaluate(() => fbq.instance.locks.isLocked()), true);
+  await api.page.evaluate(() => {
+    const entry = dataLayer.find(item => item?.event === 'page_view');
+    const deniedId = crypto.randomUUID();
+    window.dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+      detail: {
+        ...entry,
+        event_id: deniedId,
+        canonical_event: {
+          ...entry.canonical_event,
+          event_id: deniedId,
+          consent: { ...entry.canonical_event.consent, marketing: 'denied' },
+        },
+      },
+    }));
+  });
+  await api.page.waitForTimeout(1700);
+  const state = await api.page.evaluate(id => ({
+    calls: __pixelIdentity.filter(call => call.id === id),
+    dispatch: __utekosMetaPixelState.dispatches[`PageView:${id}`],
+  }), event.event_id);
+  assert.deepEqual(state.calls, []);
+  assert.equal(state.dispatch?.skipped, 'marketing_consent_withdrawn');
+});
+
+test('Pixel cancels a missing-cookie wait when marketing consent is withdrawn', async t => {
+  const timestamp = Date.now() - 5000;
+  const fbc = `fb.1.${timestamp}.ConsentCookieClick`;
+  const fbp = `fb.1.${timestamp}.ConsentCookieBrowser`;
+  const api = await fixture(t, undefined, { metaCookie: fbc, metaFbpCookie: fbp });
+  await api.waitFor('page_view');
+  const eventId = 'held-consent-cookie';
+  await api.page.evaluate(id => {
+    const original = dataLayer.find(entry => entry?.event === 'page_view');
+    document.cookie = '_fbc=; Domain=.utekos.no; Path=/; Max-Age=0';
+    const held = {
+      ...original,
+      event_id: id,
+      canonical_event: { ...original.canonical_event, event_id: id },
+    };
+    window.dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', { detail: held }));
+    window.dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+      detail: {
+        ...held,
+        canonical_event: {
+          ...held.canonical_event,
+          consent: { ...held.canonical_event.consent, marketing: 'denied' },
+        },
+      },
+    }));
+  }, eventId);
+  await api.page.evaluate(value => {
+    document.cookie = `_fbc=${value}; Domain=.utekos.no; Path=/`;
+  }, fbc);
+  await api.page.waitForTimeout(450);
+  const state = await api.page.evaluate(id => ({
+    calls: __pixelIdentity.filter(call => call.id === id),
+    dispatch: __utekosMetaPixelState.dispatches[`PageView:${id}`],
+  }), eventId);
+  assert.deepEqual(state.calls, []);
+  assert.equal(state.dispatch?.skipped, 'marketing_consent_withdrawn');
+});
+
 for (const safariMode of [false, true]) {
   const engine = safariMode ? 'WebKit' : 'Chromium';
   test(`${engine}: cold Google initialization after 500 ms enriches first events without delaying Pixel`, async t => {
