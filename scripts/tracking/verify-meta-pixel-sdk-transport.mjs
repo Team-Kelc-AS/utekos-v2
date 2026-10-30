@@ -28,6 +28,7 @@ async function until(predicate, description) {
 async function scenario(browser, kind) {
   const context = await browser.newContext({ serviceWorkers: 'block' });
   const pixelRequests = [];
+  const openBridgeRequests = [];
   const blocked = [];
   let configRequested = false;
   let releaseConfig;
@@ -73,6 +74,18 @@ async function scenario(browser, kind) {
         });
         return route.fulfill({ status: 204, body: '' });
       }
+      if (url.pathname === '/events') {
+        const payload = JSON.parse(route.request().postData() ?? '{}');
+        if (payload['fb.pixel_id'] === pixelId) {
+          openBridgeRequests.push({
+            event: payload.event_name,
+            eventId: payload.event_id,
+            fbc: payload['fb.clickID'],
+            fbp: payload['fb.fbp'],
+          });
+        }
+        return route.abort();
+      }
       blocked.push(url.hostname + url.pathname);
       return route.abort();
     });
@@ -83,7 +96,7 @@ async function scenario(browser, kind) {
     await page.goto('https://utekos.no/__pixel_sdk_probe__');
     const identifiers = await page.evaluate(scenarioKind => {
       const timestamp = Date.now() - 5000;
-      const fbc = `fb.1.${timestamp}.SyntheticClickA`;
+      const fbc = `fb.1.${timestamp}.SyntheticClickA.ABcD1234`;
       const fbp = `fb.1.${timestamp}.SyntheticBrowserA`;
       document.cookie = `_fbc=${fbc}; Path=/`;
       document.cookie = `_fbp=${fbp}; Path=/`;
@@ -189,6 +202,7 @@ async function scenario(browser, kind) {
         'different_live_meta_identity');
       await delay(500);
       assert.equal(pixelRequests.filter(request => request.eventId === 'sdk-probe-A').length, 0);
+      assert.equal(openBridgeRequests.filter(request => request.eventId === 'sdk-probe-A').length, 0);
     } else {
       await until(
         () => pixelRequests.some(request => request.eventId === 'sdk-probe-A'),
@@ -199,10 +213,20 @@ async function scenario(browser, kind) {
       assert.equal(requests[0].event, 'PageView');
       assert.equal(requests[0].fbc, identifiers.fbc);
       assert.equal(requests[0].fbp, identifiers.fbp);
+      await until(
+        () => openBridgeRequests.some(request => request.eventId === 'sdk-probe-A'),
+        `${kind} OpenBridge request`,
+      );
+      const mirrored = openBridgeRequests.filter(request => request.eventId === 'sdk-probe-A');
+      assert.ok(mirrored.every(request =>
+        request.event === 'PageView' &&
+        request.fbc === identifiers.fbc &&
+        request.fbp === identifiers.fbp),
+      `${kind} OpenBridge identity must match the original event`);
     }
 
     assert.deepEqual(errors, [], 'no uncaught browser errors');
-    return { kind, pixelRequests: pixelRequests.length, blockedHosts: [...new Set(blocked.map(url => url.split('/')[0]))] };
+    return { kind, pixelRequests: pixelRequests.length, openBridgeRequests: openBridgeRequests.length, blockedHosts: [...new Set(blocked.map(url => url.split('/')[0]))] };
   } finally {
     releaseConfig();
     await context.close();
@@ -227,7 +251,7 @@ async function main() {
     try {
       for (const kind of kinds) {
         const result = await scenario(browser, kind);
-        process.stdout.write(`${name} ${result.kind}: ${result.pixelRequests} intercepted Pixel request(s); ${result.blockedHosts.length} other external host(s) blocked\n`);
+        process.stdout.write(`${name} ${result.kind}: ${result.pixelRequests} intercepted Pixel request(s); ${result.openBridgeRequests} intercepted OpenBridge request(s); ${result.blockedHosts.length} other external host(s) blocked\n`);
       }
     } finally {
       await browser.close();
