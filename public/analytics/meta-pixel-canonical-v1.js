@@ -645,9 +645,10 @@
 
     if (!observedEventIdentity[eventKey]) {
       var eventIds = canonicalEvent.browser_id
+      // A delayed scan cannot infer an older event's identity from live cookies.
       observedEventIdentity[eventKey] = {
-        fbc: eventIds ? eventIds.fbc || null : readCookie('_fbc') || null,
-        fbp: eventIds ? eventIds.fbp || null : readCookie('_fbp') || null
+        fbc: eventIds ? eventIds.fbc || null : null,
+        fbp: eventIds ? eventIds.fbp || null : null
       }
     }
 

@@ -64,6 +64,7 @@ test('accepted Dun reservation projects one rich unvalued Pixel Lead with the se
     const event = UtekosTrackingHarness.createCanonicalGenerateLead({
       eventId: crypto.randomUUID(), eventTime: '2026-10-10T10:00:00.000Z', environment: 'production',
       consent: pageEvent.consent, pageUrl: location.href, pageViewId: pageEvent.page_view_id,
+      browserId: pageEvent.browser_id,
       customData: { submission_id: 'accepted-reservation', form_id: 'product_reservation_utekos_dun', lead_type: 'product_reservation',
         product_handle: 'utekos-dun', product_id: 'gid://shopify/Product/1', variant_id: 'gid://shopify/ProductVariant/67610887160056', color: 'Vargnatt', size: 'Small' },
     });
@@ -1629,6 +1630,7 @@ for (const pathname of ['/bli-forhandler', '/bli-forhandler/pdf']) {
       const event = UtekosTrackingHarness.createCanonicalGenerateLead({
         eventId: crypto.randomUUID(), eventTime: '2026-10-08T10:00:00.000Z', environment: 'production',
         consent: pageEvent.consent, pageUrl: location.href, pageViewId: pageEvent.page_view_id,
+        browserId: pageEvent.browser_id,
         customData: { submission_id: 'dealer-provider-receipt', form_id: 'dealer_inquiry', lead_type: 'dealer_inquiry' },
       });
       const entry = UtekosTrackingHarness.buildGenerateLeadDataLayerEvent(event);

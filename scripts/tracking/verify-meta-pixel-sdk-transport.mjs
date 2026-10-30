@@ -102,8 +102,10 @@ async function scenario(browser, kind) {
       const domain = scenarioKind === 'async-queue-domain-other-tab'
         ? '; Domain=.utekos.no'
         : '';
-      document.cookie = `_fbc=${fbc}; Path=/${domain}`;
-      document.cookie = `_fbp=${fbp}; Path=/${domain}`;
+      if (scenarioKind !== 'late-event-no-id') {
+        document.cookie = `_fbc=${fbc}; Path=/${domain}`;
+        document.cookie = `_fbp=${fbp}; Path=/${domain}`;
+      }
       if (scenarioKind === 'duplicate-aligned') {
         document.cookie = `_fbc=${fbc}; Domain=.utekos.no; Path=/`;
       }
@@ -114,7 +116,7 @@ async function scenario(browser, kind) {
           event_id: 'sdk-probe-A',
           event_name: 'page_view',
           event_time: new Date().toISOString(),
-          browser_id: { fbc, fbp },
+          ...(scenarioKind === 'late-event-no-id' ? {} : { browser_id: { fbc, fbp } }),
           consent: { marketing: 'granted' },
           custom_data: {},
         },
@@ -126,6 +128,14 @@ async function scenario(browser, kind) {
       const values = await page.evaluate(() =>
         document.cookie.split('; ').filter(cookie => cookie.startsWith('_fbc=')));
       assert.equal(values.length, 2, 'both host and domain cookie scopes are present');
+    }
+
+    if (kind === 'late-event-no-id') {
+      await page.evaluate(() => {
+        const timestamp = Date.now() + 1000;
+        document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/`;
+        document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/`;
+      });
     }
 
     await page.addScriptTag({ content: pixelScript });
@@ -259,6 +269,15 @@ async function scenario(browser, kind) {
       assert.ok(openBridgeRequests.filter(request => request.eventId === 'sdk-probe-A').every(request =>
         request.fbc === identifiers.fbc && request.fbp === identifiers.fbp),
       'OpenBridge retains the event-time identity after consent changes');
+    } else if (kind === 'late-event-no-id') {
+      await page.waitForFunction(() => !fbq.instance.locks.isLocked());
+      await delay(500);
+      assert.equal(pixelRequests.some(request =>
+        request.eventId === 'sdk-probe-A' && request.fbc?.includes('SyntheticClickB')), false,
+      'the older event must never carry click B');
+      assert.equal(pixelRequests.filter(request => request.eventId === 'sdk-probe-A').length, 0,
+        'a late Pixel scan must not attach click B to an older event without event-time IDs');
+      assert.equal(openBridgeRequests.filter(request => request.eventId === 'sdk-probe-A').length, 0);
     } else if (['new-click', 'new-click-other-tab', 'missing-cookie', 'missing-then-new-click',
       'missing-fbp', 'missing-fbp-then-new-click'].includes(kind)) {
       await page.waitForFunction(() =>
@@ -305,6 +324,7 @@ async function main() {
       'duplicate-aligned',
       'new-click',
       'new-click-other-tab',
+      'late-event-no-id',
       'missing-cookie',
       'transient-missing-cookie',
       'missing-then-new-click',
@@ -318,6 +338,7 @@ async function main() {
       'async-queue-consent-change',
     ]],
     ['webkit', webkit, [
+      'late-event-no-id',
       'transient-missing-cookie',
       'missing-then-new-click',
       'transient-missing-fbp',
