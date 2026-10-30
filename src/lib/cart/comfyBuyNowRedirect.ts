@@ -10,6 +10,8 @@ import { captureProxyMetaCookies } from "@/lib/analytics/server/captureProxyMeta
 import { comfyBuyNowVariants } from "./comfyBuyNow";
 import { createHash } from "node:crypto";
 import { extractFbclidFromFbc } from "@/lib/analytics/extractFbclidFromFbc";
+import { readObservedMetaFbclid } from "@/lib/analytics/metaFbclid";
+import { extractBrowserIds } from "@/lib/analytics/pageViewClientContext";
 import { privateHeaders } from "./request";
 import { resolveCampaignAttribution } from "@/lib/analytics/campaignAttributionSessionStore";
 import { resolveTrackingAuthorization } from "@/lib/consent/resolveTrackingAuthorization";
@@ -17,7 +19,6 @@ import { resolveTrackingAuthorization } from "@/lib/consent/resolveTrackingAutho
 const clickParameters = [
   "dclid",
   "epik",
-  "fbclid",
   "gbraid",
   "gclid",
   "msclkid",
@@ -91,14 +92,24 @@ export function GET(request: NextRequest) {
   }
 
   const cookies = captureProxyMetaCookies(request);
-  const fbc = request.cookies.get("_fbc")?.value;
-  const fbclid = request.nextUrl.searchParams.get("fbclid") || undefined;
+  const consent = resolveTrackingAuthorization();
+  const metaBrowserIds = extractBrowserIds(
+    request.headers.get("cookie") ?? "",
+    consent,
+    request.url,
+  );
+  const fbc = metaBrowserIds?.fbc;
+  const observedFbclid = readObservedMetaFbclid(request.url);
+  // Shopify can retain an earlier fbclid attribute. Write the click actually
+  // held by a validated fbc when this permalink has no new URL click.
+  const fbclid = observedFbclid.value ?? extractFbclidFromFbc(fbc);
   const clickIds = Object.fromEntries(
     clickParameters.flatMap((key) => {
       const value = request.nextUrl.searchParams.get(key);
       return value ? [[key, value]] : [];
     }),
   );
+  if (fbclid && consent.marketing === "granted") clickIds.fbclid = fbclid;
   const snapchatClickId = request.nextUrl.searchParams.get("ScCid");
   if (snapchatClickId) clickIds.sc_click_id = snapchatClickId;
   const backupMicrosoftClick =
@@ -111,13 +122,18 @@ export function GET(request: NextRequest) {
     clickIds.msclkid = backupMicrosoftClick;
   }
   const snapshot = createCheckoutAttributionSnapshot({
-    consent: resolveTrackingAuthorization(),
-    browser_id: Object.fromEntries(
-      Object.entries(browserCookies).flatMap(([field, name]) => {
-        const value = request.cookies.get(name)?.value;
-        return value ? [[field, value]] : [];
-      }),
-    ),
+    consent,
+    browser_id: {
+      ...Object.fromEntries(
+        Object.entries(browserCookies).flatMap(([field, name]) => {
+          if (field === "fbc" || field === "fbp") return [];
+          const value = request.cookies.get(name)?.value;
+          return value ? [[field, value]] : [];
+        }),
+      ),
+      ...(fbc ? { fbc } : {}),
+      ...(metaBrowserIds?.fbp ? { fbp: metaBrowserIds.fbp } : {}),
+    },
     click_id: clickIds,
     campaign: resolveCampaignAttribution(request.url),
     page_url: request.url,
@@ -129,6 +145,8 @@ export function GET(request: NextRequest) {
   // Preserve marketing parameters, including repeated values. Checkout controls
   // and order attributes come only from this server's verified handoff.
   for (const [key, value] of request.nextUrl.searchParams) {
+    if (key === "fbclid" &&
+      (consent.marketing !== "granted" || value !== observedFbclid.value)) continue;
     if (!isCheckoutControl(key)) checkout.searchParams.append(key, value);
     if (/^utm_[a-z0-9_]+$/i.test(key) || key === "ref") {
       checkout.searchParams.set(`attributes[${key}]`, value);
@@ -154,21 +172,30 @@ export function GET(request: NextRequest) {
   response.headers.set("Vercel-CDN-Cache-Control", "no-store");
   response.headers.set("Referrer-Policy", "origin");
   response.headers.set("X-Robots-Tag", "noindex");
+  const checkoutFbc = checkout.searchParams.get("attributes[_fbc]");
+  const checkoutFbclid = checkout.searchParams.get("attributes[fbclid]");
   console.info("comfy_checkout_redirect", {
     size,
     status: response.status,
-    has_fbclid: Boolean(fbclid),
-    ...(fbclid
+    has_fbclid: consent.marketing === "granted" && Boolean(observedFbclid.value),
+    ...(consent.marketing === "granted" && observedFbclid.value
       ? {
           click_fingerprint: createHash("sha256")
-            .update(fbclid)
+            .update(observedFbclid.value)
             .digest("hex")
             .slice(0, 16),
         }
       : {}),
     has_fbc: checkout.searchParams.has("attributes[_fbc]"),
     has_fbp: checkout.searchParams.has("attributes[_fbp]"),
-    fbc_matches_click: Boolean(fbclid) && extractFbclidFromFbc(fbc) === fbclid,
+    has_checkout_fbclid: Boolean(checkoutFbclid),
+    checkout_click_pair_matches:
+      Boolean(checkoutFbc && checkoutFbclid) &&
+      extractFbclidFromFbc(checkoutFbc ?? undefined) === checkoutFbclid,
+    fbc_matches_click:
+      consent.marketing === "granted" &&
+      Boolean(observedFbclid.value) &&
+      extractFbclidFromFbc(fbc) === observedFbclid.value,
     has_ad_id: checkout.searchParams.has("attributes[utekos_ad_id]"),
     has_campaign_id: checkout.searchParams.has(
       "attributes[utekos_campaign_id]",
