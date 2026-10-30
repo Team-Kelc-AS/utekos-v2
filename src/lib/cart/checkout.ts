@@ -11,6 +11,8 @@ import {
 } from "@/lib/analytics/checkoutAttributionSnapshot";
 import { checkoutProductContextToShopifyAttributes } from "@/lib/analytics/checkoutProductContext";
 import { resolveTrackingAuthorization } from "@/lib/consent/resolveTrackingAuthorization";
+import { extractBrowserIds } from "@/lib/analytics/pageViewClientContext";
+import { extractFbclidFromFbc } from "@/lib/analytics/extractFbclidFromFbc";
 import type { CampaignAttribution } from "@/lib/analytics/campaignAttribution";
 import { shopifyFetch } from "@/lib/shopify/client";
 import type { Cart } from "./types";
@@ -91,8 +93,17 @@ export function checkoutAttributes(
   facebookLoginId?: string,
   campaign?: CampaignAttribution,
   flow?: "comfyrobe_buy_now",
+  cookieHeader = "",
 ) {
   const consent = resolveTrackingAuthorization();
+  const requestBrowserIds = !event && consent.marketing === "granted"
+    ? extractBrowserIds(cookieHeader, consent)
+    : undefined;
+  const fallbackBrowserId = {
+    ...(requestBrowserIds?.fbc ? { fbc: requestBrowserIds.fbc } : {}),
+    ...(requestBrowserIds?.fbp ? { fbp: requestBrowserIds.fbp } : {}),
+  };
+  const fallbackFbclid = extractFbclidFromFbc(requestBrowserIds?.fbc);
   // Facebook's app-scoped ID is accepted only from the verified, encrypted v2
   // session. Client payloads cannot assert that identity on an order.
   const userData = { ...event?.user_data };
@@ -100,6 +111,12 @@ export function checkoutAttributes(
   const snapshot = createCheckoutAttributionSnapshot(
     {
       ...event,
+      ...(!event && Object.keys(fallbackBrowserId).length
+        ? { browser_id: fallbackBrowserId }
+        : {}),
+      ...(!event && fallbackFbclid
+        ? { click_id: { fbclid: fallbackFbclid } }
+        : {}),
       consent,
       ...(campaign && event ? { campaign } : {}),
       user_data: {
@@ -136,8 +153,9 @@ export async function persistCheckoutAttributes(
   buyerIp?: string,
   campaign?: CampaignAttribution,
   flow?: "comfyrobe_buy_now",
+  cookieHeader = "",
 ) {
-  const attributes = checkoutAttributes(cart, event, facebookLoginId, campaign, flow);
+  const attributes = checkoutAttributes(cart, event, facebookLoginId, campaign, flow, cookieHeader);
   const result = await shopifyFetch<
     {
       cartAttributesUpdate: {

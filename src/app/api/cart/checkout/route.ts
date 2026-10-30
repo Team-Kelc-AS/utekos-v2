@@ -132,6 +132,7 @@ export async function POST(request: NextRequest) {
       buyerIp(request),
       campaign?.data,
       parsed.data.buyNowSize ? "comfyrobe_buy_now" : undefined,
+      request.headers.get("cookie") ?? "",
     );
     let klarnaSession = null;
     if (parsed.data.method === 'shopify') {

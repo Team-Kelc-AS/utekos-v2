@@ -241,6 +241,64 @@ test('Shopify snapshot uses exact ID, operator policy and only verified Facebook
   assert.equal(new Map(api.checkoutAttributes(cart, null).map(attribute => [attribute.key, attribute.value])).get('utekos_begin_checkout_event_id'), '');
 });
 
+test('checkout without a browser event refreshes one observed Meta cookie pair', () => {
+  const api = checkoutHarness();
+  const cart = makeCart([makeLine(1, '800')]);
+  const firstFbc = 'fb.1.1793380000000.SyntheticClickA';
+  const nextFbc = 'fb.1.1793380100000.SyntheticClickB';
+  const nextFbp = 'fb.1.1793380100000.SyntheticBrowserB';
+  const cookieHeader = `_fbc=${nextFbc}; _fbp=${nextFbp}`;
+  const attributes = new Map(api.checkoutAttributes(
+    cart, null, undefined, undefined, undefined, cookieHeader,
+  ).map(attribute => [attribute.key, attribute.value]));
+  assert.equal(attributes.get('_fbc'), nextFbc);
+  assert.equal(attributes.get('_fbp'), nextFbp);
+  assert.equal(attributes.get('fbclid'), 'SyntheticClickB');
+  assert.equal(attributes.get('utekos_begin_checkout_event_id'), '');
+
+  const ambiguous = new Map(api.checkoutAttributes(
+    cart, null, undefined, undefined, undefined,
+    `_fbc=${firstFbc}; ${cookieHeader}`,
+  ).map(attribute => [attribute.key, attribute.value]));
+  assert.equal(ambiguous.has('_fbc'), false);
+  assert.equal(ambiguous.has('fbclid'), false);
+
+  const event = {
+    ...beginEvent(cart),
+    browser_id: { fbc: firstFbc, fbp: 'fb.1.1793380000000.SyntheticBrowserA' },
+    click_id: { fbclid: 'SyntheticClickA' },
+  };
+  const eventAttributes = new Map(api.checkoutAttributes(
+    cart, event, undefined, undefined, undefined, cookieHeader,
+  ).map(attribute => [attribute.key, attribute.value]));
+  assert.equal(eventAttributes.get('_fbc'), firstFbc);
+  assert.equal(eventAttributes.get('fbclid'), 'SyntheticClickA');
+});
+
+test('checkout readback replaces an older Shopify click with the current cookie pair', async () => {
+  const cart = makeCart([makeLine(1, '800')]);
+  const nextFbc = 'fb.1.1793380100000.SyntheticClickB';
+  const cookieHeader = `_fbc=${nextFbc}; _fbp=fb.1.1793380100000.SyntheticBrowserB`;
+  const api = checkoutHarness(async request => {
+    const merged = new Map([
+      { key: '_fbc', value: 'fb.1.1793380000000.SyntheticClickA' },
+      { key: 'fbclid', value: 'SyntheticClickA' },
+      ...request.variables.attributes,
+    ].map(attribute => [attribute.key, attribute.value]));
+    assert.equal(merged.get('_fbc'), nextFbc);
+    assert.equal(merged.get('fbclid'), 'SyntheticClickB');
+    return {
+      cartAttributesUpdate: {
+        cart: { id: fullId, attributes: [...merged].map(([key, value]) => ({ key, value })) },
+        userErrors: [], warnings: [],
+      },
+    };
+  });
+  await api.persistCheckoutAttributes(
+    fullId, cart, null, undefined, undefined, undefined, undefined, cookieHeader,
+  );
+});
+
 test('checkout requires successful mutation and returned attribute equality', async () => {
   const cart = makeCart([makeLine(1, '800')]);
   const event = beginEvent(cart);
