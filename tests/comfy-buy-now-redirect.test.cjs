@@ -38,6 +38,8 @@ for (const [suffix, variant] of [['xs', '43959919051000'], ['xl', '4395991911653
       const [name, diagnostic] = logs.at(-1);
       assert.equal(name, 'comfy_checkout_redirect');
       assert.equal(diagnostic.fbc_matches_click, true);
+      assert.equal(diagnostic.has_checkout_fbclid, true);
+      assert.equal(diagnostic.checkout_click_pair_matches, true);
       assert.equal(diagnostic.has_ad_id, true);
       assert.equal(diagnostic.has_fbp, true);
       assert.match(diagnostic.click_fingerprint, /^[a-f0-9]{16}$/);
@@ -75,6 +77,11 @@ test('a no-query permalink replaces an older Shopify click attribute with the va
   assert.equal(url.searchParams.get('attributes[fbclid]'), 'NewerClick');
   assert.equal(url.searchParams.getAll('attributes[fbclid]').length, 1);
   assert.equal(url.searchParams.get('fbclid'), null);
+  const [name, diagnostic] = logs.at(-1);
+  assert.equal(name, 'comfy_checkout_redirect');
+  assert.equal(diagnostic.has_fbclid, false);
+  assert.equal(diagnostic.has_checkout_fbclid, true);
+  assert.equal(diagnostic.checkout_click_pair_matches, true);
 });
 
 test('ambiguous Meta cookies do not choose a click for a no-query permalink', () => {
@@ -86,6 +93,7 @@ test('ambiguous Meta cookies do not choose a click for a no-query permalink', ()
   assert.equal(url.searchParams.get('attributes[_fbc]'), null);
   assert.equal(url.searchParams.get('attributes[fbclid]'), null);
   assert.equal(url.searchParams.get('fbclid'), null);
+  assert.equal(logs.at(-1)?.[1]?.checkout_click_pair_matches, false);
 });
 
 test('an invalid URL click is not passed to Shopify over an existing cookie click', () => {
@@ -123,6 +131,8 @@ test('marketing denial does not pass cookie or URL Meta identity to checkout', (
   assert.equal(url.searchParams.get('fbclid'), null);
   assert.equal(deniedLogs.at(-1)?.[1]?.has_fbclid, false);
   assert.equal(deniedLogs.at(-1)?.[1]?.click_fingerprint, undefined);
+  assert.equal(deniedLogs.at(-1)?.[1]?.has_checkout_fbclid, false);
+  assert.equal(deniedLogs.at(-1)?.[1]?.checkout_click_pair_matches, false);
 });
 
 test('the deployed legacy Meta URL tags are recorded as campaign and ad IDs', () => {

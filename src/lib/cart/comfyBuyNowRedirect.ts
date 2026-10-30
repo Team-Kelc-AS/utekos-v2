@@ -172,6 +172,8 @@ export function GET(request: NextRequest) {
   response.headers.set("Vercel-CDN-Cache-Control", "no-store");
   response.headers.set("Referrer-Policy", "origin");
   response.headers.set("X-Robots-Tag", "noindex");
+  const checkoutFbc = checkout.searchParams.get("attributes[_fbc]");
+  const checkoutFbclid = checkout.searchParams.get("attributes[fbclid]");
   console.info("comfy_checkout_redirect", {
     size,
     status: response.status,
@@ -186,6 +188,10 @@ export function GET(request: NextRequest) {
       : {}),
     has_fbc: checkout.searchParams.has("attributes[_fbc]"),
     has_fbp: checkout.searchParams.has("attributes[_fbp]"),
+    has_checkout_fbclid: Boolean(checkoutFbclid),
+    checkout_click_pair_matches:
+      Boolean(checkoutFbc && checkoutFbclid) &&
+      extractFbclidFromFbc(checkoutFbc ?? undefined) === checkoutFbclid,
     fbc_matches_click:
       consent.marketing === "granted" &&
       Boolean(observedFbclid.value) &&
