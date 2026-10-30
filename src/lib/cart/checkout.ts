@@ -126,11 +126,30 @@ export function checkoutAttributes(
     },
     event?.event_time,
   );
+  const attributionAttributes = checkoutAttributionSnapshotToShopifyAttributes(
+    snapshot,
+    event?.event_id,
+  );
+  const hasAttributionAttribute = (key: string) =>
+    attributionAttributes.some(attribute => attribute.key === key);
+  // Shopify retains omitted cart keys. A retained fbc may be the last valid
+  // click, but an unrelated raw fbclid must not survive beside it.
+  if (!hasAttributionAttribute('fbclid')) {
+    attributionAttributes.push({ key: 'fbclid', value: '' });
+  }
+  if (
+    consent.marketing !== 'granted' ||
+    (snapshot.click_id?.fbclid && !snapshot.browser_id?.fbc)
+  ) {
+    if (!hasAttributionAttribute('_fbc')) {
+      attributionAttributes.push({ key: '_fbc', value: '' });
+    }
+  }
+  if (consent.marketing !== 'granted' && !hasAttributionAttribute('_fbp')) {
+    attributionAttributes.push({ key: '_fbp', value: '' });
+  }
   return [
-    ...checkoutAttributionSnapshotToShopifyAttributes(
-      snapshot,
-      event?.event_id,
-    ),
+    ...attributionAttributes,
     // Shopify preserves omitted cart keys. Explicitly remove prior identity or
     // checkout correlation when this preparation has no verified replacement.
     ...(!facebookLoginId

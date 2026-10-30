@@ -266,7 +266,7 @@ test('checkout without a browser event refreshes one observed Meta cookie pair',
     `_fbc=${firstFbc}; ${cookieHeader}`,
   ).map(attribute => [attribute.key, attribute.value]));
   assert.equal(ambiguous.has('_fbc'), false);
-  assert.equal(ambiguous.has('fbclid'), false);
+  assert.equal(ambiguous.get('fbclid'), '');
 
   const denied = checkoutHarness(undefined, {
     analytics: 'granted', marketing: 'denied', preferences: 'granted',
@@ -275,9 +275,9 @@ test('checkout without a browser event refreshes one observed Meta cookie pair',
   const deniedAttributes = new Map(denied.checkoutAttributes(
     cart, null, undefined, undefined, undefined, cookieHeader,
   ).map(attribute => [attribute.key, attribute.value]));
-  assert.equal(deniedAttributes.has('_fbc'), false);
-  assert.equal(deniedAttributes.has('_fbp'), false);
-  assert.equal(deniedAttributes.has('fbclid'), false);
+  assert.equal(deniedAttributes.get('_fbc'), '');
+  assert.equal(deniedAttributes.get('_fbp'), '');
+  assert.equal(deniedAttributes.get('fbclid'), '');
 
   const event = {
     ...beginEvent(cart),
@@ -289,6 +289,55 @@ test('checkout without a browser event refreshes one observed Meta cookie pair',
   ).map(attribute => [attribute.key, attribute.value]));
   assert.equal(eventAttributes.get('_fbc'), firstFbc);
   assert.equal(eventAttributes.get('fbclid'), 'SyntheticClickA');
+});
+
+test('eventless checkout clears stale raw click while preserving the last stored fbc', async () => {
+  const cart = makeCart([makeLine(1, '800')]);
+  const storedFbc = 'fb.1.1793380100000.SyntheticClickB';
+  const staleFbclid = 'SyntheticClickA';
+  const api = checkoutHarness(async request => {
+    const attributes = new Map([
+      { key: '_fbc', value: storedFbc },
+      { key: 'fbclid', value: staleFbclid },
+      ...request.variables.attributes,
+    ].map(attribute => [attribute.key, attribute.value]));
+    assert.equal(attributes.get('_fbc'), storedFbc);
+    assert.equal(attributes.get('fbclid'), '');
+    return {
+      cartAttributesUpdate: {
+        cart: { id: fullId, attributes: [...attributes].map(([key, value]) => ({ key, value })) },
+        userErrors: [], warnings: [],
+      },
+    };
+  });
+  await api.persistCheckoutAttributes(fullId, cart, null);
+
+  const notCleared = checkoutHarness(async request => ({
+    cartAttributesUpdate: {
+      cart: { id: fullId, attributes: [
+        ...request.variables.attributes.filter(attribute => attribute.key !== 'fbclid'),
+        { key: '_fbc', value: storedFbc },
+        { key: 'fbclid', value: staleFbclid },
+      ] },
+      userErrors: [], warnings: [],
+    },
+  }));
+  await assert.rejects(notCleared.persistCheckoutAttributes(fullId, cart, null), CartError);
+});
+
+test('a new raw click without fbc clears an older cart fbc', () => {
+  const api = checkoutHarness();
+  const cart = makeCart([makeLine(1, '800')]);
+  const event = {
+    ...beginEvent(cart),
+    browser_id: { fbp: 'fb.1.1793380100000.SyntheticBrowserB' },
+    click_id: { fbclid: 'SyntheticClickB' },
+  };
+  const attributes = new Map(api.checkoutAttributes(
+    cart, event,
+  ).map(attribute => [attribute.key, attribute.value]));
+  assert.equal(attributes.get('_fbc'), '');
+  assert.equal(attributes.get('fbclid'), 'SyntheticClickB');
 });
 
 test('checkout readback replaces an older Shopify click with the current cookie pair', async () => {
