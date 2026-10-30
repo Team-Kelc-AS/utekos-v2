@@ -85,8 +85,11 @@ async function scenario(browser, kind) {
       const timestamp = Date.now() - 5000;
       const fbc = `fb.1.${timestamp}.SyntheticClickA`;
       const fbp = `fb.1.${timestamp}.SyntheticBrowserA`;
-      document.cookie = `_fbc=${fbc}; Path=/`;
-      document.cookie = `_fbp=${fbp}; Path=/`;
+      const scope = scenarioKind === 'async-queue-two-events'
+        ? 'Domain=.utekos.no; Path=/'
+        : 'Path=/';
+      document.cookie = `_fbc=${fbc}; ${scope}`;
+      document.cookie = `_fbp=${fbp}; ${scope}`;
       if (scenarioKind === 'duplicate-aligned') {
         document.cookie = `_fbc=${fbc}; Domain=.utekos.no; Path=/`;
       }
@@ -119,7 +122,7 @@ async function scenario(browser, kind) {
     assert.equal(configRequested, true, 'Pixel config was requested');
     assert.equal(await page.evaluate(() => fbq.instance.locks.isLocked()), true);
 
-    if (kind === 'async-queue') {
+    if (kind === 'async-queue' || kind === 'async-queue-two-events') {
       await page.evaluate(() => {
         fbq.instance.asyncParamFetchers.set('probe_hold', {
           request: new Promise(resolve => { window.__releaseAsyncProbe = resolve; }),
@@ -151,17 +154,58 @@ async function scenario(browser, kind) {
 
     releaseConfig();
 
-    if (kind === 'async-queue') {
+    if (kind === 'async-queue' || kind === 'async-queue-two-events') {
       await page.waitForFunction(() =>
         !fbq.instance.locks.isLocked() &&
         fbq.instance.eventQueue.length === 1 &&
         __utekosMetaPixelState.dispatches['PageView:sdk-probe-A']);
-      await page.evaluate(() => {
+      const secondIdentifiers = await page.evaluate(twoEvents => {
         const timestamp = Date.now() + 1000;
-        document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/`;
-        document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/`;
-        window.__releaseAsyncProbe('ready');
-      });
+        const fbc = `fb.1.${timestamp}.SyntheticClickB`;
+        const fbp = `fb.1.${timestamp}.SyntheticBrowserB`;
+        const scope = twoEvents ? 'Domain=.utekos.no; Path=/' : 'Path=/';
+        document.cookie = `_fbc=${fbc}; ${scope}`;
+        document.cookie = `_fbp=${fbp}; ${scope}`;
+        if (twoEvents) {
+          window.dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+            detail: {
+              event: 'page_view',
+              event_id: 'sdk-probe-B',
+              canonical_event: {
+                event_id: 'sdk-probe-B',
+                event_name: 'page_view',
+                event_time: new Date().toISOString(),
+                browser_id: { fbc, fbp },
+                consent: { marketing: 'granted' },
+                custom_data: {},
+              },
+            },
+          }));
+        }
+        return { fbc, fbp };
+      }, kind === 'async-queue-two-events');
+      if (kind === 'async-queue-two-events') {
+        await page.waitForFunction(() =>
+          __utekosMetaPixelState.dispatches['PageView:sdk-probe-B']);
+        const queueState = await page.evaluate(() => ({
+          length: fbq.instance.eventQueue.length,
+          locked: fbq.instance.locks.isLocked(),
+          second: __utekosMetaPixelState.dispatches['PageView:sdk-probe-B'],
+        }));
+        assert.equal(queueState.length, 2, JSON.stringify(queueState));
+      }
+      await page.evaluate(() => window.__releaseAsyncProbe('ready'));
+      if (kind === 'async-queue-two-events') {
+        await until(
+          () => pixelRequests.some(request => request.eventId === 'sdk-probe-B'),
+          'second queued Pixel request',
+        );
+        const secondRequests = pixelRequests.filter(request => request.eventId === 'sdk-probe-B');
+        assert.equal(secondRequests.length, 1);
+        assert.equal(secondRequests[0].event, 'PageView');
+        assert.equal(secondRequests[0].fbc, secondIdentifiers.fbc);
+        assert.equal(secondRequests[0].fbp, secondIdentifiers.fbp);
+      }
     }
 
     if (['new-click', 'new-click-other-tab', 'missing-cookie'].includes(kind)) {
@@ -200,6 +244,7 @@ async function main() {
       'new-click-other-tab',
       'missing-cookie',
       'async-queue',
+      'async-queue-two-events',
     ]) {
       const result = await scenario(browser, kind);
       process.stdout.write(`${result.kind}: ${result.pixelRequests} intercepted Pixel request(s); ${result.blockedHosts.length} other external host(s) blocked\n`);
