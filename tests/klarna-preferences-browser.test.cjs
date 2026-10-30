@@ -51,9 +51,10 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
           await panel.getByLabel('Favorittfarge fra utvalget vårt', { exact: true }).click();
           await page.getByRole('option', { name: 'Fjellblå', exact: true }).click();
           await panel.getByRole('checkbox', { name: 'Hytte', exact: true }).check();
+          await panel.getByRole('checkbox', { name: 'Annet', exact: true }).check();
           await panel.getByRole('button', { name: 'Lagre valgene mine' }).click();
           await panel.getByRole('status').filter({ hasText: 'Valgene er lagret.' }).waitFor();
-          assert.deepEqual(stored, { ...empty, comfyrobeSize: 'XS', favoriteColor: 'Fjellblå', interests: ['hytte'] });
+          assert.deepEqual(stored, { ...empty, comfyrobeSize: 'XS', favoriteColor: 'Fjellblå', interests: ['hytte', 'annet'] });
           assert.equal(saves, 1);
           assert.ok(await panel.getByText('Utekos kan bruke mine Klarna-opplysninger til å vise personlig tilpasset innhold.', { exact: true }).isVisible());
           const geometry = await trigger.evaluate(el => {
@@ -70,6 +71,7 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
           await trigger.click();
           await panel.getByRole('checkbox', { name: 'Hytte', exact: true }).waitFor();
           assert.equal(await panel.getByRole('checkbox', { name: 'Hytte', exact: true }).isChecked(), true);
+          assert.equal(await panel.getByRole('checkbox', { name: 'Annet', exact: true }).isChecked(), true);
           assert.equal(saves, 1);
         } finally { await context.close(); }
       }

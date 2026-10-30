@@ -14,7 +14,7 @@ const preferenceSchema = z.object({
   emailMarketing: z.boolean(), cartReminders: z.boolean(), adMatching: z.boolean(),
   comfyrobeSize: z.enum(['XS', 'XL']).nullable(),
   favoriteColor: z.enum(['Vargnatt', 'Fjellblå', 'Havdyp', 'Fjellnatt']).nullable(),
-  interests: z.array(z.enum(['camping-og-bobil', 'hytte', 'terrasse', 'glamping'])).max(4),
+  interests: z.array(z.enum(['camping-og-bobil', 'hytte', 'terrasse', 'glamping', 'annet'])).max(5),
 });
 type Preferences = z.infer<typeof preferenceSchema>;
 const empty: Preferences = {
@@ -26,6 +26,7 @@ const interestOptions = [
   { value: 'hytte', label: 'Hytte' },
   { value: 'terrasse', label: 'Terrasse' },
   { value: 'glamping', label: 'Glamping' },
+  { value: 'annet', label: 'Annet' },
 ] as const;
 const sizeOptions = [
   { value: '', label: 'Ikke valgt' }, { value: 'XS', label: 'S/XS' }, { value: 'XL', label: 'L/XXL' },
