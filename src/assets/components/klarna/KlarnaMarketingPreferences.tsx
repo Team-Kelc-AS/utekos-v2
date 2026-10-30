@@ -41,7 +41,6 @@ export function KlarnaMarketingPreferences() {
     void requestPreferences({ action: 'state' }).then(result => {
       if (active) {
         setValue(result.profile ?? empty);
-        setOpen(result.profile === null || result.profile === undefined);
         setLoaded(true);
         setStatus('ready');
       }

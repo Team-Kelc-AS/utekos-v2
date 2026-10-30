@@ -120,7 +120,6 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
     {status === 'loading' && <p role="status">Laster Klarna-innlogging …</p>}
     {status === 'pending' && <p role="status">Bekrefter Klarna-innlogging …</p>}
     {status === 'connected' && <div className="space-y-2">
-      <p role="status">Klarna er tilkoblet Utekos.</p>
       <KlarnaMarketingPreferences />
       {showDisconnect && <button type="button" onClick={() => { void disconnect(); }} className="underline underline-offset-4">Logg ut fra Utekos</button>}
     </div>}
