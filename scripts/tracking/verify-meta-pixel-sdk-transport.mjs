@@ -165,10 +165,16 @@ async function scenario(browser, kind) {
         document.cookie = '_fbc=; Path=/; Max-Age=0';
       });
     }
+    if (['missing-fbp', 'transient-missing-fbp', 'missing-fbp-then-new-click'].includes(kind)) {
+      await page.evaluate(() => {
+        document.cookie = '_fbp=; Path=/; Max-Age=0';
+      });
+    }
 
     releaseConfig();
 
-    if (kind === 'transient-missing-cookie' || kind === 'missing-then-new-click') {
+    if (['transient-missing-cookie', 'missing-then-new-click',
+      'transient-missing-fbp', 'missing-fbp-then-new-click'].includes(kind)) {
       await page.waitForFunction(() => !fbq.instance.locks.isLocked());
       await delay(350);
       assert.equal(
@@ -176,15 +182,17 @@ async function scenario(browser, kind) {
         undefined,
         'the missing cookie remains eligible for restoration',
       );
-      await page.evaluate(({ scenarioKind, fbc }) => {
+      await page.evaluate(({ scenarioKind, fbc, fbp }) => {
         if (scenarioKind === 'transient-missing-cookie') {
           document.cookie = `_fbc=${fbc}; Path=/`;
+        } else if (scenarioKind === 'transient-missing-fbp') {
+          document.cookie = `_fbp=${fbp}; Path=/`;
         } else {
           const timestamp = Date.now() + 1000;
           document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/`;
           document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/`;
         }
-      }, { scenarioKind: kind, fbc: identifiers.fbc });
+      }, { scenarioKind: kind, fbc: identifiers.fbc, fbp: identifiers.fbp });
     }
 
     if (kind.startsWith('async-queue')) {
@@ -251,7 +259,8 @@ async function scenario(browser, kind) {
       assert.ok(openBridgeRequests.filter(request => request.eventId === 'sdk-probe-A').every(request =>
         request.fbc === identifiers.fbc && request.fbp === identifiers.fbp),
       'OpenBridge retains the event-time identity after consent changes');
-    } else if (['new-click', 'new-click-other-tab', 'missing-cookie', 'missing-then-new-click'].includes(kind)) {
+    } else if (['new-click', 'new-click-other-tab', 'missing-cookie', 'missing-then-new-click',
+      'missing-fbp', 'missing-fbp-then-new-click'].includes(kind)) {
       await page.waitForFunction(() =>
         __utekosMetaPixelState.dispatches['PageView:sdk-probe-A']?.skipped ===
         'different_live_meta_identity');
@@ -299,6 +308,9 @@ async function main() {
       'missing-cookie',
       'transient-missing-cookie',
       'missing-then-new-click',
+      'missing-fbp',
+      'transient-missing-fbp',
+      'missing-fbp-then-new-click',
       'async-queue',
       'async-queue-other-tab',
       'async-queue-domain-other-tab',
@@ -308,6 +320,8 @@ async function main() {
     ['webkit', webkit, [
       'transient-missing-cookie',
       'missing-then-new-click',
+      'transient-missing-fbp',
+      'missing-fbp-then-new-click',
       'async-queue-other-tab',
       'async-queue-domain-other-tab',
       'async-queue-navigation',
