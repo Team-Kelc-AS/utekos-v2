@@ -22,6 +22,7 @@ async function fixture(engine, { width = 390, profile = null, connected = true, 
     }
     if (path === '/api/klarna/client-config') return route.fulfill({ json: { client_id: 'klarna_live_client_fixture', environment: 'production' } });
     if (request.url().startsWith('https://x.klarnacdn.net/kp/lib/v1/api.js')) return route.fulfill({ contentType: 'text/javascript', body: `window.Klarna={Payments:{Buttons:{init:()=>({load:(config,done)=>{const host=document.querySelector(config.container);host.innerHTML='<button type="button" aria-label="Klarna Express">Klarna Express</button>';done({show_form:true})}})}}};window.klarnaAsyncCallback?.();` });
+    if (path === '/api/identity/klarna/disconnect') { state.connected = false; return route.fulfill({ status: 200, json: { disconnected: true } }); }
     if (path === '/api/identity/klarna/complete') { state.connected = true; return route.fulfill({ json: { returnTo: '/handlehjelp/preferanser' } }); }
     if (path === '/api/identity/klarna/prepare') return route.fulfill({ json: { clientId: 'klarna_live_client_fixture', scope: 'openid email', redirectUri: new URL('/klarna/identity/callback', baseURL).href } });
     if (request.url().startsWith('https://js.klarna.com/web-sdk/v2/klarna.mjs')) return route.fulfill({ contentType: 'text/javascript', headers: { 'access-control-allow-origin': '*' }, body: `export async function KlarnaSDK(){const events={};return {Identity:{on(name,fn){events[name]=fn},button(){const callbacks={};return {on(name,fn){callbacks[name]=fn},mount(host){const button=document.createElement('button');button.type='button';button.textContent='Fortsett med Klarna';button.onclick=async()=>{callbacks.click?.();await events.signin?.({idToken:'fixture-token-'.repeat(10)})};host.replaceChildren(button);callbacks.ready?.()},unmount(){}}}}}}` });
@@ -162,5 +163,21 @@ test('login refresh waits for the saved profile before showing an editor', { ski
     assert.equal(await form.getByRole('checkbox', { name: 'Camping', exact: true }).isChecked(), false);
     assert.ok((await form.getByLabel('Foretrukket Comfyrobe™-passform', { exact: true }).textContent()).includes('L/XXL'));
     assert.equal(f.state.saves, 0); assert.deepEqual(f.errors, []);
+  } finally { await f.close(); }
+});
+
+
+test('signed-in customers retain a logout action in the menu and preference page', { skip: !baseURL, timeout: 60000 }, async () => {
+  const f = await fixture(chromium, { profile: { ...empty, interests: ['bobil'] } });
+  try {
+    await product(f.page);
+    await f.page.getByRole('button', { name: 'Åpne meny', exact: true }).click();
+    const menu = f.page.getByRole('dialog', { name: 'Meny', exact: true });
+    assert.equal(await menu.getByRole('button', { name: 'Logg ut fra Utekos', exact: true }).isVisible(), true);
+    await f.page.goto(new URL('/handlehjelp/preferanser', baseURL).href);
+    await f.page.locator('main').getByRole('button', { name: 'Logg ut fra Utekos', exact: true }).click();
+    await f.page.getByRole('button', { name: 'Fortsett med Klarna', exact: true }).waitFor();
+    assert.equal(f.state.connected, false); assert.deepEqual(f.state.profile.interests, ['bobil']);
+    assert.equal(await f.page.locator('main [data-klarna-preferences]').count(), 0); assert.deepEqual(f.errors, []);
   } finally { await f.close(); }
 });

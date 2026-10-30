@@ -14,7 +14,10 @@ import {
   refreshKlarnaPreferences,
   useKlarnaPreferences,
 } from "@/lib/klarna/preferences-client";
-import { KlarnaIdentityButton } from "./KlarnaIdentityButton";
+import {
+  KlarnaIdentityButton,
+  KlarnaDisconnectButton,
+} from "./KlarnaIdentityButton";
 import { KlarnaMarketingPreferences } from "./KlarnaMarketingPreferences";
 import { KlarnaPreferencesQuestionnaire } from "./KlarnaPreferencesQuestionnaire";
 import styles from "./KlarnaMarketingPreferences.module.css";
@@ -52,7 +55,10 @@ export function KlarnaPreferencesContent({
       onSaved={onSaved ?? (() => {})}
     />
   ) : (
-    <KlarnaMarketingPreferences profile={state.profile} />
+    <>
+      <KlarnaMarketingPreferences profile={state.profile} />
+      <KlarnaDisconnectButton />
+    </>
   );
 }
 export function KlarnaPreferencesButton({ menu = false }: { menu?: boolean }) {
@@ -108,5 +114,15 @@ export function KlarnaSavedPreferencesLink({
         Mine preferanser og samtykker
       </Link>
     </li>
+  );
+}
+
+export function KlarnaMenuPreferences() {
+  const { connected } = useKlarnaPreferences();
+  return (
+    <div className="flex flex-col gap-2">
+      <KlarnaPreferencesButton menu />
+      {connected && <KlarnaDisconnectButton />}
+    </div>
   );
 }
