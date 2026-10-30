@@ -4,6 +4,13 @@ import type { ProductImage as Image } from '@/lib/shopify/product-types'
 // Native 4:5 originals for tablet and desktop (768px and above).
 export const COMFYROBE_PRODUCT_GALLERY_IMAGES: Image[] = [
   productImage(
+    'comfyrobe-desktop-comfy-1440x1800',
+    '/images/products/comfyrobe/comfy-1440x1800.webp',
+    'Marineblå Comfyrobe vist forfra i et snødekt fjellandskap ved vannet.',
+    1440,
+    1800
+  ),
+  productImage(
     'comfyrobe-desktop-woman-with-open-comfyrobe-1440x1800',
     '/images/products/comfyrobe/woman-with-open-comfyrobe-1440x1800.webp',
     'Nærbilde av åpen Comfyrobe med høy krage, glidelås og brodert navn.',

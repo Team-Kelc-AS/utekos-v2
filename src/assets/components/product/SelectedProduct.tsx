@@ -7,7 +7,6 @@ import { notFound } from "next/dist/client/components/not-found";
 import type { ShopifyProduct } from "@/lib/shopify/product-types";
 import { productTitle } from "@/lib/catalog/productTitle";
 import { productGallery } from "@/lib/products/gallery";
-import { hasComfyrobeHalfPrice } from "@/lib/products/comfyrobeHalfPrice";
 import { productVariantVideo } from "@/lib/products/variantVideos";
 import { formatMoney } from "@/lib/products/money";
 import { productAvailability } from "@/lib/products/availability";
@@ -102,7 +101,6 @@ export async function SelectedProduct({
             {...images}
             title={title}
             mobileFullWidth={fullWidthMobileGallery}
-            showComfyrobeSticker={hasComfyrobeHalfPrice(product.handle, variant)}
             video={productVariantVideo(product.handle, variant)}
             videoLabel={`${title} – ${label}`}
             showMobileControls={product.handle !== "utekos-techdown"}

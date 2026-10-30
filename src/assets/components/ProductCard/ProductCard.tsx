@@ -9,9 +9,7 @@ import { productTitle } from "@/lib/catalog/productTitle";
 import { optionParam, variantHref } from "@/lib/products/variants";
 import { dunSelection } from "@/lib/reservations/dun";
 import { productVariantColorSheet } from "@/lib/products/variantColorSheets";
-import { hasComfyrobeHalfPrice } from "@/lib/products/comfyrobeHalfPrice";
 import type { ProductCardData } from "@/lib/shopify/getProductCards";
-import { ComfyrobeSticker } from "@/components/product/ComfyrobeSticker";
 import { ProductCardHeader } from "./ProductCardHeader";
 import { ProductCardFooter } from "./ProductCardFooter";
 import { ProductCardFlip } from "./ProductCardFlip";
@@ -36,7 +34,6 @@ export function ProductCard({
   const label = [title, ...options.map((option) => option.value)].join(" – ");
   const gender = options.find((option) => optionParam(option.name) === "kjonn");
   const colorSheet = variant.image && productVariantColorSheet(product.handle, variant);
-  const showComfyrobeSticker = hasComfyrobeHalfPrice(product.handle, variant);
 
   const imageContent = (
     <>
@@ -60,7 +57,6 @@ export function ProductCard({
             className="block h-auto w-full rounded-t-xl"
           />
         )}
-        {variant.image && showComfyrobeSticker && <ComfyrobeSticker className={styles.comfyrobeSticker} />}
       </Link>
       <div className="absolute right-2.5 bottom-3 z-20 xl:right-4 xl:bottom-10">
         <WishlistButton
