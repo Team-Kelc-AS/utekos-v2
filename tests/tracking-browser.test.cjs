@@ -9,7 +9,10 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const { chromium, webkit } = require('playwright');
 const esbuild = require('esbuild');
-const pixel = fs.readFileSync(path.join(root, 'public/analytics/meta-pixel-canonical-v1.js'), 'utf8');
+const pixel = fs.readFileSync(
+  process.env.META_PIXEL_SCRIPT_PATH ?? path.join(root, 'public/analytics/meta-pixel-canonical-v1.js'),
+  'utf8',
+);
 let browser, safari, bundle, previewBundle;
 
 async function buildHarness(environment) {
@@ -419,6 +422,32 @@ test('a PageView without a click does not guess between distinct live _fbc cooki
   const event = api.events('page_view')[0];
   assert.equal(event.browser_id?.fbc, undefined);
   assert.equal(event.click_id?.fbclid, undefined);
+});
+
+test('a new URL click reaches Pixel despite an older host-scoped _fbc cookie', async t => {
+  const observedAt = Date.now() - 10000;
+  const oldFbc = `fb.1.${observedAt}.FirstClick`;
+  const newFbc = `fb.1.${observedAt + 5000}.SecondClick`;
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=SecondClick', {
+    metaHostFbcCookie: oldFbc,
+    metaCookie: newFbc,
+    metaContextFbp: `fb.1.${observedAt + 5000}.123456789`,
+  });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(event.click_id?.fbclid, 'SecondClick');
+  assert.equal(event.browser_id?.fbc, newFbc);
+  await api.page.waitForFunction(id => __utekosMetaPixelState.dispatches[`PageView:${id}`], event.event_id);
+  const delivered = await api.page.evaluate(id => ({
+    pixel: __pixelIdentity.filter(call => call.id === id),
+    dispatch: __utekosMetaPixelState.dispatches[`PageView:${id}`],
+    cookies: document.cookie,
+  }), event.event_id);
+  assert.equal(delivered.pixel.length, 1, JSON.stringify(delivered));
+  assert.ok(delivered.pixel[0].cookie.split('; ').filter(cookie => cookie.startsWith('_fbc='))
+    .every(cookie => cookie === `_fbc=${newFbc}`), JSON.stringify(delivered));
+  assert.ok(event.browser_id?.fbp);
+  assert.ok(delivered.pixel[0].cookie.includes(`_fbp=${event.browser_id.fbp}`));
 });
 
 test('a live old _fbc cookie survives PageView and commerce without becoming a durable backup', async t => {
@@ -1185,6 +1214,8 @@ test('an old tab URL cannot overwrite a newer tab click, while a fresh navigatio
   await tabB.waitForFunction(() => localStorage.getItem('utekos_meta_identifiers_v2')?.includes('OfflineTabBClick'));
   const tabBFbc = JSON.parse(await tabB.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2'))).fbc;
   assert.match(tabBFbc, /\.OfflineTabBClick\./);
+  const priorClicks = JSON.parse(await tabB.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2'))).priorClicks;
+  assert.ok(priorClicks?.some(prior => prior.fbclid === 'OfflineTabAClick'));
 
   await tabA.evaluate(() => UtekosTrackingHarness.dispatchEvent(UtekosTrackingHarness.createBrowserEvent('page_view', {})));
   await api.waitFor('page_view', 2);
@@ -1204,7 +1235,59 @@ test('an old tab URL cannot overwrite a newer tab click, while a fresh navigatio
   assert.equal(freshEvent.click_id.fbclid, 'OfflineTabCClick');
   assert.equal(new URL(freshEvent.page_url).searchParams.get('fbclid'), 'OfflineTabCClick');
   assert.match(freshEvent.browser_id.fbc, /\.OfflineTabCClick\./);
-  assert.equal(JSON.parse(await tabB.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2'))).fbc, freshEvent.browser_id.fbc);
+  const latestStored = JSON.parse(await tabB.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2')));
+  assert.equal(latestStored.fbc, freshEvent.browser_id.fbc);
+  assert.deepEqual(latestStored.priorClicks.map(prior => prior.fbclid),
+    ['OfflineTabAClick', 'OfflineTabBClick']);
+});
+
+test('Pixel restores the latest captured click after an older tab remints its cookie', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineTabAClick');
+  await api.waitFor('page_view');
+  const tabB = await api.page.context().newPage();
+  await tabB.goto('https://utekos.no/produkter/test-product?fbclid=OfflineTabBClick');
+  await tabB.waitForFunction(() => localStorage.getItem('utekos_meta_identifiers_v2')?.includes('OfflineTabBClick'));
+  const stored = JSON.parse(await tabB.evaluate(() => localStorage.getItem('utekos_meta_identifiers_v2')));
+  assert.ok(stored.priorClicks?.some(prior => prior.fbclid === 'OfflineTabAClick'));
+
+  const eventId = 'pixel-after-old-tab-remint';
+  await tabB.evaluate(id => {
+    const original = dataLayer.find(entry => entry?.event === 'page_view');
+    document.cookie = `_fbc=fb.1.${Date.now()}.OfflineTabAClick.AQQCAQMC; Domain=.utekos.no; Path=/`;
+    dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+      detail: {
+        ...original,
+        event_id: id,
+        canonical_event: { ...original.canonical_event, event_id: id },
+      },
+    }));
+  }, eventId);
+  await tabB.waitForFunction(id => __pixelIdentity.some(call => call.id === id), eventId);
+  const sent = await tabB.evaluate(id => __pixelIdentity.find(call => call.id === id), eventId);
+  assert.ok(sent.cookie.split('; ').filter(part => part.startsWith('_fbc=')).every(part =>
+    part === `_fbc=${stored.fbc}`), JSON.stringify(sent));
+});
+
+test('Pixel preserves the original fbc timestamp after a same-click SDK remint', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=SameClick');
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  const eventId = 'pixel-after-same-click-remint';
+  await api.page.evaluate(id => {
+    const original = dataLayer.find(entry => entry?.event === 'page_view');
+    document.cookie = `_fbc=fb.1.${Date.now()}.SameClick.AQQCAQMC; Domain=.utekos.no; Path=/`;
+    dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+      detail: {
+        ...original,
+        event_id: id,
+        canonical_event: { ...original.canonical_event, event_id: id },
+      },
+    }));
+  }, eventId);
+  await api.page.waitForFunction(id => __pixelIdentity.some(call => call.id === id), eventId);
+  const sent = await api.page.evaluate(id => __pixelIdentity.find(call => call.id === id), eventId);
+  assert.ok(sent.cookie.split('; ').filter(part => part.startsWith('_fbc=')).every(part =>
+    part === `_fbc=${event.browser_id.fbc}`), JSON.stringify(sent));
 });
 
 test('an A landing created before B keeps its genuine URL click without inheriting B fbc', async t => {

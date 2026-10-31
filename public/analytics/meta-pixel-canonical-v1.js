@@ -82,6 +82,8 @@
   var observedEventIdentity = {}
   var MAX_PENDING_SDK_EVENTS = 128
   var MAX_PENDING_SDK_WAIT_MS = 10000
+  var META_IDENTIFIER_LOCAL_KEY = 'utekos_meta_identifiers_v2'
+  var META_COOKIE_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000
   var fbcWaitStartedAt = null
   var fbcPagehideListening = false
 
@@ -291,6 +293,60 @@
       !cookieMatchesIdentity('_fbc', ids.fbc) ||
       !cookieMatchesIdentity('_fbp', ids.fbp)
     )
+  }
+
+  function restoreLatestCanonicalMetaIdentity(ids) {
+    if (!ids.fbc || !ids.fbp) return false
+    var stored
+    try {
+      stored = JSON.parse(w.localStorage.getItem(META_IDENTIFIER_LOCAL_KEY))
+    } catch {
+      return false
+    }
+    // Only the current first-party click may repair a cookie overwritten by
+    // another tab's delayed Meta SDK. Older events must stay on CAPI alone.
+    if (!stored || stored.fbc !== ids.fbc || stored.fbp !== ids.fbp ||
+        !cookieMatchesIdentity('_fbp', ids.fbp)) return false
+
+    var liveFbcs = cookieValues('_fbc')
+    if (!liveFbcs.length) return false
+    var currentClick = clickFromFbc(ids.fbc)
+    if (!currentClick) return false
+    var priorClicks = Array.isArray(stored.priorClicks) ? stored.priorClicks : []
+    if (!liveFbcs.every(function (value) {
+      var liveClick = clickFromFbc(value)
+      return liveClick && (liveClick === currentClick ||
+        priorClicks.some(function (prior) {
+          return prior && prior.fbclid === liveClick &&
+            typeof prior.observedAt === 'number' &&
+            Date.now() - prior.observedAt <= META_COOKIE_MAX_AGE_MS
+        }))
+    })) return false
+
+    var now = Date.now()
+    var domain = w.location.hostname === 'utekos.no' ||
+      /\.utekos\.no$/.test(w.location.hostname) ? '; Domain=.utekos.no' : ''
+    var secure = w.location.protocol === 'https:' ? '; Secure' : ''
+    var match = /^fb\.\d+\.(\d{13})\.[^;]+$/.exec(ids.fbc)
+    var createdAt = match && Number(match[1])
+    if (!createdAt || createdAt > now + 5 * 60 * 1000 ||
+        now - createdAt >= META_COOKIE_MAX_AGE_MS) return false
+    var maxAge = Math.floor((createdAt + META_COOKIE_MAX_AGE_MS - now) / 1000)
+    var cookie = '_fbc=' + encodeURIComponent(ids.fbc) +
+      '; Path=/; Max-Age=' + maxAge + '; SameSite=Lax' + secure
+    d.cookie = cookie + domain
+    if (domain && !cookieMatchesIdentity('_fbc', ids.fbc)) d.cookie = cookie
+    return !hasDifferentLiveMetaIdentity(ids)
+  }
+
+  function clickFromFbc(value) {
+    if (typeof value !== 'string') return null
+    var parts = value.split('.')
+    if (parts.length < 4 || parts[0] !== 'fb') return null
+    var last = parts[parts.length - 1]
+    var hasAppendix = parts.length >= 5 && /^[A-Za-z0-9_-]{8}$/.test(last)
+    var click = parts.slice(3, hasAppendix ? -1 : undefined).join('.').trim()
+    return click || null
   }
 
   function hasMarketingConsent() {
@@ -687,7 +743,8 @@
       return
     }
 
-    if (hasDifferentLiveMetaIdentity(observedEventIdentity[eventKey])) {
+    if (hasDifferentLiveMetaIdentity(observedEventIdentity[eventKey]) &&
+        !restoreLatestCanonicalMetaIdentity(observedEventIdentity[eventKey])) {
       delete pendingFbcEvents[eventKey]
       delete pendingIdentityStartedAt[eventKey]
       delete pendingSdkEvents[eventKey]

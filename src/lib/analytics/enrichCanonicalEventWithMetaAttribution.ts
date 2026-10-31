@@ -38,6 +38,10 @@ const META_IDENTIFIER_LOCAL_KEY = 'utekos_meta_identifiers_v2'
 const metaIdentifierSessionSchema = z.strictObject({
   fbc: z.optional(z.string().check(z.minLength(1), z.maxLength(3800))),
   fbp: z.optional(z.string().check(z.minLength(1), z.maxLength(3800))),
+  priorClicks: z.optional(z.array(z.strictObject({
+    fbclid: z.string().check(z.minLength(1), z.maxLength(3800)),
+    observedAt: z.number().check(z.int(), z.minimum(1))
+  }))),
   // The old session record has savedAt. Identity age now comes from the
   // original Meta cookie timestamp, so later events cannot extend it.
   savedAt: z.optional(z.number().check(z.int(), z.minimum(1)))
@@ -173,9 +177,31 @@ function saveMetaIdentifierStorage(
       storage.removeItem(key)
       return
     }
+    let previous: z.infer<typeof metaIdentifierSessionSchema> | undefined
+    if (name === 'localStorage') {
+      try {
+        const parsed = metaIdentifierSessionSchema.safeParse(
+          JSON.parse(storage.getItem(key) ?? '{}')
+        )
+        if (parsed.success) previous = parsed.data
+      } catch { /* Invalid backup is replaced by the current observation. */ }
+    }
+    const priorClicks = (previous?.priorClicks ?? []).filter(prior =>
+      prior.observedAt <= nowMs && nowMs - prior.observedAt <= META_IDENTIFIER_MAX_AGE_MS
+    )
+    const previousClick = extractFbclidFromFbc(previous?.fbc)
+    const currentClick = extractFbclidFromFbc(storedFbc)
+    const observedPrior = previousClick && previousClick !== currentClick ?
+      [...priorClicks, { fbclid: previousClick, observedAt: nowMs }]
+    : priorClicks
+    const boundedPrior = observedPrior.filter((prior, index) =>
+      prior.fbclid !== currentClick &&
+      observedPrior.findIndex(candidate => candidate.fbclid === prior.fbclid) === index
+    ).slice(-8)
     const value = JSON.stringify({
       ...(storedFbc ? { fbc: storedFbc } : {}),
-      ...(storedFbp ? { fbp: storedFbp } : {})
+      ...(storedFbp ? { fbp: storedFbp } : {}),
+      ...(name === 'localStorage' && boundedPrior.length ? { priorClicks: boundedPrior } : {})
     })
     if (storage.getItem(key) !== value) storage.setItem(key, value)
   } catch {
