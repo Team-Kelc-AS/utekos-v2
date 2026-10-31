@@ -265,6 +265,13 @@ async function scenario(browser, kind) {
         }
         secondIdentifiers = await clickPage.evaluate(scenarioKind => {
           const timestamp = Date.now() + 1000;
+          if (scenarioKind === 'async-queue-cookie-deleted') {
+            document.cookie = '_fbc=; Path=/; Max-Age=0';
+            document.cookie = '_fbp=; Path=/; Max-Age=0';
+            document.cookie = '_fbc=; Domain=.utekos.no; Path=/; Max-Age=0';
+            document.cookie = '_fbp=; Domain=.utekos.no; Path=/; Max-Age=0';
+            return null;
+          }
           if (scenarioKind === 'async-queue-navigation') {
             history.pushState({}, '', '/produkter/test-product?fbclid=SyntheticClickB');
           }
@@ -282,7 +289,13 @@ async function scenario(browser, kind) {
           }
           return { fbc, fbp };
         }, kind);
-        await page.waitForFunction(() => document.cookie.includes('SyntheticClickB'));
+        if (kind === 'async-queue-cookie-deleted') {
+          const cookies = await page.evaluate(() => document.cookie);
+          assert.equal(cookies.includes('_fbc='), false);
+          assert.equal(cookies.includes('_fbp='), false);
+        } else {
+          await page.waitForFunction(() => document.cookie.includes('SyntheticClickB'));
+        }
         if (kind === 'async-queue-domain-other-tab') {
           const cookies = await page.evaluate(() => document.cookie);
           assert.equal(cookies.includes('SyntheticClickA'), false);
@@ -442,6 +455,7 @@ async function main() {
       'async-queue',
       'async-queue-other-tab',
       'async-queue-domain-other-tab',
+      'async-queue-cookie-deleted',
       'async-queue-navigation',
       'async-queue-dual-click',
       'async-queue-dual-click-other-tab',
@@ -456,6 +470,7 @@ async function main() {
       'missing-fbp-then-new-click',
       'async-queue-other-tab',
       'async-queue-domain-other-tab',
+      'async-queue-cookie-deleted',
       'async-queue-navigation',
       'async-queue-dual-click',
       'async-queue-dual-click-other-tab',
