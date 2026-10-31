@@ -1,7 +1,7 @@
 import "server-only";
 
 import frontPageImage from "../../../../public/images/products/comfyrobe/tre-marine-comfyrobe-hero.webp";
-import comfyrobeMobileImage from "../../../../public/corporate/brand/img/Comfyrobe_Mobile_Hero.webp";
+import comfyrobeMobileImage from "../../../../public/images/products/comfyrobe/comfyrobe_mobile_hero.webp";
 import comfyrobePortraitImage from "../../../../public/corporate/brand/img/Comfyrobe1534x2000.webp";
 import { getImageProps } from "next/image";
 import { googleSansFlex } from "@/lib/fonts";

@@ -14,6 +14,7 @@ import { googleSansFlex } from "@/lib/fonts";
 import { homeProducts } from "@/lib/catalog/homeProducts";
 import { productVariantVideo } from "@/lib/products/variantVideos";
 import stapperImage from "@public/images/kunnskap/stapper_45.webp";
+import techdownLitenImage from "@public/images/products/techdown_liten_in_hammock_915x1188.webp";
 import styles from "@/components/ProductCard/ProductCarousel.module.css";
 
 const sectionClassName = `${googleSansFlex.variable} ${styles.section} font-sans`;
@@ -62,7 +63,24 @@ export async function StockedProducts({
               },
             },
           }
-        : card,
+        : route === "/" &&
+            card.product.handle === "utekos-techdown" &&
+            card.variant.selectedOptions.some(
+              (option) => ["Størrelse", "Size", "Str"].includes(option.name) && option.value === "Liten",
+            )
+          ? {
+              ...card,
+              variant: {
+                ...card.variant,
+                image: {
+                  url: techdownLitenImage.src,
+                  width: techdownLitenImage.width,
+                  height: techdownLitenImage.height,
+                  altText: "To personer i mørkeblå Utekos TechDown™ i en hengekøye i skogen.",
+                },
+              },
+            }
+          : card,
     );
   } catch (error) {
     unstable_rethrow(error);

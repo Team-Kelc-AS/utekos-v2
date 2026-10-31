@@ -219,7 +219,7 @@ test('Comfyrobe uses separate native 4:5 desktop and 3:4 mobile galleries', () =
   assert.equal(gallery.desktop.length, 13);
   assert.equal(gallery.desktop[0].url, '/images/products/comfyrobe/comfy-1440x1800.webp');
   const fs = require('node:fs');
-  const nonGalleryFiles = ['comfy-xs.webp', 'comfy-xl.webp', 'comfyrobe-herre-smiler-lurt-hender-i-lommen.webp'];
+  const nonGalleryFiles = ['comfy-xs.webp', 'comfy-xl.webp', 'comfyrobe-herre-smiler-lurt-hender-i-lommen.webp', 'Comfyrobe.webp', 'tre-marine-comfyrobe-hero.webp', 'comfyrobe_mobile_hero.webp'];
   const files = fs.readdirSync('public/images/products/comfyrobe').filter(file => file.endsWith('.webp') && !file.includes('1440x1800') && !file.includes('-card-') && !nonGalleryFiles.includes(file));
   assert.equal(gallery.mobile.length, 18);
   assert.deepEqual(
@@ -227,7 +227,7 @@ test('Comfyrobe uses separate native 4:5 desktop and 3:4 mobile galleries', () =
     files.map(file => `/images/products/comfyrobe/${file}`.normalize('NFC')).sort()
   );
   assert.deepEqual(Array.from(gallery.mobile.slice(0, 6), image => image.url), [
-    '/images/products/comfyrobe/Comfyrobe.webp',
+    '/images/products/comfyrobe/comfyrobe_mobile_2.webp',
     '/images/products/comfyrobe/1.webp',
     '/images/products/comfyrobe/2.webp',
     '/images/products/comfyrobe/comfyrobe-avslappet-herre-staende-hender-i-lomme.webp',
