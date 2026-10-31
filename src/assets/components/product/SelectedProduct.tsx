@@ -25,7 +25,8 @@ import { OsCaravanSizeGuideDialog } from "@/components/size-guide/os-caravan/OsC
 import { getProductSizeGuideDialogContent } from "@/lib/products/getProductSizeGuideContent";
 import { AddToCart } from "@/components/commerce/AddToCart";
 import { ComfyrobeBuyNowButton } from "@/components/commerce/ComfyrobeBuyNowButton";
-import { KlarnaIdentityOffer } from "@/components/klarna/KlarnaIdentityOffer";
+import { KlarnaProductPreferences } from "@/components/klarna/KlarnaPreferencesAccess";
+import { KlarnaConnectedProductExpress } from "@/components/klarna/KlarnaConnectedExpress";
 import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { CheckMarkIcon } from "@/components/utekos-icons/CheckMarkIcon";
 import { DiscountCodeReveal } from "./DiscountCodeReveal";
@@ -206,7 +207,7 @@ export async function SelectedProduct({
                 showKlarnaModal={process.env.KLARNA_IDENTITY_ENABLED === 'true'}
               />
             )}
-            {variant.availableForSale && <KlarnaIdentityOffer />}
+            {variant.availableForSale && (isComfyrobe || variant.currentlyNotInStock === false) && <KlarnaConnectedProductExpress handle={product.handle} variantId={variant.id} />}
           </div>
           <ul className={styles.trust}>
             {isComfyrobe ? (
@@ -235,6 +236,7 @@ export async function SelectedProduct({
               />
             </div>
           )}
+          {process.env.KLARNA_IDENTITY_ENABLED === 'true' && <KlarnaProductPreferences />}
           {!isComfyrobe && (
             <div className={styles.reviewSummary}>
               <Suspense fallback={null}>

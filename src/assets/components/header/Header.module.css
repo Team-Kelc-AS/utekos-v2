@@ -162,7 +162,8 @@
   flex-shrink: 0;
 }
 .control:hover {
-  background: #012622;
+  background-color: var(--product-page-elevated, #012622);
+  background-image: var(--product-page-gradient, none);
 }
 .logo:focus-visible,
 .link:focus-visible,
