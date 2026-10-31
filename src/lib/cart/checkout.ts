@@ -11,6 +11,8 @@ import {
 } from "@/lib/analytics/checkoutAttributionSnapshot";
 import { checkoutProductContextToShopifyAttributes } from "@/lib/analytics/checkoutProductContext";
 import { resolveTrackingAuthorization } from "@/lib/consent/resolveTrackingAuthorization";
+import { extractBrowserIds } from "@/lib/analytics/pageViewClientContext";
+import { extractFbclidFromFbc } from "@/lib/analytics/extractFbclidFromFbc";
 import type { CampaignAttribution } from "@/lib/analytics/campaignAttribution";
 import { shopifyFetch } from "@/lib/shopify/client";
 import type { Cart } from "./types";
@@ -91,8 +93,17 @@ export function checkoutAttributes(
   facebookLoginId?: string,
   campaign?: CampaignAttribution,
   flow?: "comfyrobe_buy_now",
+  cookieHeader = "",
 ) {
   const consent = resolveTrackingAuthorization();
+  const requestBrowserIds = !event && consent.marketing === "granted"
+    ? extractBrowserIds(cookieHeader, consent)
+    : undefined;
+  const fallbackBrowserId = {
+    ...(requestBrowserIds?.fbc ? { fbc: requestBrowserIds.fbc } : {}),
+    ...(requestBrowserIds?.fbp ? { fbp: requestBrowserIds.fbp } : {}),
+  };
+  const fallbackFbclid = extractFbclidFromFbc(requestBrowserIds?.fbc);
   // Facebook's app-scoped ID is accepted only from the verified, encrypted v2
   // session. Client payloads cannot assert that identity on an order.
   const userData = { ...event?.user_data };
@@ -100,6 +111,12 @@ export function checkoutAttributes(
   const snapshot = createCheckoutAttributionSnapshot(
     {
       ...event,
+      ...(!event && Object.keys(fallbackBrowserId).length
+        ? { browser_id: fallbackBrowserId }
+        : {}),
+      ...(!event && fallbackFbclid
+        ? { click_id: { fbclid: fallbackFbclid } }
+        : {}),
       consent,
       ...(campaign && event ? { campaign } : {}),
       user_data: {
@@ -109,11 +126,30 @@ export function checkoutAttributes(
     },
     event?.event_time,
   );
+  const attributionAttributes = checkoutAttributionSnapshotToShopifyAttributes(
+    snapshot,
+    event?.event_id,
+  );
+  const hasAttributionAttribute = (key: string) =>
+    attributionAttributes.some(attribute => attribute.key === key);
+  // Shopify retains omitted cart keys. A retained fbc may be the last valid
+  // click, but an unrelated raw fbclid must not survive beside it.
+  if (!hasAttributionAttribute('fbclid')) {
+    attributionAttributes.push({ key: 'fbclid', value: '' });
+  }
+  if (
+    consent.marketing !== 'granted' ||
+    (snapshot.click_id?.fbclid && !snapshot.browser_id?.fbc)
+  ) {
+    if (!hasAttributionAttribute('_fbc')) {
+      attributionAttributes.push({ key: '_fbc', value: '' });
+    }
+  }
+  if (consent.marketing !== 'granted' && !hasAttributionAttribute('_fbp')) {
+    attributionAttributes.push({ key: '_fbp', value: '' });
+  }
   return [
-    ...checkoutAttributionSnapshotToShopifyAttributes(
-      snapshot,
-      event?.event_id,
-    ),
+    ...attributionAttributes,
     // Shopify preserves omitted cart keys. Explicitly remove prior identity or
     // checkout correlation when this preparation has no verified replacement.
     ...(!facebookLoginId
@@ -136,8 +172,9 @@ export async function persistCheckoutAttributes(
   buyerIp?: string,
   campaign?: CampaignAttribution,
   flow?: "comfyrobe_buy_now",
+  cookieHeader = "",
 ) {
-  const attributes = checkoutAttributes(cart, event, facebookLoginId, campaign, flow);
+  const attributes = checkoutAttributes(cart, event, facebookLoginId, campaign, flow, cookieHeader);
   const result = await shopifyFetch<
     {
       cartAttributesUpdate: {
