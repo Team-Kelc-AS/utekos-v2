@@ -64,6 +64,7 @@ test('accepted Dun reservation projects one rich unvalued Pixel Lead with the se
     const event = UtekosTrackingHarness.createCanonicalGenerateLead({
       eventId: crypto.randomUUID(), eventTime: '2026-10-10T10:00:00.000Z', environment: 'production',
       consent: pageEvent.consent, pageUrl: location.href, pageViewId: pageEvent.page_view_id,
+      browserId: pageEvent.browser_id,
       customData: { submission_id: 'accepted-reservation', form_id: 'product_reservation_utekos_dun', lead_type: 'product_reservation',
         product_handle: 'utekos-dun', product_id: 'gid://shopify/Product/1', variant_id: 'gid://shopify/ProductVariant/67610887160056', color: 'Vargnatt', size: 'Small' },
     });
@@ -462,6 +463,43 @@ test('a live old _fbc cookie survives PageView and commerce without becoming a d
   assert.equal(later.click_id?.fbclid, undefined);
 });
 
+test('Pixel sends a held event when its exact missing click cookie returns', async t => {
+  const timestamp = Date.now() - 5000;
+  const fbc = `fb.1.${timestamp}.RestoredClick`;
+  const fbp = `fb.1.${timestamp}.RestoredBrowser`;
+  const api = await fixture(t, undefined, { metaCookie: fbc, metaFbpCookie: fbp });
+  await api.waitFor('page_view');
+  const eventId = 'held-cookie-restoration';
+  const missing = await api.page.evaluate(id => {
+    const original = dataLayer.find(entry => entry?.event === 'page_view');
+    document.cookie = '_fbc=; Domain=.utekos.no; Path=/; Max-Age=0';
+    dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+      detail: {
+        ...original,
+        event_id: id,
+        canonical_event: { ...original.canonical_event, event_id: id },
+      },
+    }));
+    return document.cookie;
+  }, eventId);
+  assert.ok(!missing.includes('_fbc='));
+  await api.page.waitForTimeout(350);
+  const before = await api.page.evaluate(id => ({
+    sent: __utekosMetaPixelState.sent[`PageView:${id}`],
+    pixel: __pixelIdentity.some(entry => entry.id === id),
+  }), eventId);
+  assert.equal(before.sent, undefined);
+  assert.equal(before.pixel, false);
+
+  await api.page.evaluate(value => {
+    document.cookie = `_fbc=${value}; Domain=.utekos.no; Path=/`;
+  }, fbc);
+  await api.page.waitForFunction(id => __pixelIdentity.some(entry => entry.id === id), eventId);
+  const pixel = await api.page.evaluate(id => __pixelIdentity.find(entry => entry.id === id), eventId);
+  assert.ok(pixel.cookie.includes(`_fbc=${fbc}`));
+  assert.ok(pixel.cookie.includes(`_fbp=${fbp}`));
+});
+
 test('Pixel keeps an old click out of the SDK queue when a new click arrives', async t => {
   const first = Date.now() - 10000;
   const fbc = `fb.1.${first}.FirstClick`;
@@ -566,6 +604,78 @@ test('Pixel does not release a queued event after marketing withdrawal', async t
   }), event.event_id);
   assert.deepEqual(state.calls, []);
   assert.equal(state.queued, false);
+});
+
+test('Pixel cancels a queued event when a canonical event withdraws marketing consent', async t => {
+  const timestamp = Date.now() - 10000;
+  const api = await fixture(t, undefined, {
+    metaCookie: `fb.1.${timestamp}.ConsentClick`,
+    metaFbpCookie: `fb.1.${timestamp}.ConsentBrowser`,
+    pixelConfigLockMs: 1400,
+  });
+  await api.waitFor('page_view');
+  const event = api.events('page_view')[0];
+  assert.equal(await api.page.evaluate(() => fbq.instance.locks.isLocked()), true);
+  await api.page.evaluate(() => {
+    const entry = dataLayer.find(item => item?.event === 'page_view');
+    const deniedId = crypto.randomUUID();
+    window.dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+      detail: {
+        ...entry,
+        event_id: deniedId,
+        canonical_event: {
+          ...entry.canonical_event,
+          event_id: deniedId,
+          consent: { ...entry.canonical_event.consent, marketing: 'denied' },
+        },
+      },
+    }));
+  });
+  await api.page.waitForTimeout(1700);
+  const state = await api.page.evaluate(id => ({
+    calls: __pixelIdentity.filter(call => call.id === id),
+    dispatch: __utekosMetaPixelState.dispatches[`PageView:${id}`],
+  }), event.event_id);
+  assert.deepEqual(state.calls, []);
+  assert.equal(state.dispatch?.skipped, 'marketing_consent_withdrawn');
+});
+
+test('Pixel cancels a missing-cookie wait when marketing consent is withdrawn', async t => {
+  const timestamp = Date.now() - 5000;
+  const fbc = `fb.1.${timestamp}.ConsentCookieClick`;
+  const fbp = `fb.1.${timestamp}.ConsentCookieBrowser`;
+  const api = await fixture(t, undefined, { metaCookie: fbc, metaFbpCookie: fbp });
+  await api.waitFor('page_view');
+  const eventId = 'held-consent-cookie';
+  await api.page.evaluate(id => {
+    const original = dataLayer.find(entry => entry?.event === 'page_view');
+    document.cookie = '_fbc=; Domain=.utekos.no; Path=/; Max-Age=0';
+    const held = {
+      ...original,
+      event_id: id,
+      canonical_event: { ...original.canonical_event, event_id: id },
+    };
+    window.dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', { detail: held }));
+    window.dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+      detail: {
+        ...held,
+        canonical_event: {
+          ...held.canonical_event,
+          consent: { ...held.canonical_event.consent, marketing: 'denied' },
+        },
+      },
+    }));
+  }, eventId);
+  await api.page.evaluate(value => {
+    document.cookie = `_fbc=${value}; Domain=.utekos.no; Path=/`;
+  }, fbc);
+  await api.page.waitForTimeout(450);
+  const state = await api.page.evaluate(id => ({
+    calls: __pixelIdentity.filter(call => call.id === id),
+    dispatch: __utekosMetaPixelState.dispatches[`PageView:${id}`],
+  }), eventId);
+  assert.deepEqual(state.calls, []);
+  assert.equal(state.dispatch?.skipped, 'marketing_consent_withdrawn');
 });
 
 for (const safariMode of [false, true]) {
@@ -1592,6 +1702,7 @@ for (const pathname of ['/bli-forhandler', '/bli-forhandler/pdf']) {
       const event = UtekosTrackingHarness.createCanonicalGenerateLead({
         eventId: crypto.randomUUID(), eventTime: '2026-10-08T10:00:00.000Z', environment: 'production',
         consent: pageEvent.consent, pageUrl: location.href, pageViewId: pageEvent.page_view_id,
+        browserId: pageEvent.browser_id,
         customData: { submission_id: 'dealer-provider-receipt', form_id: 'dealer_inquiry', lead_type: 'dealer_inquiry' },
       });
       const entry = UtekosTrackingHarness.buildGenerateLeadDataLayerEvent(event);
