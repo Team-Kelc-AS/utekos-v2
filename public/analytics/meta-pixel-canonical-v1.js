@@ -313,17 +313,18 @@
     var currentClick = clickFromFbc(ids.fbc)
     if (!currentClick) return false
     var priorClicks = Array.isArray(stored.priorClicks) ? stored.priorClicks : []
+    var now = Date.now()
     if (!liveFbcs.every(function (value) {
       var liveClick = clickFromFbc(value)
       return liveClick && (liveClick === currentClick ||
         priorClicks.some(function (prior) {
           return prior && prior.fbclid === liveClick &&
-            typeof prior.observedAt === 'number' &&
-            Date.now() - prior.observedAt <= META_COOKIE_MAX_AGE_MS
+            Number.isSafeInteger(prior.observedAt) &&
+            prior.observedAt <= now &&
+            now - prior.observedAt <= META_COOKIE_MAX_AGE_MS
         }))
     })) return false
 
-    var now = Date.now()
     var domain = w.location.hostname === 'utekos.no' ||
       /\.utekos\.no$/.test(w.location.hostname) ? '; Domain=.utekos.no' : ''
     var secure = w.location.protocol === 'https:' ? '; Secure' : ''
@@ -334,8 +335,12 @@
     var maxAge = Math.floor((createdAt + META_COOKIE_MAX_AGE_MS - now) / 1000)
     var cookie = '_fbc=' + encodeURIComponent(ids.fbc) +
       '; Path=/; Max-Age=' + maxAge + '; SameSite=Lax' + secure
-    d.cookie = cookie + domain
-    if (domain && !cookieMatchesIdentity('_fbc', ids.fbc)) d.cookie = cookie
+    try {
+      d.cookie = cookie + domain
+      if (domain && !cookieMatchesIdentity('_fbc', ids.fbc)) d.cookie = cookie
+    } catch {
+      return false
+    }
     return !hasDifferentLiveMetaIdentity(ids)
   }
 
