@@ -32,6 +32,7 @@ async function scenario(browser, kind) {
   const openBridgeRequests = [];
   const blocked = [];
   let configRequested = false;
+  let openBridgeEnabled = false;
   let releaseConfig;
   const configGate = new Promise(resolve => { releaseConfig = resolve; });
 
@@ -55,6 +56,9 @@ async function scenario(browser, kind) {
         const response = await route.fetch();
         assert.equal(response.status(), 200, 'live Pixel config fetch');
         const original = await response.text();
+        openBridgeEnabled = original.includes(
+          `instance.optIn("${pixelId}", "OpenBridge", true);`,
+        );
         // Headless Chromium is blocked by Meta's BotBlocking rule. Remove only
         // that opt-in in this intercepted test copy to reach the transport.
         const botOptIn = `instance.optIn("${pixelId}", "BotBlocking", true);`;
@@ -123,6 +127,7 @@ async function scenario(browser, kind) {
       }];
       return { fbc, fbp };
     }, kind);
+    let secondIdentifiers;
 
     if (kind === 'duplicate-aligned') {
       const values = await page.evaluate(() =>
@@ -251,27 +256,70 @@ async function scenario(browser, kind) {
       } else {
         const clickPage =
           kind === 'async-queue-other-tab' ||
-          kind === 'async-queue-domain-other-tab'
+          kind === 'async-queue-domain-other-tab' ||
+          kind === 'async-queue-dual-click-other-tab'
           ? await context.newPage()
           : page;
         if (clickPage !== page) {
           await clickPage.goto('https://utekos.no/__pixel_sdk_probe__');
         }
-        await clickPage.evaluate(scenarioKind => {
+        secondIdentifiers = await clickPage.evaluate(scenarioKind => {
           const timestamp = Date.now() + 1000;
           if (scenarioKind === 'async-queue-navigation') {
             history.pushState({}, '', '/produkter/test-product?fbclid=SyntheticClickB');
           }
-          const domain = scenarioKind === 'async-queue-domain-other-tab'
+          const domain = scenarioKind === 'async-queue-domain-other-tab' ||
+            scenarioKind === 'async-queue-dual-click-other-tab'
             ? '; Domain=.utekos.no'
             : '';
-          document.cookie = `_fbc=fb.1.${timestamp}.SyntheticClickB; Path=/${domain}`;
-          document.cookie = `_fbp=fb.1.${timestamp}.SyntheticBrowserB; Path=/${domain}`;
+          const fbc = `fb.1.${timestamp}.SyntheticClickB`;
+          const fbp = `fb.1.${timestamp}.SyntheticBrowserB`;
+          document.cookie = `_fbc=${fbc}; Path=/${domain}`;
+          document.cookie = `_fbp=${fbp}; Path=/${domain}`;
+          if (scenarioKind === 'async-queue-dual-click') {
+            document.cookie = `_fbc=${fbc}; Domain=.utekos.no; Path=/`;
+            document.cookie = `_fbp=${fbp}; Domain=.utekos.no; Path=/`;
+          }
+          return { fbc, fbp };
         }, kind);
         await page.waitForFunction(() => document.cookie.includes('SyntheticClickB'));
         if (kind === 'async-queue-domain-other-tab') {
           const cookies = await page.evaluate(() => document.cookie);
           assert.equal(cookies.includes('SyntheticClickA'), false);
+        }
+        if (kind.startsWith('async-queue-dual-click')) {
+          await page.evaluate(({ fbc, fbp }) => {
+            const entry = {
+              event: 'page_view',
+              event_id: 'sdk-probe-B',
+              canonical_event: {
+                event_id: 'sdk-probe-B',
+                event_name: 'page_view',
+                event_time: new Date().toISOString(),
+                browser_id: { fbc, fbp },
+                consent: { marketing: 'granted' },
+                custom_data: {},
+              },
+            };
+            window.dispatchEvent(new CustomEvent('utekos:meta-canonical-browser-event', {
+              detail: entry,
+            }));
+          }, secondIdentifiers);
+          await delay(350);
+          const queuedState = await page.evaluate(() => ({
+            queueLength: fbq.instance.eventQueue.length,
+            secondDispatch: __utekosMetaPixelState.dispatches['PageView:sdk-probe-B'],
+            secondSent: __utekosMetaPixelState.sent['PageView:sdk-probe-B'],
+            cookie: document.cookie,
+            sdkLocked: fbq.instance.locks.isLocked(),
+          }));
+          if (kind === 'async-queue-dual-click-other-tab') {
+            assert.equal(queuedState.secondDispatch?.skipped,
+              'different_live_meta_identity', JSON.stringify(queuedState));
+          } else {
+            assert.ok(queuedState.secondDispatch && !queuedState.secondDispatch.skipped,
+              JSON.stringify(queuedState));
+          }
         }
         await page.evaluate(() => window.__releaseAsyncProbe('ready'));
       }
@@ -320,16 +368,52 @@ async function scenario(browser, kind) {
       assert.equal(requests[0].event, 'PageView');
       assert.equal(requests[0].fbc, identifiers.fbc);
       assert.equal(requests[0].fbp, identifiers.fbp);
-      await until(
-        () => openBridgeRequests.some(request => request.eventId === 'sdk-probe-A'),
-        `${kind} OpenBridge request`,
-      );
+      if (openBridgeEnabled) {
+        await until(
+          () => openBridgeRequests.some(request => request.eventId === 'sdk-probe-A'),
+          `${kind} OpenBridge request`,
+        );
+      } else {
+        await delay(350);
+      }
       const mirrored = openBridgeRequests.filter(request => request.eventId === 'sdk-probe-A');
+      assert.equal(mirrored.length > 0, openBridgeEnabled,
+        `${kind} OpenBridge transport must match live Meta config`);
       assert.ok(mirrored.every(request =>
         request.event === 'PageView' &&
         request.fbc === identifiers.fbc &&
         request.fbp === identifiers.fbp),
       `${kind} OpenBridge identity must match the original event`);
+      if (kind === 'async-queue-dual-click-other-tab') {
+        assert.equal(pixelRequests.filter(request => request.eventId === 'sdk-probe-B').length, 0);
+        assert.equal(openBridgeRequests.filter(request => request.eventId === 'sdk-probe-B').length, 0);
+      } else if (kind === 'async-queue-dual-click') {
+        await until(
+          () => pixelRequests.some(request => request.eventId === 'sdk-probe-B'),
+          `${kind} second Pixel request`,
+        );
+        const second = pixelRequests.filter(request => request.eventId === 'sdk-probe-B');
+        assert.equal(second.length, 1);
+        assert.equal(second[0].event, 'PageView');
+        assert.equal(second[0].fbc, secondIdentifiers.fbc);
+        assert.equal(second[0].fbp, secondIdentifiers.fbp);
+        if (openBridgeEnabled) {
+          await until(
+            () => openBridgeRequests.some(request => request.eventId === 'sdk-probe-B'),
+            `${kind} second OpenBridge request`,
+          );
+        } else {
+          await delay(350);
+        }
+        const secondMirrored = openBridgeRequests.filter(request => request.eventId === 'sdk-probe-B');
+        assert.equal(secondMirrored.length > 0, openBridgeEnabled,
+          `${kind} second OpenBridge transport must match live Meta config`);
+        assert.ok(secondMirrored.every(request =>
+          request.event === 'PageView' &&
+          request.fbc === secondIdentifiers.fbc &&
+          request.fbp === secondIdentifiers.fbp),
+        `${kind} second OpenBridge identity must match the second event`);
+      }
     }
 
     assert.deepEqual(errors, [], 'no uncaught browser errors');
@@ -359,6 +443,8 @@ async function main() {
       'async-queue-other-tab',
       'async-queue-domain-other-tab',
       'async-queue-navigation',
+      'async-queue-dual-click',
+      'async-queue-dual-click-other-tab',
       'async-queue-consent-change',
       'consent-withdrawn-before-sdk-ready',
     ]],
@@ -371,6 +457,8 @@ async function main() {
       'async-queue-other-tab',
       'async-queue-domain-other-tab',
       'async-queue-navigation',
+      'async-queue-dual-click',
+      'async-queue-dual-click-other-tab',
       'async-queue-consent-change',
       'consent-withdrawn-before-sdk-ready',
     ]],
