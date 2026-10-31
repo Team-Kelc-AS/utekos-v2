@@ -5,6 +5,7 @@ import type { Route } from "next";
 import type { ReactNode } from "react";
 import { googleSansFlex } from "@/lib/fonts";
 import Newsletter from "./footer/Newsletter";
+import { KlarnaSavedPreferencesLink } from "@/components/klarna/KlarnaPreferencesAccess";
 import PaymentMethods from "./footer/PaymentMethods";
 import styles from "./Footer.module.css";
 
@@ -30,6 +31,7 @@ const sections: readonly FooterSection[] = [
       { label: "Vask og vedlikehold", href: "/handlehjelp/vask-og-vedlikehold" },
       { label: "Størrelsesguide", href: "/handlehjelp/storrelsesguide" },
       { label: "Uteguiden", href: "/uteguiden" },
+      { label: "Mine preferanser og samtykker", href: "/handlehjelp/preferanser" },
     ],
   },
   {
@@ -94,6 +96,7 @@ export default function Footer() {
               <h2 id={id} className={styles.heading}>{title}</h2>
               <ul className={styles.links}>
                 <FooterLinks links={links} />
+                {id === "footer-kundeservice" && <KlarnaSavedPreferencesLink className={styles.link} />}
               </ul>
             </nav>
           ))}

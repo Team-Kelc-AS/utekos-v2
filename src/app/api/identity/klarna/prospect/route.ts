@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { preferenceWriteSchema } from '@/lib/klarna/preferences';
 import { CART_COOKIE, cartView, readCart } from '@/lib/cart/server';
 import { buyerIp, privateHeaders, sameOrigin } from '@/lib/cart/request';
 import { KLARNA_IDENTITY_SESSION_COOKIE, readKlarnaSession } from '@/lib/klarna/identity';
@@ -9,13 +10,7 @@ import { forwardKlarnaProspect, prospectCartSnapshot } from '@/lib/klarna/prospe
 const inputSchema = z.discriminatedUnion('action', [
   z.strictObject({ action: z.literal('state') }),
   z.strictObject({ action: z.literal('cart') }),
-  z.strictObject({
-    action: z.literal('save'),
-    emailMarketing: z.boolean(), cartReminders: z.boolean(), adMatching: z.boolean(),
-    comfyrobeSize: z.enum(['XS', 'XL']).nullable(),
-    favoriteColor: z.enum(['Vargnatt', 'Fjellblå', 'Havdyp', 'Fjellnatt']).nullable(),
-    interests: z.array(z.enum(['camping-og-bobil', 'hytte', 'terrasse', 'glamping', 'annet'])).max(5),
-  }),
+  preferenceWriteSchema.extend({ action: z.literal('save') }),
 ]);
 
 export async function POST(request: NextRequest) {

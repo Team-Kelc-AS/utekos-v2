@@ -76,11 +76,14 @@
   w.__utekosMetaPixelState = state
 
   var pendingFbcEvents = {}
+  var pendingIdentityStartedAt = {}
   var pendingSdkEvents = {}
   var pendingSdkStartedAt = {}
   var observedEventIdentity = {}
   var MAX_PENDING_SDK_EVENTS = 128
   var MAX_PENDING_SDK_WAIT_MS = 10000
+  var META_IDENTIFIER_LOCAL_KEY = 'utekos_meta_identifiers_v2'
+  var META_COOKIE_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000
   var fbcWaitStartedAt = null
   var fbcPagehideListening = false
 
@@ -146,6 +149,7 @@
     if (!entry) return
     delete pendingSdkEvents[key]
     delete pendingSdkStartedAt[key]
+    delete pendingIdentityStartedAt[key]
     delete observedEventIdentity[key]
     state.dispatches[key] = {
       eventId: entry.event_id,
@@ -154,6 +158,33 @@
     }
     state.sent[key] = true
     reportPixelSkip(reason)
+  }
+
+  function cancelPendingMarketingEvents() {
+    var keys = Object.keys(pendingFbcEvents).concat(
+      Object.keys(pendingSdkEvents)
+    )
+    var cancelled = false
+
+    keys.forEach(function (key) {
+      var entry = pendingFbcEvents[key] || pendingSdkEvents[key]
+      if (!entry || state.sent[key]) return
+
+      delete pendingFbcEvents[key]
+      delete pendingIdentityStartedAt[key]
+      delete pendingSdkEvents[key]
+      delete pendingSdkStartedAt[key]
+      delete observedEventIdentity[key]
+      state.dispatches[key] = {
+        eventId: entry.event_id,
+        eventName: metaEventNameForEntry(entry),
+        skipped: 'marketing_consent_withdrawn'
+      }
+      state.sent[key] = true
+      cancelled = true
+    })
+
+    if (cancelled) reportPixelSkip('marketing_consent_withdrawn')
   }
 
   function shouldWaitForFbc() {
@@ -221,6 +252,39 @@
     return values.every(function (value) { return value === expected })
   }
 
+  function shouldWaitForMissingIdentity(key, ids) {
+    var fbcValues = cookieValues('_fbc')
+    var fbpValues = cookieValues('_fbp')
+    var missing =
+      (ids.fbc !== null && fbcValues.length === 0) ||
+      (ids.fbp !== null && fbpValues.length === 0)
+    var conflicting =
+      (ids.fbc === null ? fbcValues.length > 0 :
+        fbcValues.some(function (value) { return value !== ids.fbc })) ||
+      (ids.fbp === null ? fbpValues.length > 0 :
+        fbpValues.some(function (value) { return value !== ids.fbp }))
+
+    if (!missing || conflicting) {
+      delete pendingIdentityStartedAt[key]
+      return false
+    }
+    if (!pendingIdentityStartedAt[key]) pendingIdentityStartedAt[key] = Date.now()
+    if (Date.now() - pendingIdentityStartedAt[key] < 3000) return true
+    delete pendingIdentityStartedAt[key]
+    return false
+  }
+
+  function queuePendingFbcEvent(key, entry) {
+    pendingFbcEvents[key] = entry
+    if (fbcPagehideListening) return
+    fbcPagehideListening = true
+    w.addEventListener('pagehide', function () {
+      Object.keys(pendingFbcEvents).forEach(function (pendingKey) {
+        dispatch(pendingFbcEvents[pendingKey], true)
+      })
+    })
+  }
+
   function hasDifferentLiveMetaIdentity(ids) {
     // The Pixel transport reads live cookies, not browser_id on this event.
     // Duplicate cookie names can have different Domain/Path scopes; SDK
@@ -229,6 +293,65 @@
       !cookieMatchesIdentity('_fbc', ids.fbc) ||
       !cookieMatchesIdentity('_fbp', ids.fbp)
     )
+  }
+
+  function restoreLatestCanonicalMetaIdentity(ids) {
+    if (!ids.fbc || !ids.fbp) return false
+    var stored
+    try {
+      stored = JSON.parse(w.localStorage.getItem(META_IDENTIFIER_LOCAL_KEY))
+    } catch {
+      return false
+    }
+    // Only the current first-party click may repair a cookie overwritten by
+    // another tab's delayed Meta SDK. Older events must stay on CAPI alone.
+    if (!stored || stored.fbc !== ids.fbc || stored.fbp !== ids.fbp ||
+        !cookieMatchesIdentity('_fbp', ids.fbp)) return false
+
+    var liveFbcs = cookieValues('_fbc')
+    if (!liveFbcs.length) return false
+    var currentClick = clickFromFbc(ids.fbc)
+    if (!currentClick) return false
+    var priorClicks = Array.isArray(stored.priorClicks) ? stored.priorClicks : []
+    var now = Date.now()
+    if (!liveFbcs.every(function (value) {
+      var liveClick = clickFromFbc(value)
+      return liveClick && (liveClick === currentClick ||
+        priorClicks.some(function (prior) {
+          return prior && prior.fbclid === liveClick &&
+            Number.isSafeInteger(prior.observedAt) &&
+            prior.observedAt <= now &&
+            now - prior.observedAt <= META_COOKIE_MAX_AGE_MS
+        }))
+    })) return false
+
+    var domain = w.location.hostname === 'utekos.no' ||
+      /\.utekos\.no$/.test(w.location.hostname) ? '; Domain=.utekos.no' : ''
+    var secure = w.location.protocol === 'https:' ? '; Secure' : ''
+    var match = /^fb\.\d+\.(\d{13})\.[^;]+$/.exec(ids.fbc)
+    var createdAt = match && Number(match[1])
+    if (!createdAt || createdAt > now + 5 * 60 * 1000 ||
+        now - createdAt >= META_COOKIE_MAX_AGE_MS) return false
+    var maxAge = Math.floor((createdAt + META_COOKIE_MAX_AGE_MS - now) / 1000)
+    var cookie = '_fbc=' + encodeURIComponent(ids.fbc) +
+      '; Path=/; Max-Age=' + maxAge + '; SameSite=Lax' + secure
+    try {
+      d.cookie = cookie + domain
+      if (domain && !cookieMatchesIdentity('_fbc', ids.fbc)) d.cookie = cookie
+    } catch {
+      return false
+    }
+    return !hasDifferentLiveMetaIdentity(ids)
+  }
+
+  function clickFromFbc(value) {
+    if (typeof value !== 'string') return null
+    var parts = value.split('.')
+    if (parts.length < 4 || parts[0] !== 'fb') return null
+    var last = parts[parts.length - 1]
+    var hasAppendix = parts.length >= 5 && /^[A-Za-z0-9_-]{8}$/.test(last)
+    var click = parts.slice(3, hasAppendix ? -1 : undefined).join('.').trim()
+    return click || null
   }
 
   function hasMarketingConsent() {
@@ -594,30 +717,41 @@
     var eventKey
     var data
 
-    if (
-      !canonicalEvent ||
-      !metaEventName ||
-      !canonicalEvent.consent ||
-      canonicalEvent.consent.marketing !== 'granted' ||
-      w.__utekosConsentReloading
-    )
-      return
+    if (!canonicalEvent || !canonicalEvent.consent) return
     if (entry.event_id !== canonicalEvent.event_id) return
     if (entry.event !== canonicalEvent.event_name) return
+    if (canonicalEvent.consent.marketing === 'denied') {
+      cancelPendingMarketingEvents()
+      return
+    }
+    if (!metaEventName ||
+        canonicalEvent.consent.marketing !== 'granted' ||
+        w.__utekosConsentReloading) return
 
     eventKey = metaEventName + ':' + entry.event_id
     if (state.sent[eventKey]) return
 
     if (!observedEventIdentity[eventKey]) {
       var eventIds = canonicalEvent.browser_id
+      // A delayed scan cannot infer an older event's identity from live cookies.
       observedEventIdentity[eventKey] = {
-        fbc: eventIds ? eventIds.fbc || null : readCookie('_fbc') || null,
-        fbp: eventIds ? eventIds.fbp || null : readCookie('_fbp') || null
+        fbc: eventIds ? eventIds.fbc || null : null,
+        fbp: eventIds ? eventIds.fbp || null : null
       }
     }
 
-    if (hasDifferentLiveMetaIdentity(observedEventIdentity[eventKey])) {
+    // A matching first-party cookie can reappear after the canonical event
+    // was captured. Wait briefly, but never cross over to a different click.
+    if (!finishWaiting &&
+        shouldWaitForMissingIdentity(eventKey, observedEventIdentity[eventKey])) {
+      queuePendingFbcEvent(eventKey, entry)
+      return
+    }
+
+    if (hasDifferentLiveMetaIdentity(observedEventIdentity[eventKey]) &&
+        !restoreLatestCanonicalMetaIdentity(observedEventIdentity[eventKey])) {
       delete pendingFbcEvents[eventKey]
+      delete pendingIdentityStartedAt[eventKey]
       delete pendingSdkEvents[eventKey]
       delete pendingSdkStartedAt[eventKey]
       delete observedEventIdentity[eventKey]
@@ -632,19 +766,11 @@
     }
 
     if (!finishWaiting && shouldWaitForFbc()) {
-      pendingFbcEvents[eventKey] = entry
-      if (!fbcPagehideListening) {
-        fbcPagehideListening = true
-        // Release queued events if the visitor leaves before restoration.
-        w.addEventListener('pagehide', function () {
-          Object.keys(pendingFbcEvents).forEach(function (key) {
-            dispatch(pendingFbcEvents[key], true)
-          })
-        })
-      }
+      queuePendingFbcEvent(eventKey, entry)
       return
     }
     delete pendingFbcEvents[eventKey]
+    delete pendingIdentityStartedAt[eventKey]
 
     // Keep events outside the SDK's own queue until its config lock is open.
     // The last cookie check and fbq call then happen in the same JS task.

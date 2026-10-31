@@ -38,6 +38,8 @@ for (const [suffix, variant] of [['xs', '43959919051000'], ['xl', '4395991911653
       const [name, diagnostic] = logs.at(-1);
       assert.equal(name, 'comfy_checkout_redirect');
       assert.equal(diagnostic.fbc_matches_click, true);
+      assert.equal(diagnostic.has_checkout_fbclid, true);
+      assert.equal(diagnostic.checkout_click_pair_matches, true);
       assert.equal(diagnostic.has_ad_id, true);
       assert.equal(diagnostic.has_fbp, true);
       assert.match(diagnostic.click_fingerprint, /^[a-f0-9]{16}$/);
@@ -62,6 +64,75 @@ test('a return visit preserves existing click identity without requiring JS', ()
   }));
   const url = new URL(response.headers.get('location'));
   assert.equal(url.searchParams.get('attributes[_fbc]'), 'fb.1.1792500000000.saved-click');
+  assert.equal(url.searchParams.get('attributes[fbclid]'), 'saved-click');
+});
+
+test('a no-query permalink replaces an older Shopify click attribute with the validated cookie click', () => {
+  const fbc = `fb.1.${Date.now() - 60_000}.NewerClick.AQQCAQMB`;
+  const response = GET(new NextRequest('https://utekos.no/kjop/comfyrobe/xl?attributes[fbclid]=OlderClick', {
+    headers: { cookie: `_fbc=${fbc}` },
+  }));
+  const url = new URL(response.headers.get('location'));
+  assert.equal(url.searchParams.get('attributes[_fbc]'), fbc);
+  assert.equal(url.searchParams.get('attributes[fbclid]'), 'NewerClick');
+  assert.equal(url.searchParams.getAll('attributes[fbclid]').length, 1);
+  assert.equal(url.searchParams.get('fbclid'), null);
+  const [name, diagnostic] = logs.at(-1);
+  assert.equal(name, 'comfy_checkout_redirect');
+  assert.equal(diagnostic.has_fbclid, false);
+  assert.equal(diagnostic.has_checkout_fbclid, true);
+  assert.equal(diagnostic.checkout_click_pair_matches, true);
+});
+
+test('ambiguous Meta cookies do not choose a click for a no-query permalink', () => {
+  const timestamp = Date.now() - 60_000;
+  const response = GET(new NextRequest('https://utekos.no/comfyrobe-xs', {
+    headers: { cookie: `_fbc=fb.1.${timestamp}.FirstClick; _fbc=fb.1.${timestamp + 1}.SecondClick` },
+  }));
+  const url = new URL(response.headers.get('location'));
+  assert.equal(url.searchParams.get('attributes[_fbc]'), null);
+  assert.equal(url.searchParams.get('attributes[fbclid]'), null);
+  assert.equal(url.searchParams.get('fbclid'), null);
+  assert.equal(logs.at(-1)?.[1]?.checkout_click_pair_matches, false);
+});
+
+test('an invalid URL click is not passed to Shopify over an existing cookie click', () => {
+  const fbc = `fb.1.${Date.now() - 60_000}.SavedClick`;
+  const response = GET(new NextRequest('https://utekos.no/comfyrobe-xs?fbclid=%ZZ', {
+    headers: { cookie: `_fbc=${fbc}` },
+  }));
+  const url = new URL(response.headers.get('location'));
+  assert.equal(url.searchParams.get('fbclid'), null);
+  assert.ok(url.searchParams.get('attributes[_fbc]')?.startsWith(fbc));
+  assert.equal(url.searchParams.get('attributes[fbclid]'), 'SavedClick');
+});
+
+test('marketing denial does not pass cookie or URL Meta identity to checkout', () => {
+  const deniedLogs = [];
+  const denied = loadTypeScript('lib/cart/comfyBuyNowRedirect.ts', {
+    globals: { console: { ...console, info: (...args) => deniedLogs.push(args) } },
+    mocks: {
+      'next/server': require('next/server'),
+      'capi-param-builder-nodejs': require('capi-param-builder-nodejs'),
+      '@/lib/consent/resolveTrackingAuthorization': {
+        resolveTrackingAuthorization: () => ({
+          analytics: 'granted', marketing: 'denied', preferences: 'granted',
+          source: 'operator_policy', version: '1',
+        }),
+      },
+    },
+  }).GET;
+  const response = denied(new NextRequest('https://utekos.no/comfyrobe-xs?fbclid=ObservedClick', {
+    headers: { cookie: `_fbc=fb.1.${Date.now() - 60_000}.CookieClick` },
+  }));
+  const url = new URL(response.headers.get('location'));
+  assert.equal(url.searchParams.get('attributes[_fbc]'), null);
+  assert.equal(url.searchParams.get('attributes[fbclid]'), null);
+  assert.equal(url.searchParams.get('fbclid'), null);
+  assert.equal(deniedLogs.at(-1)?.[1]?.has_fbclid, false);
+  assert.equal(deniedLogs.at(-1)?.[1]?.click_fingerprint, undefined);
+  assert.equal(deniedLogs.at(-1)?.[1]?.has_checkout_fbclid, false);
+  assert.equal(deniedLogs.at(-1)?.[1]?.checkout_click_pair_matches, false);
 });
 
 test('the deployed legacy Meta URL tags are recorded as campaign and ad IDs', () => {
