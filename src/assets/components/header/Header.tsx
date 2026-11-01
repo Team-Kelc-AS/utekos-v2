@@ -46,8 +46,8 @@ export default function Header() {
     <>
       <Link href="/produkter/comfyrobe" className={`${googleSansFlex.variable} ${styles.campaign}`}>
         <MoneyIcon size={20} className={styles.campaignMoney} />
-        <span className={styles.campaignDesktop}>Høstens kupp? 50% rabatt på Comfyrobe™. <span className={styles.campaignSaving}>Spar 845,- og få fri frakt</span></span>
-        <span className={styles.campaignMobile}>Høstens kupp? Halv pris på Comfyrobe! Kjøp her</span>
+        <span className={styles.campaignDesktop}>Comfyrobe™ for kjølige dager. <span className={styles.campaignSaving}>Se Comfyrobe™ her</span></span>
+        <span className={styles.campaignMobile}>Comfyrobe™ for kjølige dager. Se her</span>
         <ArrowRightIcon size={20} />
       </Link>
     <header className={`${googleSansFlex.variable} ${styles.header}`}>

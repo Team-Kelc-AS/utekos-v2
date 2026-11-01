@@ -2,14 +2,14 @@ import "server-only";
 
 import frontPageImage from "../../../../public/images/products/comfyrobe/tre-marine-comfyrobe-hero.webp";
 import comfyrobeMobileImage from "../../../../public/images/products/comfyrobe/comfyrobe_mobile_hero.webp";
-import comfyrobePortraitImage from "../../../../public/corporate/brand/img/Comfyrobe1534x2000.webp";
 import { getImageProps } from "next/image";
 import { googleSansFlex } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 
 const tabletMedia = "(min-width: 640px) and (pointer: coarse), (min-width: 640px) and (max-width: 1023px)";
 const desktopMedia = "(min-width: 1024px) and (pointer: fine), (min-width: 1024px) and (pointer: none)";
-const heroAlt = "Comfyrobe™ i Fjellnatt, vist forfra og bakfra. Førpris 1690 kr, nå 845 kr. Gjelder frem til 31. oktober.";
+const heroAlt = "Comfyrobe™ i Fjellnatt, vist forfra og bakfra.";
+const portraitAlt = "Comfyrobe™ i Fjellnatt, vist forfra i et vinterlandskap.";
 
 function HeroImage() {
   const { props } = getImageProps({
@@ -21,15 +21,15 @@ function HeroImage() {
     unoptimized: true,
   });
   const { props: portrait } = getImageProps({
-    src: comfyrobePortraitImage,
-    alt: heroAlt,
+    src: comfyrobeMobileImage,
+    alt: portraitAlt,
     sizes: "100vw",
     loading: "eager",
     fetchPriority: "high",
   });
   const { props: mobile } = getImageProps({
     src: comfyrobeMobileImage,
-    alt: heroAlt,
+    alt: portraitAlt,
     sizes: "100vw",
     loading: "eager",
     fetchPriority: "high",
@@ -43,7 +43,7 @@ function HeroImage() {
       <picture className="block w-full">
         <source media={desktopMedia} srcSet={props.src} width={props.width} height={props.height} />
         <source media={tabletMedia} srcSet={portrait.srcSet} sizes={portrait.sizes} width={portrait.width} height={portrait.height} />
-        <img {...mobile} alt={heroAlt} className="block h-auto w-full" />
+        <img {...mobile} alt={portraitAlt} className="block h-auto w-full" />
       </picture>
     </>
   );

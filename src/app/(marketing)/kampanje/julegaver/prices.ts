@@ -3,12 +3,17 @@ type CampaignPrice = {
   originalPrice: string | null;
 };
 
-// Verified against all Shopify Admin variants on 2026-10-28. Keep UI and JSON-LD aligned.
-export const christmasCampaignPrices = {
+export type ChristmasCampaignProductHandle =
+  | "utekos-techdown"
+  | "utekos-mikrofiber"
+  | "utekos-dun"
+  | "comfyrobe";
+
+// Shopify prices checked on 2026-10-28; Comfyrobe restored per merchant on 2026-11-01.
+// Keep UI and JSON-LD aligned.
+export const christmasCampaignPrices: Record<ChristmasCampaignProductHandle, CampaignPrice> = {
   "utekos-techdown": { price: "1990", originalPrice: null },
   "utekos-mikrofiber": { price: "1790", originalPrice: null },
   "utekos-dun": { price: "2990", originalPrice: null },
-  comfyrobe: { price: "845", originalPrice: "1690" },
-} satisfies Record<string, CampaignPrice>;
-
-export type ChristmasCampaignProductHandle = keyof typeof christmasCampaignPrices;
+  comfyrobe: { price: "1690", originalPrice: null },
+};
