@@ -15,8 +15,8 @@ export default function AboutLayout({ children }: { children: ReactNode }) {
     <>
       <SupportJsonLd page="about" />
       <main className={`${googleSansFlex.variable} ${styles.page}`}>
-        <div className={styles.container}>
-          <div className={styles.breadcrumbs}>
+        <div className={styles.breadcrumbBar}>
+          <div className={`${styles.container} ${styles.breadcrumbs}`}>
             <Breadcrumbs
               items={supportPages.about.breadcrumbs}
             />

@@ -24,6 +24,8 @@ export async function POST(request: NextRequest) {
   const parsed = inputSchema.safeParse(value);
   if (!parsed.success) return NextResponse.json({ error: 'Ugyldige valg.' }, { status: 400, headers: privateHeaders });
   const session = readKlarnaSession(request.cookies.get(KLARNA_IDENTITY_SESSION_COOKIE)?.value);
+  // An anonymous identity lookup is a valid empty read, not a failed login.
+  if (!session && parsed.data.action === 'matching') return NextResponse.json({ matching: null }, { headers: privateHeaders });
   if (!session) return NextResponse.json({ error: 'Logg inn med Klarna først.' }, { status: 401, headers: privateHeaders });
   try {
     const input = parsed.data;
