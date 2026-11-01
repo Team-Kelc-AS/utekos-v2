@@ -11,6 +11,7 @@ import { useEffect, useRef } from "react";
 import { DeleteIcon } from "@/components/utekos-icons/DeleteIcon";
 import Dialog from "./Dialog";
 import CartFooter from "./CartFooter";
+import EmptyCartRecommendations from "./EmptyCartRecommendations";
 import SmartCartSuggestions from "./SmartCartSuggestions";
 import Image from "next/image";
 import Link from "next/link";
@@ -55,15 +56,8 @@ export default function CartDrawer() {
       {!cart ? (
         <p role="status">Laster handlekurven …</p>
       ) : !cart.lines.length ? (
-        <div className={styles.empty}>
-          <p>Handlekurven er tom.</p>
-          <Link
-            href="/produkter"
-            className={styles.primary}
-            onClick={closeCart}
-          >
-            Se produktene
-          </Link>
+        <div className={styles.cartBody}>
+          <EmptyCartRecommendations pending={pending} />
         </div>
       ) : (
         <>

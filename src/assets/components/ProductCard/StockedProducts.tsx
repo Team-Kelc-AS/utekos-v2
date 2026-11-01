@@ -120,6 +120,7 @@ export async function StockedProducts({
               key={card.variant.id}
               {...card}
               video={productVariantVideo(card.product.handle, card.variant)}
+              showKlarnaExpress={route === "/"}
             />
           ))}
         </ProductCarousel>

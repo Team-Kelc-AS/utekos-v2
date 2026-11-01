@@ -5,6 +5,7 @@ import { changeCart, useCartState } from "@/lib/cart/client";
 import { Button } from "@/components/ui/button";
 import { CardFooter } from "@/components/ui/card";
 import { DunReservationButton } from "@/components/reservations/DunReservationButton";
+import { KlarnaProductExpressCheckout } from "@/components/klarna/KlarnaProductExpressCheckout";
 import type { DunSelection } from "@/lib/reservations/dun";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -18,11 +19,13 @@ export function ProductCardFooter({
   variantId,
   available,
   reservationSelection,
+  showKlarnaExpress = false,
 }: {
   handle: string;
   variantId: string;
   available: boolean;
   reservationSelection?: DunSelection;
+  showKlarnaExpress?: boolean;
 }) {
   const { pending } = useCartState();
   const [adding, setAdding] = useState(false);
@@ -70,6 +73,14 @@ export function ProductCardFooter({
             )}
           </Button>
         </CardFooter>
+      )}
+      {showKlarnaExpress && available && (
+        <KlarnaProductExpressCheckout
+          key={variantId}
+          handle={handle}
+          variantId={variantId}
+          disabled={pending}
+        />
       )}
     </div>
   );

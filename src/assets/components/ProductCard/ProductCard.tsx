@@ -25,7 +25,8 @@ export function ProductCard({
   product,
   variant,
   video,
-}: ProductCardData & { video?: ProductCardVideoSource }) {
+  showKlarnaExpress = false,
+}: ProductCardData & { video?: ProductCardVideoSource; showKlarnaExpress?: boolean }) {
   const title = productTitle(product);
   const href = variantHref(product.handle, variant, product.variants.nodes);
   const options = variant.selectedOptions.filter(
@@ -95,7 +96,7 @@ export function ProductCard({
         )}
       </CardContent>
       <ProductCardHeader title={title} href={href} variant={variant} />
-      <ProductCardFooter handle={product.handle} variantId={variant.id} available={variant.availableForSale}
+      <ProductCardFooter handle={product.handle} variantId={variant.id} available={variant.availableForSale} showKlarnaExpress={showKlarnaExpress}
         reservationSelection={product.handle === "utekos-dun" ? dunSelection(variant) : undefined} />
     </Card>
   );

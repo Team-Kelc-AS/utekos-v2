@@ -26,7 +26,7 @@ import { getProductSizeGuideDialogContent } from "@/lib/products/getProductSizeG
 import { AddToCart } from "@/components/commerce/AddToCart";
 import { ComfyrobeBuyNowButton } from "@/components/commerce/ComfyrobeBuyNowButton";
 import { KlarnaProductPreferences } from "@/components/klarna/KlarnaPreferencesAccess";
-import { KlarnaConnectedProductExpress } from "@/components/klarna/KlarnaConnectedExpress";
+import { KlarnaProductExpressCheckout } from "@/components/klarna/KlarnaProductExpressCheckout";
 import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { CheckMarkIcon } from "@/components/utekos-icons/CheckMarkIcon";
 import { DiscountCodeReveal } from "./DiscountCodeReveal";
@@ -185,7 +185,7 @@ export async function SelectedProduct({
                           product_handle: product.handle,
                           placement: "product-size-selector",
                         }}
-                        triggerClassName="h-12 w-full min-w-0 justify-center gap-2 rounded-2xl px-6 font-sans font-semibold text-base"
+                        triggerClassName={commerceStyles.primary}
                       />
                     </div>
                   )}
@@ -207,7 +207,7 @@ export async function SelectedProduct({
                 showKlarnaModal={process.env.KLARNA_IDENTITY_ENABLED === 'true'}
               />
             )}
-            {variant.availableForSale && (isComfyrobe || variant.currentlyNotInStock === false) && <KlarnaConnectedProductExpress handle={product.handle} variantId={variant.id} />}
+            {variant.availableForSale && (isComfyrobe || variant.currentlyNotInStock === false) && <KlarnaProductExpressCheckout key={variant.id} handle={product.handle} variantId={variant.id} />}
           </div>
           <ul className={styles.trust}>
             {isComfyrobe ? (
@@ -232,7 +232,7 @@ export async function SelectedProduct({
                   product_handle: product.handle,
                   placement: "product-size-selector",
                 }}
-                triggerClassName="h-12 w-full min-w-0 justify-center gap-2 rounded px-6 font-sans font-semibold text-base"
+                triggerClassName={commerceStyles.primary}
               />
             </div>
           )}
