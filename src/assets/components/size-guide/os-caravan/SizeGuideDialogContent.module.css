@@ -1,0 +1,44 @@
+.techDown {
+  font-size: 1rem;
+}
+
+.techDown [data-slot='dialog-header'] > p:first-child {
+  font-size: 0.875rem;
+}
+
+.techDown [data-slot='dialog-title'] {
+  font-size: 1.875rem;
+}
+
+.techDown [data-slot='dialog-description'] {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.techDown li > p:first-child {
+  font-size: 1.125rem;
+}
+
+.techDown li > p + p {
+  font-size: 1rem;
+}
+
+.techDown li li {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.techDown [data-slot='table'],
+.techDown [data-slot='dialog-footer'] button {
+  font-size: 1rem;
+}
+
+@media (min-width: 640px) {
+  .techDown [data-slot='dialog-title'] {
+    font-size: 2.25rem;
+  }
+
+  .techDown [data-slot='dialog-description'] {
+    font-size: 1.125rem;
+  }
+}

@@ -24,6 +24,7 @@ export type ProductSizeGuideMeasurementRow = {
 }
 
 export type ProductSizeGuideContent = {
+  family?: ProductSizeGuideFamily
   badge: string
   title: string
   description: string
@@ -164,10 +165,22 @@ export function getProductSizeGuideDialogContent(product: {
 
   return {
     ...content,
+    family,
     badge: name,
     title: 'Størrelsesguide',
     ...(family === 'techdown' ? {
-      description: 'Velg mellom Middels, Stor og Større. Start med høyderådet, og sammenlign gjerne målene med et plagg du allerede har. Alle mål er i centimeter.',
+      description: 'Velg mellom Liten, Middels, Stor og Større. Start med høyderådet, og sammenlign gjerne målene med et plagg du allerede har. Alle mål er i centimeter.',
+      sizeTips: [
+        {
+          size: 'Liten',
+          heading: 'Velg Liten hvis...',
+          heightGuide: '155–165 cm (evt. opptil 165 cm)',
+          fitGuidance: [
+            'Du ligger i øvre sjiktet (mot 165 cm) og ønsker en mer kroppsnær passform.'
+          ]
+        },
+        ...content.sizeTips
+      ],
       tableAriaLabel: 'Måletabell for TechDown-størrelser',
       tableCaption: `Mål for ${name} i Middels, Stor og Større`
     } : {})

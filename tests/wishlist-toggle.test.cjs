@@ -4,6 +4,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
+const fs = require('node:fs');
 const esbuild = require('esbuild');
 const { chromium, expect } = require('playwright/test');
 const { loadTypeScript } = require('./load-typescript.cjs');
@@ -36,6 +37,7 @@ test.before(async () => {
       </div>);
     ` },
     absWorkingDir: root, bundle: true, format: 'iife', platform: 'browser',
+    external: ['/fonts/*'],
     jsx: 'automatic', outdir: '/tmp/utekos-wishlist-test', write: false,
     define: {
       'process.env.NEXT_PUBLIC_TRACKING_ENABLED': 'window.__trackingEnabled',
@@ -57,6 +59,12 @@ async function fixture(t, trackingEnabled = true) {
   t.after(() => { assert.deepEqual(forbidden, []); assert.deepEqual(errors, []); });
   await context.route('**/*', async route => {
     const request = route.request(), url = new URL(request.url());
+    if (['/assets/auth/google-g.png', '/fonts/google-sans-medium.ttf'].includes(url.pathname))
+      return route.fulfill({ body: fs.readFileSync(path.join(root, 'public', url.pathname)), contentType: url.pathname.endsWith('.png') ? 'image/png' : 'font/ttf' });
+    if (url.pathname === '/api/identity/klarna/status')
+      return route.fulfill({ json: { available: false, connected: false, originSupported: false } });
+    if (url.pathname === '/api/identity/google/status')
+      return route.fulfill({ json: { authenticated: false } });
     if (url.origin === 'https://utekos.no' && request.isNavigationRequest()) return route.fulfill({
       contentType: 'text/html', body: '<!doctype html><title>Wishlist fixture</title><div id="root"></div>',
     });
@@ -128,6 +136,28 @@ test('all placements toggle together; add opens login and reports once, remove d
   await expect.poll(() => page.evaluate(() => window.actions.length)).toBe(3);
   assert.equal(events().length, 2, 'runtime deduplicates replayed mutation');
   assert.equal(await page.evaluate(() => dataLayer.filter(e => e.event === 'add_to_wishlist').length), 2);
+});
+
+test('wishlist email field validates and submits its value through the integrated control', async t => {
+  const { page } = await fixture(t, false);
+  await page.locator('#card button').click();
+  const dialog = page.getByRole('dialog', { name: 'Utekos ønskeliste' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText('Favoritten er lagret på denne enheten.')).toHaveCount(0);
+  await expect(dialog.getByRole('button', { name: 'Registrer deg', exact: true })).toHaveCount(0);
+  await expect(dialog.getByRole('link', { name: 'Fortsett med Google', exact: true })).toBeVisible();
+  await expect(dialog.getByRole('link', { name: 'Fortsett med Google', exact: true })).toHaveAttribute('href', '/auth/google?returnTo=%2Fprodukter%2Ftest-product');
+  await expect(dialog.getByRole('link', { name: 'Opprett konto', exact: true })).toBeVisible();
+  const email = dialog.getByLabel('E-postadresse', { exact: true });
+  await email.fill('invalid');
+  await email.press('Enter');
+  assert.equal(await email.evaluate(element => element.validity.valid), false);
+  await expect(dialog).toBeVisible();
+  await email.fill('wishlist+fixture@example.test');
+  const submitted = page.waitForRequest(request => request.url().endsWith('/customer/account/authorize') && request.method() === 'POST');
+  await dialog.getByRole('button', { name: 'Fortsett med e-post', exact: true }).click();
+  const request = await submitted;
+  assert.equal(new URLSearchParams(request.postData()).get('email'), 'wishlist+fixture@example.test');
 });
 
 test('failed addition/removal retain persisted state and never send add_to_wishlist', async t => {

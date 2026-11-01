@@ -1,7 +1,10 @@
 'use client'
 
 import type { RefObject } from 'react'
+import { useRef } from 'react'
+import { cn } from 'cn'
 import type { ProductSizeGuideContent } from '@/lib/products/getProductSizeGuideContent'
+import styles from './SizeGuideDialogContent.module.css'
 import { Button } from './button'
 import {
   Dialog,
@@ -31,9 +34,11 @@ type SizeGuideContentProps = {
 export default function SizeGuideDialogContent({
   content, open, onOpenChange, triggerRef
 }: SizeGuideContentProps) {
+  const popupRef = useRef<HTMLDivElement>(null)
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent finalFocus={triggerRef} className='inset-0 top-0 left-0 flex h-svh max-h-svh max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none bg-background p-0 text-foreground ring-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:h-auto sm:max-h-[calc(100svh-3rem)] sm:max-w-3xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:ring-1'>
+      <DialogContent ref={popupRef} initialFocus={content.family === 'techdown' ? popupRef : undefined} finalFocus={triggerRef} className={cn('inset-0 top-0 left-0 flex h-svh max-h-svh max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none bg-background p-0 text-foreground ring-0 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:h-auto sm:max-h-[calc(100svh-3rem)] sm:max-w-3xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:ring-1', content.family === 'techdown' && styles.techDown)}>
         <DialogHeader className='shrink-0 border-b border-foreground/12 px-6 py-6 pr-14 sm:px-8 sm:py-7 sm:pr-14'>
           <p className='font-sans font-semibold text-xs tracking-wide text-primary uppercase'>
             {content.badge}
@@ -47,7 +52,7 @@ export default function SizeGuideDialogContent({
         </DialogHeader>
 
         {(content.sizeTips.length > 0 || content.rows.length > 0) && <div className='no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-8 sm:py-6'>
-          {content.sizeTips.length > 0 && <ul className={`mb-6 grid gap-3 ${content.sizeTips.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}>
+          {content.sizeTips.length > 0 && <ul className={`mb-6 grid gap-3 ${content.sizeTips.length === 2 || content.sizeTips.length === 4 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}>
             {content.sizeTips.map(size => (
               <li
                 key={size.size}

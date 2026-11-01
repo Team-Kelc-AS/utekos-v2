@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from '@/components/commerce/commerce.module.css';
 declare global { interface Window { utekosWishlistFacebookOnLogin?: () => void } }
-export function WishlistFacebookLogin({ returnTo }: { returnTo: string }) {
+export function WishlistFacebookLogin({ returnTo, className }: { returnTo: string; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<'loading' | 'ready' | 'pending' | 'connected' | 'error'>('loading');
@@ -42,14 +42,14 @@ export function WishlistFacebookLogin({ returnTo }: { returnTo: string }) {
       };
       const button = document.createElement('div');
       button.className = 'fb-login-button';
-      for (const [key, value] of Object.entries({ size: 'large', width: String(Math.min(360, ref.current.clientWidth)), 'button-type': 'continue_with', 'use-continue-as': 'true', scope: 'public_profile,email', onlogin: 'utekosWishlistFacebookOnLogin();' })) button.setAttribute(`data-${key}`, value);
+      for (const [key, value] of Object.entries({ size: 'large', width: String(Math.min(400, ref.current.clientWidth)), 'button-type': 'continue_with', 'use-continue-as': 'true', scope: 'public_profile,email', onlogin: 'utekosWishlistFacebookOnLogin();' })) button.setAttribute(`data-${key}`, value);
       ref.current.replaceChildren(button);
       sdk.XFBML.parse(ref.current, () => { window.clearTimeout(timeout); if (!inactive()) setState('ready'); });
     }
     void prepare().catch(() => { window.clearTimeout(timeout); if (!disposed) setState('error'); });
     return () => { disposed = true; window.clearTimeout(timeout); delete window.utekosWishlistFacebookOnLogin; };
   }, [attempt, returnTo]);
-  return <div style={{ marginBottom: '1rem' }}>
+  return <div className={className}>
     <div ref={ref} style={{ visibility: state === 'ready' ? 'visible' : 'hidden', height: state === 'ready' || state === 'loading' ? 'auto' : 0 }} />
     {state === 'loading' || state === 'pending' ? <p role="status">{state === 'loading' ? 'Laster Facebook …' : 'Bekrefter Facebook …'}</p> : null}
     {state === 'error' && <div><p role="status">Facebook er ikke tilgjengelig. Prøv igjen eller fortsett med e-post.</p><button className={styles.secondary} onClick={() => { setState('loading'); setAttempt(a => a + 1); }}>Prøv Facebook igjen</button></div>}

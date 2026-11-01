@@ -11,7 +11,7 @@ export function KlarnaArrivalOffer() {
 
   useEffect(() => {
     // These routes complete an existing identity, preference or review task.
-    if (/^\/(?:klarna\/identity|handlehjelp\/preferanser|anmeldelse)(?:\/|$)/.test(window.location.pathname)) return;
+    if (/^\/(?:auth|klarna\/identity|handlehjelp\/preferanser|anmeldelse)(?:\/|$)/.test(window.location.pathname)) return;
     try { if (sessionStorage.getItem(dismissedKey)) return; } catch { /* The offer still works without session storage. */ }
     const controller = new AbortController();
     let active = true;

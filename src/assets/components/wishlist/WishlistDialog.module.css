@@ -1,0 +1,235 @@
+@font-face {
+  font-family: 'Google Sans Sign In';
+  src: url('/fonts/google-sans-medium.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+.dialog.dialog {
+  width: min(29rem, calc(100% - 2rem));
+  padding: 2rem;
+  border: 1px solid #f0eee92b;
+  border-radius: 1.5rem;
+  background: #001a18;
+  color: #f0eee9;
+  box-shadow: 0 24px 80px #010b0a80;
+}
+
+.dialog > div:first-child {
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dialog h2 {
+  padding-top: 0.375rem;
+  font-size: clamp(1.5rem, 5vw, 1.875rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.dialog > div:first-child > button {
+  flex-shrink: 0;
+  border: 1px solid #f0eee933;
+  border-radius: 50%;
+}
+
+.providers {
+  display: grid;
+  gap: 0.875rem;
+}
+
+.klarna {
+  width: 100%;
+}
+
+.klarna :global(klarna-identity-button) {
+  display: block;
+  width: 100%;
+  height: 48px;
+  color-scheme: normal;
+}
+
+.klarna p,
+.facebook p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.facebook {
+  width: 100%;
+  min-width: 0;
+  line-height: 0;
+}
+
+/* Google Identity branding: light theme, original G and Google Sans Medium. */
+.dialog .google {
+  position: relative;
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border: 1px solid #747775;
+  border-radius: 999px;
+  background: #fff;
+  color: #1f1f1f;
+  font-family: 'Google Sans Sign In', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  text-decoration: none;
+}
+
+.google img {
+  width: 20px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.googleWrapper {
+  min-width: 0;
+}
+
+.googleConnected {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.googleConnected p {
+  margin: 0;
+}
+
+.googleConnected button {
+  min-height: 44px;
+  background: transparent;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.google span {
+  flex: 1;
+  text-align: center;
+}
+
+.google:hover {
+  box-shadow: inset 0 0 0 100px #30303014;
+}
+
+.form {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.form label {
+  font-size: 0.875rem;
+}
+
+.emailField {
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  gap: 0.625rem;
+  padding-left: 1rem;
+  border: 1px solid #f0eee94d;
+  border-radius: 0.875rem;
+  background: #012622;
+}
+
+.emailField > svg {
+  flex-shrink: 0;
+  color: #f0eee999;
+}
+
+.emailField input {
+  width: 100%;
+  min-width: 0;
+  min-height: 54px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1rem;
+}
+
+.emailField input::placeholder {
+  color: #f0eee999;
+}
+
+.emailField:focus-within {
+  border-color: #f0eee9;
+  box-shadow: 0 0 0 2px #f0eee926;
+}
+
+.emailField input:focus-visible {
+  outline: none;
+}
+
+.emailField button {
+  display: grid;
+  width: 48px;
+  min-height: 54px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: #f0eee9;
+  cursor: pointer;
+}
+
+.emailField button:hover {
+  background: #f0eee90d;
+}
+
+.status {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.createAccount {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.createAccount p {
+  margin: 0;
+  color: #f0eee9bf;
+  font-size: 0.9375rem;
+}
+
+.createButton {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 1px solid #f0eee961;
+  border-radius: 0.875rem;
+  background: #012622;
+  color: #f0eee9;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.createButton:hover {
+  border-color: #f0eee9;
+  background: #001a18;
+}
+
+@media (max-width: 479px) {
+  .dialog.dialog {
+    width: calc(100% - 1.5rem);
+    max-height: calc(100dvh - 1.5rem);
+    padding: 1.5rem 1.25rem;
+  }
+}
