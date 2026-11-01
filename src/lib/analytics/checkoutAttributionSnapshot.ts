@@ -24,6 +24,7 @@ const META_AUDIENCE_ATTRIBUTE = 'utekos_meta_audience'
 const CONSENT_ATTRIBUTE = 'utekos_consent'
 const CAPTURED_AT_ATTRIBUTE = 'utekos_attribution_captured_at'
 const EXTERNAL_ID_ATTRIBUTE = 'utekos_external_id'
+const CUSTOMER_USER_DATA_ATTRIBUTE = 'utekos_customer_user_data_v1'
 const PAGE_URL_ATTRIBUTE = 'utekos_page_url'
 const REFERRER_URL_ATTRIBUTE = 'utekos_referrer_url'
 const EXPERIMENT_KEY_ATTRIBUTE = 'utekos_experiment_key'
@@ -335,6 +336,10 @@ function buildCartAttributes(
     })
   }
 
+  if (snapshot.consent.marketing === 'granted' && snapshot.user_data && Object.keys(snapshot.user_data).length > 0) {
+    attributes.push({ key: CUSTOMER_USER_DATA_ATTRIBUTE, value: JSON.stringify(snapshot.user_data) })
+  }
+
   return attributes
 }
 
@@ -405,6 +410,14 @@ export function parseOrderAttributionFromNoteAttributes(
     )) {
       const value = parseIdentifier(attributes.get(attributeKey))
       if (value) clickId[identifier] = value
+    }
+
+    const matchingJson = attributes.get(CUSTOMER_USER_DATA_ATTRIBUTE)
+    if (matchingJson && matchingJson.length <= 4096) {
+      let matching: unknown
+      try { matching = JSON.parse(matchingJson) } catch { /* Invalid optional attribution is ignored. */ }
+      const parsedMatching = canonicalUserDataSchema.safeParse(matching)
+      if (parsedMatching.success) Object.assign(userData, parsedMatching.data)
     }
 
     const facebookLoginId = parseIdentifier(

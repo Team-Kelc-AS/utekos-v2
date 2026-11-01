@@ -379,7 +379,25 @@
     return externalId
   }
 
-  function installPixel(externalId) {
+  function pixelMatchingData(externalId, matching) {
+    var data = externalId ? { external_id: externalId } : {}
+    if (!matching || typeof matching !== 'object') return data
+    if (typeof matching.externalId === 'string') data.external_id = matching.externalId
+    var fields = {
+      email_sha256: 'em', phone_sha256: 'ph', first_name_sha256: 'fn',
+      last_name_sha256: 'ln', city_sha256: 'ct', state_sha256: 'st',
+      postal_code_sha256: 'zp', country_sha256: 'country',
+      gender_sha256: 'ge', date_of_birth_sha256: 'db'
+    }
+    Object.keys(fields).forEach(function (key) {
+      if (key === 'state_sha256' && matching.location && matching.location.country_code === 'NO') return
+      var value = matching.userData && matching.userData[key]
+      if (Array.isArray(value) && /^[a-f0-9]{64}$/.test(value[0])) data[fields[key]] = value[0]
+    })
+    return data
+  }
+
+  function installPixel(externalId, matching) {
     if (!w.fbq) {
       var queue = function () {
         if (queue.callMethod) {
@@ -428,9 +446,10 @@
     w.fbq(
       'init',
       PIXEL_ID,
-      externalId ? { external_id: externalId } : {}
+      pixelMatchingData(externalId, matching)
     )
     state.initialized = true
+    w.__utekosCustomerMatchingInitialized = matching && matching.externalId || externalId || 'anonymous'
   }
 
   function syncPixelConsent() {
@@ -892,7 +911,7 @@
       readCookie(EXTERNAL_ID_COOKIE) || ensureExternalId()
     // Install as soon as marketing is granted. Do not wait for _fbp —
     // fbevents.js creates it. Waiting blocked SPA clicks / returning visits.
-    if (!state.initialized) installPixel(externalId)
+    if (!state.initialized) installPixel(externalId, w.__utekosCustomerMatchingSnapshot)
     syncPixelConsent()
 
     flushPendingSdkEvents()
@@ -916,6 +935,11 @@
     }, 200)
   }
 
+  w.addEventListener('utekos:customer-matching-changing', function () {
+    w.__utekosConsentReloading = true
+    if (state.initialized) w.fbq('consent', 'revoke')
+    discardPendingEvents()
+  })
   scheduleConsentRetry()
   if (state.timer === null) run()
   listenForCanonicalEvents()

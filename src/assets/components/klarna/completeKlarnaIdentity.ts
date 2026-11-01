@@ -1,10 +1,12 @@
 'use client';
+import { invalidateCustomerMatching } from '@/lib/analytics/customerMatching';
 
 export async function completeKlarnaIdentity(idToken: string): Promise<string> {
   const response = await fetch('/api/identity/klarna/complete', {
     method: 'POST',
     credentials: 'same-origin',
     cache: 'no-store',
+    keepalive: true,
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({ idToken }),
     signal: AbortSignal.timeout(15000),
@@ -20,5 +22,6 @@ export async function completeKlarnaIdentity(idToken: string): Promise<string> {
   if (!result || typeof result !== 'object' || !('returnTo' in result) ||
       typeof result.returnTo !== 'string' || !result.returnTo.startsWith('/') ||
       result.returnTo.startsWith('//')) throw new Error('Ugyldig innloggingssvar.');
+  invalidateCustomerMatching();
   return result.returnTo;
 }

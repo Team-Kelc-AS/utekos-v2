@@ -10,6 +10,7 @@ import { sendCanonicalGTMEvent } from '@/lib/analytics/sendCanonicalGTMEvent';
 import { enrichCanonicalBrowserJourneyContext } from '@/lib/analytics/internalJourneyContext';
 import { deliverCanonicalEvent } from './delivery';
 import { summarizeVitalEntries, vitalDocumentPath } from './web-vital-diagnostics';
+import { primeCustomerMatching } from '@/lib/analytics/customerMatching';
 
 const metricVersions = new Set<string>();
 const reportVital: Parameters<typeof useReportWebVitals>[0] = metric => {
@@ -39,6 +40,7 @@ export default function TrackingRuntime() {
   useReportWebVitals(reportVital);
   useEffect(() => {
     if (!browserTrackingEnabled()) return;
+    primeCustomerMatching();
     reportNavigation();
     const stopCommerce = attachCommerceTracking();
     return () => { stopCommerce(); };

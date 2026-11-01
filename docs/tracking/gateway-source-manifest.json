@@ -70,7 +70,9 @@
       "source": "src/lib/analytics/canonicalEventEnvelope.ts",
       "target": "src/lib/analytics/canonicalEventEnvelope.ts",
       "sourceSha256": "39b735b0f1a7e7f84c437ab9094bd28e82d3f79651e6acfa70b3e02dadfe347b",
-      "adapted": false
+      "adapted": false,
+      "reviewedTargetSha256": "ea92fcc61e78c3a58039fd6da8d5623979a4153010a9db8bd00739131a0501a5",
+      "reason": " Reviewed 2026-11-01: optional consented Klarna hashes, including provider-specific email/phone and optional ge/db. Missing values remain absent."
     },
     {
       "source": "src/lib/analytics/canonicalSignalContract.ts",

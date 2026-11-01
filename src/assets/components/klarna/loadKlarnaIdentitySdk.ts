@@ -15,7 +15,8 @@ export type KlarnaIdentitySdk = {
   Identity: {
     button: (config: {
       clientType: 'public'; id: string; locale: string;
-      redirectUri: string; scope: string; theme: 'default';
+      redirectUri: string; scope: string; theme: 'default' | 'light' | 'outlined';
+      shape?: 'default' | 'rectangle' | 'pill';
     }) => {
       mount: (container: HTMLElement) => void;
       attach: (selector: string) => void;

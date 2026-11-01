@@ -3,8 +3,10 @@ import type { PreferenceWrite } from './preferences';
 
 import { NextRequest } from 'next/server';
 import type { Cart } from '@/lib/cart/types';
-import { forwardTrackingRequest } from '@/lib/tracking/backend';
+import { forwardTrackingRequest, identityCookieHeader } from '@/lib/tracking/backend';
 import { klarnaIdentityConfig, type KlarnaIdentitySession } from './identity';
+import { ipAddress } from '@vercel/functions/headers';
+import type { ConsentSnapshot } from '@/lib/analytics/canonicalEventEnvelope';
 
 type CartSnapshot = { publicId: string; lines: {
   variantId: string; handle: string; variantTitle: string; quantity: number;
@@ -26,7 +28,7 @@ export function prospectCartSnapshot(cart: Cart): CartSnapshot {
 export async function forwardKlarnaProspect(
   request: NextRequest,
   session: Omit<KlarnaIdentitySession, 'expiresAt'>,
-  input: { action: 'login' } | { action: 'state' } | { action: 'cart'; cart: CartSnapshot } | {
+  input: { action: 'login' } | { action: 'authenticated_login'; login: { eventId: string; eventTime: string; pageUrl: string; consent: ConsentSnapshot } } | { action: 'state' } | { action: 'matching' } | { action: 'cart'; cart: CartSnapshot } | {
     action: 'save';
     cart: CartSnapshot;
   } & PreferenceWrite,
@@ -34,12 +36,18 @@ export async function forwardKlarnaProspect(
   const config = klarnaIdentityConfig();
   if (!config) throw new Error('Klarna identity unavailable');
   const url = `${request.nextUrl.origin}/api/identity/klarna/prospect`;
+  const clientIp = ipAddress(request);
+  const userAgent = request.headers.get('user-agent');
+  const referrer = request.headers.get('referer');
   const trustedRequest = new NextRequest(url, {
     method: 'POST',
     headers: {
       origin: request.nextUrl.origin,
       'content-type': 'application/json',
-      ...(request.headers.get('user-agent') ? { 'user-agent': request.headers.get('user-agent')! } : {}),
+      cookie: identityCookieHeader(request),
+      ...(clientIp ? { 'x-forwarded-for': clientIp } : {}),
+      ...(userAgent ? { 'user-agent': userAgent } : {}),
+      ...(referrer ? { referer: referrer } : {}),
     },
     body: JSON.stringify({
       ...input,

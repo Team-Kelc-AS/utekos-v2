@@ -17,7 +17,9 @@ let browser, safari, bundle, previewBundle;
 
 async function buildHarness(environment) {
   const result = await esbuild.build({
-    stdin: { contents: `export {reportNavigation,attachCommerceTracking,prepareCanonicalCheckout,confirmCheckoutTracking,createBrowserEvent,dispatchEvent} from './src/lib/tracking/runtime';
+    stdin: { contents: `export {browserTrackingEnabled,reportNavigation,attachCommerceTracking,prepareCanonicalCheckout,confirmCheckoutTracking,createBrowserEvent,dispatchEvent} from './src/lib/tracking/runtime';
+      export {primeCustomerMatching,invalidateCustomerMatching} from './src/lib/analytics/customerMatching';
+      export {completeKlarnaIdentity} from './src/assets/components/klarna/completeKlarnaIdentity';
       export {enrichCanonicalEventWithMetaAttribution} from './src/lib/analytics/enrichCanonicalEventWithMetaAttribution';
       export {observeStorefront,observeTrackedPage} from './src/lib/tracking/dom-observers';
       export {emitStorefrontAction} from './src/lib/tracking/browser-events';
@@ -94,6 +96,60 @@ function commerce(id = '1') {
     available_for_sale: true, currently_not_in_stock: false, quantity_available: 10, selected_options: [{ name: 'Størrelse', value: id }], collection_ids: [], collection_titles: [],
   }] };
 }
+test('already available verified matching initializes Pixel without waiting and follows PageView, cart and checkout', async t => {
+  const h = 'a'.repeat(64);
+  const matching = { externalId: 'prospect_fixture', userData: {
+    email_sha256: [h], google_email_sha256: ['b'.repeat(64)], phone_sha256: [h], e164_phone_sha256: ['c'.repeat(64)],
+    first_name_sha256: [h], last_name_sha256: [h], postal_code_sha256: [h], state_sha256: [h], country_sha256: [h],
+    date_of_birth_sha256: ['d'.repeat(64)], gender_sha256: ['e'.repeat(64)],
+  }, location: { source: 'customer_provided', country_code: 'NO', postal_code: '5000', region_code: 'Vestland' } };
+  const api = await fixture(t, undefined, { customerMatching: matching, matchingPreloaded: true });
+  await api.waitFor('page_view');
+  await api.page.evaluate(data => {
+    UtekosTrackingHarness.dispatchEvent(UtekosTrackingHarness.createBrowserEvent('add_to_cart', { ...data, cart_id: 'cart_fixture', cart_mutation_id: 'mutation_fixture' }));
+    UtekosTrackingHarness.dispatchEvent(UtekosTrackingHarness.createBrowserEvent('begin_checkout', { ...data, cart_id: 'cart_fixture', checkout_id: 'checkout_fixture', creation_revision: 'revision_fixture' }));
+  }, commerce());
+  await api.waitFor('add_to_cart'); await api.waitFor('begin_checkout');
+  const pixelInit = await api.page.evaluate(() => __pixelCalls.find(call => call[0] === 'init'));
+  assert.deepEqual(pixelInit[2], { external_id: matching.externalId, em: h, ph: h, fn: h, ln: h, zp: h, country: h, db: 'd'.repeat(64), ge: 'e'.repeat(64) });
+  for (const name of ['page_view', 'add_to_cart', 'begin_checkout']) {
+    const collected = api.events(name)[0];
+    assert.deepEqual(collected.user_data, matching.userData); assert.equal(collected.external_id, matching.externalId);
+    const browser = await api.page.evaluate(name => __canonicalBrowser.find(entry => entry.event === name).canonical_event, name);
+    assert.deepEqual(browser.user_data, collected.user_data); assert.equal(browser.event_id, collected.event_id);
+    assert.equal(browser.event_time, collected.event_time); assert.deepEqual(browser.click_id, collected.click_id);
+  }
+  assert.equal(api.requests.filter(request => request.path === '/api/identity/klarna/prospect').length, 1);
+});
+for (const safariMode of [false, true]) test(`first PageView does not wait for profile or login, and login cannot replay it (webkit=${safariMode})`, async t => {
+  const api = await fixture(t, undefined, { matchingDelay: 1900, safariMode });
+  await api.waitFor('page_view');
+  assert.equal(await api.page.evaluate(() => window.__utekosCustomerMatchingSnapshot), undefined);
+  assert.equal(api.events('page_view').length, 1);
+  const first = api.events('page_view')[0];
+  const pixel = await api.page.evaluate(() => __pixelCalls.filter(c => c[0] === 'trackSingle' && c[2] === 'PageView'));
+  assert.equal(pixel.length, 1);
+  assert.equal(pixel[0][4].eventID, first.event_id);
+  await api.page.evaluate(() => UtekosTrackingHarness.completeKlarnaIdentity('fixture-validated-token-'.repeat(8)));
+  await api.page.waitForTimeout(2100);
+  assert.equal(api.events('page_view').length, 1);
+  assert.equal(api.requests.filter(r => r.path === '/api/identity/klarna/complete').length, 1);
+  const calls = await api.page.evaluate(() => __pixelCalls);
+  assert.equal(calls.filter(c => c[0] === 'trackSingle' && c[2] === 'PageView').length, 1);
+  assert.equal(calls.filter(c => c[2] === 'Login').length, 0);
+  assert.equal(api.events('login').length, 0);
+});
+
+for (const safariMode of [false, true]) test(`successful login needs no browser follow-up when the page closes immediately (webkit=${safariMode})`, async t => {
+  const api = await fixture(t, undefined, { safariMode });
+  await api.waitFor('page_view');
+  await api.page.evaluate(() => UtekosTrackingHarness.completeKlarnaIdentity('fixture-validated-token-'.repeat(8)));
+  await api.page.close();
+  assert.equal(api.requests.filter(r => r.path === '/api/identity/klarna/complete').length, 1);
+  assert.equal(api.events('login').length, 0);
+  assert.equal(api.events('page_view').length, 1);
+});
+
 const attr = value => JSON.stringify(value).replaceAll('&', '&amp;').replaceAll('"', '&quot;');
 function content(url, { longJourney = false } = {}) {
   const parsed = new URL(url);
@@ -118,9 +174,10 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, deferObservers = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, metaFirstIpDelay = 0, storedClicks, storedDurableClicks, metaCookie, metaHostFbcCookie, metaFbpCookie, metaCookiesBlocked = false, metaContextFbc, metaContextFbp = 'fb.1.1700000000000.123456789', pixelConfigLockMs = 0, pixelReadinessSignal = true } = {}) {
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, deferObservers = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, metaFirstIpDelay = 0, storedClicks, storedDurableClicks, metaCookie, metaHostFbcCookie, metaFbpCookie, metaCookiesBlocked = false, metaContextFbc, metaContextFbp = 'fb.1.1700000000000.123456789', pixelConfigLockMs = 0, pixelReadinessSignal = true, customerMatching = null, matchingDelay = 0, matchingPreloaded = false } = {}) {
   const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block', userAgent });
   t.after(() => context.close());
+  if (matchingPreloaded) await context.addInitScript(value => { window.__utekosCustomerMatchingSnapshot = value; }, customerMatching);
   if (storedClicks) await context.addInitScript(identifiers => {
     if (!sessionStorage.getItem('utekos_click_ids')) sessionStorage.setItem('utekos_click_ids', JSON.stringify(identifiers));
   }, storedClicks);
@@ -168,7 +225,7 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
       dataLayer.push=function(...entries){for(const entry of entries){if(entry?.[0]==='get'&&typeof entry[3]==='function'){window.__gaGetCount++;if(!${gaBlocked})entry[3](performance.now()>=window.__gaReadyAt?(entry[2]==='client_id'?'123.456':'789'):undefined);}}return Array.prototype.push.apply(this,entries)};
       addEventListener('utekos:meta-canonical-browser-event',event=>window.__canonicalBrowser.push(event.detail));
       </script>${preview ? '' : '<script src="/analytics/meta-pixel-canonical-v1.js"></script>'}</head><body>${content(url, { longJourney })}<script src="/tracking-browser-fixture.js"></script><script>
-      UtekosTrackingHarness.reportNavigation();${deferCommerce ? '' : 'UtekosTrackingHarness.attachCommerceTracking();'}
+      if(UtekosTrackingHarness.browserTrackingEnabled())UtekosTrackingHarness.primeCustomerMatching();UtekosTrackingHarness.reportNavigation();${deferCommerce ? '' : 'UtekosTrackingHarness.attachCommerceTracking();'}
       ${deferObservers ? '' : 'window.__stopObservers=UtekosTrackingHarness.observeTrackedPage();'}
       addEventListener('popstate',()=>{window.__stopObservers();UtekosTrackingHarness.reportNavigation();window.__stopObservers=UtekosTrackingHarness.observeTrackedPage()});
       </script></body></html>` });
@@ -178,6 +235,11 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
     if (url.origin === 'https://utekos.no' && url.pathname.startsWith('/api/')) {
       let json; try { json = JSON.parse(body); } catch { json = body; }
       requests.push({ path: url.pathname, body: json });
+      if (url.pathname === '/api/identity/klarna/prospect') {
+        if (matchingDelay) await new Promise(resolve => setTimeout(resolve, matchingDelay));
+        return route.fulfill({ json: { matching: customerMatching } });
+      }
+      if (url.pathname === '/api/identity/klarna/complete') return route.fulfill({ json: { returnTo: '/produkter/test-product?variant=1' } });
       if (url.pathname === '/api/meta/client-ip') {
         const delay = ++metaIpCalls === 1 ? metaFirstIpDelay || metaIpDelay : metaIpDelay;
         if (delay) await new Promise(resolve => setTimeout(resolve, delay));

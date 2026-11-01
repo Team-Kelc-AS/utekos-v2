@@ -155,6 +155,8 @@ export function checkoutAttributes(
     ...(!facebookLoginId
       ? [{ key: FACEBOOK_LOGIN_ID_ATTRIBUTE, value: "" }]
       : []),
+    ...(!snapshot.user_data || Object.keys(snapshot.user_data).length === 0
+      ? [{ key: 'utekos_customer_user_data_v1', value: '' }] : []),
     ...(!event ? [{ key: BEGIN_CHECKOUT_EVENT_ATTRIBUTE, value: "" }] : []),
     ...checkoutProductContextToShopifyAttributes(cart.commerce?.items ?? []),
     ...(event?.checkout_method

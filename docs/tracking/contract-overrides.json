@@ -88,8 +88,8 @@
     },
     "public/analytics/meta-pixel-canonical-v1.js": {
       "baseSha256": "194a9fedfcf335a4a5203aaa7cdc10f1faece1b9b92a07e130265a8a271fe273",
-      "sha256": "d9043f79399c2d8cc25920e06fda398cc6bd9a08c539101270e3c9b681da01e5",
-      "reason": "Whitelisted product, variant, color and size custom properties for confirmed unvalued Dun reservation Lead. Same server/browser event ID and single browser replay tested in offline Chromium; other event mappings unchanged. Reviewed 2026-10-14: meta-externalads opts out before Pixel initialization; offline Chromium verifies no Pixel, collector events or browser identity while public product content remains readable. Extend the telemetry opt-out to observed Meta ExternalAgent and WebIndexer crawlers; public pages and ordinary app browsers remain available. Extend the reviewed telemetry-only crawler gate to documented facebookexternalhit and meta-externalfetcher; public content and customer in-app browsers remain eligible. Reviewed documented Google crawler/fetcher telemetry exclusion; normal Chrome and Google app visitors are unaffected.",
+      "sha256": "c5be92d1e932201819b3acdfa5d8ed1f037c943d88a9c0cb4b620ff489b64620",
+      "reason": "Whitelisted product, variant, color and size custom properties for confirmed unvalued Dun reservation Lead. Same server/browser event ID and single browser replay tested in offline Chromium; other event mappings unchanged. Reviewed 2026-10-14: meta-externalads opts out before Pixel initialization; offline Chromium verifies no Pixel, collector events or browser identity while public product content remains readable. Extend the telemetry opt-out to observed Meta ExternalAgent and WebIndexer crawlers; public pages and ordinary app browsers remain available. Extend the reviewed telemetry-only crawler gate to documented facebookexternalhit and meta-externalfetcher; public content and customer in-app browsers remain eligible. Reviewed documented Google crawler/fetcher telemetry exclusion; normal Chrome and Google app visitors are unaffected. Reviewed 2026-11-01: retain current SDK readiness/cookie safeguards; add synchronous already-available Klarna matching, omit Norwegian st, and revoke this document Pixel on identity changes without reload or PageView replay. Login is CAPI-only.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "public/analytics/meta-pixel-canonical-v1.js"
     },
@@ -176,6 +176,27 @@
       "reason": "Reviewed 2026-10-17: add optional stack and window/promise/caught operation fields to the client_error type, matching runtime schema and current backend byte-for-byte. Existing diagnostic pipeline tests validate old and extended payloads without retaining private error details.",
       "implementationRepository": "utekos-v2",
       "implementationPath": "types/observability/log/LogPayload.ts"
+    },
+    "src/lib/analytics/canonicalEventEnvelope.ts": {
+      "baseSha256": "39b735b0f1a7e7f84c437ab9094bd28e82d3f79651e6acfa70b3e02dadfe347b",
+      "sha256": "ea92fcc61e78c3a58039fd6da8d5623979a4153010a9db8bd00739131a0501a5",
+      "reason": "Reviewed 2026-11-01: consented Klarna identity, provider-specific hashes, checkout attribute round-trip, and synchronous cached identity without delaying or replaying PageView. Focused unit and offline browser coverage.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/canonicalEventEnvelope.ts"
+    },
+    "src/lib/analytics/checkoutAttributionSnapshot.ts": {
+      "baseSha256": "3b83d26048ae89916627d4e705b942463c3c0d39e23e35a7f8e73ff006087d9c",
+      "sha256": "9dc8304782391eba035256ddd5c61318a2894165c741793a4e2fd1e5fe6dced0",
+      "reason": "Reviewed 2026-11-01: consented Klarna identity, provider-specific hashes, checkout attribute round-trip, and synchronous cached identity without delaying or replaying PageView. Focused unit and offline browser coverage.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/checkoutAttributionSnapshot.ts"
+    },
+    "src/lib/analytics/sendCanonicalGTMEvent.ts": {
+      "baseSha256": "31e69ff5afb9b050e9fa646fadf64a7a72c01f3f77e99034351d7efed482342d",
+      "sha256": "6166c8db08e4ae4a13f4d7e2f1cd07c0f3a2acf63351fceb5efcd27715cd72d1",
+      "reason": "Reviewed 2026-11-01: consented Klarna identity, provider-specific hashes, checkout attribute round-trip, and synchronous cached identity without delaying or replaying PageView. Focused unit and offline browser coverage.",
+      "implementationRepository": "utekos-v2",
+      "implementationPath": "src/lib/analytics/sendCanonicalGTMEvent.ts"
     }
   }
 }

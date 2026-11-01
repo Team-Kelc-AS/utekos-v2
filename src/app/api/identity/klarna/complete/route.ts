@@ -8,6 +8,8 @@ import {
   readKlarnaState, verifyKlarnaIdToken,
 } from '@/lib/klarna/identity';
 import { forwardKlarnaProspect } from '@/lib/klarna/prospect';
+import { klarnaLoginEventId } from '@/lib/klarna/login';
+import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAuthorization';
 
 const inputSchema = z.strictObject({ idToken: z.string().min(100).max(12000) });
 
@@ -41,9 +43,15 @@ export async function POST(request: NextRequest) {
     return response;
   }
   try {
-    const stored = await forwardKlarnaProspect(request, identity, { action: 'login' });
+    const eventId = klarnaLoginEventId(input.data.idToken);
+    const stored = await forwardKlarnaProspect(request, identity, { action: 'authenticated_login', login: {
+      eventId, eventTime: new Date().toISOString(),
+      pageUrl: new URL(state.returnTo, request.nextUrl.origin).href,
+      consent: resolveTrackingAuthorization(),
+    } });
     const receipt: unknown = stored.ok ? await stored.json() : null;
-    if (!receipt || typeof receipt !== 'object' || !('stored' in receipt) || receipt.stored !== true) {
+    if (!receipt || typeof receipt !== 'object' || !('stored' in receipt) || receipt.stored !== true ||
+        !('login_event_id' in receipt) || receipt.login_event_id !== eventId) {
       throw new Error('Klarna profile storage was not confirmed');
     }
   } catch {

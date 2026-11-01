@@ -5,21 +5,28 @@ import { completeKlarnaIdentity } from './completeKlarnaIdentity';
 import { klarnaIdentityIdToken, loadKlarnaIdentitySdk, type KlarnaIdentitySdk } from './loadKlarnaIdentitySdk';
 import { refreshKlarnaPreferences } from '@/lib/klarna/preferences-client';
 import { Button } from '@/components/ui/button';
+import { invalidateCustomerMatching } from '@/lib/analytics/customerMatching';
 
 type Status = 'loading' | 'ready' | 'pending' | 'connected' | 'unavailable' | 'unsupported-origin' | 'error';
 type LoadingStage = 'status' | 'prepare' | 'sdk-import' | 'sdk-init' | 'mount' | 'provider';
 type PrepareResponse = { clientId: string; scope: string; redirectUri: string };
 
-export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidth = false, customButton }: {
+export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidth = false, customButton, theme = 'default', shape, wrapperClassName, onConnected }: {
   returnTo?: string;
   showDisconnect?: boolean;
   fullWidth?: boolean;
   customButton?: { className: string; wrapperClassName?: string; children: ReactNode };
+  theme?: 'default' | 'light' | 'outlined';
+  shape?: 'default' | 'rectangle' | 'pill';
+  wrapperClassName?: string;
+  onConnected?: () => void;
 }) {
   const id = useId().replaceAll(':', '');
   const container = useRef<HTMLDivElement>(null);
   const customButtonRef = useRef<HTMLButtonElement>(null);
   const custom = !!customButton;
+  const connectedCallback = useRef(onConnected);
+  useEffect(() => { connectedCallback.current = onConnected; }, [onConnected]);
   const [status, setStatus] = useState<Status>('loading');
   const [stage, setStage] = useState<LoadingStage>('status');
   const [errorMessage, setErrorMessage] = useState('Klarna-innloggingen kunne ikke fullføres. Last siden på nytt og prøv igjen.');
@@ -30,7 +37,9 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
     let button: ReturnType<KlarnaIdentitySdk['Identity']['button']> | undefined;
     const onMessage = (event: MessageEvent) => {
       if (event.origin === window.location.origin && event.data === 'utekos:klarna-connected' && active) {
+        invalidateCustomerMatching();
         setStatus('connected');
+        connectedCallback.current?.();
         void refreshKlarnaPreferences();
       }
     };
@@ -45,7 +54,7 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
       if (!active) return;
       if (!existing.available) { setStatus('unavailable'); return; }
       if (!existing.originSupported) { setStatus('unsupported-origin'); return; }
-      if (existing.connected) { setStatus('connected');
+      if (existing.connected) { setStatus('connected'); connectedCallback.current?.();
         void refreshKlarnaPreferences(); return; }
       setStage('prepare');
       const prepareResponse = await fetch('/api/identity/klarna/prepare', {
@@ -66,7 +75,7 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
         setStatus('pending');
         try {
           await completeKlarnaIdentity(klarnaIdentityIdToken(signinResponse));
-          if (active) { setStatus('connected'); void refreshKlarnaPreferences(); }
+          if (active) { setStatus('connected'); connectedCallback.current?.(); void refreshKlarnaPreferences(); }
         } catch (error) {
           const statusResponse = await fetch('/api/identity/klarna/status', { cache: 'no-store' })
             .then(response => response.ok ? response.json() as Promise<{ connected: boolean }> : null)
@@ -82,7 +91,7 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
       });
       button = klarna.Identity.button({
         clientType: 'public', id: `utekos-klarna-${id}`, locale: 'nb-NO',
-        redirectUri: config.redirectUri, scope: config.scope, theme: 'default',
+        redirectUri: config.redirectUri, scope: config.scope, theme, ...(shape ? { shape } : {}),
       });
       button.on('ready', async () => { if (active) setStatus('ready'); });
       button.on('click', async () => { clicked = true; });
@@ -92,10 +101,10 @@ export function KlarnaIdentityButton({ returnTo, showDisconnect = true, fullWidt
     }
     void setup().catch(() => { if (active) setStatus('error'); });
     return () => { active = false; window.removeEventListener('message', onMessage); button?.unmount(); };
-  }, [id, returnTo, custom]);
+  }, [id, returnTo, custom, theme, shape]);
 
   if (status === 'unavailable') return null;
-  return <div className={customButton?.wrapperClassName ?? (fullWidth ? 'w-full' : 'w-full max-w-sm')} data-klarna-stage={stage}>
+  return <div className={wrapperClassName ?? customButton?.wrapperClassName ?? (fullWidth ? 'w-full' : 'w-full max-w-sm')} data-klarna-stage={stage}>
     {customButton ? <button
       ref={customButtonRef}
       id={`utekos-klarna-target-${id}`}

@@ -9,6 +9,7 @@ import { forwardKlarnaProspect, prospectCartSnapshot } from '@/lib/klarna/prospe
 
 const inputSchema = z.discriminatedUnion('action', [
   z.strictObject({ action: z.literal('state') }),
+  z.strictObject({ action: z.literal('matching') }),
   z.strictObject({ action: z.literal('cart') }),
   preferenceWriteSchema.extend({ action: z.literal('save') }),
 ]);
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
   if (!session) return NextResponse.json({ error: 'Logg inn med Klarna først.' }, { status: 401, headers: privateHeaders });
   try {
     const input = parsed.data;
-    if (input.action === 'state') return forwardKlarnaProspect(request, session, input);
+    if (input.action === 'state' || input.action === 'matching') return forwardKlarnaProspect(request, session, input);
     const cartId = request.cookies.get(CART_COOKIE)?.value;
     const raw = cartId ? await readCart(cartId, buyerIp(request)) : null;
     const cart = prospectCartSnapshot(await cartView(raw, buyerIp(request)));

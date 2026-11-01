@@ -23,6 +23,7 @@ import {
 } from "./browser-events";
 import type { CheckoutTrackingMethod } from "@/lib/cart/tracking";
 import { deliverCanonicalEvent } from "./delivery";
+import { enrichWithCachedCustomerMatching } from '@/lib/analytics/customerMatching';
 
 export function browserTrackingEnabled() {
   return (
@@ -121,7 +122,8 @@ async function prepareEvent(event: StorefrontEvent) {
   const journey = enrichCanonicalBrowserJourneyContext(event);
   // The SDK owns collection readiness, timeout and page-exit fallback. Racing
   // it here discarded in-app click IDs before the first PageView and checkout.
-  return enrichCanonicalEventWithMetaAttribution(journey);
+  const identified = enrichWithCachedCustomerMatching(journey);
+  return enrichCanonicalEventWithMetaAttribution(identified);
 }
 function googleIds(event: { browser_id?: Record<string, string> }) {
   const ids = event.browser_id;

@@ -2,6 +2,7 @@ import { sendGTMEvent } from '@next/third-parties/google'
 import { enrichCanonicalEventWithGoogleAnalyticsIds } from './googleAnalyticsBrowserIds'
 import { enrichBrowserMetaAudience } from './browserMetaAudience'
 import type { CanonicalEventEnvelope } from './canonicalEventEnvelope'
+import { enrichWithCachedCustomerMatching } from './customerMatching'
 
 export const META_CANONICAL_BROWSER_EVENT =
   'utekos:meta-canonical-browser-event'
@@ -18,7 +19,7 @@ export async function sendCanonicalGTMEvent(
     sendGTMEvent(data)
     return
   }
-  const audienceEnriched = enrichBrowserMetaAudience(canonical)
+  const audienceEnriched = enrichBrowserMetaAudience(enrichWithCachedCustomerMatching(canonical))
   const browserData = {
     ...data,
     canonical_event: audienceEnriched,

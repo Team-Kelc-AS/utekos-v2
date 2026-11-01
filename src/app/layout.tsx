@@ -7,6 +7,7 @@ import { Telemetry } from "@/lib/tracking/Telemetry";
 import Footer from "@/components/Footer";
 import { googleSansFlex } from "@/lib/fonts";
 import Header from "@/components/header/Header";
+import { KlarnaArrivalOffer } from "@/components/klarna/KlarnaArrivalOffer";
 import { GoogleMerchantWidget } from "@/components/GoogleMerchantWidget";
 import type { Metadata } from "next";
 import { buildRootMetadata } from "@/lib/seo/siteMetadata";
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <StapeScripts />
         <Suspense fallback={null}><Tracking /><Telemetry /></Suspense>
         <Header />
+        <KlarnaArrivalOffer />
         {children}
         <Footer />
         <GoogleMerchantWidget />

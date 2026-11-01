@@ -114,6 +114,7 @@
 
 /* Tailwind utilities: fixed palette values and scoped semantic aliases. */
 @theme inline {
+  --background-image-utekos-gradient: var(--utekos-gradient);
   --color-*: initial;
   --background-image-patriot-blue-gradient: linear-gradient(
     to right in oklch,
@@ -321,6 +322,18 @@
 
 /* Runtime tokens are shared by semantic utilities and CSS Modules. */
 :root {
+  --utekos-gradient: linear-gradient(
+    90deg,
+    #001211,
+    #010b0a,
+    #001a18,
+    #001f1c,
+    #012622,
+    #001f1c,
+    #001a18,
+    #010b0a,
+    #001211
+  );
   --color-patriot-blue-50: color-mix(in oklch, var(--color-patriot-blue-100) 96%, white);
   --color-patriot-blue-100: oklch(0.3504 0.0537 281.83);
   --color-patriot-blue-200: color-mix(in oklch, var(--color-patriot-blue-100), var(--color-patriot-blue-300));
