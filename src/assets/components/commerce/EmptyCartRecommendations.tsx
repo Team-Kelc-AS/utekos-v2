@@ -67,7 +67,7 @@ export default function EmptyCartRecommendations({ pending }: { pending: boolean
             <ItemTitle className={styles.emptyRecommendationTitle}>
               <Link href={`/produkter/${product.handle}?variant=${encodeURIComponent(product.variantId)}`} onClick={closeCart}>{product.title}</Link>
             </ItemTitle>
-            <ItemDescription className="font-medium">{product.size}</ItemDescription>
+            <ItemDescription className="font-medium text-foreground">{product.size}</ItemDescription>
             <p className={styles.emptyRecommendationPrice}>{formatMoney(product.price)}</p>
             <ItemActions className={styles.emptyRecommendationActions}>
               <Button disabled={pending} aria-busy={adding === product.variantId} aria-label={`Legg ${product.title}, ${product.size} i kurv`} className="min-h-11" onClick={() => { void add(product); }}>

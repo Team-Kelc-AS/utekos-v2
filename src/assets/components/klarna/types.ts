@@ -26,7 +26,7 @@ declare global {
             load: (
               config: {
                 container: string;
-                theme: 'default';
+                theme: 'default' | 'light';
                 shape: 'pill';
                 locale: 'nb-NO';
                 on_click: (authorize: KlarnaAuthorize) => void;

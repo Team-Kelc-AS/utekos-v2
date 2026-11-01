@@ -97,7 +97,7 @@ export function KlarnaProductExpressCheckout({ handle, variantId, scope, disable
         if (disposed || initialized.current || !window.Klarna?.Payments.Buttons) return;
         initialized.current = true;
         window.Klarna.Payments.Buttons.init({ client_id: config.client_id }).load({
-          container: `#${containerId}`, theme: 'default', shape: 'pill', locale: 'nb-NO',
+          container: `#${containerId}`, theme: 'light', shape: 'pill', locale: 'nb-NO',
           on_click: authorize => { void authorizePurchase(authorize); },
         }, result => {
           if (disposed) return;
