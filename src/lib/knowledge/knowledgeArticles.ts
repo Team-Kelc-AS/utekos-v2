@@ -122,7 +122,7 @@ const articleContent = {
     title: "Jakten på julegaven til den som har alt",
     metaTitle: "Jakten på julegaven til den som har alt | Utekos",
     description:
-      "Julegavehandelen utgjør et intenst, årlig stressmoment fordi vi forsøker å materialisere dyp omtanke for en partner som tilsynelatende allerede besitter alt som trengs for en komfortabel hverdag. Selv om desember ideelt sett skal være en måned fylt med tradisjoner, hvile og forventninger, fører fraværet av konkrete ønskelister til at selve gavejakten overskygges av usikkerhet og prestasjonsangst. I et desperat forsøk på å bevise kjærlighet gjennom det perfekte kjøpet, tvinges vi ofte til å ta forhastede og irrasjonelle beslutninger i butikken som vi senere angrer på. Denne panikkdrevne tilnærmingen danner selve utgangspunktet for hvorfor intensjonen om å glede så lett ender opp som en overfladisk gave som fullstendig mangler langsiktig verdi for mottakeren.",
+      "Å kjøpe julegave til en partner som allerede har alt, skaper ofte usikkerhet og prestasjonsangst. I et desperat forsøk på å bevise kjærlighet tar vi ofte panikkdrevne og forhastede beslutninger. Slike irrasjonelle kjøp fører til at gode intensjoner ender opp som overfladiske gaver som fullstendig mangler langsiktig verdi for mottakeren.",
     articleSection: "Julegaver",
     publishedAt: "2026-10-06",
     updatedAt: "2026-10-06",

@@ -37,7 +37,7 @@ export function KlarnaIdentityModal({ open, onOpenChange, preview }: {
           />
           <div className={styles.copy}>
             <Dialog.Title className={styles.title}>
-              Meld deg inn nå og få gratis frakt på din neste ordre.
+              Få beskjed først om unike lanseringer og spennende fordeler.
             </Dialog.Title>
             <Dialog.Description className={styles.description}>
               Lås opp tilbud som matcher din stil og dine interesser

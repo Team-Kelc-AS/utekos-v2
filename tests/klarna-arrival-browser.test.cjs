@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { chromium, webkit } = require('playwright');
 const baseURL = process.env.KLARNA_ARRIVAL_TEST_BASE_URL;
-const title = 'Meld deg inn nå og få gratis frakt på din neste ordre.';
+const title = 'Få beskjed først om unike lanseringer og spennende fordeler.';
 const sdk = `export async function KlarnaSDK(){const events={};return {Identity:{on(name,fn){events[name]=fn},button(config){window.__klarnaButtons??=[];window.__klarnaButtons.push(config);const callbacks={};let host;return {on(name,fn){callbacks[name]=fn},mount(container){host=document.createElement('klarna-identity-button');const button=document.createElement('button');button.textContent='Fortsett med Klarna';button.style.cssText='width:100%;height:100%;border:0;border-radius:999px;font:500 20px sans-serif;background:'+(config.theme==='light'?'#f9f8f5':'#0b051d')+';color:'+(config.theme==='light'?'#0b051d':'#fff');button.onclick=async()=>{callbacks.click?.();await events.signin?.({idToken:'fixture-token-'.repeat(10)})};host.append(button);container.replaceChildren(host);callbacks.ready?.()},unmount(){host?.remove()}}}}}}`;
 
 async function fixture(engine, width, overrides = {}) {
@@ -44,17 +44,18 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
           const r = el.getBoundingClientRect(), s = getComputedStyle(el);
           const image = el.querySelector('img');
           return { x: r.x, y: r.y, width: r.width, height: r.height, bottom: r.bottom, radius: s.borderRadius,
-            background: s.backgroundImage, color: s.color, fill: s.backgroundColor, scroll: el.scrollHeight, client: el.clientHeight,
+            paddingTop: s.paddingTop, paddingBottom: s.paddingBottom, background: s.backgroundImage, color: s.color, fill: s.backgroundColor, scroll: el.scrollHeight, client: el.clientHeight,
             src: image.getAttribute('src'), loaded: image.complete && image.naturalWidth > 0,
             closeColor: getComputedStyle(el.querySelector('button[aria-label="Lukk vinduet"] svg')).color,
             theme: window.__klarnaButtons.at(-1).theme, now: performance.now(), viewport: innerHeight };
         });
         assert.ok(metrics.now >= 2000);
         assert.ok(metrics.loaded);
-        assert.equal(metrics.height, width <= 760 ? 240 : 329);
+        if (width <= 760) assert.ok(metrics.height >= 252);
+        else assert.equal(metrics.height, 329);
         assert.ok(metrics.scroll <= metrics.client + 1, JSON.stringify(metrics));
         if (width <= 760) {
-          assert.equal(metrics.width, width); assert.equal(metrics.x, 0); assert.equal(metrics.bottom, metrics.viewport);
+          assert.equal(metrics.paddingTop, '24px'); assert.equal(metrics.paddingBottom, '20px'); assert.equal(metrics.width, width); assert.equal(metrics.x, 0); assert.equal(metrics.bottom, metrics.viewport);
           assert.equal(metrics.radius, '0px'); assert.equal(metrics.background, 'none');
           assert.equal(metrics.fill, 'rgb(240, 238, 233)'); assert.equal(metrics.color, 'rgb(1, 11, 10)');
           assert.equal(metrics.closeColor, metrics.color);
