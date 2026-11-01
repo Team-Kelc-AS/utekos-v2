@@ -285,13 +285,24 @@
     })
   }
 
-  function hasDifferentLiveMetaIdentity(ids) {
+  function hasDifferentLiveMetaIdentity(ids, eventTime) {
+    var browserCookieMatches = cookieMatchesIdentity('_fbp', ids.fbp)
+    if (!browserCookieMatches && ids.fbp === null && eventTime) {
+      var values = cookieValues('_fbp')
+      var match = values.length === 1 && /^fb\.\d+\.(\d{13})\.[^;]+$/.exec(values[0] || '')
+      var createdAt = match && Number(match[1])
+      var capturedAt = Date.parse(eventTime)
+      // The SDK may create this browser's first cookie during init. There is
+      // no prior browser identity to replace; never relax the click-ID check.
+      browserCookieMatches = !!createdAt && isFinite(capturedAt) &&
+        createdAt >= capturedAt && createdAt <= Date.now()
+    }
     // The Pixel transport reads live cookies, not browser_id on this event.
     // Duplicate cookie names can have different Domain/Path scopes; SDK
     // selection is not guaranteed to match our first-value cookie reader.
     return (
       !cookieMatchesIdentity('_fbc', ids.fbc) ||
-      !cookieMatchesIdentity('_fbp', ids.fbp)
+      !browserCookieMatches
     )
   }
 
@@ -767,7 +778,7 @@
       return
     }
 
-    if (hasDifferentLiveMetaIdentity(observedEventIdentity[eventKey]) &&
+    if (hasDifferentLiveMetaIdentity(observedEventIdentity[eventKey], canonicalEvent.event_time) &&
         !restoreLatestCanonicalMetaIdentity(observedEventIdentity[eventKey])) {
       delete pendingFbcEvents[eventKey]
       delete pendingIdentityStartedAt[eventKey]
