@@ -21,7 +21,7 @@
   overflow-y: auto;
   padding: 52px 54px 40px;
   transform: translate(-50%, -50%);
-  border-radius: 48px;
+  border-radius: 40px;
   background: var(--utekos-gradient);
   color: var(--foreground);
   font-family: var(--font-google-sans-flex), sans-serif;

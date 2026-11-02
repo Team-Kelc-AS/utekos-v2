@@ -44,6 +44,8 @@ const sections: readonly FooterSection[] = [
         label: <span>E-post: <wbr />kundeservice@<wbr />utekos.no</span>,
         href: "mailto:kundeservice@utekos.no",
       },
+      { label: "NBCC-medlemsfordel", href: "/produkter/camping-og-bobil/nbcc" },
+      { label: "Logg inn", href: "/customer/account/authorize" },
     ],
   },
   {
@@ -52,7 +54,6 @@ const sections: readonly FooterSection[] = [
     links: [
       { label: "Om oss", href: "/om-oss" },
       { label: "Forhandlere", href: "/forhandlere" },
-      { label: "Bli forhandler", href: "/bli-forhandler" },
       { label: "Frakt og retur", href: "/frakt-og-retur" },
       { label: "Personvern", href: "/personvern" },
       { label: "Vilkår og betingelser", href: "/vilkar-betingelser" },
@@ -65,7 +66,10 @@ const shopLinks: readonly FooterLink[] = [
   { label: "Alle produkter", href: "/produkter" },
   { label: "Varmeplagg", href: "/produkter/varmeplagg" },
   { label: "Tilbehør", href: "/produkter/tilbehor" },
-  { label: "NBCC-medlemsfordel", href: "/produkter/camping-og-bobil/nbcc" },
+];
+
+const businessLinks: readonly FooterLink[] = [
+  { label: "Bli forhandler", href: "/bli-forhandler" },
 ];
 
 function FooterLinks({ links }: { links: readonly FooterLink[] }) {
@@ -108,6 +112,9 @@ export default function Footer() {
               <p>Lille Damsgårdsveien 25<br />5162 Laksevåg</p>
               <p>Org.nr. 925 820 393</p>
             </address>
+            <ul className={styles.links}>
+              <FooterLinks links={businessLinks} />
+            </ul>
           </section>
         </div>
 

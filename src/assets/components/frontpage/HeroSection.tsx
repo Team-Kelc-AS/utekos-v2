@@ -29,9 +29,9 @@ function HeroImage() {
     fetchPriority: "high",
   });
   const { props: mobile } = getImageProps({
-    src: comfyrobeMobileImage,
-    alt: portraitAlt,
-    sizes: "100vw",
+    src: frontPageImage,
+    alt: heroAlt,
+    sizes: "94vw",
     loading: "eager",
     fetchPriority: "high",
   });
@@ -67,7 +67,6 @@ export function HeroSection() {
       )}
     >
       <div className={cn("relative", styles.desktopFrame)}>
-        <HeroImage />
         <div className={cn("absolute inset-x-0 top-[58%] z-10 flex flex-col items-center px-4 sm:top-[55%] sm:px-6", styles.desktopContent)}>
           <h1 id="hero-h1" className={cn("m-0 max-w-3xl text-center text-[clamp(1.25rem,4vw,3.5rem)] leading-[1.08] font-extrabold text-white uppercase lg:pointer-fine:text-[clamp(1.75rem,2.5vw,3.5rem)] lg:pointer-none:text-[clamp(1.75rem,2.5vw,3.5rem)]", styles.desktopHeading)}>
             <span className={styles.mobileOnly}>
@@ -105,6 +104,7 @@ export function HeroSection() {
             <Link href="/produkter/utekos-techdown" prefetch={false} className={styles.desktopSecondary}>TechDown™</Link>
           </div>
         </div>
+        <HeroImage />
       </div>
     </section>
   );
