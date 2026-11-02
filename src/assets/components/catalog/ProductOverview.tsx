@@ -1,6 +1,9 @@
 import "server-only";
 
+import { Fragment } from "react";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { Separator } from "@/components/ui/separator";
 import { CategoryPage, type CategoryPageProps } from "./CategoryPage";
 import {
   Carousel,
@@ -18,6 +21,8 @@ import { getProductListing } from "@/lib/shopify/getProductListing";
 import { getProduct } from "@/lib/shopify/getProduct";
 import { VariantCard } from "./VariantCard";
 import { ProductRowsMotion } from "./ProductRowsMotion";
+import { SkreddersyBanner } from "./SkreddersyBanner";
+import { NbccMembershipSection } from "./NbccMembershipSection";
 import styles from "./ProductOverview.module.css";
 
 export async function ProductOverview({ searchParams }: CategoryPageProps) {
@@ -39,49 +44,61 @@ export async function ProductOverview({ searchParams }: CategoryPageProps) {
       data-tracking-category="all"
       data-tracking-category-name="Alle produkter"
     >
+      <div className={styles.breadcrumbBar}>
+        <div className={styles.breadcrumbs}>
+          <Breadcrumbs
+            items={[
+              { label: "Forsiden", href: "/" },
+              { label: "Produkter" },
+            ]}
+          />
+        </div>
+      </div>
       <header className={styles.hero}>
-        <h1>
-          Juster. Form. <span>Nyt.</span>
-        </h1>
+        <SkreddersyBanner />
       </header>
       <ProductRowsMotion>
         {rows.map((row, rowIndex) => (
-          <section
-            key={row.id}
-            data-product-row={row.id}
-            data-tracking-list={`overview-${row.id}`}
-            data-tracking-list-name={row.label}
-            className={styles.row}
-            aria-label={row.label}
-          >
-            <Carousel
-              aria-label={`${row.label} – sveip for flere størrelser`}
-              opts={{
-                align: "start",
-                containScroll: "trimSnaps",
-                slidesToScroll: 1,
-              }}
+          <Fragment key={row.id}>
+            {rowIndex > 0 && (
+              <Separator className={styles.rowSeparator} />
+            )}
+            <section
+              data-product-row={row.id}
+              data-tracking-list={`overview-${row.id}`}
+              data-tracking-list-name={row.label}
+              className={styles.row}
+              aria-label={row.label}
             >
-              <CarouselContent className={styles.track}>
-                {row.cards.map((card, index) => (
-                  <CarouselItem key={card.variant.id} className={styles.slide}>
-                    <VariantCard
-                      card={card}
-                      eager={rowIndex === 0 && index < 2}
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious
-                aria-label="Forrige variant"
-                className={styles.previous}
-              />
-              <CarouselNext
-                aria-label="Neste variant"
-                className={styles.next}
-              />
-            </Carousel>
-          </section>
+              <Carousel
+                aria-label={`${row.label} – sveip for flere størrelser`}
+                opts={{
+                  align: "start",
+                  containScroll: "trimSnaps",
+                  slidesToScroll: 1,
+                }}
+              >
+                <CarouselContent className={styles.track}>
+                  {row.cards.map((card, index) => (
+                    <CarouselItem key={card.variant.id} className={styles.slide}>
+                      <VariantCard
+                        card={card}
+                        eager={rowIndex === 0 && index < 2}
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious
+                  aria-label="Forrige variant"
+                  className={styles.previous}
+                />
+                <CarouselNext
+                  aria-label="Neste variant"
+                  className={styles.next}
+                />
+              </Carousel>
+            </section>
+          </Fragment>
         ))}
         {rows.length === 0 && (
           <p>Ingen produkter er tilgjengelige akkurat nå.</p>
@@ -92,6 +109,9 @@ export async function ProductOverview({ searchParams }: CategoryPageProps) {
           </Link>
         )}
       </ProductRowsMotion>
+      <div className={styles.membership}>
+        <NbccMembershipSection />
+      </div>
       <div className={styles.guidance}>
         <CategoryNavigation />
         <KnowledgeGuideCards

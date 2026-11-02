@@ -15,7 +15,7 @@ import { ProductCardColorSheet } from '@/components/ProductCard/ProductCardColor
 import { VariantCardActions } from './VariantCardActions';
 import styles from './ProductOverview.module.css';
 
-const sizes = '(min-width: 1328px) 302px, (min-width: 1280px) 25vw, (min-width: 768px) 33vw, 67vw';
+const sizes = '(min-width: 1440px) calc((100vw - 2 * clamp(48px, calc(8vw - 40px), 115px) - 72px) / 4), (min-width: 1328px) 302px, (min-width: 1280px) 25vw, (min-width: 768px) 33vw, 67vw';
 
 export function VariantCard({ card, eager = false }: { card: OverviewCard; eager?: boolean }) {
   const { product, variant, title, image, color } = card;
