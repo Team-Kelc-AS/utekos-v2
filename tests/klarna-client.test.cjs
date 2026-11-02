@@ -8,6 +8,27 @@ const cart = { totalQuantity: 1, lines: [], subtotal: { amount: '1499', currency
 const cartResult = { cart, warnings: [] };
 function loadCart(fetch) { return loadTypeScript('lib/cart/client.ts', { mocks: { react, './tracking': { reportCartMutation() {}, reportCartView() {}, persistCheckoutPreparation: async () => ({ checkoutUrl: 'https://checkout.example.test' }) } }, fetch }); }
 
+test('discount fallback persists Shopify checkout once and returns its confirmed URL under the payment lock', async () => {
+  const methods = [];
+  const api = loadTypeScript('lib/cart/client.ts', { mocks: {
+    react,
+    './tracking': { reportCartMutation() {}, persistCheckoutPreparation: async (_cart, method) => {
+      assert.equal(api.useCartState().pending, true);
+      methods.push(method);
+      return { checkoutUrl: 'https://checkout.example.test/with-discount' };
+    } },
+  } });
+  const prepared = await api.prepareExpressCheckout(
+    async () => ({ ...cartResult, checkoutMethod: 'shopify' }),
+    result => result.checkoutMethod,
+  );
+  assert.deepEqual(methods, ['shopify']);
+  assert.equal(prepared.checkoutUrl, 'https://checkout.example.test/with-discount');
+  assert.equal(api.useCartState().pending, true);
+  api.finishExpressCheckout();
+  assert.equal(api.useCartState().pending, false);
+});
+
 test('Express locks concurrent cart operations until authorization is dismissed', async () => {
   const api = loadCart();
   let resolve;

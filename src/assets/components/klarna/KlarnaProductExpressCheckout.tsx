@@ -9,13 +9,16 @@ import { loadKlarnaExpressCheckoutSdk, loadKlarnaPublicConfig } from './loadKlar
 import type { KlarnaAuthorize } from './types';
 import styles from './KlarnaExpressCheckoutButton.module.css';
 
-type Prepared = CartResult & { orderPayload: KlarnaExpressOrderPayload; shopifyCartId: string };
+type Prepared = CartResult & (
+  | { checkoutMethod: 'shopify' }
+  | { checkoutMethod?: 'klarna'; orderPayload: KlarnaExpressOrderPayload; shopifyCartId: string }
+);
 type Selection = { handle: string; variantId: string; scope?: never } | { scope: 'cart'; handle?: never; variantId?: never };
 type Props = Selection & { disabled?: boolean };
 
 async function prepare(selection: Selection): Promise<Prepared> {
   const response = await fetch('/api/klarna/prepare', {
-    method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+    method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-Utekos-Checkout-Fallback': 'shopify' },
     body: JSON.stringify(selection),
   });
   const result = await response.json();
@@ -38,6 +41,7 @@ export function KlarnaProductExpressCheckout({ handle, variantId, scope, disable
   const current = useRef({ handle, variantId, scope, disabled, pending });
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => { current.current = { handle, variantId, scope, disabled, pending }; }, [handle, variantId, scope, disabled, pending]);
 
@@ -50,6 +54,7 @@ export function KlarnaProductExpressCheckout({ handle, variantId, scope, disable
     async function authorizePurchase(authorize: KlarnaAuthorize) {
       if (inFlight || current.current.disabled || current.current.pending) return;
       inFlight = true;
+      setProcessing(true);
       let ownsCartLock = false;
       setError(null);
       try {
@@ -58,8 +63,12 @@ export function KlarnaProductExpressCheckout({ handle, variantId, scope, disable
           return prepare(selection.scope === 'cart'
             ? { scope: 'cart' }
             : { handle: selection.handle!, variantId: selection.variantId! });
-        });
+        }, result => result.checkoutMethod ?? 'klarna');
         ownsCartLock = true;
+        if (prepared.checkoutMethod === 'shopify') {
+          window.location.assign(prepared.checkoutUrl);
+          return;
+        }
         let handled = false;
         authorize({ auto_finalize: true, collect_shipping_address: true }, prepared.orderPayload, result => {
           if (handled) return;
@@ -70,6 +79,7 @@ export function KlarnaProductExpressCheckout({ handle, variantId, scope, disable
               typeof result.authorization_token !== 'string' || !result.authorization_token.trim()) {
             finishExpressCheckout();
             inFlight = false;
+            setProcessing(false);
             if (result.show_form === false || result.finalize_required === true) setError('Klarna er ikke tilgjengelig for dette kjøpet akkurat nå.');
             return;
           }
@@ -77,6 +87,7 @@ export function KlarnaProductExpressCheckout({ handle, variantId, scope, disable
             if (error instanceof KlarnaCompletionError && error.notSubmitted) {
               finishExpressCheckout();
               inFlight = false;
+              setProcessing(false);
             } else {
               markExpressCheckoutUncertain();
             }
@@ -86,6 +97,7 @@ export function KlarnaProductExpressCheckout({ handle, variantId, scope, disable
       } catch (error) {
         if (ownsCartLock) finishExpressCheckout();
         inFlight = false;
+        setProcessing(false);
         setError(error instanceof Error ? error.message : 'Klarna-kassen kunne ikke forberedes.');
       }
     }
@@ -120,9 +132,10 @@ export function KlarnaProductExpressCheckout({ handle, variantId, scope, disable
 
   return (
     <div className="w-full min-w-0 font-sans">
-      <div ref={hostRef} inert={disabled || pending} aria-busy={!ready && !error}>
+      <div ref={hostRef} inert={disabled || pending} aria-busy={processing || (!ready && !error)}>
         <div id={containerId} className={styles.host} />
       </div>
+      {processing && !error && <p role="status" className="mt-2 text-sm leading-snug">Åpner betaling …</p>}
       {error && <p role="alert" className="mt-2 text-sm leading-snug">{error}</p>}
     </div>
   );

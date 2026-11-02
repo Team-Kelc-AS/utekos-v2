@@ -23,12 +23,13 @@ export function AddToCart({
   showKlarnaModal?: boolean;
 }) {
   const { pending } = useCartState();
+  const [adding, setAdding] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [preview, setPreview] = useState(false);
   const unavailableLabel =
     customUnavailableLabel ??
     (handle === "utekos-dun" ? "Snart tilbake" : "Utsolgt");
-  async function add() {
+  async function addToCart() {
     if (!showKlarnaModal) {
       await changeCart({ action: "add", handle, variantId, quantity: 1 });
       return;
@@ -51,17 +52,27 @@ export function AddToCart({
     setModalOpen(true);
   }
 
+  async function add() {
+    if (pending || adding) return;
+    setAdding(true);
+    try {
+      await addToCart();
+    } finally {
+      setAdding(false);
+    }
+  }
+
   return <>
     <button
       type="button"
       className={styles.primary}
-      disabled={!available || pending}
-      aria-busy={pending}
+      disabled={!available || pending || adding}
+      aria-busy={adding}
       onClick={() => { void add(); }}
     >
       {!available
         ? unavailableLabel
-        : pending
+        : adding
           ? "Legger til …"
           : (label ?? (compact ? "Legg til" : "Legg i handlekurven"))}
     </button>

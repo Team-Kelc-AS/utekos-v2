@@ -2,6 +2,7 @@
 
 import type { Cart, CartOperation, CartResult } from "./types";
 import { persistCheckoutPreparation, reportCartMutation } from "./tracking";
+import type { CheckoutTrackingMethod } from "./tracking";
 
 import { useSyncExternalStore } from "react";
 
@@ -132,7 +133,8 @@ export class ExpressPreparationError extends Error {
 }
 export async function prepareExpressCheckout<T extends CartResult>(
   prepare: () => Promise<T>,
-): Promise<T> {
+  checkoutMethod: (result: T) => CheckoutTrackingMethod = () => "klarna",
+): Promise<T & { checkoutUrl: string }> {
   if (state.pending)
     throw new Error("Vent til handlekurven er ferdig oppdatert.");
   publish({ pending: true, error: null, warnings: [] });
@@ -143,8 +145,8 @@ export async function prepareExpressCheckout<T extends CartResult>(
     reportCartMutation(result);
     // Persist the same begin_checkout ID and attribution before Klarna receives
     // its authorization payload. A failed write never submits a payment.
-    await persistCheckoutPreparation(result.cart, "klarna");
-    return result;
+    const checkout = await persistCheckoutPreparation(result.cart, checkoutMethod(result));
+    return { ...result, checkoutUrl: checkout.checkoutUrl };
   } catch (error) {
     // Shopify may have accepted the line before payload validation or the
     // response failed. Reconcile that cart while the shared lock is still held.

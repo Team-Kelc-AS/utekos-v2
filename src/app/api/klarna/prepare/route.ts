@@ -48,26 +48,35 @@ export async function POST(request: NextRequest) {
       paymentCartId = result.id;
       preparedCart = { cart: result.cart, warnings: result.warnings, mutation: result.mutation };
     }
-    if (preparedCart.cart.requiresStandardCheckout)
-      throw new KlarnaBridgeError("Bruk Til kassen for å beholde rabatten og fraktfordelene dine.", 409);
     if (preparedCart.warnings.length)
       throw new KlarnaBridgeError(
         "Handlekurven ble justert. Kontroller den før du betaler.",
         409,
       );
-    const orderPayload = await cartOrderPayload(
-      paymentCartId,
-      origin,
-      buyerIp(request),
-    );
-    response = NextResponse.json(
-      {
-        orderPayload,
-        shopifyCartId: orderPayload.merchant_reference1,
-        ...preparedCart,
-      },
-      { headers: privateHeaders },
-    );
+    if (preparedCart.cart.requiresStandardCheckout) {
+      // Older open tabs must not pass a handoff response to the Klarna SDK.
+      if (request.headers.get('x-utekos-checkout-fallback') !== 'shopify')
+        throw new KlarnaBridgeError("Bruk Til kassen for å beholde rabatten og fraktfordelene dine.", 409);
+      response = NextResponse.json(
+        { ...preparedCart, checkoutMethod: 'shopify' },
+        { headers: privateHeaders },
+      );
+    } else {
+      const orderPayload = await cartOrderPayload(
+        paymentCartId,
+        origin,
+        buyerIp(request),
+      );
+      response = NextResponse.json(
+        {
+          orderPayload,
+          shopifyCartId: orderPayload.merchant_reference1,
+          ...preparedCart,
+          checkoutMethod: 'klarna',
+        },
+        { headers: privateHeaders },
+      );
+    }
   } catch (error) {
     const known =
       error instanceof CartError || error instanceof KlarnaBridgeError;

@@ -295,3 +295,34 @@ test('shipping and accessory codes cannot be lost through Express even when merc
   }
   assert.equal((await server({ pages: [{ ...cart(), discountCodes: [{ code: 'COMFYFRI', applicable: false }] }] }).cartOrderPayload(fullId, backend)).order_amount, 12345);
 });
+
+test('discounted product checkout hands off the prepared cart without authorizing or adding twice', async () => {
+  let payloadReads = 0;
+  const discounted = { totalQuantity: 1, lines: [{ variantId: 'gid://shopify/ProductVariant/19' }], requiresStandardCheckout: true, discountCodes: [{ code: 'COMFYFRI', applicable: true }] };
+  const api = routes({
+    '@/lib/cart/mutations': { mutateCart: async () => ({ id: fullId, cart: discounted, warnings: [] }) },
+    '@/lib/klarna/server': { ...server(), cartOrderPayload: async () => { payloadReads++; throw new Error('Must not authorize discounted cart'); } },
+  });
+  const req = request({ handle: 'utekos-test', variantId: 'gid://shopify/ProductVariant/19' });
+  req.headers.set('x-utekos-checkout-fallback', 'shopify');
+  const response = await api.prepare(req);
+  assert.equal(response.status, 200);
+  assert.equal(response.data.checkoutMethod, 'shopify');
+  assert.deepEqual(response.data.cart.discountCodes, discounted.discountCodes);
+  assert.equal(response.data.orderPayload, undefined);
+  assert.equal(payloadReads, 0);
+  assert.equal(response.cookieWrites.length, 1);
+});
+
+test('cart adjustments and clients without handoff support never authorize a discounted cart', async () => {
+  for (const warnings of [[], ['Kontroller antallet.']]) {
+    const api = routes({ '@/lib/cart/mutations': { mutateCart: async () => ({ id: fullId, cart: { requiresStandardCheckout: true }, warnings }) } });
+    const req = request({ handle: 'utekos-test', variantId: 'gid://shopify/ProductVariant/19' });
+    if (warnings.length) req.headers.set('x-utekos-checkout-fallback', 'shopify');
+    const response = await api.prepare(req);
+    assert.equal(response.status, 409);
+    assert.equal(response.data.checkoutMethod, undefined);
+    assert.equal(response.data.orderPayload, undefined);
+    assert.deepEqual(response.data.warnings, warnings);
+  }
+});
