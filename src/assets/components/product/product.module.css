@@ -45,6 +45,11 @@
   padding-block: 0.5rem 1.5rem;
   font-size: 0.875rem;
 }
+@media (min-width: 768px) {
+  .breadcrumbs {
+    padding-block: 1.5rem;
+  }
+}
 .grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -152,8 +157,12 @@
   align-items: start;
   gap: 0.75rem;
 }
-.wishlistButton {
-  gap: 0.35rem;
+.titleRow .wishlistButton {
+  height: auto;
+  min-height: 44px;
+  gap: 0.5rem;
+  padding: 10px 14px;
+  border-radius: 9999px;
 }
 .price {
   display: flex;
@@ -265,6 +274,36 @@
   height: 48px;
   padding-block: 0;
   border: 0;
+}
+.purchaseActions > :is(button, a),
+.page [data-slot="card-footer"] > button {
+  border-radius: 9999px;
+}
+
+main[data-product-theme="maritime-blue"] .wishlistButton {
+  background-color: var(--product-detail-background);
+  background-image: var(--product-detail-gradient);
+}
+
+.page[data-product-theme="maritime-blue"]
+  :is(.accordion, .faqColumn)
+  [data-tracking-accordion-item]
+  [data-tracking-accordion-trigger] {
+  background-color: transparent;
+  background-image: none;
+}
+
+.page[data-product-theme="maritime-blue"] :is(
+  [data-faq-label],
+  [data-accordion-badge]
+) {
+  border-color: #a7b8dd55;
+  background-color: var(--product-detail-background);
+  background-image: var(--product-detail-gradient);
+  color: #f0eee9;
+}
+.page[data-product-theme="maritime-blue"] [data-faq-label] svg {
+  color: #c5d2ed;
 }
 .trust {
   display: grid;
@@ -605,7 +644,7 @@ main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion
   white-space: nowrap;
   padding-block: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: 9999px;
   font-weight: 500;
 }
 .productSkeleton {
@@ -681,6 +720,7 @@ main[data-product-theme="comfyrobe"] .accordion > div > [data-tracking-accordion
   }
 }
 @media (max-width: 374px) {
+  .wishlistButton > span { display: none; }
   .reviewSummary { min-height: 10rem; }
   .container {
     width: calc(100% - 2rem);

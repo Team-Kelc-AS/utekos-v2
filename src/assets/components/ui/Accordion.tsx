@@ -118,7 +118,7 @@ const AccordionTrigger = React.forwardRef<
             {children}
           </span>
           {badge && (
-            <span className="inline-flex items-center rounded-full bg-[#b44701]/20 px-2.5 py-0.5 text-xs font-medium text-[#f0eee9] border border-[#b44701]/40">
+            <span data-accordion-badge className="inline-flex items-center rounded-full bg-[#b44701]/20 px-2.5 py-0.5 text-xs font-medium text-[#f0eee9] border border-[#b44701]/40">
               {badge}
             </span>
           )}

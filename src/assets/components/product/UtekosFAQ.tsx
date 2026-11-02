@@ -65,7 +65,7 @@ export function UtekosFAQ({
     <section aria-labelledby="techdown-faq-title" className="w-full">
       <div className="mx-auto w-full max-w-3xl">
         <div className="pb-1">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#f0eee9]/15 bg-[#012622]/80 px-3 py-1 text-xs font-semibold tracking-wider uppercase text-[#f0eee9]/70 mb-4">
+          <div data-faq-label className="inline-flex items-center gap-2 rounded-full border border-[#f0eee9]/15 bg-[#012622]/80 px-3 py-1 text-xs font-semibold tracking-wider uppercase text-[#f0eee9]/70 mb-4">
             <HelpCircle className="h-3.5 w-3.5 text-[#b44701]" />
             FAQ
           </div>

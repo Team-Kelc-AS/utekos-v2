@@ -1,4 +1,41 @@
 /* The active server-resolved variant also themes the shared header and portals. */
+body:has(> main[data-product-theme="maritime-blue"]:not([style*="display: none"])) {
+  /* Maritime Blue #27293d, with evenly spaced OKLab lightness and a quiet center. */
+  --product-page-gradient: linear-gradient(
+    90deg in oklch,
+    #141628 0%,
+    #1a1b2e 12.5%,
+    #1f2134 25%,
+    #25273b 37.5%,
+    #2b2d41 50%,
+    #25273b 62.5%,
+    #1f2134 75%,
+    #1a1b2e 87.5%,
+    #141628 100%
+  );
+  --product-detail-gradient: linear-gradient(
+    90deg in oklch,
+    #101123 0%,
+    #151729 12.5%,
+    #1b1c2f 25%,
+    #202235 37.5%,
+    #26283c 50%,
+    #202235 62.5%,
+    #1b1c2f 75%,
+    #151729 87.5%,
+    #101123 100%
+  );
+  --product-page-background: #141628;
+  --product-page-surface: #1b1c2f;
+  --product-page-elevated: #26283c;
+  --product-detail-background: #101123;
+  --product-page-gallery-accent: var(--product-detail-background);
+  --product-newsletter-surface: var(--product-detail-background);
+  --product-newsletter-gradient: var(--product-detail-gradient);
+  --product-accordion-surface: var(--product-detail-background);
+  --product-accordion-gradient: var(--product-detail-gradient);
+}
+
 body:has(> main[data-product-theme="comfyrobe"]:not([style*="display: none"])) {
   --product-page-gradient: linear-gradient(
     to right in oklch,
@@ -143,7 +180,7 @@ body:has(> main[data-product-theme]:not([style*="display: none"]))
 }
 
 body:has(
-    > main[data-product-theme="patriot-blue"]:not([style*="display: none"])
+    > main:is([data-product-theme="patriot-blue"], [data-product-theme="maritime-blue"]):not([style*="display: none"])
   )
   > header {
   background-color: var(--product-newsletter-surface);
@@ -168,6 +205,21 @@ main[data-product-theme]
     [aria-label="Bla gjennom produktvarianter"] button
   ) {
   background-color: var(--product-page-surface);
+}
+
+main[data-product-theme="maritime-blue"] :is(
+  [data-variant]:not([data-slot]),
+  [data-tracking-accordion-item],
+  aside[aria-label="Kjøp valgt variant"],
+  section[aria-label="Detaljer om produktet"] aside,
+  [data-tracking-size-guide] > button,
+  [data-gallery-controls] > span,
+  [data-gallery-product] button[aria-label$="bilde"],
+  button[aria-label^="Spill av"],
+  [aria-label="Bla gjennom produktvarianter"] button
+) {
+  background-color: var(--product-detail-background);
+  background-image: var(--product-detail-gradient);
 }
 
 main[data-product-theme]
@@ -245,22 +297,44 @@ main[data-product-theme="patriot-blue"]
   background-image: none;
 }
 
-main[data-product-theme="comfyrobe"]
+main:is([data-product-theme="comfyrobe"], [data-product-theme="maritime-blue"])
   section[aria-label="Detaljer om produktet"]
   [data-tracking-accordion-trigger] {
   background-color: transparent;
   background-image: none;
 }
 
-main[data-product-theme="comfyrobe"]
+main:is([data-product-theme="comfyrobe"], [data-product-theme="maritime-blue"])
   > section[data-tracking-list="related-products"]
   [data-product-card],
-main[data-product-theme="comfyrobe"]
+main:is([data-product-theme="comfyrobe"], [data-product-theme="maritime-blue"])
   > section[data-tracking-list="related-products"]
   [data-product-card]
   > :not([data-slot="card-content"]) {
   background-color: var(--product-newsletter-surface);
   background-image: var(--product-newsletter-gradient);
+}
+
+main[data-product-theme="maritime-blue"] [data-product-card] {
+  --background: var(--product-detail-background);
+  --card: var(--product-detail-background);
+  --night: var(--product-detail-background);
+}
+
+body:has(> main[data-product-theme="maritime-blue"]:not([style*="display: none"]))
+  :is(
+    header input[type="search"],
+    footer input[type="email"],
+    footer section[aria-labelledby="footer-newsletter-heading"] button
+  ) {
+  background-color: var(--product-detail-background);
+  background-image: var(--product-detail-gradient);
+  color: #f0eee9;
+}
+
+body:has(> main[data-product-theme="maritime-blue"]:not([style*="display: none"]))
+  footer input[type="email"]::placeholder {
+  color: #f0eee9b3;
 }
 
 body:has(> main[data-product-theme]:not([style*="display: none"]))

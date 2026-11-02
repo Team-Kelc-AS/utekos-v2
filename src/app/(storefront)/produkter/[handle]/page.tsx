@@ -77,6 +77,8 @@ async function ProductContent({ params, searchParams }: Props) {
   )?.value;
   const productTheme = product.handle === "comfyrobe"
     ? "comfyrobe"
+    : product.handle === "utekos-techdown"
+      ? "maritime-blue"
     : ["utekos-dun", "utekos-mikrofiber"].includes(product.handle)
       ? color === "Fjellblå"
         ? "patriot-blue"
