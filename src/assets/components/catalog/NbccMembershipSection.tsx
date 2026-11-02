@@ -5,7 +5,6 @@ import Link from "next/link";
 import { cn } from "cn";
 import { buttonVariants } from "@/components/ui/button";
 import { NBCC_LOGIN_URL, NBCC_PATH } from "@/lib/nbcc/content";
-import { NbccMembershipDialog } from "./NbccMembershipDialog";
 import styles from "./NbccMembership.module.css";
 
 export function NbccMembershipSection() {
@@ -39,7 +38,6 @@ export function NbccMembershipSection() {
               Til Gnist-app
             </a>
           </div>
-          <NbccMembershipDialog />
         </div>
       </div>
     </section>
