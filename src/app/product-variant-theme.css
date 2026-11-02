@@ -33,7 +33,17 @@ body:has(> main[data-product-theme="maritime-blue"]:not([style*="display: none"]
   --product-newsletter-surface: var(--product-detail-background);
   --product-newsletter-gradient: var(--product-detail-gradient);
   --product-accordion-surface: var(--product-detail-background);
-  --product-accordion-gradient: var(--product-detail-gradient);
+  --product-accordion-gradient: linear-gradient(
+    90deg in oklch,
+    #101123 0%,
+    #151729 12.5%,
+    #1b1c2f 25%,
+    #202235 37.5%,
+    #202235 62.5%,
+    #1b1c2f 75%,
+    #151729 87.5%,
+    #101123 100%
+  );
 }
 
 body:has(> main[data-product-theme="comfyrobe"]:not([style*="display: none"])) {
@@ -209,7 +219,6 @@ main[data-product-theme]
 
 main[data-product-theme="maritime-blue"] :is(
   [data-variant]:not([data-slot]),
-  [data-tracking-accordion-item],
   aside[aria-label="Kjøp valgt variant"],
   section[aria-label="Detaljer om produktet"] aside,
   [data-tracking-size-guide] > button,
@@ -220,6 +229,11 @@ main[data-product-theme="maritime-blue"] :is(
 ) {
   background-color: var(--product-detail-background);
   background-image: var(--product-detail-gradient);
+}
+
+main[data-product-theme="maritime-blue"] [data-tracking-accordion-item] {
+  background-color: var(--product-accordion-surface);
+  background-image: var(--product-accordion-gradient);
 }
 
 main[data-product-theme]
