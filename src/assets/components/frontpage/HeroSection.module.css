@@ -156,12 +156,20 @@
 }
 
 @media (max-width: 639px) {
-  .desktopHero { padding: 12px; }
+  .desktopHero {
+    display: flex;
+    height: calc(100dvh - 72px);
+    min-height: 28rem;
+    padding: 12px 12px 0;
+  }
 
   .desktopFrame {
     container-type: inline-size;
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
     border-radius: 24px;
     background-color: #e0e0dc;
     background-image: var(--hero-paper-background);
@@ -180,7 +188,7 @@
     width: 100%;
     max-width: none;
     color: #010b0a;
-    font-size: 15cqi;
+    font-size: min(15cqi, 9dvh);
     font-weight: 800;
     line-height: 0.95;
     letter-spacing: -0.035em;
@@ -188,7 +196,7 @@
   }
 
   .desktopCopy { display: block; }
-  .desktopHeading .desktopCopy > span:not(:first-child) { display: inline; }
+  .desktopHeading .desktopCopy > span { display: block; }
   .desktopAccent { color: #b44701; }
   .mobileOnly { display: none; }
 
@@ -231,8 +239,19 @@
   .desktopActions a:focus-visible { outline: 2px solid #010b0a; outline-offset: 4px; }
 
   .desktopPicture {
+    display: flex;
+    flex: 1 1 0;
+    min-height: 0;
+    align-items: flex-end;
+    justify-content: flex-end;
+    container-type: size;
     width: 94%;
     margin-left: auto;
+  }
+
+  .desktopPicture img {
+    width: min(100%, calc(100cqh * 1372 / 1362));
+    height: auto;
   }
 }
 
