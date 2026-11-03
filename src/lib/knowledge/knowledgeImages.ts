@@ -3,6 +3,12 @@ export const knowledgeImages = {
   "christmasGift": {
     "images": [
       {
+        "src": "/images/kunnskap/julegavenes_mystiske_spadom.webp",
+        "alt": "En rådvill julegavehandler søker råd hos en spåkone, omgitt av tankebobler med mulige gaver.",
+        "width": 1260,
+        "height": 709
+      },
+      {
         "src": "/images/kunnskap/bergens-julemarked-i-vinterglød.webp",
         "alt": "Travle nordmenn på julehandel i en snødekt handlegate, som illustrerer det enorme økonomiske omfanget og stresset rundt kjøp av julegaver.",
         "width": 1672,

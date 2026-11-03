@@ -69,6 +69,28 @@ test('metadata, graph identities, dates and image references agree for all artic
   }
 });
 
+test('Christmas article graph uses its displayed hero once and keeps its separate sharing image', () => {
+  const article = knowledgeArticles.christmasGift;
+  const heroUrl = 'https://utekos.no/images/kunnskap/julegavenes_mystiske_spadom.webp';
+  const graph = plain(buildKnowledgeJsonLd(article))['@graph'];
+  const images = graph.filter(node => node['@type'] === 'ImageObject');
+  const hero = images.find(node => node.url === heroUrl);
+  const entity = graph.find(node => node['@type'] === 'Article');
+  const page = graph.find(node => node['@type'] === 'WebPage');
+
+  assert.equal(article.images[0].src, '/images/kunnskap/julegavenes_mystiske_spadom.webp');
+  assert.equal(images.filter(node => node.url === heroUrl).length, 1);
+  assert.equal(hero.width.value, 1260);
+  assert.equal(hero.height.value, 709);
+  assert.equal(page.primaryImageOfPage['@id'], hero['@id']);
+  assert.equal(entity.image.filter(image => image['@id'] === hero['@id']).length, 1);
+  assert.equal(new Set(images.map(image => image['@id'])).size, images.length);
+  assert.equal(article.cardImage.src, '/images/kunnskap/bergens-julemarked-i-vinterglød.webp');
+  assert.equal(buildKnowledgeMetadata(article).openGraph.images[0].url,
+    'https://utekos.no/images/uteguiden/social/julegaven-til-den-som-har-alt-v1.png');
+  assert.ok(!graph.some(node => ['Product', 'ItemList'].includes(node['@type'])));
+});
+
 test('undocumented dates remain absent; date-only values retain their precision', () => {
   const undated = articles.filter(a => !a.publishedAt);
   assert.equal(undated.length, 3);

@@ -51,6 +51,21 @@ test('curated editorial image sources exist without transforming their originals
   }
 });
 
+test('Christmas image sitemap includes the displayed hero exactly once', () => {
+  const url = 'https://utekos.no/uteguiden/julegaven-til-den-som-har-alt';
+  const images = sitemapImages(editorialSitemapImages['/uteguiden/julegaven-til-den-som-har-alt']);
+  const xml = resolveSitemap([encodeSitemapEntry({ url, images })]);
+  const $ = load(xml, { xml: true });
+  const emittedImages = $('image\\:loc').map((_, element) => $(element).text()).get();
+
+  assert.equal($('url > loc').text(), url);
+  assert.equal(emittedImages.length, 7);
+  assert.equal(new Set(emittedImages).size, emittedImages.length);
+  assert.equal(emittedImages.filter(image => image ===
+    'https://utekos.no/images/kunnskap/julegavenes_mystiske_spadom.webp').length, 1);
+  assert.ok(!emittedImages.some(image => image.includes('/uteguiden/social/')));
+});
+
 test('current Next serializer produces XML that preserves media URLs and video text', () => {
   const image = 'https://cdn.shopify.com/image.jpg?v=1&width=1200';
   const content = 'https://cdn.shopify.com/video.mp4?v=1&quality=high';

@@ -9,19 +9,22 @@ export function ChristmasGiftArticleLayout({
 }: {
   children: ReactNode;
 }) {
+  const article = knowledgeArticles.christmasGift;
+  const heroImage = article.images[0];
+
   return (
     <KnowledgeArticleScaffold
-      article={knowledgeArticles.christmasGift}
+      article={article}
       heroPlacement="after-title"
       hero={
         <figure className={imageStyles.figure}>
           <span className={imageStyles.figureFrame}>
             <Image
               className={imageStyles.figureImage}
-              src="/images/kunnskap/julegavenes_mystiske_spadom.webp"
-              alt="En rådvill julegavehandler søker råd hos en spåkone, omgitt av tankebobler med mulige gaver."
-              width={1260}
-              height={709}
+              src={heroImage.src}
+              alt={heroImage.alt}
+              width={heroImage.width}
+              height={heroImage.height}
               sizes="(min-width: 1024px) 816px, (min-width: 832px) 752px, (min-width: 800px) calc(100vw - 80px), (min-width: 400px) 90vw, calc(100vw - 40px)"
               preload
             />
