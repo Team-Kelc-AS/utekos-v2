@@ -34,6 +34,10 @@ export function buildServerGtmUpstreamUrl(
     SERVER_GTM_ORIGIN
   )
   url.search = search
+  // Next.js strips the trailing slash, but Stape uses it to route the tag bootstrap.
+  if (/^\/fps\/[A-Za-z0-9_-]+$/.test(url.pathname) && url.searchParams.has('id')) {
+    url.pathname += '/'
+  }
 
   return url
 }

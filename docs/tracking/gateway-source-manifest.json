@@ -19,7 +19,9 @@
       "source": "src/lib/analytics/serverGtmGateway/buildServerGtmUpstreamUrl.ts",
       "target": "src/lib/analytics/serverGtmGateway/buildServerGtmUpstreamUrl.ts",
       "sourceSha256": "8d8e88c5593b9259ae9aabc56a78f2ef52cfe9894bfc4cae64d2c88a14a3b667",
-      "adapted": false
+      "adapted": false,
+      "reviewedTargetSha256": "f0b2dd8beb9938272c338ffec55f0894d4dec1f1a061660150fbf4a5f75d871d",
+      "reason": "Restore the directory slash on FPS tag bootstrap requests after Next.js path normalization. Stape returns HTTP 400 for this path without the slash."
     },
     {
       "source": "src/lib/analytics/serverGtmGateway/proxyServerGtmRequest.ts",

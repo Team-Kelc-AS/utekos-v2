@@ -98,6 +98,22 @@ test('Stape gateway preserves the body, query, visitor headers and independent c
   assert.equal(response.headers.get('content-encoding'), null)
 })
 
+test('Stape FPS tag bootstrap reaches the directory endpoint with its original query', async () => {
+  const search = '?id=GT-TEST&cx=c&gtm=a%2Bb&f=1'
+  const path = ['fps', 'encoded-container']
+  let forwardedUrl: string | undefined
+  const response = await proxyServerGtmRequest(new Request(`https://utekos.no/__sgtm/fps/encoded-container${search}`), {
+    params: Promise.resolve({ path }),
+  }, async url => {
+    forwardedUrl = String(url)
+    return new Response('fixture')
+  })
+  assert.equal(forwardedUrl, `https://edge.utekos.no/fps/encoded-container/${search}`)
+  assert.equal(await response.text(), 'fixture')
+  assert.equal(buildServerGtmUpstreamUrl(path, '')?.pathname, '/fps/encoded-container')
+  assert.equal(buildServerGtmUpstreamUrl([...path, 'gtd'], search)?.pathname, '/fps/encoded-container/gtd')
+})
+
 test('invalid Stape paths fail without fetch; provider errors have no private details and no retry', async () => {
   for (const path of [['..'], ['.'], ['a/b'], ['a\\b'], ['x'.repeat(257)], Array(33).fill('a')]) {
     assert.equal(buildServerGtmUpstreamUrl(path, ''), null)
