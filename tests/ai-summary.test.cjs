@@ -205,7 +205,7 @@ test('source resolution rejects unregistered articles and unpublished product ha
   let productCalls = 0;
   const { getSummarySource } = loadTypeScript('lib/ai-summary/source.ts', {
     mocks: {
-      '@/lib/products/judgeme': { getJudgeMeReviews() { throw new Error('Unexpected review request'); } },
+      '@/lib/products/judgeme': { getJudgeMePreview() { throw new Error('Unexpected review request'); } },
       '@/lib/shopify/getProductHandles': { getProductHandles: async () => ['published'] },
       '@/lib/shopify/getProduct': { getProduct: async () => { productCalls++; return null; } },
       '@/lib/knowledge/knowledgeArticles': { knowledgeArticleList: [{ slug: 'registered', title: 'Tittel', description: 'Ingress' }] },

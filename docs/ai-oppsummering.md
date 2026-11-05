@@ -14,12 +14,13 @@ brukeren godkjenner den reviderte versjonen. Kun preview-grenen
   Tidligere hovedpunkter og egen forbeholdsliste er fjernet.
 - Produkter bruker samme lokale beskrivelse og trekkspilldata som siden,
   med Shopify-beskrivelsen som reserve. Bare publiserte handles aksepteres.
-- Judge.me hentes med eksisterende `getJudgeMeReviews(product.id)` fra den
-  offentlige produktwidgeten. Den eksisterende adapteren kontrollerer produkt-ID
+- Judge.me hentes med `getJudgeMePreview(product.id, 40)` fra den
+  offentlige produktwidgeten. Ett kall med fem sekunders timeout unngår full
+  paginering mens leseren venter. Den eksisterende adapteren kontrollerer produkt-ID
   og publiserte omtaler, og cacher data i fem minutter. Butikkomtaler blandes
   ikke inn i produktomtaler. Manglende data er ikke null omtaler.
 - Gjennomsnitt og totalantall kommer direkte fra Judge.me, uten modellberegning.
-  Modellen får maksimalt 40 nyeste omtaler, med stjerner og avgrenset tittel/tekst.
+  Modellen får maksimalt 40 publiserte omtaler, med stjerner og avgrenset tittel/tekst.
   Navn, ID, kjøpsstatus og dato sendes ikke til modellen. Ved delvis dekning
   viser UI hvor mange omtaler som inngår. Kritikk må beholdes; kundeerfaringer
   skal ikke presenteres som dokumenterte produktegenskaper.

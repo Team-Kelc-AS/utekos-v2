@@ -99,7 +99,7 @@ async function readWidget(domain: string, externalId: string, token: string, per
 }
 
 /** One bounded request, retaining the real total; no full review pagination on listings. */
-export async function getJudgeMePreview(productId: string): Promise<JudgeMeReviews | null> {
+export async function getJudgeMePreview(productId: string, limit: 3 | 40 = 3): Promise<JudgeMeReviews | null> {
   'use cache';
   cacheLife({ stale: 300, revalidate: 300, expire: 3600 });
   cacheTag(`judgeme:product:${productId}`);
@@ -108,8 +108,8 @@ export async function getJudgeMePreview(productId: string): Promise<JudgeMeRevie
   const domain = process.env.SHOPIFY_STORE_DOMAIN?.replace(/^https?:\/\//, '').replace(/\/$/, '');
   if (!externalId || !token || !domain) { cacheLife('seconds'); return null; }
   try {
-    const data = await readWidget(domain, externalId, token, 3, 1);
-    return { ...data, reviews: [...new Map(data.reviews.map(review => [review.id, review])).values()].slice(0, 3) };
+    const data = await readWidget(domain, externalId, token, limit, 1);
+    return { ...data, reviews: [...new Map(data.reviews.map(review => [review.id, review])).values()].slice(0, limit) };
   } catch {
     cacheLife('seconds');
     return null;
