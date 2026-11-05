@@ -47,7 +47,9 @@ eller prompts. API-et avviser kryssorigin, ugyldig JSON og mer enn 512 bytes.
 Det har en avgrenset, instanslokal grense på 10 forespørsler/minutt per
 adressehash. Dette er ikke en distribuert kvote eller et globalt kostnadstak.
 Bruk AI Gateways budsjetter og Vercel Firewall ved behov for delte grenser.
-Generering har 25 sekunders timeout, maks én vanlig retry og 2400 outputtokens.
+Generering har 40 sekunders timeout innenfor funksjonens grense på 45 sekunder,
+maks én vanlig retry og 2400 outputtokens. Grensen tar høyde for kalde
+modellkall som i produksjonskontrollen kunne overstige 25 sekunder.
 
 Loggene har `ai_summary_cache_hit`, `ai_summary_completed`,
 `ai_summary_unconfigured`, `ai_summary_failed` og

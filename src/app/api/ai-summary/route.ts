@@ -6,7 +6,7 @@ import { getSummarySource } from '@/lib/ai-summary/source';
 import { buildSummaryPrompt, summaryCacheKey, summaryInstructions, SUMMARY_MODEL } from '@/lib/ai-summary/prompt';
 import { summaryRateLimit } from '@/lib/ai-summary/rateLimit';
 
-export const maxDuration = 30;
+export const maxDuration = 45;
 const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
 
 export async function POST(request: Request) {
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       prompt: buildSummaryPrompt(source),
       output: Output.object({ schema: pageSummarySchema }),
       maxOutputTokens: 2400,
-      timeout: 25_000,
+      timeout: 40_000,
       maxRetries: 1,
       abortSignal,
       onError: () => {}, // The response stream below logs errors once, without prompt/provider payloads.
