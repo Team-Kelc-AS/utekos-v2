@@ -32,11 +32,16 @@ brukeren godkjenner den reviderte versjonen. Kun preview-grenen
 
 AI SDK 7 `streamText`, `Output.object` og `useObject` brukes via AI Gateway.
 Modellen er `google/gemini-3.8-flash`, bekreftet i Gateways katalog 5. november
-2026. `providerOptions.google.thinkingConfig.thinkingLevel: 'minimal'` erstatter
-leverandørens standardnivå. Gateways generelle `reasoning: 'minimal'` skal ikke
-brukes her: den delte Gemini 3-mappingen kan oversette dette til `high`, noe som
-ga avbrutt JSON i den første preview-testen. Outputtaket
-reduseres fra 2400 til 600 tokens, timeout fra 40 til 15 sekunder, uten automatisk
+2026. `thinkingConfig.thinkingLevel: 'low'` settes i både `providerOptions.google`
+og `providerOptions.vertex`, siden Gateway kan bruke begge leverandørene.
+Akkurat denne modellen støtter bare `low` og `high` ifølge modellkatalogen.
+Den generelle `reasoning: 'minimal'` kan oversettes til `high`, og native
+`minimal` støttes ikke av denne modellen; begge ble forkastet etter feil i
+preview. En direkte sammenligning av tre modeller viste at 3.8 Flash med `low`
+beholdt tydelige material-/produktforbehold med langt lavere latenstid.
+Outputtaket reduseres fra 2400 til 1600 tokens for å gi plass til både intern
+resonnering og gyldig JSON, mens synlig tekst har egne strenge ordgrenser.
+Timeout reduseres fra 40 til 15 sekunder, uten automatisk
 modellretry. Funksjonsgrensen er 30 sekunder. `AI_SUMMARY_MODEL` kan overstyre
 modellen; et bytte må testes for støtten til reasoning og strukturert output.
 

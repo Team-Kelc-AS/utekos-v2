@@ -86,9 +86,12 @@ export async function POST(request: Request) {
       system: summaryInstructions,
       prompt: buildSummaryPrompt(source),
       output: Output.object({ schema: pageSummarySchema }),
-      // Gateway's shared Gemini effort mapping can turn "minimal" into "high".
-      providerOptions: { google: { thinkingConfig: { thinkingLevel: SUMMARY_REASONING } } },
-      maxOutputTokens: 600,
+      // Configure both serving providers; this model supports only low/high.
+      providerOptions: {
+        google: { thinkingConfig: { thinkingLevel: SUMMARY_REASONING } },
+        vertex: { thinkingConfig: { thinkingLevel: SUMMARY_REASONING } },
+      },
+      maxOutputTokens: 1600,
       timeout: 15_000,
       maxRetries: 0,
       abortSignal,

@@ -28,7 +28,8 @@ function routeHarness({ resolvedSource = source, generated = summary, enabled = 
         Output: { object: value => value },
         streamText: ({ abortSignal, providerOptions, reasoning }) => {
           assert.equal(reasoning, undefined);
-          assert.equal(providerOptions.google.thinkingConfig.thinkingLevel, 'minimal');
+          assert.equal(providerOptions.google.thinkingConfig.thinkingLevel, 'low');
+          assert.equal(providerOptions.vertex.thinkingConfig.thinkingLevel, 'low');
           calls += 1;
           generationSignal = abortSignal;
           return {
