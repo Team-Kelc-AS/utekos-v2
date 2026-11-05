@@ -4,7 +4,6 @@ import { useObject } from '@ai-sdk/react';
 import { Brain, ChevronDown, Star } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { productSummaryResponseSchema, type SummaryTarget } from '@/lib/ai-summary/schema';
-import styles from './PageAiSummary.module.css';
 
 export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
   const [open, setOpen] = useState(true);
@@ -27,6 +26,9 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
     return () => stop();
   }, [stop]);
   const failed = invalid || Boolean(error);
+  const paragraphClassName = 'mx-0! mt-0! mb-3.5! max-w-[55ch] leading-[1.65]!';
+  const noteClassName = `${paragraphClassName} text-[.8125rem]!`;
+  const actionClassName = 'min-h-11 cursor-pointer rounded-[.5rem] border border-(--summary-border) px-3 py-2 [font:inherit] focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-offset-4';
 
   function activate() {
     setInvalid(false);
@@ -40,38 +42,38 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
       <button
         ref={trigger}
         type="button"
-        className={styles.trigger}
+        className="flex min-h-18 w-full cursor-pointer items-center gap-3.5 rounded-[inherit] p-4 text-left text-inherit [font:inherit] font-extrabold! leading-[1.4]! hover:bg-[color-mix(in_srgb,var(--summary-ink)_5%,transparent)] focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-offset-4 sm:px-5"
         aria-expanded={open}
         aria-controls={regionId}
         onClick={() => started ? setOpen(!open) : activate()}
       >
-        <Brain size={20} aria-hidden="true" />
+        <Brain size={20} className="shrink-0" aria-hidden="true" />
         <span>Kortversjonen</span>
-        <ChevronDown size={20} aria-hidden="true" className={open ? styles.chevronOpen : undefined} />
+        <ChevronDown size={20} aria-hidden="true" className={`ml-auto shrink-0 ${open ? 'rotate-180' : ''}`} />
       </button>
-      <div id={regionId} hidden={!open} className={styles.content} aria-busy={isLoading}>
-        {isLoading && !object?.content?.summary && <span className={styles.loader} role="status" aria-label="Laster" />}
+      <div id={regionId} hidden={!open} className="border-t border-(--summary-border) p-4 sm:p-5 [&[hidden]]:hidden! [&>p:last-child]:mb-0!" aria-busy={isLoading}>
+        {isLoading && !object?.content?.summary && <span className="m-2 inline-block size-4 rounded-full border-2 border-(--summary-border) border-t-current animate-spin [animation-duration:800ms] motion-reduce:animate-none" role="status" aria-label="Laster" />}
         {!failed && object ? (
           <div>
-            {object.content?.summary && <p className={styles.summary}>{object.content.summary}</p>}
+            {object.content?.summary && <p className={`${paragraphClassName} text-lg!`}>{object.content.summary}</p>}
             {target.kind === 'product' && object.reviews?.count !== undefined && object.reviews.average !== undefined && (
-              <p className={styles.rating}>
-                {object.reviews.count > 0 ? <><Star size={16} aria-hidden="true" />{object.reviews.average.toLocaleString('nb-NO', { maximumFractionDigits: 2 })}/5 · {object.reviews.count} {object.reviews.count === 1 ? 'omtale' : 'omtaler'} på Judge.me</> : 'Ingen produktomtaler ennå.'}
+              <p className={`${paragraphClassName} flex items-center gap-1.5 text-base! font-extrabold!`}>
+                {object.reviews.count > 0 ? <><Star size={16} className="shrink-0" aria-hidden="true" />{object.reviews.average.toLocaleString('nb-NO', { maximumFractionDigits: 2 })}/5 · {object.reviews.count} {object.reviews.count === 1 ? 'omtale' : 'omtaler'} på Judge.me</> : 'Ingen produktomtaler ennå.'}
               </p>
             )}
-            {object.content?.reviewSummary && <p>{object.content.reviewSummary}</p>}
-            {object.reviews?.includedCount !== undefined && object.reviews.count !== undefined && object.reviews.includedCount < object.reviews.count && <p className={styles.note}>Omtaleteksten bygger på {object.reviews.includedCount} av {object.reviews.count} omtaler.</p>}
-            {!isLoading && target.kind === 'product' && object.reviews === null && <p className={styles.note}>Kundeomtaler er midlertidig utilgjengelige.</p>}
+            {object.content?.reviewSummary && <p className={`${paragraphClassName} text-base!`}>{object.content.reviewSummary}</p>}
+            {object.reviews?.includedCount !== undefined && object.reviews.count !== undefined && object.reviews.includedCount < object.reviews.count && <p className={noteClassName}>Omtaleteksten bygger på {object.reviews.includedCount} av {object.reviews.count} omtaler.</p>}
+            {!isLoading && target.kind === 'product' && object.reviews === null && <p className={noteClassName}>Kundeomtaler er midlertidig utilgjengelige.</p>}
           </div>
         ) : null}
         {failed && <>
-          <p role="status">Oppsummeringen kunne ikke lastes.</p>
-          <button type="button" className={styles.action} onClick={activate}>Prøv igjen</button>
+          <p className={`${paragraphClassName} text-base!`} role="status">Oppsummeringen kunne ikke lastes.</p>
+          <button type="button" className={actionClassName} onClick={activate}>Prøv igjen</button>
         </>}
-        {isLoading && <button type="button" className={styles.action} onClick={() => {
+        {isLoading && <button type="button" className={actionClassName} onClick={() => {
           clear(); setStarted(false); setOpen(false); setInvalid(false);
         }}>Avbryt</button>}
-        {!isLoading && !failed && object && <p className={styles.note}>
+        {!isLoading && !failed && object && <p className={noteClassName}>
           AI-generert. Les {target.kind === 'product' ? 'produktdetaljene og omtalene' : 'hele artikkelen'} for alle nyanser.
         </p>}
       </div>

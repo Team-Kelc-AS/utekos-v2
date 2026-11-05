@@ -37,6 +37,11 @@ brukeren godkjenner den reviderte versjonen. Kun preview-grenen
 
 ## Svartid, forberedelse og cache
 
+Utseendet styres med Tailwind CSS 4-klasser i `ArticleSummaryDisclosure.tsx`,
+`ProductAiSummary.tsx` og `PageAiSummaryContent.tsx`. Komponentene har ingen
+CSS-modul. Markørens animasjoner registreres som `--animate-*` i Tailwinds
+`@theme` i `globals.css`; spinneren bruker standard `animate-spin`.
+
 Artiklene har ingen generering i klikkflyten. De tolv validerte oppsummeringene
 ligger i `articleSummaries.generated.json` og rendres som lukket, innebygd
 HTML `<details>` i siden. Med JavaScript viser klikket en tydelig merket
