@@ -219,6 +219,12 @@ export const knowledgeImages = {
         "height": 900
       },
       {
+        "src": "/images/kunnskap/frostpust-i-vinterkulden.webp",
+        "alt": "Nærbilde av en person i vinterkulden som justerer kragen på et strukturert innerlag. Synlig frostrøyk understreker kontrasten mellom beskyttende kroppsvarme og iskalde omgivelser.",
+        "width": 1600,
+        "height": 900
+      },
+      {
         "src": "/images/kunnskap/Vinterpause med varm drikke og fjordutsikt.webp",
         "alt": "En turgåer tar en pause i et snødekket vinterlandskap, sittende på et sitteunderlag. Personen har på seg en tykk, mørk genser i merinoull (innerlag), og smiler mens de holder en rykende kopp med varm drikke.",
         "width": 1312,
@@ -229,6 +235,12 @@ export const knowledgeImages = {
         "alt": "En langrennsutøver i full aktivitet på vei opp en snødekket bakke i en vinterskog. Vedkommende har på seg en tynn, teknisk overdel (syntetisk innerlag) under en åpen vindjakke for å transportere bort svette.",
         "width": 1370,
         "height": 1148
+      },
+      {
+        "src": "/images/kunnskap/vinterekspedisjon-rustikk-strikkegenser.webp",
+        "alt": "En turgåer i snøvær som henter et tørt, tykt ull-innerlag opp fra ryggsekken, klart til å brukes som et varmende skift for å unngå nedkjøling.",
+        "width": 1600,
+        "height": 900
       }
     ],
     "cardImage": {
