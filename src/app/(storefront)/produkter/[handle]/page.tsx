@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageAiSummary } from "@/components/ai-summary/PageAiSummary";
 import { ProductFallback, ProductSkeleton } from "@/components/product/ProductSkeleton";
 import { getProduct } from "@/lib/shopify/getProduct";
 import { getProductHandles } from "@/lib/shopify/getProductHandles";
@@ -103,6 +104,7 @@ async function ProductContent({ params, searchParams }: Props) {
         >
           <SelectedProduct product={product} searchParams={searchParams} />
         </Suspense>
+        <PageAiSummary key={product.handle} target={{ kind: "product", slug: product.handle }} />
         <ProductDetails handle={product.handle} productId={product.id} />
       </div>
       <Suspense fallback={null}>

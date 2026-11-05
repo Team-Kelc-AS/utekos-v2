@@ -1,4 +1,5 @@
 import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
+import { PageAiSummary } from "@/components/ai-summary/PageAiSummary";
 import Image from "next/image";
 import imageStyles from "@/components/knowledge/knowledgeChrome.module.css";
 import { KnowledgeArticleMeta } from "@/components/knowledge/KnowledgeArticleMeta";
@@ -22,6 +23,7 @@ import { KnowledgeToc } from "@/components/knowledge/KnowledgeToc";
 </figure>
 
 <KnowledgeArticleMeta article={knowledgeArticles.glamping} />
+<PageAiSummary target={{ kind: "article", slug: "hva-er-glamping" }} />
 
 <KnowledgeLearnings
   article={{

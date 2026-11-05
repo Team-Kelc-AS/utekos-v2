@@ -1,4 +1,5 @@
 import { KnowledgeArticleMeta } from "@/components/knowledge/KnowledgeArticleMeta";
+import { PageAiSummary } from "@/components/ai-summary/PageAiSummary";
 import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
 import { KnowledgeRegisteredImage } from "@/components/knowledge/KnowledgeRegisteredImage";
 
@@ -7,6 +8,7 @@ import { KnowledgeRegisteredImage } from "@/components/knowledge/KnowledgeRegist
 For å velge riktig glampingopphold og pakke riktig, må du kartlegge stedets standard for oppvarming, toalettforhold, adkomst og mattilbud, og deretter tilpasse utstyret ditt med lag-på-lag-bekledning og vanntett fottøy.
 
 <KnowledgeArticleMeta article={knowledgeArticles.glampingNorway} />
+<PageAiSummary target={{ kind: "article", slug: "glamping-i-norge" }} />
 
 <KnowledgeRegisteredImage article={knowledgeArticles.glampingNorway} caption="Illustrasjon av en tretopphytte ved en fjord. Bildet dokumenterer ikke et bestemt overnattingssted." />
 

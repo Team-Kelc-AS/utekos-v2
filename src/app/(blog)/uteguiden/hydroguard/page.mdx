@@ -1,4 +1,5 @@
 import { KnowledgeArticleMeta } from "@/components/knowledge/KnowledgeArticleMeta";
+import { PageAiSummary } from "@/components/ai-summary/PageAiSummary";
 import { hydroGuardArticle } from "@/lib/knowledge/hydroguardArticle";
 import { EditorialFigure } from "./HydroGuardArticleParts";
 import { BackToTop } from "@/components/knowledge/BackToTop";
@@ -31,6 +32,7 @@ import styles from "./hydroguard.module.css";
 </div>
 
 <KnowledgeArticleMeta article={hydroGuardArticle} className={styles.panel} />
+<PageAiSummary target={{ kind: "article", slug: "hydroguard" }} />
 
 
 {/* 2. Hva du vil lære */}

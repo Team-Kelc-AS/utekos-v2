@@ -1,4 +1,5 @@
 import "server-only";
+import { PageAiSummary } from "@/components/ai-summary/PageAiSummary";
 
 import { ArticleRelatedContent } from "./RelatedContent";
 import { BackToTop } from "./BackToTop";
@@ -47,6 +48,7 @@ export function KnowledgeArticleScaffold({
           <KnowledgeToc article={article} />
         </>
       )}
+      <PageAiSummary key={article.slug} target={{ kind: "article", slug: article.slug }} />
       <div className={articleStyles.body}>{children}</div>
       {footer ?? (
         <>
