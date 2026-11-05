@@ -5,7 +5,7 @@
   "scripts": {
     "sync": "f() { git add . && git commit -m \"$1\" && git push; }; f",
     "dev": "node scripts/build-ai-summary-sources.mjs && next dev",
-    "build": "node scripts/build-ai-summary-sources.mjs && node scripts/build-google-reviews.mjs && node scripts/performance/check-motion-budget.mjs && next build && node scripts/check-content-routes.mjs",
+    "build": "node scripts/build-ai-summary-sources.mjs && tsx scripts/prepare-ai-article-summaries.ts --check && node scripts/build-google-reviews.mjs && node scripts/performance/check-motion-budget.mjs && next build && node scripts/check-content-routes.mjs",
     "build:reviews": "node scripts/build-google-reviews.mjs",
     "start": "next start",
     "pdf:worker": "node scripts/sync-pdf-worker.mjs",
@@ -14,7 +14,8 @@
     "perf:motion": "node scripts/performance/check-motion-budget.mjs",
     "test:tracking": "node --test tests/*.test.cjs && NODE_OPTIONS='--conditions=react-server' tsx --test tests/tracking-gateway.test.ts",
     "tracking:contracts": "python3 scripts/tracking/vendor-contracts.py --manifest",
-    "build:ai-sources": "node scripts/build-ai-summary-sources.mjs"
+    "build:ai-sources": "node scripts/build-ai-summary-sources.mjs",
+    "prepare:article-summaries": "node scripts/build-ai-summary-sources.mjs && tsx scripts/prepare-ai-article-summaries.ts --write"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.157",

@@ -1,0 +1,343 @@
+{
+  "sherpacore": {
+    "sourceKey": "61b2999ffa16139bc1b9361313348f06d12106a11d137251995fd05f7cf78641",
+    "content": {
+      "scope": "Artikkelen redegjør for SherpaCore™, det innvendige fôret i Comfyrobe, med fokus på fiberinnhold, tekstilstruktur, flatevekt og fuktegenskaper.",
+      "learning": "Du lærer forskjellen på råfiber og overflatestruktur, hvordan hevet luv isolerer, hva 250 g/m² betyr for duken, og hvordan hydrofob polyester transporterer fukt kapillært.",
+      "points": [
+        {
+          "text": "SherpaCore™ er 100 % polyester, ikke ull; navnet viser til strukturen.",
+          "details": []
+        },
+        {
+          "text": "Tekstilet isolerer ved at en mekanisk hevet luv fanger stillestående luft, som begrenser varmetap uten å tilføre aktiv varme.",
+          "details": [
+            "Flatevekten på 250 g/m² angir tettheten per arealenhet for selve stoffet målt etter standarder som ASTM D3776, ikke vekten av hele plagget."
+          ]
+        },
+        {
+          "text": "Væske flyttes i hulrommene mellom fibrene, i samspill med overflatebehandling. Dette bidrar til fukthåndtering og rask tørking.",
+          "details": []
+        },
+        {
+          "text": "Comfyrobe har en todelt oppbygning der fôret gir isolasjon og fuktkontroll, mens et ytterstoff på 130 g/m² med PU-belegg skjermer mot vind og vær.",
+          "details": []
+        }
+      ]
+    }
+  },
+  "julegaven-til-den-som-har-alt": {
+    "sourceKey": "c9abeb084ff77ad88e6f9c0f24056419dfe529c20d7b922e55ae4ea5e52bb3da",
+    "content": {
+      "scope": "Artikkelen analyserer psykologiske mekanismer bak julegavekjøp, økonomisk dødvektstap og overgangen til praktiske nyttegaver.",
+      "learning": "Du lærer hvorfor givere og mottakere vurderer gaver ulikt, hva som bidrar til feilkjøp, og hvordan praktisk anvendelighet kan gi verdi over tid.",
+      "points": [
+        {
+          "text": "Forskning viser en markant gaveasymmetri der giveren søker dramaturgi ved overrekkelsen, mens mottakeren vektlegger nytteverdi over tid.",
+          "details": [
+            "Joel Waldfogel har beregnet at omtrent 20 prosent av gavens verdi forsvinner i økonomisk dødvektstap."
+          ]
+        },
+        {
+          "text": "Givere prioriterer ofte abstrakt ønskelighet, overraskelser og luksus fremfor konkrete ønsker, fleksibilitet og praktisk gjennomførbarhet.",
+          "details": []
+        },
+        {
+          "text": "Artikkelen fremhever praktiske problemløsere som reduserer hverdagsfriksjon for voksne med etablert livsstil, fremfor nye statusgjenstander.",
+          "details": [
+            "Utekos TechDown™ brukes som eksempel på en nyttegave, med hydrofobisk CloudWeave™ og Luméa™ nylon som ytterstoff."
+          ]
+        }
+      ]
+    }
+  },
+  "hva-er-glamping": {
+    "sourceKey": "b6ada79090c92de9ecf41fb39457ae7527015669a9ed3974af02350a16b4ada3",
+    "content": {
+      "scope": "Artikkelen analyserer glamping som fenomen innen reiseliv, med fokus på historikk, demografi, økonomi, arkitektur og norske reguleringer.",
+      "learning": "Du lærer om konseptets opprinnelse og psykologi, økonomiske investeringskalkyler, juridiske rammer etter friluftsloven og balansen mellom bærekraft og grønnvasking.",
+      "points": [
+        {
+          "text": "Glamping gir hotellkomfort ute.",
+          "details": [
+            "Begrepet oppsto på 2000-tallet og har historiske forløpere i imperiale telt og tidlige afrikanske safariturer."
+          ]
+        },
+        {
+          "text": "Artikkelen drøfter lønnsomhet og lave investeringskostnader, men også driftskostnader ved telt som slites i hardt klima.",
+          "details": [
+            "Innkvarteringen varierer fra isolerte pods og safaritelt til kupler, og suppleres ofte med velværetilbud som badstuer."
+          ]
+        },
+        {
+          "text": "Kommersiell utbygging krever egne avklaringer om arealbruk og tillatelser; allemannsretten er ikke en utbyggingsrett.",
+          "details": [
+            "Miljøavtrykket avhenger av konstruksjon og drift. Høyt energiforbruk i uisolerte telt gir grunnlag for kritikk om grønnvasking."
+          ]
+        }
+      ]
+    }
+  },
+  "glamping-i-norge": {
+    "sourceKey": "a3f45f429166ac357980a40271a5247f0e6acf9ed20e76e52272bfb01007d883",
+    "content": {
+      "scope": "Artikkelen redegjør for forberedelser til glamping i Norge, med vekt på vurdering av fasiliteter, adkomst og behov for riktig utstyr.",
+      "learning": "Leseren lærer å kartlegge oppvarming, sanitærforhold og matmuligheter, samt hvordan skiftende vær krever lagvis bekledning, gode sko og ryggsekk.",
+      "points": [
+        {
+          "text": "Oppvarmingsløsninger avgjør komforten utenfor sommeren, og enkelte steder krever at gjesten selv fyrer kontinuerlig med ved.",
+          "details": [
+            "Gulv kan forbli kalde selv med ovn, og enkelte aktører kombinerer vedovn med dieselvarmer eller gass."
+          ]
+        },
+        {
+          "text": "Sanitær- og matfasiliteter spenner fra luksus med restaurant og innendørs bad til utedo, pumpedusj og enkel primus.",
+          "details": [
+            "Uten innlagt vann eller strøm må mat forberedes hjemme og vannforbruk rasjoneres nøye."
+          ]
+        },
+        {
+          "text": "Adkomst i ulendt terreng gjør rullekoffert uegnet, og bagasjen bør fraktes i ryggsekk.",
+          "details": []
+        },
+        {
+          "text": "Uforutsigbart norsk vær krever trelagspåkledning, vanntett fottøy og hodelykt for trygg ferdsel i mørket.",
+          "details": []
+        }
+      ]
+    }
+  },
+  "vinterlagring-av-campingvogn-og-bobil": {
+    "sourceKey": "f3b692b89e377965d32de4bd808866b0fb8b145f787ada3bdfee80162daebe72",
+    "content": {
+      "scope": "Artikkelen gir en teknisk veiledning for vinterklargjøring, lagring og aktiv vinterbruk av bobiler og campingvogner i nordisk klima.",
+      "learning": "Du lærer metodisk tømming av vannsystemer, korrekt batteri- og gassvedlikehold, fuktsikring, garanti- og forsikringskrav samt regelverk for dekk og kjetting.",
+      "points": [
+        {
+          "text": "Vannsystemer må tømmes mekanisk for å hindre frostsprengning i rør og beredere.",
+          "details": [
+            "Truma FrostControl dumper beredervann ved ca. 3 °C og kan først lukkes igjen over ca. 7 °C."
+          ]
+        },
+        {
+          "text": "Batterier og varmeanlegg krever kjemitilpasset vedlikehold i vinterhalvåret.",
+          "details": [
+            "Blybatterier lagres fulladet, LiFePO4 på 50–60 %. Litiumceller må ikke lades med celletemperatur under 0 °C.",
+            "Glykol i Alde-systemer må byttes hvert andre eller femte år for å hindre tæring."
+          ]
+        },
+        {
+          "text": "Fuktsikring krever lufting og årlig test.",
+          "details": [
+            "Propan, CO og røyk krever ulike varslere og riktig plassering; test dem før vintersesongen."
+          ]
+        },
+        {
+          "text": "Krav til dekk og kjetting avhenger av kjøretøyets vektklasse og forholdene på veien.",
+          "details": []
+        }
+      ]
+    }
+  },
+  "hvordan-forlenge-terassesesongen": {
+    "sourceKey": "f49b191775e94c72b5303182f79046c220f7abb292b4b549fb172af72c0fd2e7",
+    "content": {
+      "scope": "Artikkelen redegjør for innglassing av balkong og terrasse, med krav i plan- og bygningsloven, TEK17, fuktsikring, brannkrav og varmeteknologi.",
+      "learning": "Du lærer hvilke regler som utløser søknadsplikt, hvordan brann- og fuktsikring prosjekteres, og hvorfor regulerbare kvartsvarmere er mer energieffektive enn gass.",
+      "points": [
+        {
+          "text": "Artikkelen beskriver innglassing som en fasadeendring og et uklimatisert rom, og går gjennom søknadsplikt og tekniske rammer.",
+          "details": [
+            "Enkeltglass gir ikke termisk isolasjon, og fukt eller snøfokk kan trenge inn ved uvær."
+          ]
+        },
+        {
+          "text": "Brannsikring skal hindre spredning mellom etasjer og nabobalkonger.",
+          "details": [
+            "Brannklasser og skjerming vurderes ut fra fasadens utforming og avstanden mellom balkongene."
+          ]
+        },
+        {
+          "text": "Riktig fall, oppkanter og drenering til frostfrie nedløp er avgjørende for å hindre fuktskader og varmetap i takisolasjon.",
+          "details": []
+        },
+        {
+          "text": "Infrarøde kvartsvarmere varmer flater direkte, men krever trinnløs regulering for å gi reell strømsparing.",
+          "details": []
+        }
+      ]
+    }
+  },
+  "cloudweave": {
+    "sourceKey": "6cae527c410d670be0a3dc40366e18e0e941561bbf91a099900e6f825a7c6d79",
+    "content": {
+      "scope": "Artikkelen redegjør for hvordan isolasjon fungerer mekanisk, og sammenligner dun med syntetisk CloudWeave™ i fuktig norsk klima og nullføre.",
+      "learning": "Du lærer hvorfor stillestående luft isolerer mot varmetap, hvordan fuktighet påvirker dun og syntetisk fiber ulikt, samt hvilket fyll som egner seg til ulike værforhold.",
+      "points": [
+        {
+          "text": "Plagg produserer ikke varme selv, men bremser kroppens varmetap ved å fange stillestående luft i hulrommene.",
+          "details": [
+            "Vann leder varme rundt 25 ganger raskere enn luft. Vått eller komprimert fyll isolerer dårligere."
+          ]
+        },
+        {
+          "text": "Dun gir best varme per gram og lavest pakkvolum under tørre og kalde forhold, men strukturen kollapser hvis fyllet blir vått.",
+          "details": []
+        },
+        {
+          "text": "CloudWeave™ består av løse syntetiske fibre som etterligner dun, men tar opp minimalt med vann og bevarer luftlommer ved fukt.",
+          "details": [
+            "Utekos TechDown™ bruker materialet til isolasjon i skiftende kystvintre og vått sluddvær."
+          ]
+        },
+        {
+          "text": "Dun reiser spørsmål om dyrevelferd; syntetiske fibre bidrar til mikrofiberutslipp.",
+          "details": []
+        }
+      ]
+    }
+  },
+  "hva-skal-man-ha-innerst": {
+    "sourceKey": "95c51d43deddebf6c18a8ede9e851b120f4d6102cd6cde264963749a8de81c51",
+    "content": {
+      "scope": "Artikkelen vurderer valg av innerlag i kulde, og sammenligner egenskapene til ull, syntetiske materialer og bomull etter aktivitetsnivå.",
+      "learning": "Du lærer hvordan innerlagets fukthåndtering og passform påvirker varmetapet, hvorfor bomull bør unngås, og hva du bør velge ved hvile kontra høy intensitet.",
+      "points": [
+        {
+          "text": "Innerlaget fanger luft og holder huden tørr mot kulden.",
+          "details": [
+            "Klærne må ikke sitte for stramt, da sammentrykking av luftlaget svekker isolasjonsevnen vesentlig."
+          ]
+        },
+        {
+          "text": "Ull tiltrekker seg fukt, frigjør varme i prosessen og opprettholder isolasjon i våt tilstand, men har lengre tørketid.",
+          "details": [
+            "Egenskapene gjør ull velegnet ved lav intensitet, lange pauser og stillesitting i streng kulde."
+          ]
+        },
+        {
+          "text": "Syntetiske stoffer som polyester og polyamid er vannavvisende, tørker raskt og ventilerer effektivt under hard fysisk anstrengelse.",
+          "details": []
+        },
+        {
+          "text": "Bomull holder på fukt når den blir våt og bør unngås innerst i kulde. Vann leder varme bort fra kroppen langt raskere enn luft.",
+          "details": []
+        }
+      ]
+    }
+  },
+  "hvordan-holde-varmen-ute": {
+    "sourceKey": "4f3316296177cf2dd469915cefe044f66b0151701f2b7fb419c511c8e1759987",
+    "content": {
+      "scope": "Artikkelen forklarer kroppens varmeregnskap og prinsipper for bekledning utendørs, med vekt på lagdeling, fukt, vind og sirkulasjon i kulde.",
+      "learning": "Du lærer hvordan aktivitet, luftlag og materialvalg styrer varmetapet, hvorfor fuktighet og vind svekker isolasjonen, og hvordan du unngår nedkjøling.",
+      "points": [
+        {
+          "text": "Kroppens varmeregnskap krever balanse mellom metabolsk varmeproduksjon og varmetap.",
+          "details": [
+            "Aktivitet øker varmeproduksjonen kraftig, mens muskelvevets egen isolasjonsevne faller."
+          ]
+        },
+        {
+          "text": "Klærne fungerer som et system der stillestående luft står for mesteparten av isolasjonen.",
+          "details": [
+            "Ull eller syntetisk materiale innerst transporterer fukt, mens mellomlaget må sitte løst nok til å fange luft uten å komprimeres."
+          ]
+        },
+        {
+          "text": "Vind og fuktighet reduserer klesisolasjonen betydelig fordi vann leder varme raskt.",
+          "details": [
+            "Ytterlaget må skjerme mot vind og regn, men samtidig ha mekanisk lufting for å slippe ut overskuddsvarme og svette."
+          ]
+        },
+        {
+          "text": "Hender og føtter krever varm kjerne og romslige plagg.",
+          "details": []
+        }
+      ]
+    }
+  },
+  "hvorfor-blir-man-kald": {
+    "sourceKey": "23537ca72143da7a30d32c11b39358a62cceedd0b97e57507be0068e888cb887",
+    "content": {
+      "scope": "Artikkelen redegjør for kroppens termoregulering, mekanismene bak varmetap i kulde, samt fysiologiske og atferdsmessige tiltak for å holde varmen.",
+      "learning": "Du lærer hvordan kroppen styrer varmebalansen, forskjellen på termisk ubehag og hypotermi, og hvordan bekledning og aktivitet hindrer nedkjøling.",
+      "points": [
+        {
+          "text": "Kroppens stoffskifte lager varme, mens konveksjon, ledning, stråling og fukt gir tap.",
+          "details": [
+            "Vann leder varme om lag 25 ganger raskere enn luft, noe som gjør fuktighet til en stor risiko i kulde."
+          ]
+        },
+        {
+          "text": "Hypothalamus snevrer inn perifere blodårer for å prioritere kjernetemperaturen på 37 grader fremfor hender og føtter.",
+          "details": []
+        },
+        {
+          "text": "Fysiologisk skilles det mellom subjektivt termisk ubehag, perifer nedkjøling og reell hypotermi med kjernetemperatur under 35 grader.",
+          "details": []
+        },
+        {
+          "text": "Varmebalansen sikres ved å fange stillestående luft med flere lag tøy og stimulere forbrenningen med mat og bevegelse.",
+          "details": [
+            "Klær varmer ikke i seg selv, men isolerer mot tap av egenprodusert varme."
+          ]
+        }
+      ]
+    }
+  },
+  "ykk": {
+    "sourceKey": "80c8f46eb2add08fbde108c096d52b81d6b3669b4fec8234b4616a50ab666a30",
+    "content": {
+      "scope": "Artikkelen redegjør for glidelåsens mekaniske oppbygning, datasimulering, industritesting, samt vedlikehold og miljøkrav i produksjonen.",
+      "learning": "Du lærer hvorfor glidelåser kiler seg eller deler seg, hvordan toleranser påvirker styrken, og hvordan riktig vask og håndtering i kulde forebygger mekanisk svikt.",
+      "points": [
+        {
+          "text": "Glidelåsen virker gjennom samspillet mellom tenner, glider og bånd. Presise toleranser hindrer at låsen deler seg.",
+          "details": [
+            "Innvendig kile i glideren styrer inngrepet, og låsestiften krever at dra-tappen løftes før justering."
+          ]
+        },
+        {
+          "text": "Svikt skyldes oftest smuss, is eller skjev belastning fremfor utslitt metall, og kulde gjør plast stivere og metall trangere.",
+          "details": [
+            "Kiler glideren seg, rygg rolig tilbake og fjern is eller smuss. Ikke bruk makt."
+          ]
+        },
+        {
+          "text": "PET-simuleringer erstatter ikke fysisk langtidstesting i kulde.",
+          "details": []
+        },
+        {
+          "text": "Standardiserte tester etter JIS S2015:2019 måler kjedestyrke og stoppere, mens levetiden forlenges ved full lukking før vask og skylling av veisalt.",
+          "details": []
+        }
+      ]
+    }
+  },
+  "hydroguard": {
+    "sourceKey": "94382df0bccb39a1a7f226d59f15010721f189de675d1c794633f2dbeb568332",
+    "content": {
+      "scope": "Artikkelen redegjør for HydroGuard™, ytterstoffet i Comfyrobe™ fra Utekos, dets tekniske oppbygning, målebegreper og vedlikehold.",
+      "learning": "Du lærer hvordan polyestervev, peach skin-finish og PU-belegg fungerer, hva ISO-teststandarder betyr, samt samspillet med innerfôret SherpaCore™.",
+      "points": [
+        {
+          "text": "HydroGuard™ kombinerer en matt peach skin-polyesterbase på 130 g/m² med et pustende PU-belegg bak.",
+          "details": [
+            "Mekanisk bearbeiding fjerner plastpreget i overflaten, mens det beskyttede polyuretanbelegget hindrer vanninntrenging og slipper ut vanndamp."
+          ]
+        },
+        {
+          "text": "Internasjonale tekstilstandarder skiller prinsipielt mellom overflateavvisning, reell vanntetthet, luftgjennomgang og vanndamptransport.",
+          "details": [
+            "Vannavvisning måler kun avprelling på overflaten, mens vanntetthet krever hydrostatisk trykktest; sømmer påvirker helheten."
+          ]
+        },
+        {
+          "text": "I Comfyrobe™ danner stoffet en værsperre foran fôret SherpaCore™, og vask av plagget må følge innsydd anvisning selv om ytterstoffet tåler 40 °C.",
+          "details": []
+        }
+      ]
+    }
+  }
+}

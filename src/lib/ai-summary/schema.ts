@@ -48,14 +48,15 @@ export function articleSummaryIssues(summary: ArticleSummary): string[] {
   return issues;
 }
 
-export const summaryResponseSchema = z.object({
+export const productSummaryResponseSchema = z.object({
   reviews: z.object({
     average: z.number().min(0).max(5),
     count: z.number().int().nonnegative(),
     includedCount: z.number().int().nonnegative(),
   }).nullable(),
-  content: z.union([pageSummarySchema, articleSummarySchema]),
+  content: pageSummarySchema,
 });
+export const summaryResponseSchema = productSummaryResponseSchema.extend({ content: z.union([pageSummarySchema, articleSummarySchema]) });
 
 export type PageSummary = z.infer<typeof pageSummarySchema>;
 export const summarySourceSchema = summaryTargetSchema.extend({

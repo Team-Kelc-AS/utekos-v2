@@ -35,53 +35,40 @@ brukeren godkjenner den reviderte versjonen. Kun preview-grenen
   artikler støttes. `pnpm dev` og `pnpm build` regenererer kildene; ved redigering
   under en kjørende server brukes `pnpm build:ai-sources`.
 
-## Modell, streaming og cache
+## Svartid, forberedelse og cache
 
-AI SDK 7 `streamText`, `Output.object` og `useObject` brukes via AI Gateway.
-Modellen er `google/gemini-3.8-flash`, bekreftet i Gateways katalog 5. november
-2026. `thinkingConfig.thinkingLevel: 'low'` settes i både `providerOptions.google`
-og `providerOptions.vertex`, siden Gateway kan bruke begge leverandørene.
-Akkurat denne modellen støtter bare `low` og `high` ifølge modellkatalogen.
-Den generelle `reasoning: 'minimal'` kan oversettes til `high`, og native
-`minimal` støttes ikke av denne modellen; begge ble forkastet etter feil i
-preview. En direkte sammenligning av tre modeller viste at 3.8 Flash med `low`
-beholdt tydelige material-/produktforbehold med langt lavere latenstid.
-Outputtaket er 1600 tokens for å gi plass til både intern
-resonnering og gyldig JSON, mens synlig tekst har egne lengdegrenser.
-Timeout reduseres fra 40 til 15 sekunder, med maksimalt én retry ved
-midlertidig leverandørfeil innenfor samme tidsgrense. Funksjonsgrensen er 30 sekunder. `AI_SUMMARY_MODEL` kan overstyre
-modellen; et bytte må testes for støtten til reasoning og strukturert output.
-Artikler har maksimalt tre utkast innen én samlet frist på 15 sekunder, uten
-automatisk leverandørretry. Ved feil lengde/fordeling får neste utkast målt
-tegnantall og konkret korrigeringsbehov. Når ett tekstfelt kan bringe hele svaret
-innenfor kravene, skrives bare dette feltet om; øvrig innhold beholdes.
-Ugyldig JSON, leverandørfeil og avbrudd
-stopper genereringen. Tekst avkortes eller fylles aldri mekanisk.
+Artiklene har ingen generering i klikkflyten. De tolv validerte oppsummeringene
+ligger i `articleSummaries.generated.json` og rendres som lukket, innebygd
+HTML `<details>` i siden. Klikket åpner teksten direkte, også uten JavaScript,
+uten AI-kall, API-kall eller lasting av AI-klienten. Artikkelendepunktet kan
+også returnere det samme ferdige resultatet med `X-AI-Summary-Cache: PREPARED`.
 
-Ingen modellkall skjer ved sidevisning, prefetch eller bygg. SDK-klienten
-lastes ved klikk. API-et strømmer først verifisert ratingmetadata og deretter
-modellens kompakte produktobjekt. Artikkelutkast holdes tilbake til struktur,
-tegnantall og fordeling er validert, slik at en eventuell korrigering ikke viser
-leseren et ugyldig utkast. Resultatet valideres strukturelt og mot lengdegrenser.
-Manglende omtaler kan aldri gi generert omtaletekst; tilgjengelig omtaletekst
-må faktisk tas med. Validering er ikke en semantisk faktasjekk.
+SHA-256-nøkkelen binder hver tekst til artikkelens tittel, ingress, MDX-innhold,
+modell, reasoning og artikkelprompt. En endret kilde kan ikke bruke gammel
+oppsummering. `pnpm build` kontrollerer at alle registrerte artikler har en
+oppdatert og validert oppsummering; mangler stopper bygget. Kontroll gjør aldri
+modellkall. Manuell forberedelse kjøres eksplisitt med
+`pnpm prepare:article-summaries` i et Gateway-autentisert miljø, og tekstene
+skal gjennomgås før publisering. Skriptet gjenbruker uendrede tekster og gir
+maksimalt tre utkast per endret artikkel. Ved retting av ett felt beholdes
+resten. Dette er redaksjonelt arbeid før publisering, aldri ventetid for leseren.
 
-Vercel Runtime Cache lagrer bare fullførte, validerte svar i 24 timer. SHA-256-
-nøkkelen inkluderer produkt-/artikkeltekst, omtaler, rating, antall, modell,
-reasoning og promptversjon. Artikler har egen promptversjon; produktnøklene
-endres ikke ved denne artikkelrevisjonen. Endringer i kilden gir nytt svar etter at kildecachen
-oppdateres. Cache-lesefeil stopper generering; skrivefeil logges. Avbrudd og
-ufullstendige svar lagres ikke. HTTP-avbrudd stopper modellen.
-`vercel.ts` aktiverer Vercels nødvendige `supportsCancellation` kun for
-`src/app/api/ai-summary/route.ts`; klientens abortsignal alene er ikke nok på
-plattformen.
+Modellen ved forberedelse og produktsammendrag er `google/gemini-3.8-flash`,
+med `thinkingConfig.thinkingLevel: 'low'` for både Google og Vertex gjennom
+AI Gateway. AI SDK 7 `streamText` og `Output.object` validerer struktur;
+servervalidering håndhever tegnantall, fordeling, underpunkter og produktgrenser.
+Produktvisningen bruker `useObject`, med fem sekunders maksimal nettverksventing.
+Et produktmodellkall har 4,5 sekunders tidsgrense og maksimalt én leverandørretry
+innen samme grense. Avbrudd stopper modellen; ingen delvise resultater caches.
+`vercel.ts` aktiverer `supportsCancellation` for API-ruten.
 
-Et validert produkt-/omtalegrunnlag lagres også delt i fem minutter. Derfor
-trenger et cachet svar ikke vente på Shopify/Judge.me ved hvert klikk eller
-ved bytte av serverinstans. Endringer slår gjennom etter oppdatering av de
-eksisterende Shopify-/Judge.me-cachene og utløp av kildens fem minutters cache;
-dette er ikke sanntidsdata. Ukjent/feilet omtalegrunnlag caches ikke og gir
-«Prøv igjen» uten modellkall; null publiserte omtaler er fortsatt et gyldig svar.
+Vercel Runtime Cache lagrer ferdige produktresultater i 24 timer. Nøkkelen
+inkluderer produktdata, omtaler, rating, antall, modell, reasoning og prompt.
+Et validert produkt-/omtalegrunnlag lagres delt i fem minutter, i tillegg til
+Shopify-/Judge.me-cachene. Ukjent omtalegrunnlag gir feil uten modellkall;
+null publiserte omtaler er et gyldig svar. Cachelesefeil stopper generering;
+skrivefeil logges. Artiklene har ingen tidsbasert utløpstid: de følger den
+publiserte kildeversjonen, så første leser slipper også å vente.
 
 ## Kostnader og kontroll
 
@@ -96,20 +83,19 @@ kryssorigin, ugyldig JSON og mer enn 512 bytes. Den instanslokale grensen på
 10 forespørsler/minutt er ikke et distribuert kostnadstak.
 
 Logger registrerer request-ID, kilde/model, cachetreff, totalvarighet,
-kildetid, tid til første modelltekst, antall utkast, input/output- og reasoning-tokens.
-For artikler er første modelltekst et internt tidspunkt; leseren får først det
-ferdig validerte resultatet. Tokenantall summeres over alle artikkelutkast.
+kildetid, tid til første modelltekst og input/output-/reasoning-tokens for produkter.
+Artikkelendepunktet logger bare levering av ferdig resultat, uten modellbruk.
 Prompt, svar, nøkler og klientadresse logges ikke. Ingen nye bakgrunnsjobber,
 varsler eller automatisk publisering er opprettet.
 
 ## Verifisering og publisering
 
-Kjør `node --test tests/ai-summary.test.cjs`, avgrenset ESLint, `pnpm typecheck`
-og `pnpm build`. Test aktivert versjon med preview-variabelen, ekte Gateway
-og Judge.me. Kontroller kald generering, første tekst, ordgrenser, direkte
-ratingtall, kritikk, manglende omtaler, delt cache MISS/HIT, mobil/desktop,
-feil/prøv igjen, avbryt og ingen forespørsel før klikk. Sammenlign modelltekst
-med kildene. Produksjonsaktivering krever nytt klarsignal etter AGENTS.md.
+Kjør `node --test tests/ai-summary.test.cjs tests/judgeme.test.cjs`, avgrenset
+ESLint, `pnpm typecheck` og `pnpm build`. Kontroller alle tolv artikler mot
+kildene, tegnantall, tredeling og underpunkter. Verifiser klikk uten nettverk,
+også uten JavaScript, på mobil og desktop. Produkter skal beholde Judge.me,
+35/20-ordsgrenser, cache, avbryt og feil/prøv igjen; femsekundersfristen testes
+med forsinket svar. Produksjonsaktivering krever nytt klarsignal etter AGENTS.md.
 
 5. november ble den tidligere versjonen tatt ut i commit `587cf83`.
 Revisjonens målinger og skjermbilder lagres utenfor Git i

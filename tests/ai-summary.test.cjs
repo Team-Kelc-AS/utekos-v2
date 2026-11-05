@@ -3,7 +3,8 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { loadTypeScript } = require('./load-typescript.cjs');
 
-const source = { kind: 'article', slug: 'test-artikkel', title: 'Test', content: 'Kildetekst. '.repeat(30) };
+const source = { kind: 'product', slug: 'test-produkt', title: 'Test', content: 'Kildetekst. '.repeat(30), reviews: { average: 0, count: 0, items: [] } };
+const articleSource = { ...source, kind: 'article', reviews: undefined };
 const summary = { summary: 'En oppsummering med tilstrekkelig lengde.', reviewSummary: '' };
 const articleSummary = {
   scope: 'Artikkelen forklarer hvordan lagvis bekledning hjelper deg å holde varmen ute, med vekt på fukt, isolasjon og beskyttelse mot været.',
@@ -17,9 +18,9 @@ const articleSummary = {
 const shortDraft = { ...articleSummary, scope: 'UTKAST SKAL IKKE VISES. Dette er for kort.' };
 const withoutDetails = { ...articleSummary, points: articleSummary.points.map(point => ({ text: [point.text, ...point.details].join(' '), details: [] })) };
 
-const responseSummary = { reviews: null, content: articleSummary };
+const responseSummary = { reviews: { average: 0, count: 0, includedCount: 0 }, content: summary };
 
-function routeHarness({ resolvedSource = source, generated = resolvedSource.kind === 'article' ? articleSummary : summary, generatedDrafts = [generated], enabled = true, configured = true, summaryKey = false, fail = false, valid = true, finishReason = 'stop', cacheReadError = false, cacheWriteError = false, waitForAbort = false, waitForAbortAtCall = waitForAbort ? 1 : 0, rateLimit = 0 } = {}) {
+function routeHarness({ resolvedSource = source, generated = resolvedSource.kind === 'article' ? articleSummary : summary, generatedDrafts = [generated], enabled = true, configured = true, summaryKey = false, fail = false, valid = true, finishReason = 'stop', cacheReadError = false, cacheWriteError = false, waitForAbort = false, waitForAbortAtCall = waitForAbort ? 1 : 0, rateLimit = 0, prepared = articleSummary } = {}) {
   const cache = new Map();
   const cacheWrites = [];
   const prompts = [];
@@ -28,11 +29,13 @@ function routeHarness({ resolvedSource = source, generated = resolvedSource.kind
   let calls = 0;
   let sourceCalls = 0;
   let generationSignal;
-  const route = loadTypeScript('app/api/ai-summary/route.ts', {
+  const preparationController = new AbortController();
+  const options = {
     env: { ...(enabled ? { NEXT_PUBLIC_AI_SUMMARY_ENABLED: 'true' } : {}), ...(summaryKey ? { AI_SUMMARY_GATEWAY_API_KEY: 'summary-test-only' } : configured ? { AI_GATEWAY_API_KEY: 'test-only' } : {}) },
     globals: { Request, Response, ReadableStream, Buffer, crypto, TextEncoderStream, AbortController,
       console: { info() {}, warn() {}, error() {} } },
     mocks: {
+      '@/lib/ai-summary/preparedArticles': { getPreparedArticleSummary: () => prepared },
       '@/lib/ai-summary/source': { getSummarySource: async target => { sourceCalls++; return target.slug === source.slug ? resolvedSource : null; } },
       '@/lib/ai-summary/rateLimit': { summaryRateLimit: () => rateLimit },
       '@vercel/functions': { getCache: () => ({
@@ -67,12 +70,15 @@ function routeHarness({ resolvedSource = source, generated = resolvedSource.kind
         createTextStreamResponse: ({ stream, headers }) => new Response(stream.pipeThrough(new TextEncoderStream()), { headers }),
       },
     },
-  });
+  };
+  const route = loadTypeScript('app/api/ai-summary/route.ts', options);
+  const generator = loadTypeScript('lib/ai-summary/generateArticleSummary.ts', options);
+  const prepare = () => generator.generateArticleSummary({ model: 'test/model', source: articleSource, abortSignal: preparationController.signal, onText() {} });
   const request = (body = resolvedSource, headers = {}) => route.POST(new Request('https://utekos.no/api/ai-summary', {
     method: 'POST', headers: { 'Content-Type': 'application/json', ...headers },
     body: typeof body === 'string' ? body : JSON.stringify({ kind: body.kind, slug: body.slug }),
   }));
-  return { request, cache, cacheWrites, prompts, schemas, calls: () => calls, sourceCalls: () => sourceCalls, generationSignal: () => generationSignal,
+  return { request, prepare, abortPreparation: () => preparationController.abort(), cache, cacheWrites, prompts, schemas, calls: () => calls, sourceCalls: () => sourceCalls, generationSignal: () => generationSignal,
     waitForCall: call => calls >= call ? Promise.resolve() : new Promise(resolve => callWaiters.push({ call, resolve })),
   };
 }
@@ -103,70 +109,66 @@ test('streams one generation, validates it, and serves the next activation from 
   assert.equal(second.headers.get('X-AI-Summary-Cache'), 'HIT');
   assert.deepEqual(await second.json(), responseSummary);
   assert.equal(app.calls(), 1);
-  assert.equal(app.cache.size, 1);
-  assert.equal(app.cacheWrites[0].options.ttl, 86400);
+  assert.equal(app.cache.size, 2);
+  assert.equal(app.cacheWrites.at(-1).options.ttl, 86400);
 });
 
-test('article repair exposes only the validated result and caches it for the next reader', async () => {
-  const app = routeHarness({ generatedDrafts: [shortDraft, { replacement: articleSummary.scope }] });
+test('articles return prepared content without Gateway configuration, cache access or model calls', async () => {
+  const app = routeHarness({ resolvedSource: articleSource, configured: false, cacheReadError: true });
   const first = await app.request();
+  assert.equal(first.headers.get('X-AI-Summary-Cache'), 'PREPARED');
   const text = await first.text();
-  assert.deepEqual(JSON.parse(text), responseSummary);
-  assert.doesNotMatch(text, /UTKAST SKAL IKKE VISES/);
+  assert.deepEqual(JSON.parse(text), { reviews: null, content: articleSummary });
+  assert.equal(await (await app.request()).text(), text);
+  assert.equal(app.calls(), 0);
+  assert.equal(app.cache.size, 0);
+  const missing = routeHarness({ resolvedSource: articleSource, prepared: null });
+  assert.equal((await missing.request()).status, 503);
+  assert.equal(missing.calls(), 0);
+});
+
+test('prepared articles are bound to the current source and validated before use', () => {
+  const { summaryCacheKey, SUMMARY_MODEL } = loadTypeScript('lib/ai-summary/prompt.ts');
+  const { getPreparedArticleSummary } = loadTypeScript('lib/ai-summary/preparedArticles.ts', { mocks: {
+    './articleSummaries.generated.json': { default: { [articleSource.slug]: { sourceKey: summaryCacheKey(articleSource, SUMMARY_MODEL), content: articleSummary } } },
+  } });
+  assert.deepEqual(JSON.parse(JSON.stringify(getPreparedArticleSummary(articleSource))), articleSummary);
+  assert.equal(getPreparedArticleSummary({ ...articleSource, content: articleSource.content + 'Ny opplysning' }), null);
+  assert.equal(getPreparedArticleSummary({ ...articleSource, slug: 'ukjent' }), null);
+});
+
+test('editorial preparation repairs one field without changing other sections', async () => {
+  const app = routeHarness({ generatedDrafts: [shortDraft, { replacement: articleSummary.scope }] });
+  const result = await app.prepare();
+  assert.deepEqual(JSON.parse(JSON.stringify(result.content)), articleSummary);
   assert.equal(app.calls(), 2);
   assert.match(app.prompts[1], /Skriv BARE en ny tekst til scope i feltet replacement/);
   assert.equal(app.schemas[1].safeParse(articleSummary).success, false);
-  assert.equal(app.schemas[1].safeParse({ replacement: articleSummary.scope }).success, true);
   assert.deepEqual(Object.keys(app.schemas[1].shape), ['replacement']);
-  assert.equal(JSON.parse(text).content.learning, shortDraft.learning);
-  assert.deepEqual(JSON.parse(text).content.points, shortDraft.points);
-  assert.equal(app.cacheWrites.length, 1);
-  assert.equal(app.cacheWrites[0].options.ttl, 86400);
-  const second = await app.request();
-  assert.equal(second.headers.get('X-AI-Summary-Cache'), 'HIT');
-  assert.equal(await second.text(), text);
-  assert.equal(app.calls(), 2);
+  assert.equal(result.content.learning, shortDraft.learning);
+  assert.deepEqual(JSON.parse(JSON.stringify(result.content.points)), shortDraft.points);
 });
 
-test('missing nested points require a full article repair instead of a single-field patch', async () => {
+test('editorial preparation fully regenerates when nested points are missing', async () => {
   const app = routeHarness({ generatedDrafts: [withoutDetails, articleSummary] });
-  const response = await app.request();
-  assert.deepEqual(await response.json(), responseSummary);
+  assert.deepEqual(JSON.parse(JSON.stringify((await app.prepare()).content)), articleSummary);
   assert.equal(app.calls(), 2);
   assert.match(app.prompts[1], /Minst ett hovedpunkt må ha et underpunkt/);
-  assert.equal(app.schemas[1].safeParse(articleSummary).success, true);
-  assert.equal(app.schemas[1].safeParse({ replacement: articleSummary.scope }).success, false);
-  assert.equal(app.cacheWrites.length, 1);
 });
 
-test('three invalid article drafts fail without caching or exposing a draft', async () => {
+test('three invalid editorial drafts never return an invalid prepared result', async () => {
   const app = routeHarness({ generatedDrafts: [shortDraft, { replacement: shortDraft.scope }] });
-  const response = await app.request();
-  const reader = response.body.getReader();
-  const chunks = [];
-  await assert.rejects(async () => {
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) return;
-      chunks.push(Buffer.from(value));
-    }
-  }, /kunne ikke fullføres/);
-  assert.doesNotMatch(Buffer.concat(chunks).toString(), /UTKAST SKAL IKKE VISES/);
+  await assert.rejects(app.prepare(), /length or structure validation/);
   assert.equal(app.calls(), 3);
-  assert.equal(app.cache.size, 0);
 });
 
-test('cancelling during article repair aborts the active call and prevents a third attempt', async () => {
-  const app = routeHarness({ generatedDrafts: [shortDraft, { replacement: shortDraft.scope }, { replacement: articleSummary.scope }], waitForAbortAtCall: 2 });
-  const response = await app.request();
-  const reader = response.body.getReader();
-  await reader.read();
+test('cancelling editorial preparation prevents a third attempt', async () => {
+  const app = routeHarness({ generatedDrafts: [shortDraft, { replacement: shortDraft.scope }], waitForAbortAtCall: 2 });
+  const result = app.prepare();
   await app.waitForCall(2);
-  await reader.cancel();
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(app.generationSignal().aborted, true);
+  app.abortPreparation();
+  await assert.rejects(result, /abort/i);
   assert.equal(app.calls(), 2);
-  assert.equal(app.cache.size, 0);
 });
 
 test('provider errors, invalid output and truncated completions never populate cache', async () => {
@@ -174,7 +176,7 @@ test('provider errors, invalid output and truncated completions never populate c
     const app = routeHarness(options);
     const response = await app.request();
     await assert.rejects(response.text(), /kunne ikke fullføres/);
-    assert.equal(app.cache.size, 0);
+    assert.equal(app.cache.size, 1);
   }
 });
 
@@ -186,7 +188,7 @@ test('cancelling the response aborts the provider and never caches a partial res
   await reader.cancel();
   await new Promise(resolve => setImmediate(resolve));
   assert.equal(app.generationSignal().aborted, true);
-  assert.equal(app.cache.size, 0);
+  assert.equal(app.cache.size, 1);
 });
 
 test('cache read failures stop generation; write failures preserve a valid response', async () => {
@@ -222,7 +224,7 @@ test('source text, model and source identity participate in the cache key', () =
   const { summaryCacheKey } = loadTypeScript('lib/ai-summary/prompt.ts');
   const original = summaryCacheKey(source, 'test/model');
   assert.equal(summaryCacheKey({ ...source }, 'test/model'), original);
-  for (const updated of [{ ...source, content: source.content + 'Ny tekst' }, { ...source, slug: 'annen-artikkel' }, { ...source, kind: 'product' }]) {
+  for (const updated of [{ ...source, content: source.content + 'Ny tekst' }, { ...source, slug: 'annen-artikkel' }, { ...source, kind: 'article' }]) {
     assert.notEqual(summaryCacheKey(updated, 'test/model'), original);
   }
   assert.notEqual(summaryCacheKey(source, 'test/new-model'), original);
@@ -259,8 +261,8 @@ test('article length includes headings and spaces and accepts exactly 950–1000
   for (const total of [949, 950, 1000, 1001]) {
     const article = articleWithSectionLengths(150, 200, total - 352);
     assert.equal(articleSummaryMetrics(article).total, total);
-    if (total >= 950 && total <= 1000) assert.doesNotThrow(() => validateSummary(article, source));
-    else assert.throws(() => validateSummary(article, source), /950–1000/);
+    if (total >= 950 && total <= 1000) assert.doesNotThrow(() => validateSummary(article, articleSource));
+    else assert.throws(() => validateSummary(article, articleSource), /950–1000/);
   }
 });
 
@@ -278,19 +280,19 @@ test('article proportions allow five percentage points either side of 15/20/65',
     [170, 150, 678], [110, 250, 638],
     [180, 218, 600], [130, 168, 700],
   ];
-  for (const lengths of boundaries) assert.doesNotThrow(() => validateSummary(articleWithSectionLengths(...lengths), source), lengths.join('/'));
+  for (const lengths of boundaries) assert.doesNotThrow(() => validateSummary(articleWithSectionLengths(...lengths), articleSource), lengths.join('/'));
   const outside = [
     [99, 221, 678], [201, 169, 628],
     [171, 149, 678], [109, 251, 638],
     [181, 218, 599], [129, 168, 701],
   ];
-  for (const lengths of outside) assert.throws(() => validateSummary(articleWithSectionLengths(...lengths), source), /utgjør/, lengths.join('/'));
+  for (const lengths of outside) assert.throws(() => validateSummary(articleWithSectionLengths(...lengths), articleSource), /utgjør/, lengths.join('/'));
 });
 
 test('articles require nested points and cannot use the compact product schema', () => {
   const { articleSummarySchema, validateSummary } = loadTypeScript('lib/ai-summary/schema.ts');
-  assert.throws(() => validateSummary(withoutDetails, source), /underpunkt/);
-  assert.throws(() => validateSummary(summary, source));
+  assert.throws(() => validateSummary(withoutDetails, articleSource), /underpunkt/);
+  assert.throws(() => validateSummary(summary, articleSource));
   assert.throws(() => validateSummary(articleSummary, { ...source, kind: 'product' }), /Invalid product/);
   assert.equal(articleSummarySchema.safeParse({ ...articleSummary, points: articleSummary.points.slice(0, 2) }).success, false);
   assert.equal(articleSummarySchema.safeParse({ ...articleSummary, scope: '' }).success, false);

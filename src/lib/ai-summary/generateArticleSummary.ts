@@ -37,8 +37,8 @@ export async function generateArticleSummary({ model, source, abortSignal, onTex
   abortSignal: AbortSignal;
   onText: () => void;
 }) {
-  // All attempts share one deadline; invalid drafts never reach readers/cache.
-  const signal = AbortSignal.any([abortSignal, AbortSignal.timeout(15_000)]);
+  // Used by the explicit editorial preparation command, never reader requests.
+  const signal = abortSignal;
   let correction = '';
   let draft: ArticleSummary | undefined;
   const usage = { inputTokens: 0, outputTokens: 0, reasoningTokens: 0 };

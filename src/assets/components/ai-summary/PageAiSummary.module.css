@@ -33,6 +33,9 @@
   line-height: 1.4;
 }
 .trigger > svg { flex-shrink: 0; }
+.trigger { list-style: none; }
+.trigger::-webkit-details-marker { display: none; }
+.card[open] > .trigger > svg:last-child { transform: rotate(180deg); }
 .trigger > svg:last-child { margin-left: auto; }
 .trigger:hover { background: color-mix(in srgb, var(--summary-ink) 5%, transparent); }
 .trigger:focus-visible, .action:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
