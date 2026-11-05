@@ -1,9 +1,10 @@
+import { knowledgeArticles } from '@/lib/knowledge/knowledgeArticles'
 import { getImageProps } from 'next/image'
 import styles from '@/components/knowledge/knowledgeChrome.module.css'
 
 export function KeepWarmHero() {
   const common = {
-    alt: 'En turgåer har stoppet for en pause i en snødekt skog, og er i ferd med å ta på seg en tykk dunjakke (isolasjonslag) over turklærne for å unngå varmetap. Ryggsekken står i snøen ved siden av.',
+    alt: 'Turgåer med rød jakke, ryggsekk og staver i snøvær på fjellet.',
     sizes: '(min-width: 1024px) 816px, (min-width: 832px) 752px, (min-width: 800px) calc(100vw - 80px), (min-width: 400px) 90vw, calc(100vw - 40px)',
     loading: 'eager' as const,
     fetchPriority: 'high' as const,
@@ -34,6 +35,7 @@ export function KeepWarmHero() {
         {/* getImageProps supplies optimized sources without client-side image switching. */}
         <img {...mobile} alt={common.alt} className={styles.figureImage} />
       </picture>
+      <figcaption className={styles.figcaption}>{knowledgeArticles.keepWarm.images[0].caption}</figcaption>
     </figure>
   )
 }

@@ -123,6 +123,29 @@
   font-weight: 800;
 }
 
+/* One owner for both summary gaps, including summaries immediately after a hero. */
+.article [data-article-body] {
+  display: flow-root;
+}
+
+.article.article [data-article-body] > [data-ai-summary] {
+  margin-block: 2rem;
+}
+
+.article.article [data-article-body] > :has(+ [data-ai-summary]),
+.article.article > figure:has(+ [data-article-body] > [data-ai-summary]:first-child) {
+  margin-bottom: 0;
+}
+
+.article.article [data-article-body] > [data-ai-summary] + *,
+.article.article [data-article-body] > [data-ai-summary] + span:empty + * {
+  margin-top: 0;
+}
+
+.article [data-article-body] > [data-ai-summary] + span:empty {
+  display: block;
+}
+
 .body .primaryMarkers li::marker {
   color: var(--primary);
 }

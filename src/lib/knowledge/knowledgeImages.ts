@@ -3,6 +3,7 @@ export const knowledgeImages = {
   "christmasGift": {
     "images": [
       {
+        "caption": "Når ønskelisten er uklar, kan gavejakten føles som spådomskunst. Illustrasjonen viser en julegavehandler omgitt av mulige gavevalg.",
         "src": "/images/kunnskap/julegavenes_mystiske_spadom.webp",
         "alt": "En rådvill julegavehandler søker råd hos en spåkone, omgitt av tankebobler med mulige gaver.",
         "width": 1260,
@@ -55,6 +56,7 @@ export const knowledgeImages = {
   "glamping": {
     "images": [
       {
+        "caption": "Et møblert telt med dobbeltseng og vedovn illustrerer kombinasjonen av natur og komfort som kjennetegner glamping.",
         "src": "/images/kunnskap/Luksuriøs-glamping-i-skumringsskogen.webp",
         "alt": "Luksuriøst oppsatt glampingtelt med oppreist dobbeltseng og koselig utendørs belysning i skogen ved solnedgang, moderne friluftsliv",
         "width": 1672,
@@ -89,6 +91,7 @@ export const knowledgeImages = {
   "glampingNorway": {
     "images": [
       {
+        "caption": "En hytte mellom furutrærne med utsikt mot fjorden illustrerer en av mange former for glamping. Bildet viser ikke et navngitt overnattingssted.",
         "src": "/images/kunnskap/trehus.webp",
         "alt": "Norsk glamping i tretopphytte ved en fjord på Vestlandet, med utsikt til høye fjell og speilblankt vann i morgentåke",
         "width": 1834,
@@ -105,6 +108,7 @@ export const knowledgeImages = {
   "winterStorage": {
     "images": [
       {
+        "caption": "Campingvogn og bobil står ved et overbygd lagerbygg før vinteren. Illustrasjonen setter valg av lagringssted og beskyttelse mot vær i sammenheng.",
         "src": "/images/uteguiden/vinterlagring-v1.png",
         "alt": "AI-generert illustrasjon av campingvogn og bobil ved et lagerbygg i et nordisk vinterlandskap.",
         "width": 1672,
@@ -157,6 +161,7 @@ export const knowledgeImages = {
   "terrace": {
     "images": [
       {
+        "caption": "Glassvegger skjermer sitteplassen på balkongen, mens pledd og belysning gjør den innbydende i kveldsmørket.",
         "src": "/images/kunnskap/Cozy Scandinavian Balcony at Dusk.webp",
         "alt": "Moderne innglasset balkong med lukkede glassvegger, innredet med værbestandige utemøbler og varm belysning i kveldsmørket.",
         "width": 1672,
@@ -185,6 +190,7 @@ export const knowledgeImages = {
   "cloudweave": {
     "images": [
       {
+        "caption": "To personer har tatt plass på terrassen i lange, isolerende plagg. Bildet viser bekledning for rolige stunder ute.",
         "src": "/og-image-skreddersy-varmen.jpg",
         "alt": "To personer i varme plagg på en terrasse",
         "width": 1200,
@@ -213,6 +219,7 @@ export const knowledgeImages = {
   "baseLayer": {
     "images": [
       {
+        "caption": "Ull-innerlaget kommer til syne når turgåeren åpner jakken. Laget nærmest huden er utgangspunktet for bekledning på vintertur.",
         "src": "/images/kunnskap/vintervandrer-i-snodekt-landskap.webp",
         "alt": "Turgåer i snølandskap som åpner jakken for å vise ull-innerlag",
         "width": 1600,
@@ -253,6 +260,7 @@ export const knowledgeImages = {
   "keepWarm": {
     "images": [
       {
+        "caption": "En turgåer i snøvær på fjellet illustrerer behovet for bekledning som beskytter mot både vind og kulde.",
         "src": "/images/kunnskap/Fjellvinter i gyllent motlys.webp",
         "alt": "En turgåer har stoppet for en pause i en snødekt skog, og er i ferd med å ta på seg en tykk dunjakke (isolasjonslag) over turklærne for å unngå varmetap. Ryggsekken står i snøen ved siden av.",
         "width": 1122,
@@ -281,6 +289,7 @@ export const knowledgeImages = {
   "cold": {
     "images": [
       {
+        "caption": "To personer venter på bussen i vinterkulden. Kontrasten i bekledning og kroppsholdning illustrerer hvor ulikt kulde kan oppleves.",
         "src": "/images/kunnskap/hvorfor-blir-man-kald-16x9.jpg",
         "alt": "To personer på en snødekt bussholdeplass i skumringen – én som hutrer med armene i kors, én som står rolig i vinterjakke.",
         "width": 1672,
@@ -303,6 +312,7 @@ export const knowledgeImages = {
   "ykk": {
     "images": [
       {
+        "caption": "Nærbildet viser glideren og tennene i en metallglidelås, med rim og vanndråper på overflaten.",
         "src": "/glidelas-struktur-mikro.jpg",
         "alt": "Makrofoto av en rimfrosten metallglidelås der glideren griper inn i tennene.",
         "width": 1448,

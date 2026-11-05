@@ -3,6 +3,7 @@ import type { CalloutType } from "./document-callout";
 import { MdxLink } from "./link";
 import { Details, Summary } from "./disclosure";
 import { Table } from "./table";
+import { TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { cx, type Props } from "./shared";
 import styles from "./mdx.module.css";
 
@@ -144,14 +145,14 @@ export const mdxTypography = {
   caption: ({ className, ...props }: Props<"caption">) => (
     <caption {...props} className={cx(styles.caption, className)} />
   ),
-  thead: (props: Props<"thead">) => <thead {...props} />,
-  tbody: (props: Props<"tbody">) => <tbody {...props} />,
-  tfoot: (props: Props<"tfoot">) => <tfoot {...props} />,
-  tr: (props: Props<"tr">) => <tr {...props} />,
+  thead: TableHeader,
+  tbody: TableBody,
+  tfoot: TableFooter,
+  tr: TableRow,
   th: ({ scope = "col", ...props }: Props<"th">) => (
-    <th {...props} scope={scope} />
+    <TableHead {...props} scope={scope} />
   ),
-  td: (props: Props<"td">) => <td {...props} />,
+  td: TableCell,
   details: Details,
   summary: Summary,
   dl: ({ className, ...props }: Props<"dl">) => (

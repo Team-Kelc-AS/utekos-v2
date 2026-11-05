@@ -29,6 +29,7 @@ export function ChristmasGiftArticleLayout({
               preload
             />
           </span>
+          <figcaption className={imageStyles.figcaption}>{heroImage.caption}</figcaption>
         </figure>
       }
     >

@@ -16,6 +16,7 @@ export const sherpaCoreArticle = {
   "articleSection": "Materialer",
 
   "publishedAt": "2026-10-17T16:48:14.257Z",
+  "updatedAt": "2026-11-05",
   "topics": [
     "SherpaCore™",
     "sherpa-fleece",

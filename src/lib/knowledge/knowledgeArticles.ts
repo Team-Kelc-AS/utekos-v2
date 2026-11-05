@@ -28,6 +28,7 @@ export type KnowledgeImage = {
   width: number;
   height: number;
   alt: string;
+  caption?: string;
 };
 
 export type KnowledgeArticle = {
@@ -130,7 +131,7 @@ const articleContent = {
       "Å kjøpe julegave til en partner som allerede har alt, skaper ofte usikkerhet og prestasjonsangst. I et desperat forsøk på å bevise kjærlighet tar vi ofte panikkdrevne og forhastede beslutninger. Slike irrasjonelle kjøp fører til at gode intensjoner ender opp som overfladiske gaver som fullstendig mangler langsiktig verdi for mottakeren.",
     articleSection: "Julegaver",
     publishedAt: "2026-10-06",
-    updatedAt: "2026-10-06",
+    updatedAt: "2026-11-05",
 
     topics: ["julegaver", "gaveasymmetri", "bekledning"],
     learnings: [
@@ -287,7 +288,7 @@ const articleContent = {
       "En innglasset balkong eller terrasse kan fungere som et skjermet oppholdsrom langt utover høsten. Ved å sette seg inn i byggetekniske krav, riktig fuktsikring og moderne varmeteknologi, oppnår man et lunt uterom som tåler røft norsk klima.",
     articleSection: "Terrasse og uterom",
     publishedAt: "2026-10-03",
-    updatedAt: "2026-10-03",
+    updatedAt: "2026-11-05",
 
     topics: [
       "terrassesesong",
@@ -436,7 +437,7 @@ const articleContent = {
     description: sharedDescription,
     articleSection: "Materialer og isolasjon",
     publishedAt: "2026-09-23T12:53:06+02:00",
-    updatedAt: "2026-09-24T09:30:00+02:00",
+    updatedAt: "2026-11-05",
 
     topics: [
       "CloudWeave",
@@ -483,7 +484,7 @@ const articleContent = {
       "Ull eller syntetisk innerst? Lær hvordan innerlaget regulerer temperatur og fuktighet, hvorfor bomull er farlig i kulda, og hva du bør velge etter aktivitet.",
     articleSection: "Materialer og isolasjon",
     publishedAt: "2026-09-23T12:22:40+02:00",
-    updatedAt: "2026-09-24T09:30:00+02:00",
+    updatedAt: "2026-11-05",
 
     topics: [
       "innerlag",
@@ -586,7 +587,7 @@ const articleContent = {
       "Å holde varmen ute er et varmeregnskap: kroppen produserer varme, klærne hindrer at den forsvinner. Lær hvordan aktivitet, lag-på-lag, vind og fukt endrer regnestykket.",
     articleSection: "Kulde og varme",
     publishedAt: "2026-09-23T10:05:11+02:00",
-    updatedAt: "2026-09-24T09:30:00+02:00",
+    updatedAt: "2026-11-05",
 
     topics: [
       "holde varmen ute",
@@ -699,7 +700,7 @@ const articleContent = {
       "Å fryse er ikke kulde som kryper inn. Kroppen produserer varme, og omgivelsene tar den. Forstå termoregulering, mytene om varmetap, og hva som faktisk tipper balansen.",
     articleSection: "Kulde og varme",
     publishedAt: "2026-09-23T08:00:00+02:00",
-    updatedAt: "2026-09-24T09:30:00+02:00",
+    updatedAt: "2026-11-05",
 
     topics: [
       "kulde",
@@ -798,7 +799,7 @@ const articleContent = {
       "Glidelåsen er det mest belastede mekaniske punktet i vintertøyet. Forstå hvordan glider, tenner og bånd samhandler, hvorfor glidelåsen svikter i kulde, og hvordan riktig vask og vedlikehold forlenger levetiden.",
     articleSection: "Materialer og isolasjon",
     publishedAt: "2026-09-24T08:00:00+02:00",
-    updatedAt: "2026-09-24T08:00:00+02:00",
+    updatedAt: "2026-11-05",
 
     topics: [
       "glidelås",
@@ -903,6 +904,7 @@ const articleContent = {
     description: "",
     articleSection: "Glamping",
     publishedMonth: "2026-10",
+    updatedAt: "2026-11-05",
     topics: ["glamping", "historie", "turisme"],
     learnings: [],
     toc: [],
@@ -918,6 +920,7 @@ const articleContent = {
       "For å velge riktig glampingopphold og pakke riktig, må du kartlegge stedets standard for oppvarming, toalettforhold, adkomst og mattilbud, og deretter tilpasse utstyret ditt med lag-på-lag-bekledning og vanntett fottøy.",
     articleSection: "Glamping",
     publishedMonth: "2026-10",
+    updatedAt: "2026-11-05",
     topics: ["glamping", "Norge", "pakkeliste"],
     learnings: [],
     toc: [],
@@ -933,6 +936,7 @@ const articleContent = {
       "Det krevende nordiske klimaet, preget av ekstreme temperatursvingninger, vedvarende høy luftfuktighet og strenge kuldeperioder, utsetter fritidskjøretøy for enorme påkjenninger. Forberedelse til vinteren, enten det innebærer stasjonær lagring eller aktiv bruk i vintermånedene, er den mest kritiske vedlikeholdsoppgaven for eiere av bobiler og campingvogner. Mangelfull vinterklargjøring er den primære årsaken til verditap, og kan resultere i katastrofale og kostbare skader som frostsprengte vanninstallasjoner, irreversibelt ødelagte batteribanker, dype strukturelle fuktskader og korrosjon i vitale gass- og varmeanlegg.",
     articleSection: "Camping og bobil",
     publishedMonth: "2026-10",
+    updatedAt: "2026-11-05",
     showReadingTime: false,
 
     topics: ["vinterlagring", "campingvogn", "bobil"],

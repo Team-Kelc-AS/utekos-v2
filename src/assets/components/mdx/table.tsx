@@ -9,14 +9,16 @@ export function Table({
   ...props
 }: TableProps) {
   return (
-    <div
-      className={styles.tableScroll}
-      role="region"
-      aria-label={scrollLabel}
-      tabIndex={0}
-    >
-      <table {...props} className={cx(styles.table, className)} />
-    </div>
+    <ShadcnTable
+      {...props}
+      className={cx(styles.table, className)}
+      containerProps={{
+        className: styles.tableScroll,
+        role: "region",
+        "aria-label": scrollLabel,
+        tabIndex: 0,
+      }}
+    />
   );
 }
 

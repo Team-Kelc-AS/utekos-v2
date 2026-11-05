@@ -13,7 +13,7 @@ export const hydroGuardArticle = {
   "authorId": "utekos",
   "articleSection": "Materialkunnskap",
   "publishedAt": "2026-10-17",
-  "updatedAt": "2026-10-17",
+  "updatedAt": "2026-11-05",
 
   "topics": [
     "HydroGuard™",

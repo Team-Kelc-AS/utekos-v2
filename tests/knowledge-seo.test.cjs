@@ -98,7 +98,7 @@ test('undocumented dates remain absent; date-only values retain their precision'
   for (const article of undated) {
     const entity = buildKnowledgeJsonLd(article)['@graph'].find(node => node['@type'] === 'Article');
     assert.ok(!Object.hasOwn(entity, 'datePublished'));
-    assert.ok(!Object.hasOwn(entity, 'dateModified'));
+    assert.equal(entity.dateModified, article.updatedAt);
     assert.ok(!Object.hasOwn(buildKnowledgeMetadata(article).openGraph, 'publishedTime'));
   }
   const dateOnly = { ...articles[0], publishedAt: '2026-09-01', updatedAt: '2026-09-02' };

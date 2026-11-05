@@ -292,6 +292,7 @@
 .content .table {
   display: table;
   width: 100%;
+  min-width: 42rem;
   margin: 0;
   overflow: visible;
   border-collapse: collapse;
@@ -300,7 +301,11 @@
 }
 .content .table th,
 .content .table td {
-  min-width: 8rem;
+  min-width: 12rem;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: manual;
   padding: 0.85em 1em;
   border-block-end: 1px solid var(--mdx-border);
   text-align: start;
@@ -317,6 +322,7 @@
   text-align: right;
 }
 .content .table th {
+  color: var(--mdx-ink);
   font-weight: 800;
   background: var(--mdx-surface);
 }
