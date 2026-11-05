@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { SummarySource } from './schema';
 
-export const SUMMARY_PROMPT_VERSION = '4';
+export const SUMMARY_PROMPT_VERSION = '5';
 export const SUMMARY_MODEL = 'google/gemini-3.8-flash';
 export const SUMMARY_REASONING = 'low';
 
@@ -15,6 +15,7 @@ Ikke oppgi pris, rabatt, lagerstatus eller leveringstid.
 Ved motstridende opplysninger: utelat den omstridte påstanden og ta med et kort forbehold om uklarheten.
 summary: Én til to setninger, høyst 35 ord totalt. Velg det viktigste og flett inn et vesentlig forbehold når relevant. Ingen oppramsing eller gjentakelse.
 reviewSummary: Én setning, høyst 20 ord, om de vedlagte produktomtalene fra Judge.me. Ta med vesentlig kritikk og blandede erfaringer når de finnes. Tilskriv erfaringer kundene; de er ikke dokumenterte produktegenskaper. Ikke bruk beskrivelsen som bevis for kundeerfaringer.
+Hvis en omtale beskriver et annet produkt, gjengi avviket nøkternt uten å fastslå at kunden tar feil. Ikke overfør slike egenskaper til dette produktet.
 Er omtalene få, skriv «En kunde nevner» eller «I omtalene nevnes», ikke «alle», «de fleste» eller «vanligst». Et utvalg representerer ikke alle kunder. Ikke gjenta rating eller antall; de vises separat fra datakilden.
 Når reviews er null, items er tom eller mangler tekst, eller type er artikkel: reviewSummary skal være tom streng.
 Bruk ren tekst uten Markdown, HTML, lenker, emoji eller salgsfraser. Unngå innledninger som «Denne siden handler om».`;
