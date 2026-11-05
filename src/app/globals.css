@@ -42,6 +42,20 @@
 }
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --animate-summary-cursor: summary-cursor .5s steps(1) infinite;
+  --animate-summary-cursor-finish: summary-cursor-finish .8s linear forwards;
+
+  @keyframes summary-cursor {
+    50% { opacity: 0; }
+  }
+
+  @keyframes summary-cursor-finish {
+    0%, 35%, 70%, 80% { opacity: 1; }
+    17%, 52%, 100% { opacity: 0; }
+  }
+}
+
 @font-face {
   font-family: "Google Sans Flex Reviews";
   src: url("/fonts/google-sans-flex-120pt-latin.woff2") format("woff2");

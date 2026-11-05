@@ -3,37 +3,66 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { loadTypeScript } = require('./load-typescript.cjs');
 
-const source = { kind: 'article', slug: 'test-artikkel', title: 'Test', content: 'Kildetekst. '.repeat(30) };
-const summary = { summary: 'En oppsummering med tilstrekkelig lengde.', keyPoints: ['Første hovedpunkt', 'Andre hovedpunkt'], limitations: [] };
+const source = { kind: 'product', slug: 'test-produkt', title: 'Test', content: 'Kildetekst. '.repeat(30), reviews: { average: 0, count: 0, items: [] } };
+const articleSource = { ...source, kind: 'article', reviews: undefined };
+const summary = { summary: 'En oppsummering med tilstrekkelig lengde.', reviewSummary: '' };
+const articleSummary = {
+  scope: 'Artikkelen forklarer hvordan lagvis bekledning hjelper deg å holde varmen ute, med vekt på fukt, isolasjon og beskyttelse mot været.',
+  learning: 'Du lærer å velge et innerlag som flytter fukt, et mellomlag som holder på luft og et ytterlag som skjermer mot vind. Du får også råd om å justere lagene når aktivitet og temperatur endrer seg.',
+  points: [
+    { text: 'Begynn med et innerlag som passer aktiviteten. Fukt nær kroppen kan gjøre deg kald når du stopper, selv om du var varm mens du gikk.', details: ['Juster bekledningen før du blir svett, og ha et tørt plagg tilgjengelig til pausen.'] },
+    { text: 'Velg isolasjon etter hvor mye du beveger deg og hvor lenge du skal sitte stille. Flere lag gir fleksibilitet når forholdene skifter.', details: ['Unngå at lagene sitter så stramt at de presser sammen luftlaget som bidrar til å holde på varmen.'] },
+    { text: 'Bruk ytterlaget til å skjerme mot vind og nedbør. Åpne for lufting ved behov, og vurder hele antrekket fremfor ett enkelt materiale.', details: [] },
+  ],
+};
+const shortDraft = { ...articleSummary, scope: 'UTKAST SKAL IKKE VISES. Dette er for kort.' };
+const withoutDetails = { ...articleSummary, points: articleSummary.points.map(point => ({ text: [point.text, ...point.details].join(' '), details: [] })) };
 
-function routeHarness({ enabled = true, configured = true, summaryKey = false, fail = false, valid = true, finishReason = 'stop', cacheReadError = false, cacheWriteError = false, waitForAbort = false, rateLimit = 0 } = {}) {
+const responseSummary = { reviews: { average: 0, count: 0, includedCount: 0 }, content: summary };
+
+function routeHarness({ resolvedSource = source, generated = resolvedSource.kind === 'article' ? articleSummary : summary, generatedDrafts = [generated], enabled = true, configured = true, summaryKey = false, fail = false, valid = true, finishReason = 'stop', cacheReadError = false, cacheWriteError = false, waitForAbort = false, waitForAbortAtCall = waitForAbort ? 1 : 0, rateLimit = 0, prepared = articleSummary } = {}) {
   const cache = new Map();
+  const cacheWrites = [];
+  const prompts = [];
+  const schemas = [];
+  const callWaiters = [];
   let calls = 0;
+  let sourceCalls = 0;
   let generationSignal;
-  const route = loadTypeScript('app/api/ai-summary/route.ts', {
+  const preparationController = new AbortController();
+  const options = {
     env: { ...(enabled ? { NEXT_PUBLIC_AI_SUMMARY_ENABLED: 'true' } : {}), ...(summaryKey ? { AI_SUMMARY_GATEWAY_API_KEY: 'summary-test-only' } : configured ? { AI_GATEWAY_API_KEY: 'test-only' } : {}) },
     globals: { Request, Response, ReadableStream, Buffer, crypto, TextEncoderStream, AbortController,
       console: { info() {}, warn() {}, error() {} } },
     mocks: {
-      '@/lib/ai-summary/source': { getSummarySource: async target => target.slug === source.slug ? source : null },
+      '@/lib/ai-summary/preparedArticles': { getPreparedArticleSummary: () => prepared },
+      '@/lib/ai-summary/source': { getSummarySource: async target => { sourceCalls++; return target.slug === source.slug ? resolvedSource : null; } },
       '@/lib/ai-summary/rateLimit': { summaryRateLimit: () => rateLimit },
       '@vercel/functions': { getCache: () => ({
         get: async key => { if (cacheReadError) throw new Error('Cache unavailable'); return cache.get(key) ?? null; },
-        set: async (key, value) => { if (cacheWriteError) throw new Error('Cache unavailable'); cache.set(key, value); },
+        set: async (key, value, options) => { if (cacheWriteError) throw new Error('Cache unavailable'); cache.set(key, value); cacheWrites.push({ key, value, options }); },
       }) },
       ai: {
         createGateway: ({ apiKey }) => model => { assert.equal(apiKey, 'summary-test-only'); return model; },
         Output: { object: value => value },
-        streamText: ({ abortSignal }) => {
+        streamText: ({ abortSignal, providerOptions, reasoning, prompt, output }) => {
+          assert.equal(reasoning, undefined);
+          assert.equal(providerOptions.google.thinkingConfig.thinkingLevel, 'low');
+          assert.equal(providerOptions.vertex.thinkingConfig.thinkingLevel, 'low');
           calls += 1;
+          const call = calls;
+          const draft = valid ? generatedDrafts[Math.min(call - 1, generatedDrafts.length - 1)] : { summary: 'short' };
+          prompts.push(prompt);
+          schemas.push(output.schema);
           generationSignal = abortSignal;
+          for (const waiter of callWaiters) if (call >= waiter.call) waiter.resolve();
           return {
             stream: (async function* () {
               if (fail) yield { type: 'error', error: new Error('Provider unavailable') };
-              else yield { type: 'text-delta', text: JSON.stringify(valid ? summary : { summary: 'short' }) };
-              if (waitForAbort && !abortSignal.aborted) await new Promise(resolve => abortSignal.addEventListener('abort', resolve, { once: true }));
+              else yield { type: 'text-delta', text: JSON.stringify(draft) };
+              if (call === waitForAbortAtCall && !abortSignal.aborted) await new Promise(resolve => abortSignal.addEventListener('abort', resolve, { once: true }));
             })(),
-            output: Promise.resolve(valid ? summary : { summary: 'short' }),
+            output: Promise.resolve(draft),
             finishReason: Promise.resolve(finishReason),
             totalUsage: Promise.resolve({ inputTokens: 10, outputTokens: 10 }),
           };
@@ -41,12 +70,17 @@ function routeHarness({ enabled = true, configured = true, summaryKey = false, f
         createTextStreamResponse: ({ stream, headers }) => new Response(stream.pipeThrough(new TextEncoderStream()), { headers }),
       },
     },
-  });
-  const request = (body = source, headers = {}) => route.POST(new Request('https://utekos.no/api/ai-summary', {
+  };
+  const route = loadTypeScript('app/api/ai-summary/route.ts', options);
+  const generator = loadTypeScript('lib/ai-summary/generateArticleSummary.ts', options);
+  const prepare = () => generator.generateArticleSummary({ model: 'test/model', source: articleSource, abortSignal: preparationController.signal, onText() {} });
+  const request = (body = resolvedSource, headers = {}) => route.POST(new Request('https://utekos.no/api/ai-summary', {
     method: 'POST', headers: { 'Content-Type': 'application/json', ...headers },
     body: typeof body === 'string' ? body : JSON.stringify({ kind: body.kind, slug: body.slug }),
   }));
-  return { request, cache, calls: () => calls, generationSignal: () => generationSignal };
+  return { request, prepare, abortPreparation: () => preparationController.abort(), cache, cacheWrites, prompts, schemas, calls: () => calls, sourceCalls: () => sourceCalls, generationSignal: () => generationSignal,
+    waitForCall: call => calls >= call ? Promise.resolve() : new Promise(resolve => callWaiters.push({ call, resolve })),
+  };
 }
 
 test('rejects cross-origin, malformed, oversized and arbitrary source requests before generation', async () => {
@@ -70,12 +104,71 @@ test('streams one generation, validates it, and serves the next activation from 
   const app = routeHarness();
   const first = await app.request();
   assert.equal(first.headers.get('X-AI-Summary-Cache'), 'MISS');
-  assert.deepEqual(JSON.parse(await first.text()), summary);
+  assert.deepEqual(JSON.parse(await first.text()), responseSummary);
   const second = await app.request();
   assert.equal(second.headers.get('X-AI-Summary-Cache'), 'HIT');
-  assert.deepEqual(await second.json(), summary);
+  assert.deepEqual(await second.json(), responseSummary);
   assert.equal(app.calls(), 1);
-  assert.equal(app.cache.size, 1);
+  assert.equal(app.cache.size, 2);
+  assert.equal(app.cacheWrites.at(-1).options.ttl, 86400);
+});
+
+test('articles return prepared content without Gateway configuration, cache access or model calls', async () => {
+  const app = routeHarness({ resolvedSource: articleSource, configured: false, cacheReadError: true });
+  const first = await app.request();
+  assert.equal(first.headers.get('X-AI-Summary-Cache'), 'PREPARED');
+  const text = await first.text();
+  assert.deepEqual(JSON.parse(text), { reviews: null, content: articleSummary });
+  assert.equal(await (await app.request()).text(), text);
+  assert.equal(app.calls(), 0);
+  assert.equal(app.cache.size, 0);
+  const missing = routeHarness({ resolvedSource: articleSource, prepared: null });
+  assert.equal((await missing.request()).status, 503);
+  assert.equal(missing.calls(), 0);
+});
+
+test('prepared articles are bound to the current source and validated before use', () => {
+  const { summaryCacheKey, SUMMARY_MODEL } = loadTypeScript('lib/ai-summary/prompt.ts');
+  const { getPreparedArticleSummary } = loadTypeScript('lib/ai-summary/preparedArticles.ts', { mocks: {
+    './articleSummaries.generated.json': { default: { [articleSource.slug]: { sourceKey: summaryCacheKey(articleSource, SUMMARY_MODEL), content: articleSummary } } },
+  } });
+  assert.deepEqual(JSON.parse(JSON.stringify(getPreparedArticleSummary(articleSource))), articleSummary);
+  assert.equal(getPreparedArticleSummary({ ...articleSource, content: articleSource.content + 'Ny opplysning' }), null);
+  assert.equal(getPreparedArticleSummary({ ...articleSource, slug: 'ukjent' }), null);
+});
+
+test('editorial preparation repairs one field without changing other sections', async () => {
+  const app = routeHarness({ generatedDrafts: [shortDraft, { replacement: articleSummary.scope }] });
+  const result = await app.prepare();
+  assert.deepEqual(JSON.parse(JSON.stringify(result.content)), articleSummary);
+  assert.equal(app.calls(), 2);
+  assert.match(app.prompts[1], /Skriv BARE en ny tekst til scope i feltet replacement/);
+  assert.equal(app.schemas[1].safeParse(articleSummary).success, false);
+  assert.deepEqual(Object.keys(app.schemas[1].shape), ['replacement']);
+  assert.equal(result.content.learning, shortDraft.learning);
+  assert.deepEqual(JSON.parse(JSON.stringify(result.content.points)), shortDraft.points);
+});
+
+test('editorial preparation fully regenerates when nested points are missing', async () => {
+  const app = routeHarness({ generatedDrafts: [withoutDetails, articleSummary] });
+  assert.deepEqual(JSON.parse(JSON.stringify((await app.prepare()).content)), articleSummary);
+  assert.equal(app.calls(), 2);
+  assert.match(app.prompts[1], /Minst ett hovedpunkt må ha et underpunkt/);
+});
+
+test('three invalid editorial drafts never return an invalid prepared result', async () => {
+  const app = routeHarness({ generatedDrafts: [shortDraft, { replacement: shortDraft.scope }] });
+  await assert.rejects(app.prepare(), /length or structure validation/);
+  assert.equal(app.calls(), 3);
+});
+
+test('cancelling editorial preparation prevents a third attempt', async () => {
+  const app = routeHarness({ generatedDrafts: [shortDraft, { replacement: shortDraft.scope }], waitForAbortAtCall: 2 });
+  const result = app.prepare();
+  await app.waitForCall(2);
+  app.abortPreparation();
+  await assert.rejects(result, /abort/i);
+  assert.equal(app.calls(), 2);
 });
 
 test('provider errors, invalid output and truncated completions never populate cache', async () => {
@@ -83,7 +176,7 @@ test('provider errors, invalid output and truncated completions never populate c
     const app = routeHarness(options);
     const response = await app.request();
     await assert.rejects(response.text(), /kunne ikke fullføres/);
-    assert.equal(app.cache.size, 0);
+    assert.equal(app.cache.size, 1);
   }
 });
 
@@ -95,7 +188,7 @@ test('cancelling the response aborts the provider and never caches a partial res
   await reader.cancel();
   await new Promise(resolve => setImmediate(resolve));
   assert.equal(app.generationSignal().aborted, true);
-  assert.equal(app.cache.size, 0);
+  assert.equal(app.cache.size, 1);
 });
 
 test('cache read failures stop generation; write failures preserve a valid response', async () => {
@@ -103,7 +196,7 @@ test('cache read failures stop generation; write failures preserve a valid respo
   assert.equal((await unavailable.request()).status, 503);
   assert.equal(unavailable.calls(), 0);
   const unwritable = routeHarness({ cacheWriteError: true });
-  assert.deepEqual(await (await unwritable.request()).json(), summary);
+  assert.deepEqual(await (await unwritable.request()).json(), responseSummary);
   assert.equal(unwritable.cache.size, 0);
 });
 
@@ -123,7 +216,7 @@ test('missing Gateway configuration returns 503 without a provider call', async 
 
 test('a dedicated summary key works without a shared key or OIDC fallback', async () => {
   const app = routeHarness({ configured: false, summaryKey: true });
-  assert.deepEqual(await (await app.request()).json(), summary);
+  assert.deepEqual(await (await app.request()).json(), responseSummary);
   assert.equal(app.calls(), 1);
 });
 
@@ -131,10 +224,114 @@ test('source text, model and source identity participate in the cache key', () =
   const { summaryCacheKey } = loadTypeScript('lib/ai-summary/prompt.ts');
   const original = summaryCacheKey(source, 'test/model');
   assert.equal(summaryCacheKey({ ...source }, 'test/model'), original);
-  for (const updated of [{ ...source, content: source.content + 'Ny tekst' }, { ...source, slug: 'annen-artikkel' }, { ...source, kind: 'product' }]) {
+  for (const updated of [{ ...source, content: source.content + 'Ny tekst' }, { ...source, slug: 'annen-artikkel' }, { ...source, kind: 'article' }]) {
     assert.notEqual(summaryCacheKey(updated, 'test/model'), original);
   }
   assert.notEqual(summaryCacheKey(source, 'test/new-model'), original);
+  assert.notEqual(summaryCacheKey({ ...source, reviews: { count: 1, average: 4, items: [] } }, 'test/model'), original);
+});
+
+test('compact responses enforce both word limits and reject unsupported customer claims', () => {
+  const { validateSummary } = loadTypeScript('lib/ai-summary/schema.ts');
+  const product = { ...source, kind: 'product' };
+  assert.equal(validateSummary(summary, product), summary);
+  assert.throws(() => validateSummary({ ...summary, summary: 'ord '.repeat(36).trim() }, product), /word limit/);
+  assert.throws(() => validateSummary({ ...summary, reviewSummary: 'ord '.repeat(21).trim() }, product), /word limit/);
+  for (const reviews of [null, { average: 0, count: 0, items: [] }, { average: 5, count: 1, items: [{ rating: 5, title: '', body: '' }] }]) {
+    assert.throws(() => validateSummary({ ...summary, reviewSummary: 'Kundene liker produktet.' }, { ...product, reviews }), /unsupported review/);
+  }
+});
+
+// Known section sizes, including the literal headings and block separators.
+function articleWithSectionLengths(scope, learning, points) {
+  return {
+    scope: 'a'.repeat(scope - 7),
+    learning: 'b'.repeat(learning - 14),
+    points: [
+      { text: 'c'.repeat(150), details: ['d'.repeat(100)] },
+      { text: 'e'.repeat(150), details: [] },
+      { text: 'f'.repeat(points - 432), details: [] },
+    ],
+  };
+}
+
+test('article length includes headings and spaces and accepts exactly 950–1000 characters', () => {
+  const { articleSummaryMetrics, validateSummary } = loadTypeScript('lib/ai-summary/schema.ts');
+  assert.equal(articleSummaryMetrics(articleSummary).total, 956);
+  for (const total of [949, 950, 1000, 1001]) {
+    const article = articleWithSectionLengths(150, 200, total - 352);
+    assert.equal(articleSummaryMetrics(article).total, total);
+    if (total >= 950 && total <= 1000) assert.doesNotThrow(() => validateSummary(article, articleSource));
+    else assert.throws(() => validateSummary(article, articleSource), /950–1000/);
+  }
+});
+
+test('article counting normalizes Norwegian characters and visible whitespace', () => {
+  const { articleSummaryMetrics } = loadTypeScript('lib/ai-summary/schema.ts');
+  const equivalent = { ...articleSummary, scope: `  ${articleSummary.scope.replace('å', 'a\u030a').replace(' ', '\n\t  ')}  ` };
+  assert.equal(articleSummaryMetrics(equivalent).total, 956);
+  assert.equal(articleSummaryMetrics({ ...articleSummary, scope: articleSummary.scope.replace('A', '🌲') }).total, 956);
+});
+
+test('article proportions allow five percentage points either side of 15/20/65', () => {
+  const { validateSummary } = loadTypeScript('lib/ai-summary/schema.ts');
+  const boundaries = [
+    [100, 220, 678], [200, 170, 628],
+    [170, 150, 678], [110, 250, 638],
+    [180, 218, 600], [130, 168, 700],
+  ];
+  for (const lengths of boundaries) assert.doesNotThrow(() => validateSummary(articleWithSectionLengths(...lengths), articleSource), lengths.join('/'));
+  const outside = [
+    [99, 221, 678], [201, 169, 628],
+    [171, 149, 678], [109, 251, 638],
+    [181, 218, 599], [129, 168, 701],
+  ];
+  for (const lengths of outside) assert.throws(() => validateSummary(articleWithSectionLengths(...lengths), articleSource), /utgjør/, lengths.join('/'));
+});
+
+test('articles require nested points and cannot use the compact product schema', () => {
+  const { articleSummarySchema, validateSummary } = loadTypeScript('lib/ai-summary/schema.ts');
+  assert.throws(() => validateSummary(withoutDetails, articleSource), /underpunkt/);
+  assert.throws(() => validateSummary(summary, articleSource));
+  assert.throws(() => validateSummary(articleSummary, { ...source, kind: 'product' }), /Invalid product/);
+  assert.equal(articleSummarySchema.safeParse({ ...articleSummary, points: articleSummary.points.slice(0, 2) }).success, false);
+  assert.equal(articleSummarySchema.safeParse({ ...articleSummary, scope: '' }).success, false);
+});
+
+test('product reviews keep live aggregates, criticism and bounded text without reviewer metadata', () => {
+  const { buildProductSummarySource } = loadTypeScript('lib/ai-summary/productSource.ts', {
+    mocks: { '@/lib/products/content': { getProductPageDescriptionText: () => 'Beskrivelse', getProductPageContent: () => null } },
+  });
+  const review = { id: 'private-id', author: 'Private name', date: '2026-11-01', verified: true, rating: 2, title: 'Trang passform', body: 'Passformen var for trang.' };
+  const result = buildProductSummarySource({ handle: 'produkt', title: 'Produkt', description: '' }, { average: 4.3, count: 57, reviews: Array.from({ length: 45 }, () => review) });
+  assert.equal(result.reviews.average, 4.3);
+  assert.equal(result.reviews.count, 57);
+  assert.equal(result.reviews.items.length, 40);
+  assert.equal(result.reviews.items[0].rating, 2);
+  assert.match(JSON.stringify(result.reviews), /Trang passform/);
+  assert.doesNotMatch(JSON.stringify(result.reviews), /Private name|private-id|verified|2026-11-01/);
+});
+
+test('product responses stream source ratings and retain them on cache hits', async () => {
+  const resolvedSource = { ...source, kind: 'product', reviews: { average: 4.3, count: 7, items: [{ rating: 2, title: 'Passform', body: 'For trang.' }] } };
+  const generated = { ...summary, reviewSummary: 'En kunde nevner trang passform.' };
+  const app = routeHarness({ resolvedSource, generated });
+  const first = await app.request();
+  const result = await first.json();
+  assert.deepEqual(result, { reviews: { average: 4.3, count: 7, includedCount: 1 }, content: generated });
+  assert.deepEqual(await (await app.request()).json(), result);
+  assert.equal(app.calls(), 1);
+  assert.equal(app.sourceCalls(), 1);
+  const missing = routeHarness({ resolvedSource });
+  await assert.rejects((await missing.request()).text(), /kunne ikke fullføres/);
+  assert.equal(missing.cache.size, 1); // Only the validated source, never the invalid summary.
+});
+
+test('unavailable product reviews fail without generating or caching a misleading summary', async () => {
+  const app = routeHarness({ resolvedSource: { ...source, kind: 'product', reviews: null } });
+  assert.equal((await app.request()).status, 503);
+  assert.equal(app.calls(), 0);
+  assert.equal(app.cache.size, 0);
 });
 
 test('rate limit resets after its window and bounds distinct clients', () => {
@@ -164,6 +361,7 @@ test('source resolution rejects unregistered articles and unpublished product ha
   let productCalls = 0;
   const { getSummarySource } = loadTypeScript('lib/ai-summary/source.ts', {
     mocks: {
+      '@/lib/products/judgeme': { getJudgeMePreview() { throw new Error('Unexpected review request'); } },
       '@/lib/shopify/getProductHandles': { getProductHandles: async () => ['published'] },
       '@/lib/shopify/getProduct': { getProduct: async () => { productCalls++; return null; } },
       '@/lib/knowledge/knowledgeArticles': { knowledgeArticleList: [{ slug: 'registered', title: 'Tittel', description: 'Ingress' }] },

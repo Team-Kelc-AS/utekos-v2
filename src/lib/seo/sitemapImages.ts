@@ -1,3 +1,4 @@
+import { promiseImages } from '@/lib/frontpage/promiseImages';
 import { knowledgeArticleList, knowledgeOverview } from "@/lib/knowledge/knowledgeArticles";
 import { productGallery } from '@/lib/products/gallery';
 import type { ShopifyProduct } from '@/lib/shopify/product-types';
@@ -19,14 +20,7 @@ export function productSitemapImages(product: ShopifyProduct): string[] {
 // Content images actually displayed by these pages. Decorative icons/logos and
 // metadata-only Open Graph images are deliberately omitted.
 export const editorialSitemapImages: Readonly<Record<string, readonly string[]>> = {
-  '/': [
-    '/JUSTER.png',
-    '/JUSTER_1440x1800.png',
-    '/images/promise/techdown-kate-kikkert-1080.webp',
-    '/images/promise/kaffe-med-tilpasset-utekos-mikrofiber-vinter-terrasse-.webp',
-    '/images/promise/techdown-monica-1080.webp',
-    '/images/promise/techdown-kristoffer-1080.webp',
-  ],
+  '/': promiseImages.map(image => image.src),
   '/om-oss': [
     '/om-oss.webp',
     '/UtekosGrunder.webp',

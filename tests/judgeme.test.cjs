@@ -128,6 +128,15 @@ test('preview distinguishes zero reviews from errors, missing config and mismatc
   assert.equal(missing.calls.length, 0);
 });
 
+test('summary review input is bounded to one request and forty reviews while preserving total', async () => {
+  const h = setup([widget(Array.from({ length: 45 }, (_, i) => review(String(i))), 500)]);
+  const result = await h.getJudgeMePreview('gid://shopify/Product/123', 40);
+  assert.equal(result.count, 500);
+  assert.equal(result.reviews.length, 40);
+  assert.equal(h.calls.length, 1);
+  assert.equal(new URL(h.calls[0].url).searchParams.get('per_page'), '40');
+});
+
 test('store reviews use only the published shop widget and keep the product endpoint separate', async () => {
   const storeReview = review('shop-1', '<script>secret()</script>')
     .replace('datetime="2026-09-01T12:00:00Z"', 'data-content="2026-09-01 12:00:00 UTC"');

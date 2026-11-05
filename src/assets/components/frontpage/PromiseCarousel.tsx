@@ -83,7 +83,7 @@ export function PromiseCarousel({ children }: { children: ReactNode }) {
   const count = Children.count(children);
 
   return (
-    <Carousel className={styles.carousel} aria-label="Juster. Form. Nyt. – bildekarusell" tabIndex={0} opts={{ loop: true, breakpoints: { '(min-width: 768px)': { active: false }, '(prefers-reduced-motion: reduce)': { duration: 0 } } }}>
+    <Carousel className={styles.carousel} aria-label="Juster. Form. Nyt. – bildekarusell" tabIndex={0} opts={{ loop: true, align: 'start', breakpoints: { '(prefers-reduced-motion: reduce)': { duration: 0 } } }}>
       <CarouselContent id={id} className={`ml-0 items-start ${styles.rail}`}>
         {Children.map(children, (child, index) => (
           <CarouselItem className={`pl-0 ${styles.slide}`} aria-label={`${index + 1} av ${count}`}>
