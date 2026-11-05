@@ -56,7 +56,7 @@ nøkkelen inkluderer produkt-/artikkeltekst, omtaler, rating, antall, modell,
 reasoning og promptversjon. Endringer i kilden gir nytt svar etter at kildecachen
 oppdateres. Cache-lesefeil stopper generering; skrivefeil logges. Avbrudd og
 ufullstendige svar lagres ikke. HTTP-avbrudd stopper modellen.
-`vercel.json` aktiverer Vercels nødvendige `supportsCancellation` kun for
+`vercel.ts` aktiverer Vercels nødvendige `supportsCancellation` kun for
 `src/app/api/ai-summary/route.ts`; klientens abortsignal alene er ikke nok på
 plattformen.
 

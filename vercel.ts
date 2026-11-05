@@ -1,6 +1,11 @@
 import type { VercelConfig } from '@vercel/config/v1'
 
 export const config: VercelConfig = {
+  functions: {
+    'src/app/api/ai-summary/route.ts': {
+      supportsCancellation: true
+    }
+  },
   headers: [
     {
       source: '/__sgtm/:path*',
