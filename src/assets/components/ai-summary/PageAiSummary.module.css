@@ -48,6 +48,7 @@
 .article { max-width: 65ch; }
 .card .article h3 { margin: 1.25rem 0 .375rem; font-size: 1rem; font-weight: 800; line-height: 1.5; }
 .card .article h3:first-child { margin-top: 0; }
+.card .article > h3 + p { margin-top: 0; }
 .card .article ul { margin: 0 0 1rem; padding-left: 1.25rem; list-style: disc; font-size: 1rem; line-height: 1.65; }
 .card .article li { margin-block: .375rem; padding-left: .125rem; }
 .card .article li > ul { margin-block: .25rem .5rem; list-style: circle; }

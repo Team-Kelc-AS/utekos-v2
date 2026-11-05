@@ -3,8 +3,11 @@
 import { Brain, ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { ArticleSummary } from '@/lib/ai-summary/schema';
-import { ARTICLE_PRESENTATION_COMPLETE_MS, ARTICLE_STATUS_MESSAGES, ARTICLE_STATUS_MS, ARTICLE_TEXT_COMPLETE_MS, articlePresentationBlocks, articleRevealTimeline, articleVisibleCharacters } from '@/lib/ai-summary/articlePresentation';
+import { ARTICLE_PRESENTATION_COMPLETE_MS, ARTICLE_STATUS_MESSAGES, ARTICLE_STATUS_MS, ARTICLE_STATUS_STEP_MS, ARTICLE_TEXT_COMPLETE_MS, articlePresentationBlocks, articleRevealTimeline, articleVisibleCharacters } from '@/lib/ai-summary/articlePresentation';
 import styles from './PageAiSummary.module.css';
+
+// Browser module memory survives client navigation, but resets on a full reload.
+const presentedArticles = new Set<string>();
 
 export function ArticleSummaryDisclosure({ slug, content }: { slug: string; content: ArticleSummary }) {
   const details = useRef<HTMLDetailsElement>(null);
@@ -13,6 +16,7 @@ export function ArticleSummaryDisclosure({ slug, content }: { slug: string; cont
   const [elapsed, setElapsed] = useState(ARTICLE_PRESENTATION_COMPLETE_MS);
   const blocks = articlePresentationBlocks(content);
   const fullText = blocks.map(block => block.text).join(' ');
+  const presentationKey = `${slug}:${fullText}`;
 
   useEffect(() => {
     if (!run) return;
@@ -54,10 +58,12 @@ export function ArticleSummaryDisclosure({ slug, content }: { slug: string; cont
           return;
         }
         setOpen(true);
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (presentedArticles.has(presentationKey) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          presentedArticles.add(presentationKey);
           setRun(null); setElapsed(ARTICLE_PRESENTATION_COMPLETE_MS);
           return;
         }
+        presentedArticles.add(presentationKey);
         setElapsed(0);
         setRun({ startedAt: event.timeStamp, timeline: articleRevealTimeline(fullText) });
       }}>
@@ -68,7 +74,7 @@ export function ArticleSummaryDisclosure({ slug, content }: { slug: string; cont
       <div className={styles.content}>
         {animating && <p className={styles.note}>Visningsanimasjon – teksten er generert på forhånd.</p>}
         <div role="status" aria-live="polite" aria-atomic="true" className={preparing ? styles.presentationStatus : styles.srOnly}>
-          {preparing ? ARTICLE_STATUS_MESSAGES[Math.min(2, Math.floor(elapsed / 400))] : typing ? 'Viser oppsummeringen…' : 'Oppsummeringen er klar.'}
+          {preparing ? ARTICLE_STATUS_MESSAGES[Math.min(2, Math.floor(elapsed / ARTICLE_STATUS_STEP_MS))] : typing ? 'Viser oppsummeringen…' : 'Oppsummeringen er klar.'}
         </div>
         <div className={styles.article} data-article-summary-content hidden={preparing} aria-busy={typing}>
           <h3 hidden={!blockVisible('scope-heading')}>{text('scope-heading')}</h3>

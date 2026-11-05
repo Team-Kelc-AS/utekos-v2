@@ -2,7 +2,8 @@ import type { ArticleSummary } from './schema';
 
 export const ARTICLE_HEADINGS = ['Omfang', 'Hva lærer du?', 'Rask oppsummering av innhold'] as const;
 export const ARTICLE_STATUS_MESSAGES = ['Leser artikkelinnhold...', 'Analyserer kilder..', 'Skriver oppsummering...'] as const;
-export const ARTICLE_STATUS_MS = 1_200;
+export const ARTICLE_STATUS_STEP_MS = 800;
+export const ARTICLE_STATUS_MS = 2_500;
 export const ARTICLE_TEXT_COMPLETE_MS = 4_000;
 export const ARTICLE_PRESENTATION_COMPLETE_MS = 4_800;
 

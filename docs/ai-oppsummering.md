@@ -41,12 +41,16 @@ Artiklene har ingen generering i klikkflyten. De tolv validerte oppsummeringene
 ligger i `articleSummaries.generated.json` og rendres som lukket, innebygd
 HTML `<details>` i siden. Med JavaScript viser klikket en tydelig merket
 visningsanimasjon: «Leser artikkelinnhold...», «Analyserer kilder..» og
-«Skriver oppsummering...» ved 0, 400 og 800 ms. Merknaden «Visningsanimasjon –
+«Skriver oppsummering...» ved 0, 800 og 1600 ms. Merknaden «Visningsanimasjon –
 teksten er generert på forhånd.» gjør det klart at dette ikke er ny behandling.
-Fra 1200 ms avdekkes teksten ordvis, med små tilfeldige variasjoner og pauser
+Fra 2500 ms avdekkes teksten ordvis, med små tilfeldige variasjoner og pauser
 ved tegnsetting, innen et fast tidsbudsjett. Hele teksten er synlig ved 4000 ms;
 markøren blinker ferdig og forsvinner ved 4800 ms. Klokken starter i klikkhendelsen,
-og lukking avbryter animasjonen. Redusert bevegelse og JavaScript avslått gir
+og lukking avbryter animasjonen. Samme artikkel animeres bare ved første
+åpning i den gjeldende nettlesersiden, også ved klientnavigasjon bort og tilbake.
+En full sideoppdatering nullstiller dette; ingen cookies eller varig lagring
+brukes. Ved ny åpning etter avbrudd vises hele teksten direkte.
+Redusert bevegelse og JavaScript avslått gir
 direkte visning. Det skjer ingen AI- eller API-kall ved klikk. Artikkelendepunktet kan
 også returnere det samme ferdige resultatet med `X-AI-Summary-Cache: PREPARED`.
 

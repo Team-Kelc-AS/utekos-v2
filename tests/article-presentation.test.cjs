@@ -13,9 +13,9 @@ test('all article text is preserved and fully revealed by four seconds for eithe
     assert.equal(Array.from(text.normalize('NFC').replace(/\s+/g, ' ').trim()).length, articleSummaryMetrics(content).total);
     for (const random of [() => 0, () => 1]) {
       const timeline = articleRevealTimeline(text, random);
-      assert.equal(articleVisibleCharacters(1199, timeline), 0);
-      assert.ok(articleVisibleCharacters(2500, timeline) > 0);
-      assert.ok(articleVisibleCharacters(2500, timeline) < text.length);
+      assert.equal(articleVisibleCharacters(2499, timeline), 0);
+      assert.ok(articleVisibleCharacters(3250, timeline) > 0);
+      assert.ok(articleVisibleCharacters(3250, timeline) < text.length);
       assert.equal(articleVisibleCharacters(4000, timeline), text.length);
       assert.equal(articleVisibleCharacters(20_000, timeline), text.length);
       assert.ok(timeline.every((word, i) => i === 0 || word.at > timeline[i - 1].at));
