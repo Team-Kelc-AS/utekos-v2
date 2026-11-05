@@ -39,8 +39,15 @@ brukeren godkjenner den reviderte versjonen. Kun preview-grenen
 
 Artiklene har ingen generering i klikkflyten. De tolv validerte oppsummeringene
 ligger i `articleSummaries.generated.json` og rendres som lukket, innebygd
-HTML `<details>` i siden. Klikket åpner teksten direkte, også uten JavaScript,
-uten AI-kall, API-kall eller lasting av AI-klienten. Artikkelendepunktet kan
+HTML `<details>` i siden. Med JavaScript viser klikket en tydelig merket
+visningsanimasjon: «Leser artikkelinnhold...», «Analyserer kilder..» og
+«Skriver oppsummering...» ved 0, 400 og 800 ms. Merknaden «Visningsanimasjon –
+teksten er generert på forhånd.» gjør det klart at dette ikke er ny behandling.
+Fra 1200 ms avdekkes teksten ordvis, med små tilfeldige variasjoner og pauser
+ved tegnsetting, innen et fast tidsbudsjett. Hele teksten er synlig ved 4000 ms;
+markøren blinker ferdig og forsvinner ved 4800 ms. Klokken starter i klikkhendelsen,
+og lukking avbryter animasjonen. Redusert bevegelse og JavaScript avslått gir
+direkte visning. Det skjer ingen AI- eller API-kall ved klikk. Artikkelendepunktet kan
 også returnere det samme ferdige resultatet med `X-AI-Summary-Cache: PREPARED`.
 
 SHA-256-nøkkelen binder hver tekst til artikkelens tittel, ingress, MDX-innhold,
@@ -90,10 +97,11 @@ varsler eller automatisk publisering er opprettet.
 
 ## Verifisering og publisering
 
-Kjør `node --test tests/ai-summary.test.cjs tests/judgeme.test.cjs`, avgrenset
+Kjør `node --test tests/ai-summary.test.cjs tests/article-presentation.test.cjs tests/judgeme.test.cjs`, avgrenset
 ESLint, `pnpm typecheck` og `pnpm build`. Kontroller alle tolv artikler mot
-kildene, tegnantall, tredeling og underpunkter. Verifiser klikk uten nettverk,
-også uten JavaScript, på mobil og desktop. Produkter skal beholde Judge.me,
+kildene, tegnantall, tredeling og underpunkter. Verifiser statusrekkefølge,
+delvis tekst, markør, full tekst innen fem sekunder fra klikk, lukking/åpning,
+redusert bevegelse og visning uten JavaScript på mobil og desktop. Produkter skal beholde Judge.me,
 35/20-ordsgrenser, cache, avbryt og feil/prøv igjen; femsekundersfristen testes
 med forsinket svar. Produksjonsaktivering krever nytt klarsignal etter AGENTS.md.
 

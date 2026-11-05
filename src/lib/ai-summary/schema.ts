@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { ARTICLE_HEADINGS } from './articlePresentation';
+export { ARTICLE_HEADINGS } from './articlePresentation';
 
 export const summaryTargetSchema = z.object({
   kind: z.enum(['product', 'article']),
@@ -14,7 +16,6 @@ export const pageSummarySchema = z.object({
     .describe('Maksimalt 20 ord om faktiske produktomtaler. Tom streng når kilden mangler omtaletekst, eller siden er en artikkel.'),
 });
 
-export const ARTICLE_HEADINGS = ['Omfang', 'Hva lærer du?', 'Rask oppsummering av innhold'] as const;
 export const articleSummarySchema = z.object({
   scope: z.string().trim().min(40).max(240).describe('Artikkelens tema og avgrensning. Omtrent 140 tegn.'),
   learning: z.string().trim().min(60).max(290).describe('Hva leseren lærer. Omtrent 180 tegn.'),
