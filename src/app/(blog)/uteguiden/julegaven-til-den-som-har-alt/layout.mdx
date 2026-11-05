@@ -1,4 +1,4 @@
-import { KnowledgeJsonLd } from "@/components/knowledge/KnowledgeJsonLd";
+import { ChristmasArticleJsonLd } from "./components/ChristmasArticleJsonLd";
 import { buildKnowledgeMetadata } from "@/lib/knowledge/buildKnowledgeMetadata";
 import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
 export const metadata = buildKnowledgeMetadata(knowledgeArticles.christmasGift);
@@ -6,6 +6,6 @@ export default function ArticleLayout({ children }) {
   return children;
 }
 
-<KnowledgeJsonLd article={knowledgeArticles.christmasGift} />
+<ChristmasArticleJsonLd />
 
 {props.children}
