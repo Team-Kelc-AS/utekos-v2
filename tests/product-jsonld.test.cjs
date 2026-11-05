@@ -41,7 +41,8 @@ test('uses current variants, prices, availability and direct variant URLs instea
   assert.deepEqual(first.offers.seller, { '@id': buildSiteJsonLd()['@graph'][0]['@id'] });
   assert.equal(first.offers.priceSpecification.price, '1990.00');
   assert.equal(first.offers.shippingDetails.shippingRate.value, 99);
-  assert.equal(first.offers.hasMerchantReturnPolicy.returnFees, 'https://schema.org/ReturnFeesCustomerResponsibility');
+  assert.equal(first.offers.hasMerchantReturnPolicy, undefined);
+  assert.equal(buildSiteJsonLd()['@graph'][0].hasMerchantReturnPolicy.returnFees, 'https://schema.org/ReturnFeesCustomerResponsibility');
   assert.equal(first.gtin14, '07090062980009');
   assert.equal(first.sku, 'CURRENT-SKU');
   assert.match(first.colorSwatch, /^https:\/\/.*\.png$/);
@@ -87,8 +88,13 @@ test('new variants of current products keep the applicable shipping and return p
   for (const [amount, expected] of [['998.99', 99], ['999.00', 0], ['999.01', 0]]) {
     const result = buildProductJsonLd(product([variant({ id: 'gid://shopify/ProductVariant/999', price: { amount, currencyCode: 'NOK' } })]), null);
     assert.equal(result.offers.shippingDetails.shippingRate.value, expected);
-    assert.equal(result.offers.hasMerchantReturnPolicy.merchantReturnDays, 14);
+    assert.equal(result.offers.hasMerchantReturnPolicy, undefined);
     assert.equal(result.offers.shippingDetails.deliveryTime.handlingTime, undefined);
+    assert.deepEqual(plain(result.offers.shippingDetails.deliveryTime.transitTime), {
+      '@type': 'QuantitativeValue', minValue: 1, maxValue: 4, unitCode: 'DAY',
+    });
+    assert.deepEqual(plain(result.offers.shippingDetails.deliveryTime.businessDays.dayOfWeek),
+      ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => `https://schema.org/${day}`));
   }
   const foreign = buildProductJsonLd(product([variant({ price: { amount: '100', currencyCode: 'EUR' } })]), null);
   assert.equal(foreign.offers.shippingDetails, undefined);

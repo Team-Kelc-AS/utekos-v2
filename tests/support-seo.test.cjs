@@ -119,7 +119,7 @@ test('founder and article markup contain documented facts and no inferred public
 test('shipping policy page links to shared policies and uses its visible revision date', () => {
   const page = plain(buildSupportJsonLd('shippingReturns'))['@graph'][0];
   const merchant = plain(buildSiteJsonLd())['@graph'][0];
-  assert.equal(page.dateModified, '2026-10-05');
+  assert.equal(page.dateModified, '2026-11-06');
   assert.deepEqual(page.mainEntity.map(entity => entity['@id']), [
     merchant.hasMerchantReturnPolicy['@id'], merchant.hasShippingService['@id'],
   ]);

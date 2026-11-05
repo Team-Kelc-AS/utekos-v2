@@ -52,11 +52,11 @@ export const supportPages = {
   shippingReturns: {
     path: '/frakt-og-retur',
     title: 'Frakt og retur hos Utekos | Levering og størrelsesbytte',
-    description: 'Frakt og retur hos Utekos: se fraktpris, leveringstid, 14 dagers angrerett, gratis størrelsesbytte, returadresse og hvordan du får pengene tilbake.',
+    description: 'Frakt og retur hos Utekos: se leveringstid, 14 dagers angrerett, utvidet returfrist til jul, gratis størrelsesbytte og hvordan du får pengene tilbake.',
     pageType: 'WebPage', socialType: 'website',
     breadcrumbs: [{ label: 'Forsiden', href: '/' }, { label: 'Frakt og retur' }],
     // Visible <time dateTime> in the policy; not the build or publication date.
-    dateModified: '2026-10-05',
+    dateModified: '2026-11-06',
   },
 } as const satisfies Record<SupportPageKey, SupportPage>;
 

@@ -92,9 +92,15 @@ test('site graph represents the verified merchant and website, without page-spec
 
 test('shared merchant policies preserve complete return terms and standard Norway shipping thresholds', () => {
   const merchant = plain(buildSiteJsonLd())['@graph'][0];
-  assert.deepEqual(merchant.hasMerchantReturnPolicy, {
-    '@type': 'MerchantReturnPolicy', '@id': 'https://utekos.no/frakt-og-retur#return-policy',
-    merchantReturnLink: 'https://utekos.no/frakt-og-retur',
+  const returns = merchant.hasMerchantReturnPolicy;
+  assert.equal(returns['@id'], 'https://utekos.no/frakt-og-retur#return-policy');
+  assert.equal(returns.merchantReturnLink, 'https://utekos.no/frakt-og-retur');
+  assert.equal(returns.merchantReturnDays, 14);
+  assert.equal(returns.returnFees, 'https://schema.org/ReturnFeesCustomerResponsibility');
+  assert.deepEqual(returns.returnPolicySeasonalOverride, {
+    '@type': 'MerchantReturnPolicySeasonalOverride',
+    returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+    startDate: '2026-11-24', endDate: '2026-12-24', merchantReturnDays: 30,
   });
   const service = merchant.hasShippingService;
   assert.equal(service['@id'], 'https://utekos.no/frakt-og-retur#shipping-service');

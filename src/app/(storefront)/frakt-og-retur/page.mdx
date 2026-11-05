@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { christmasReturnPolicy } from "@/lib/commerce/returnPolicy";
 
 <header className={styles.header}>
 <Badge variant="ghost" className={styles.eyebrow}>Kundeservice</Badge>
@@ -70,13 +71,13 @@ import { cn } from "@/lib/utils";
 
 <h2 id="frakt-og-levering-heading">Fraktpris og leveringstid</h2>
 
-Vi tilbyr **gratis ordinær frakt** på alle bestillinger over 999 kr. For bestillinger under 999 kr er fraktprisen **99 kr**. Det eksakte fraktbeløpet vises alltid i kassen før du fullfører kjøpet.
+Vi tilbyr **gratis ordinær frakt** på alle bestillinger fra 999 kr. For bestillinger under 999 kr er fraktprisen **99 kr**. Det eksakte fraktbeløpet vises alltid i kassen før du fullfører kjøpet.
 
 ### Rask levering fra vårt lager i Bergen
 
-Alle pakker sendes direkte fra vårt lager i Bergen med PostNord. Normal leveringstid er **2–5 virkedager**, avhengig av hvor i landet du bor:
+Alle pakker sendes direkte fra vårt lager i Bergen med PostNord. Normal leveringstid er **1–4 virkedager etter at PostNord har hentet pakken**, avhengig av hvor i landet du bor. Vi regner mandag–lørdag som virkedager:
 
-- **Bestill innen kl. 14.00:** Pakken sendes fra oss samme dag.
+- **Bestill innen kl. 14.00 på en virkedag:** Pakken sendes fra oss samme dag.
 - **Sør- og Vestlandet:** Normalt levert innen 1–2 virkedager.
 - **Nord-Norge:** Beregn 1–2 dager ekstra.
 
@@ -106,6 +107,12 @@ Sjekk sporingslenken i e-posten din, eller [kontakt oss via kontaktskjemaet](/ko
 Du har **14 kalenderdagers angrerett** når du handler på nett hos Utekos. Fristen regnes fra dagen etter at du fysisk mottok varen, forutsatt at du har fått lovpålagt informasjon om angreretten.
 
 Ender angrefristen på en lørdag, helligdag eller høytidsdag, forlenges den til nærmeste virkedag.
+
+### Utvidet returfrist julen 2026
+
+<p>{christmasReturnPolicy.description}</p>
+
+### Slik går du frem
 
 1. **Gi oss beskjed om at du angrer.** Send en tydelig melding til [kundeservice@utekos.no](mailto:kundeservice@utekos.no) før fristen utløper. Du trenger ikke oppgi en grunn, bruke et bestemt skjema eller vente på godkjenning. Navn, ordrenummer og hvilke varer det gjelder hjelper oss å behandle returen, men er ikke vilkår for angreretten.
 2. **Pakk varen forsvarlig.** Du oppretter og betaler returfrakten selv ved vanlig retur. Bruk gjerne en sending med sporing, og ta vare på innleveringskvitteringen.
@@ -191,7 +198,7 @@ Ordinær frakt i Norge koster 99 kr på bestillinger under 999 kr. Fra 999 kr er
 <AccordionTrigger>Hvor lang er leveringstiden?</AccordionTrigger>
 <AccordionContent>
 
-Normalt 2–5 virkedager fra PostNord har hentet pakken. Leveringstiden avhenger av destinasjonen. Du får sporing på e-post når pakken er på vei.
+Normalt 1–4 virkedager fra PostNord har hentet pakken, mandag–lørdag. Leveringstiden avhenger av destinasjonen. Du får sporing på e-post når pakken er på vei.
 
 </AccordionContent>
 </AccordionItem>
@@ -201,6 +208,8 @@ Normalt 2–5 virkedager fra PostNord har hentet pakken. Leveringstiden avhenger
 <AccordionContent>
 
 Du har 14 kalenderdager på å melde fra om at du angrer. Fristen regnes fra dagen etter at du mottok varen, forutsatt at lovpålagt informasjon om angreretten er gitt. Etter at du har meldt fra, skal varen sendes uten unødig opphold og senest innen 14 kalenderdager.
+
+<p>{christmasReturnPolicy.description}</p>
 
 </AccordionContent>
 </AccordionItem>
@@ -249,7 +258,7 @@ Ja, ingen produkter i dagens aktive sortiment har produktspesifikke unntak fra a
 
 Trenger du hjelp med modell eller størrelse før du bestiller? [Spør kundeservice](/kontaktskjema), eller [se varmeplaggene våre](/produkter/varmeplagg).
 
-<p className={styles.company}>Ansvarlig for vilkårene: Utekos / KELC AS. Siden er oppdatert <time dateTime="2026-10-05">5. oktober 2026</time>. Lovfestede forbrukerrettigheter gjelder i tillegg.</p>
+<p className={styles.company}>Ansvarlig for vilkårene: Utekos / KELC AS. Siden er oppdatert <time dateTime="2026-11-06">6. november 2026</time>. Lovfestede forbrukerrettigheter gjelder i tillegg.</p>
 </div>
 </div>
 </div>
