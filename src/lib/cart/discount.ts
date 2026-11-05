@@ -10,6 +10,10 @@ type DiscountCart = {
 };
 const fields = "id discountCodes { code applicable }";
 
+export function isRetiredDiscountCode(value: string): boolean {
+  return value.trim().toUpperCase() === "COMFYFRI";
+}
+
 export function discountCode(value: string): string {
   const code = value.trim();
   if (!code || code.length > 255 || /[\x00-\x1f\x7f/\\]/u.test(code)) {
@@ -38,6 +42,14 @@ export function discountDestination(requestUrl: string): URL {
       target.searchParams.append(key, value);
     }
   }
+  const discounts = target.searchParams.getAll("discount");
+  if (discounts.some(value => value.split(",").some(isRetiredDiscountCode))) {
+    target.searchParams.delete("discount");
+    for (const value of discounts) {
+      const active = value.split(",").filter(code => !isRetiredDiscountCode(code));
+      if (active.length) target.searchParams.append("discount", active.join(","));
+    }
+  }
   return target;
 }
 
@@ -49,6 +61,7 @@ export async function applyDiscountCode(
   buyerIp?: string,
 ): Promise<DiscountCart> {
   const code = discountCode(value);
+  if (isRetiredDiscountCode(code)) throw new CartError("Rabattkoden er utløpt.", 410);
   const id = cartIdentity(cookieId)?.fullId;
   const existing = id
     ? (

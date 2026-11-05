@@ -141,7 +141,6 @@ export function GET(request: NextRequest) {
   const variant = comfyBuyNowVariants[size].split("/").at(-1);
   const checkout = new URL(`https://kasse.utekos.no/cart/${variant}:1`);
   checkout.searchParams.set("channel", "buy_button");
-  checkout.searchParams.set("discount", "COMFYFRI");
   // Preserve marketing parameters, including repeated values. Checkout controls
   // and order attributes come only from this server's verified handoff.
   for (const [key, value] of request.nextUrl.searchParams) {

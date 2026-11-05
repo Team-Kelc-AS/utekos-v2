@@ -2,17 +2,11 @@
 import { useEffect, useId, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { applyCartDiscount, changeCart, closeCart } from '@/lib/cart/client';
+import { changeCart, closeCart } from '@/lib/cart/client';
 import type { Cart } from '@/lib/cart/types';
-import { COMFY_SHIPPING_CODE, selectCartSuggestions, shippingStatus, type CartSuggestion } from '@/lib/cart/suggestions';
+import { selectCartSuggestions, shippingStatus, type CartSuggestion } from '@/lib/cart/suggestions';
 import { formatMoney } from '@/lib/products/money';
 import styles from './commerce.module.css';
-
-function PromotionCode({ code, applied, pending }: { code: string; applied: boolean; pending: boolean }) {
-  return <button type="button" className={styles.secondary} disabled={pending || applied} onClick={() => { void applyCartDiscount(code); }}>
-    {applied ? `${code} er lagt til` : `Bruk ${code}`}
-  </button>;
-}
 
 function Suggestion({ product, pending }: { product: CartSuggestion; pending: boolean }) {
   const selectId = useId();
@@ -50,9 +44,6 @@ export default function SmartCartSuggestions({ cart, pending }: { cart: Cart; pe
   const shipping = shippingStatus(cart);
   if (!shipping) return null;
   const suggestions = selectCartSuggestions(cart, products);
-  const codes = cart.discountCodes ?? [];
-  const applied = (code: string) => codes.some(item => item.applicable && item.code.toUpperCase() === code);
-  const hasComfyrobe = cart.lines.some(line => line.handle === 'comfyrobe');
   return <section className={styles.smartCart} aria-label="Frakt og tilbehør">
     <div className={styles.shippingNotice} role="status">
       {shipping.free ? <p>Gratulerer, du har gratis frakt!</p> : <>
@@ -60,11 +51,6 @@ export default function SmartCartSuggestions({ cart, pending }: { cart: Cart; pe
         <progress value={shipping.progress} max={100} aria-label="Fremdrift mot gratis frakt" />
       </>}
     </div>
-    {hasComfyrobe && !shipping.free && <div className={styles.promotion}>
-      <p>Få gratis frakt på Comfyrobe™ med <strong>{COMFY_SHIPPING_CODE}</strong>.</p>
-      <p className={styles.muted}>Kan ikke kombineres med andre rabatter.</p>
-      <PromotionCode code={COMFY_SHIPPING_CODE} applied={applied(COMFY_SHIPPING_CODE)} pending={pending} />
-    </div>}
     {suggestions.length > 0 && <>
       <h3>{suggestions.some(product => product.accessory) ? 'Fullfør din Utekos' : 'Andre livsnytere har også sett på'}</h3>
       <ul className={styles.suggestions}>{suggestions.map(product => <Suggestion key={product.id} product={product} pending={pending} />)}</ul>

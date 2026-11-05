@@ -2,6 +2,7 @@ import {
   applyDiscountCode,
   discountCode,
   discountDestination,
+  isRetiredDiscountCode,
 } from "@/lib/cart/discount";
 import { buyerIp, privateHeaders } from "@/lib/cart/request";
 
@@ -25,6 +26,7 @@ export async function GET(
   try {
     const code = discountCode((await context.params).code);
     const response = destination(request);
+    if (isRetiredDiscountCode(code)) return response;
     // Navigation previews and passive crawlers must not create carts.
     if (
       isPassiveWebCrawler(request.headers.get("user-agent")) ||

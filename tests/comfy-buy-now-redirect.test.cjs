@@ -23,7 +23,7 @@ for (const [suffix, variant] of [['xs', '43959919051000'], ['xl', '4395991911653
       const url = new URL(response.headers.get('location'));
       assert.equal(url.origin, 'https://kasse.utekos.no');
       assert.equal(url.pathname, `/cart/${variant}:1`);
-      assert.equal(url.searchParams.get('discount'), 'COMFYFRI');
+      assert.equal(url.searchParams.get('discount'), null);
       assert.match(url.searchParams.get('attributes[_fbp]'), /^fb\.1\.1792500000000\.12345(?:\.|$)/);
       assert.match(url.searchParams.get('attributes[_fbc]'), /\.fixture-click(?:\.|$)/);
       assert.equal(url.searchParams.get('attributes[fbclid]'), 'fixture-click');
@@ -174,7 +174,7 @@ test('query parameters, encoding and repeated marketing values survive without o
     assert.deepEqual(url.searchParams.getAll(key), incoming.searchParams.getAll(key));
   }
   assert.equal(url.searchParams.get('channel'), 'buy_button');
-  assert.equal(url.searchParams.get('discount'), 'COMFYFRI');
+  assert.equal(url.searchParams.get('discount'), null);
   assert.equal(url.searchParams.get('attributes[msclkid]'), null);
   assert.equal(url.searchParams.get('checkout[email]'), null);
   assert.equal(url.searchParams.get('attributes[utm_campaign]'), 'Høst & varme');

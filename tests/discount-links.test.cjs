@@ -28,6 +28,34 @@ test('shareable discount creates an empty Storefront cart, then retains it for f
   assert.equal(h.requests[0].cache, 'no-store');
 });
 
+test('retired Comfyrobe codes cannot create or modify a cart', async () => {
+  for (const code of ['COMFYFRI', 'comfyfri', ' COMFYFRI ']) {
+    const h = harness([]);
+    await assert.rejects(h.api.applyDiscountCode(code, id), error => error.status === 410);
+    assert.equal(h.requests.length, 0);
+  }
+});
+
+test('old Comfyrobe campaign links redirect without applying the code or losing attribution', async () => {
+  const h = harness([], 'app/discount/[code]/route.ts');
+  const source = new NextRequest('https://utekos.no/discount/COMFYFRI?redirect=%2Fprodukter%2Fcomfyrobe%3Fdiscount%3DCOMFYFRI&utm_source=fixture&fbclid=exact-FixtureClick');
+  const response = await h.api.GET(source, { params: Promise.resolve({ code: 'COMFYFRI' }) });
+  const target = new URL(response.headers.get('location'));
+  assert.equal(response.status, 303);
+  assert.equal(target.pathname, '/produkter/comfyrobe');
+  assert.equal(target.searchParams.get('discount'), null);
+  assert.equal(target.searchParams.get('utm_source'), 'fixture');
+  assert.equal(target.searchParams.get('fbclid'), 'exact-FixtureClick');
+  assert.equal(response.headers.get('set-cookie'), null);
+  assert.equal(h.requests.length, 0);
+});
+
+test('retiring a campaign code preserves other discount codes', () => {
+  const h = harness([]);
+  const target = h.api.discountDestination('https://utekos.no/discount/COMFYFRI?redirect=%2Fprodukter%3Fdiscount%3DNBCC128%2CCOMFYFRI&discount=COMFYFRI');
+  assert.equal(target.searchParams.get('discount'), 'NBCC128');
+});
+
 test('applying a link preserves existing codes and does not repeat an existing code', async () => {
   const h = harness([{ cart: cart(['OTHER']) }, { cartDiscountCodesUpdate: { cart: cart(['OTHER', 'NBCC128']), userErrors: [] } }]);
   await h.api.applyDiscountCode('NBCC128', id, '192.0.2.1');

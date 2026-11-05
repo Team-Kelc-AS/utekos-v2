@@ -1,7 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { applyDiscountCode } from "@/lib/cart/discount";
 import {
   COMFY_BUY_NOW_CART_COOKIE,
   comfyBuyNowVariants,
@@ -9,7 +8,6 @@ import {
 import { mutateCart } from "@/lib/cart/mutations";
 import { CartError, cartView, readCart } from "@/lib/cart/server";
 import { buyerIp, privateHeaders, sameOrigin } from "@/lib/cart/request";
-import { COMFY_SHIPPING_CODE } from "@/lib/cart/suggestions";
 
 const inputSchema = z.strictObject({ size: z.enum(["xs", "xl"]) });
 
@@ -48,14 +46,6 @@ export async function POST(request: NextRequest) {
       undefined,
       buyerIp(request),
     );
-    const discounted = await applyDiscountCode(
-      COMFY_SHIPPING_CODE,
-      result.id,
-      buyerIp(request),
-    );
-    if (!discounted.discountCodes.some((code) => code.code.toUpperCase() === COMFY_SHIPPING_CODE)) {
-      throw new CartError("Rabattkoden kunne ikke bekreftes. Prøv igjen.", 409);
-    }
     const cart = await cartView(await readCart(result.id, buyerIp(request)), buyerIp(request));
     if (
       cart.totalQuantity !== 1 ||

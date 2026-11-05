@@ -2,7 +2,6 @@ import type { Cart } from './types';
 import type { Money, ProductImage } from '@/lib/shopify/product-types';
 
 export const FREE_SHIPPING_THRESHOLD = 999;
-export const COMFY_SHIPPING_CODE = 'COMFYFRI';
 export type CartSuggestion = {
   id: string; handle: string; title: string; accessory: boolean;
   minimumPrice: Money;
@@ -14,8 +13,7 @@ export function shippingStatus(cart: Cart) {
   // Do not promise threshold shipping using an amount before an order discount.
   const subtotal = Math.min(Number(cart.subtotal.amount), Number(cart.total.amount));
   if (!Number.isFinite(subtotal) || subtotal < 0) return null;
-  const codeApplied = cart.discountCodes?.some(code => code.applicable && code.code.toUpperCase() === COMFY_SHIPPING_CODE) ?? false;
-  return { free: subtotal >= FREE_SHIPPING_THRESHOLD || codeApplied, remaining: Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal), progress: Math.min(100, subtotal / FREE_SHIPPING_THRESHOLD * 100), codeApplied };
+  return { free: subtotal >= FREE_SHIPPING_THRESHOLD, remaining: Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal), progress: Math.min(100, subtotal / FREE_SHIPPING_THRESHOLD * 100) };
 }
 
 // Port of headless SmartCartSuggestions: bridge the gap with the cheapest

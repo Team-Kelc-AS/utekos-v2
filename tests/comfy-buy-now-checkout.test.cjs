@@ -19,12 +19,12 @@ function cartFor(size, available = true) {
     checkoutUrl: 'https://kasse.utekos.no/checkouts/checkout-fixture',
     totalQuantity: 1,
     lines: [{ handle: 'comfyrobe', variantId: variants[size], available }],
-    discountCodes: [{ code: 'COMFYFRI', applicable: false }],
+    discountCodes: [],
     commerce: { currency: 'NOK', value: 845, items: [{ item_id: variants[size] }] },
   };
 }
 
-test('buy-now creates one selected cart, confirms the discount, and keeps the ordinary cart cookie untouched', async () => {
+test('buy-now creates one selected cart without adding a discount and keeps the ordinary cart cookie untouched', async () => {
   const calls = [];
   const cart = cartFor('xs');
   const api = loadTypeScript('app/api/cart/comfy-buy-now/route.ts', { globals: { TextEncoder }, mocks: {
@@ -43,7 +43,8 @@ test('buy-now creates one selected cart, confirms the discount, and keeps the or
   assert.equal(calls[0][1].variantId, variants.xs);
   assert.equal(calls[0][1].quantity, 1);
   assert.equal(calls[0][2], undefined);
-  assert.deepEqual(calls[1].slice(1, 3), ['COMFYFRI', fullId]);
+  assert.equal(calls.some(call => call[0] === 'discount'), false);
+  assert.deepEqual(calls[1], ['read', fullId]);
   assert.equal(response.cookies.get('utekos_comfy_buy_now_cart').value, fullId);
   assert.equal(response.cookies.get('utekos_cart'), undefined);
   const payload = await response.json();

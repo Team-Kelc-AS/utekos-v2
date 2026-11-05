@@ -21,7 +21,6 @@ import {
   COMFY_BUY_NOW_CART_COOKIE,
   comfyBuyNowVariants,
 } from "@/lib/cart/comfyBuyNow";
-import { COMFY_SHIPPING_CODE } from "@/lib/cart/suggestions";
 
 const preparationSchema = z.strictObject({
   method: z.enum(["shopify", "klarna"]),
@@ -92,8 +91,7 @@ export async function POST(request: NextRequest) {
         view.totalQuantity !== 1 ||
         view.lines.length !== 1 ||
         view.lines[0].variantId !== variantId ||
-        !view.lines[0].available ||
-        !view.discountCodes?.some((code) => code.code.toUpperCase() === COMFY_SHIPPING_CODE)
+        !view.lines[0].available
       ) {
         throw new CartError("Kassen ble endret. Prøv igjen.", 409);
       }
