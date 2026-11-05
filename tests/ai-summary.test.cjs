@@ -26,7 +26,9 @@ function routeHarness({ resolvedSource = source, generated = summary, enabled = 
       ai: {
         createGateway: ({ apiKey }) => model => { assert.equal(apiKey, 'summary-test-only'); return model; },
         Output: { object: value => value },
-        streamText: ({ abortSignal }) => {
+        streamText: ({ abortSignal, providerOptions, reasoning }) => {
+          assert.equal(reasoning, undefined);
+          assert.equal(providerOptions.google.thinkingConfig.thinkingLevel, 'minimal');
           calls += 1;
           generationSignal = abortSignal;
           return {

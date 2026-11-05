@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { SummarySource } from './schema';
 
-export const SUMMARY_PROMPT_VERSION = '2';
+export const SUMMARY_PROMPT_VERSION = '3';
 export const SUMMARY_MODEL = 'google/gemini-3.8-flash';
 export const SUMMARY_REASONING = 'minimal';
 
