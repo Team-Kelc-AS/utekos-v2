@@ -5,6 +5,7 @@ import { pageSummarySchema, summaryResponseSchema, summarySourceSchema, summaryT
 import { getSummarySource } from '@/lib/ai-summary/source';
 import { buildSummaryPrompt, summaryCacheKey, summaryInstructions, SUMMARY_MODEL, SUMMARY_REASONING } from '@/lib/ai-summary/prompt';
 import { summaryRateLimit } from '@/lib/ai-summary/rateLimit';
+import { generateArticleSummary } from '@/lib/ai-summary/generateArticleSummary';
 
 export const maxDuration = 30;
 const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
     const cancellation = new AbortController();
     const abortSignal = AbortSignal.any([request.signal, cancellation.signal]);
     abortSignal.throwIfAborted();
-    const result = streamText({
+    const result = source.kind === 'product' ? streamText({
       model: summaryApiKey ? createGateway({ apiKey: summaryApiKey })(model) : model,
       system: summaryInstructions,
       prompt: buildSummaryPrompt(source),
@@ -106,7 +107,7 @@ export async function POST(request: Request) {
       maxRetries: 1,
       abortSignal,
       onError: () => {}, // The response stream below logs errors once, without prompt/provider payloads.
-    });
+    }) : null;
 
     const reviews = source.reviews ? {
       average: source.reviews.average, count: source.reviews.count, includedCount: source.reviews.items.length,
@@ -117,17 +118,35 @@ export async function POST(request: Request) {
         try {
           // Ratings come directly from Judge.me, before any model text is streamed.
           controller.enqueue(`{"reviews":${JSON.stringify(reviews)},"content":`);
-          for await (const part of result.stream) {
-            if (part.type === 'text-delta') {
-              firstTextMs ??= Date.now() - started;
-              controller.enqueue(part.text);
+          let content;
+          let usage;
+          let attempts = 1;
+          if (result) {
+            for await (const part of result.stream) {
+              if (part.type === 'text-delta') {
+                firstTextMs ??= Date.now() - started;
+                controller.enqueue(part.text);
+              }
+              if (part.type === 'error') throw part.error;
+              if (part.type === 'abort') throw new Error('Summary aborted');
             }
-            if (part.type === 'error') throw part.error;
-            if (part.type === 'abort') throw new Error('Summary aborted');
+            content = validateSummary(pageSummarySchema.parse(await result.output), source);
+            if (await result.finishReason !== 'stop') throw new Error('Incomplete summary');
+            const tokens = await result.totalUsage;
+            usage = { inputTokens: tokens.inputTokens, outputTokens: tokens.outputTokens, reasoningTokens: tokens.outputTokenDetails?.reasoningTokens };
+          } else {
+            const article = await generateArticleSummary({
+              model: summaryApiKey ? createGateway({ apiKey: summaryApiKey })(model) : model,
+              source, abortSignal,
+              onText: () => { firstTextMs ??= Date.now() - started; },
+            });
+            content = validateSummary(article.content, source);
+            usage = article.usage;
+            attempts = article.attempts;
+            abortSignal.throwIfAborted();
+            controller.enqueue(JSON.stringify(content));
           }
-          const content = validateSummary(pageSummarySchema.parse(await result.output), source);
           const summary = summaryResponseSchema.parse({ reviews, content });
-          if (await result.finishReason !== 'stop') throw new Error('Incomplete summary');
           abortSignal.throwIfAborted();
           controller.enqueue('}');
           try {
@@ -138,11 +157,10 @@ export async function POST(request: Request) {
           } catch (error) {
             console.error(JSON.stringify({ event: 'ai_summary_cache_write_failed', ...logContext, error: error instanceof Error ? error.name : 'UnknownError' }));
           }
-          const usage = await result.totalUsage;
           console.info(JSON.stringify({ event: 'ai_summary_completed', ...logContext,
-            durationMs: Date.now() - started, sourceMs, firstTextMs,
+            durationMs: Date.now() - started, sourceMs, firstTextMs, attempts,
             inputTokens: usage.inputTokens, outputTokens: usage.outputTokens,
-            reasoningTokens: usage.outputTokenDetails?.reasoningTokens }));
+            reasoningTokens: usage.reasoningTokens }));
           controller.close();
         } catch (error) {
           cancellation.abort();

@@ -7,11 +7,18 @@ brukeren godkjenner den reviderte versjonen. Kun preview-grenen
 
 ## Innhold og datakilder
 
-- Brain-ikon og tittelen «Kortversjonen». Ingen synlig genereringssetning;
+- Brain-ikon og tittelen «Kortversjonen» på produkter, og «Oppsummer denne
+  artikkelen for meg» på artikler. Ingen synlig genereringssetning;
   en liten indikator har tilgjengelig status og respekterer redusert bevegelse.
-- Ett avsnitt på maksimalt 35 ord, inkludert vesentlige forbehold.
-  På produktsider kommer inntil 20 ord om kundeerfaringer i tillegg.
-  Tidligere hovedpunkter og egen forbeholdsliste er fjernet.
+- Produkter har ett avsnitt på maksimalt 35 ord, inkludert vesentlige forbehold,
+  og inntil 20 ord om kundeerfaringer i tillegg.
+- Artikler har 950–1000 tegn med mellomrom, fordelt på «Omfang» (ca. 15 %),
+  «Hva lærer du?» (ca. 20 %) og «Rask oppsummering av innhold» (ca. 65 %).
+  Den siste delen har 3–5 hovedpunkter med minst ett underpunkt. Fordelingen
+  tillater fem prosentpoeng avvik per del. Tegn telles som Unicode-kodepunkter
+  etter NFC-normalisering og sammenslåing av mellomrom, med ett mellomrom
+  mellom hver tekstblokk. De tre underoverskriftene inngår; knapptittel,
+  AI-merknad, JSON og CSS-punktmarkører inngår ikke.
 - Produkter bruker samme lokale beskrivelse og trekkspilldata som siden,
   med Shopify-beskrivelsen som reserve. Bare publiserte handles aksepteres.
 - Judge.me hentes med `getJudgeMePreview(product.id, 40)` fra den
@@ -39,21 +46,30 @@ Den generelle `reasoning: 'minimal'` kan oversettes til `high`, og native
 `minimal` støttes ikke av denne modellen; begge ble forkastet etter feil i
 preview. En direkte sammenligning av tre modeller viste at 3.8 Flash med `low`
 beholdt tydelige material-/produktforbehold med langt lavere latenstid.
-Outputtaket reduseres fra 2400 til 1600 tokens for å gi plass til både intern
-resonnering og gyldig JSON, mens synlig tekst har egne strenge ordgrenser.
+Outputtaket er 1600 tokens for å gi plass til både intern
+resonnering og gyldig JSON, mens synlig tekst har egne lengdegrenser.
 Timeout reduseres fra 40 til 15 sekunder, med maksimalt én retry ved
 midlertidig leverandørfeil innenfor samme tidsgrense. Funksjonsgrensen er 30 sekunder. `AI_SUMMARY_MODEL` kan overstyre
 modellen; et bytte må testes for støtten til reasoning og strukturert output.
+Artikler har maksimalt tre utkast innen én samlet frist på 15 sekunder, uten
+automatisk leverandørretry. Ved feil lengde/fordeling får neste utkast målt
+tegnantall og konkret korrigeringsbehov. Når ett tekstfelt kan bringe hele svaret
+innenfor kravene, skrives bare dette feltet om; øvrig innhold beholdes.
+Ugyldig JSON, leverandørfeil og avbrudd
+stopper genereringen. Tekst avkortes eller fylles aldri mekanisk.
 
 Ingen modellkall skjer ved sidevisning, prefetch eller bygg. SDK-klienten
 lastes ved klikk. API-et strømmer først verifisert ratingmetadata og deretter
-modellens kompakte objekt. Resultatet valideres strukturelt og mot ordgrenser.
+modellens kompakte produktobjekt. Artikkelutkast holdes tilbake til struktur,
+tegnantall og fordeling er validert, slik at en eventuell korrigering ikke viser
+leseren et ugyldig utkast. Resultatet valideres strukturelt og mot lengdegrenser.
 Manglende omtaler kan aldri gi generert omtaletekst; tilgjengelig omtaletekst
 må faktisk tas med. Validering er ikke en semantisk faktasjekk.
 
 Vercel Runtime Cache lagrer bare fullførte, validerte svar i 24 timer. SHA-256-
 nøkkelen inkluderer produkt-/artikkeltekst, omtaler, rating, antall, modell,
-reasoning og promptversjon. Endringer i kilden gir nytt svar etter at kildecachen
+reasoning og promptversjon. Artikler har egen promptversjon; produktnøklene
+endres ikke ved denne artikkelrevisjonen. Endringer i kilden gir nytt svar etter at kildecachen
 oppdateres. Cache-lesefeil stopper generering; skrivefeil logges. Avbrudd og
 ufullstendige svar lagres ikke. HTTP-avbrudd stopper modellen.
 `vercel.ts` aktiverer Vercels nødvendige `supportsCancellation` kun for
@@ -62,8 +78,9 @@ plattformen.
 
 Et validert produkt-/omtalegrunnlag lagres også delt i fem minutter. Derfor
 trenger et cachet svar ikke vente på Shopify/Judge.me ved hvert klikk eller
-ved bytte av serverinstans. Kildeendringer, også avpublisering, kan bruke inntil
-fem minutter på å slå gjennom. Ukjent/feilet omtalegrunnlag caches ikke og gir
+ved bytte av serverinstans. Endringer slår gjennom etter oppdatering av de
+eksisterende Shopify-/Judge.me-cachene og utløp av kildens fem minutters cache;
+dette er ikke sanntidsdata. Ukjent/feilet omtalegrunnlag caches ikke og gir
 «Prøv igjen» uten modellkall; null publiserte omtaler er fortsatt et gyldig svar.
 
 ## Kostnader og kontroll
@@ -79,7 +96,9 @@ kryssorigin, ugyldig JSON og mer enn 512 bytes. Den instanslokale grensen på
 10 forespørsler/minutt er ikke et distribuert kostnadstak.
 
 Logger registrerer request-ID, kilde/model, cachetreff, totalvarighet,
-kildetid, tid til første modelltekst, input/output- og reasoning-tokens.
+kildetid, tid til første modelltekst, antall utkast, input/output- og reasoning-tokens.
+For artikler er første modelltekst et internt tidspunkt; leseren får først det
+ferdig validerte resultatet. Tokenantall summeres over alle artikkelutkast.
 Prompt, svar, nøkler og klientadresse logges ikke. Ingen nye bakgrunnsjobber,
 varsler eller automatisk publisering er opprettet.
 

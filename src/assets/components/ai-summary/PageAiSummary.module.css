@@ -42,6 +42,12 @@
 .card .content p { max-width: 55ch; margin: 0 0 .875rem; font-size: 1rem; line-height: 1.65; }
 .card .content .note { font-size: .8125rem; }
 .card .content .summary { font-size: 1.125rem; }
+.article { max-width: 65ch; }
+.card .article h3 { margin: 1.25rem 0 .375rem; font-size: 1rem; font-weight: 800; line-height: 1.5; }
+.card .article h3:first-child { margin-top: 0; }
+.card .article ul { margin: 0 0 1rem; padding-left: 1.25rem; list-style: disc; font-size: 1rem; line-height: 1.65; }
+.card .article li { margin-block: .375rem; padding-left: .125rem; }
+.card .article li > ul { margin-block: .25rem .5rem; list-style: circle; }
 .rating { display: flex; align-items: center; gap: .375rem; font-weight: 800; }
 .rating > svg { flex-shrink: 0; }
 .loader { display: inline-block; width: 1rem; height: 1rem; margin: .5rem; border: 2px solid var(--summary-border); border-top-color: currentColor; border-radius: 50%; animation: summarySpin .8s linear infinite; }
