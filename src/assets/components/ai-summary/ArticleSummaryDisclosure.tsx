@@ -155,7 +155,7 @@ export function ArticleSummaryDisclosure({
           aria-atomic="true"
           className={
             preparing
-              ? "min-h-10 font-medium leading-[1.65] shimmer motion-reduce:shimmer-none"
+              ? "min-h-10 font-medium leading-[1.65] shimmer motion-reduce:shimmer-none [--shimmer-color:#f0eee933]"
               : "sr-only"
           }
         >

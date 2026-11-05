@@ -29,8 +29,6 @@ import { KlarnaProductPreferences } from "@/components/klarna/KlarnaPreferencesA
 import { KlarnaProductExpressCheckout } from "@/components/klarna/KlarnaProductExpressCheckout";
 import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { CheckMarkIcon } from "@/components/utekos-icons/CheckMarkIcon";
-import { DiscountCodeReveal } from "./DiscountCodeReveal";
-import { TagOutlineIcon } from "@/components/utekos-icons/TagOutlineIcon";
 import { TruckOutlineIcon } from "@/components/utekos-icons/TruckOutlineIcon";
 import { ReturnsOutlineIcon } from "@/components/utekos-icons/ReturnsOutlineIcon";
 import styles from "./product.module.css";
@@ -139,12 +137,6 @@ export async function SelectedProduct({
             <strong>{formatMoney(variant.price)}</strong>
             {compare && <del>{formatMoney(compare)}</del>}
           </div>
-          {isComfyrobe && (
-            <div className={`${styles.discountTrust} ${styles.mobileDiscount}`}>
-              <TagOutlineIcon tone="orange" />
-              <DiscountCodeReveal code="COMFYFRI" />
-            </div>
-          )}
           <VariantOptions selectedId={variant.id}>
             {options
               .filter((o) => o.values.some((v) => v.value !== "Default Title"))
@@ -210,14 +202,7 @@ export async function SelectedProduct({
             {variant.availableForSale && (isComfyrobe || variant.currentlyNotInStock === false) && <KlarnaProductExpressCheckout key={variant.id} handle={product.handle} variantId={variant.id} />}
           </div>
           <ul className={styles.trust}>
-            {isComfyrobe ? (
-              <li className={`${styles.discountTrust} ${styles.desktopDiscount}`}>
-                <TagOutlineIcon tone="orange" />
-                <DiscountCodeReveal code="COMFYFRI" />
-              </li>
-            ) : (
-              <li><TruckOutlineIcon />Gratis frakt fra 999 kr</li>
-            )}
+            <li><TruckOutlineIcon />Gratis frakt fra 999 kr</li>
             <li>
               <ReturnsOutlineIcon />
               <Link href="/frakt-og-retur">Gratis størrelsesbytte</Link>

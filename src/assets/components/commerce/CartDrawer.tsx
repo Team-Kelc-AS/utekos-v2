@@ -47,7 +47,7 @@ export default function CartDrawer() {
             </button>
           </p>
         )}
-        {warnings.map((w, i) => (
+        {warnings.filter((warning) => !/\bCOMFYFRI\b/i.test(warning)).map((w, i) => (
           <p key={i} className={styles.message}>
             {w}
           </p>

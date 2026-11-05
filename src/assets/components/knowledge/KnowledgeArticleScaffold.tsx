@@ -9,6 +9,8 @@ import { KnowledgeArticleIntro } from "./KnowledgeArticleIntro";
 import { KnowledgeLearnings } from "./KnowledgeLearnings";
 import { KnowledgeSources } from "./KnowledgeSources";
 import { KnowledgeToc } from "./KnowledgeToc";
+import { DocsTableOfContents } from "./DocsTableOfContents";
+import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import articleStyles from "@/app/(blog)/uteguiden/knowledgeArticle.module.css";
 
@@ -19,6 +21,7 @@ export function KnowledgeArticleScaffold({
   header,
   footer,
   className,
+  tocLayout = "inline",
 }: {
   article: KnowledgeArticle;
   hero?: ReactNode;
@@ -28,11 +31,13 @@ export function KnowledgeArticleScaffold({
   /** Override closing content when migrating an article verbatim. */
   footer?: ReactNode;
   className?: string;
+  tocLayout?: "inline" | "sidebar";
 }) {
-  return (
+  const hasSidebar = tocLayout === "sidebar" && article.toc.length > 0 && !header;
+  const content = (
     <article
       id="top"
-      className={[articleStyles.article, className].filter(Boolean).join(" ")}
+      className={cn(articleStyles.article, className)}
     >
       {header ?? <KnowledgeArticleIntro article={article} />}
       {hero ?? <KnowledgeRegisteredImage article={article} preload />}
@@ -40,7 +45,11 @@ export function KnowledgeArticleScaffold({
         {article.learnings.length > 0 && !header ? (
           <KnowledgeLearnings article={article} />
         ) : null}
-        {article.toc.length > 0 && !header ? <KnowledgeToc article={article} /> : null}
+        {hasSidebar ? (
+          <div className={cn(articleStyles.mobileToc, "xl:hidden")}>
+            <DocsTableOfContents article={article} variant="accordion" />
+          </div>
+        ) : article.toc.length > 0 && !header ? <KnowledgeToc article={article} /> : null}
         <PageAiSummary
           key={article.slug}
           target={{ kind: "article", slug: article.slug }}
@@ -55,5 +64,18 @@ export function KnowledgeArticleScaffold({
       )}
       <MostReadArticles currentSlug={article.slug} />
     </article>
+  );
+
+  if (!hasSidebar) return content;
+
+  return (
+    <div className={articleStyles.withToc} data-knowledge-layout>
+      {content}
+      <aside className={cn(articleStyles.tocRail, "hidden xl:block")}>
+        <div className={articleStyles.tocSticky}>
+          <DocsTableOfContents article={article} variant="list" />
+        </div>
+      </aside>
+    </div>
   );
 }

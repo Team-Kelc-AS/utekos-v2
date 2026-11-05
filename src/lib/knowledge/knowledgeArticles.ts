@@ -21,6 +21,7 @@ export type KnowledgeReference = {
 export type KnowledgeTocEntry = {
   id: string;
   label: string;
+  depth?: 2 | 3;
 };
 
 export type KnowledgeImage = {

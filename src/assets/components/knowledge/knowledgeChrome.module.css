@@ -312,14 +312,17 @@
 
 .toc.toc > :is(h2, h3):first-child {
   margin: 0 0 0.75rem;
-  font-size: 1.05rem;
+}
+
+.learnings.learnings > h2:first-child,
+.toc.toc > :is(h2, h3):first-child {
+  font-size: clamp(1.375rem, 2.5vw, 1.75rem);
 }
 
 /* Keep the learning-card heading inside its card; article-body H2 spacing is not applicable here. */
 .learnings.learnings > h2:first-child {
   margin: 0 0 1.25rem;
   color: inherit;
-  font-size: clamp(1.375rem, 2.5vw, 1.75rem);
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -351,6 +354,11 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0.45rem;
+}
+
+.toc.toc .tocList a,
+.toc.toc .tocList li::marker {
+  font-weight: 500;
 }
 
 .sources {
