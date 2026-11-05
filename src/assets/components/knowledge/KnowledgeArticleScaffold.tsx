@@ -1,10 +1,10 @@
 import "server-only";
 import { PageAiSummary } from "@/components/ai-summary/PageAiSummary";
 
-import { ArticleRelatedContent } from "./RelatedContent";
+import { MostReadArticles } from "./MostReadArticles";
 import { BackToTop } from "./BackToTop";
 import type { KnowledgeArticle } from "@/lib/knowledge/knowledgeArticles";
-import { KnowledgeArticleBreadcrumbs } from "./KnowledgeArticleBreadcrumbs";
+import { KnowledgeRegisteredImage } from "./KnowledgeRegisteredImage";
 import { KnowledgeArticleIntro } from "./KnowledgeArticleIntro";
 import { KnowledgeLearnings } from "./KnowledgeLearnings";
 import { KnowledgeSources } from "./KnowledgeSources";
@@ -15,7 +15,6 @@ import articleStyles from "@/app/(blog)/uteguiden/knowledgeArticle.module.css";
 export function KnowledgeArticleScaffold({
   article,
   hero,
-  heroPlacement = "before-title",
   children,
   header,
   footer,
@@ -23,7 +22,6 @@ export function KnowledgeArticleScaffold({
 }: {
   article: KnowledgeArticle;
   hero?: ReactNode;
-  heroPlacement?: "before-title" | "after-title";
   children: ReactNode;
   /** Preserve an existing editorial introduction without rewriting its copy. */
   header?: ReactNode;
@@ -36,27 +34,26 @@ export function KnowledgeArticleScaffold({
       id="top"
       className={[articleStyles.article, className].filter(Boolean).join(" ")}
     >
-      {header ?? (
-        <>
-          <KnowledgeArticleBreadcrumbs article={article} />
-          {heroPlacement === "before-title" ? hero : null}
-          <KnowledgeArticleIntro
-            article={article}
-            afterTitle={heroPlacement === "after-title" ? hero : undefined}
-          />
+      {header ?? <KnowledgeArticleIntro article={article} />}
+      {hero ?? <KnowledgeRegisteredImage article={article} preload />}
+      <div className={articleStyles.body} data-article-body>
+        {article.learnings.length > 0 && !header ? (
           <KnowledgeLearnings article={article} />
-          <KnowledgeToc article={article} />
-        </>
-      )}
-      <PageAiSummary key={article.slug} target={{ kind: "article", slug: article.slug }} />
-      <div className={articleStyles.body}>{children}</div>
+        ) : null}
+        {article.toc.length > 0 && !header ? <KnowledgeToc article={article} /> : null}
+        <PageAiSummary
+          key={article.slug}
+          target={{ kind: "article", slug: article.slug }}
+        />
+        {children}
+      </div>
       {footer ?? (
         <>
-          <ArticleRelatedContent article={article} />
           <BackToTop />
           <KnowledgeSources article={article} />
         </>
       )}
+      <MostReadArticles currentSlug={article.slug} />
     </article>
   );
 }

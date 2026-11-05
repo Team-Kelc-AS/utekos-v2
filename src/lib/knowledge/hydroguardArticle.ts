@@ -1,8 +1,10 @@
+import articleReading from "./articleReading.generated";
 import type { KnowledgeArticle } from "./knowledgeArticles";
 
 // Metadata and references from the supplied article; original image dimensions preserved.
 export const hydroGuardArticle = {
   "slug": "hydroguard",
+  ...articleReading["hydroguard"],
   "path": "/uteguiden/hydroguard",
   "title": "Hva er HydroGuard™? Bli kjent med ytterstoffet i Comfyrobe™",
   "metaTitle": "HydroGuard™ – ytterstoffet i Comfyrobe™ | Utekos",
@@ -12,7 +14,7 @@ export const hydroGuardArticle = {
   "articleSection": "Materialkunnskap",
   "publishedAt": "2026-10-17",
   "updatedAt": "2026-10-17",
-  "readingMinutes": 6,
+
   "topics": [
     "HydroGuard™",
     "Comfyrobe™",

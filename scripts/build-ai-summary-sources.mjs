@@ -16,7 +16,8 @@ const omittedElements = new Set([
 
 // Parse MDX without evaluating imports, JSX expressions or page code.
 export function extractArticleText(node) {
-  if (omitted.has(node.type) || omittedElements.has(node.name)) return '';
+  if (omitted.has(node.type) || omittedElements.has(node.name) ||
+      node.attributes?.some(attribute => attribute.name === 'data-ai-source-exclude')) return '';
   if (node.type === 'text' || node.type === 'inlineCode') return node.value;
   if (node.type === 'mdxTextExpression' || node.type === 'mdxFlowExpression') {
     const expression = node.data?.estree?.body?.[0]?.expression;

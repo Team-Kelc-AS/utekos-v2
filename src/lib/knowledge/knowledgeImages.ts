@@ -109,6 +109,42 @@ export const knowledgeImages = {
         "alt": "AI-generert illustrasjon av campingvogn og bobil ved et lagerbygg i et nordisk vinterlandskap.",
         "width": 1672,
         "height": 941
+      },
+      {
+        "src": "/images/kunnskap/vinterdekket-hymer-ved-norsk-fjord.webp",
+        "alt": "Bobil parkert utendørs på et flatt og drenerende underlag i et snødekt landskap, delvis beskyttet av et skreddersydd og pustende vintertrekk i grått stoff.",
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "src": "/images/kunnskap/truma-frostcontrol-i-bobilskap.webp",
+        "alt": "Nærbilde av en blå Truma FrostControl sikkerhetsventil for vannsystem, montert inne i et bobilskap. Ventilen er vist i lukket driftsposisjon med den blå knappen trykket inn.",
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "src": "/images/kunnskap/detaljert-LiFePO4-batteri-i-el-rom.webp",
+        "alt": "Moderne LiFePO4 litiumbatteri montert i en teknisk boks i en bobil, med lysende LED-indikatorer som viser at det interne varmesystemet (BMS) er aktivt for å beskytte mot kulde.",
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "src": "/images/kunnskap/truma-DuoControl-cs-med-gassflasker.webp",
+        "alt": "Detaljert Truma DuoControl CS gassregulator montert i et gasskap og koblet til to propanflasker. Regulatoren er utstyrt med et EisEx varmeelement for å forhindre ispropper i kulden.",
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "src": "/images/kunnskap/AL-KO-tilhengerkobling.webp",
+        "alt": "Nærbilde av en totalt fettfri og metallisk ren tilhengerkule som låses inn i en campingvogns antislengkobling, hvor de tørre friksjonsklossene griper om kulen.",
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "src": "/images/kunnskap/vintercamping-med-bålkos-og-bobil.webp",
+        "alt": "Stemningsfull vintercamp foran en bobil i en snødekt skog. Bobilen er beskyttet med isolerende termomatter på frontruten, og i forgrunnen brenner en bålpanne ved siden av stoler dekket med varme reinskinn.",
+        "width": 1600,
+        "height": 900
       }
     ],
     "cardImage": {

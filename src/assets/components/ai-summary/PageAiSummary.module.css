@@ -1,5 +1,5 @@
 .card {
-  --summary-surface: var(--product-page-surface, var(--night));
+  --summary-surface: var(--product-accordion-surface, var(--product-page-surface, #012622));
   --summary-ink: var(--primary-foreground);
   --summary-border: color-mix(in srgb, var(--summary-ink) 24%, transparent);
   width: 100%;
@@ -8,14 +8,16 @@
   border: 1px solid var(--summary-border);
   border-radius: .75rem;
   background: var(--summary-surface);
+  background-image: var(--product-accordion-gradient, none);
   color: var(--summary-ink);
   font-weight: 500;
   overflow-wrap: anywhere;
 }
 .card[data-appearance='article'] {
-  --summary-surface: var(--knowledge-surface, #f0eee9);
-  --summary-ink: var(--knowledge-ink, #010b0a);
-  --summary-border: var(--knowledge-border-strong, color-mix(in srgb, #001a18 35%, transparent));
+  --summary-surface: var(--knowledge-summary-surface, #010b0a);
+  background-image: none;
+  --summary-ink: #f0eee9;
+  --summary-border: color-mix(in srgb, #f0eee9 15%, transparent);
 }
 .trigger {
   display: flex;

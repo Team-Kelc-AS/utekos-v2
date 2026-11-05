@@ -18,7 +18,9 @@ const article = z.object({
   metaDescription: z.string().check(z.trim(), z.minLength(1)), authorId: z.literal('utekos'),
   articleSection: z.string().check(z.trim(), z.minLength(1)), topics: z.array(z.string().check(z.minLength(1))),
   publishedAt: z.optional(editorialDate), updatedAt: z.optional(editorialDate),
+  publishedMonth: z.optional(z.string().check(z.regex(/^\d{4}-(0[1-9]|1[0-2])$/))),
   readingMinutes: z.optional(z.number().check(z.int(), z.gt(0))),
+  showReadingTime: z.optional(z.boolean()),
   images: z.array(image).check(z.minLength(1)), cardImage: image, socialImage: image,
   references: z.array(reference),
 }).check(z.superRefine((value, ctx) => {

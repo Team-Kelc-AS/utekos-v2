@@ -4,11 +4,8 @@ import Link from "next/link";
 import type { ListingKey } from "@/lib/catalog/categories";
 import {
   knowledgeArticles,
-  getRelatedKnowledgeArticles,
-  type KnowledgeArticle,
 } from "@/lib/knowledge/knowledgeArticles";
 import { KnowledgeGuideCards } from "./KnowledgeGuideCards";
-import styles from "./knowledgeChrome.module.css";
 
 type ArticleKey = keyof typeof knowledgeArticles;
 
@@ -41,47 +38,6 @@ export function CategoryRelatedGuides({
         Se hele Uteguiden
       </Link>
     </KnowledgeGuideCards>
-  );
-}
-
-export function ArticleRelatedContent({
-  article,
-}: {
-  article: KnowledgeArticle;
-}) {
-  return (
-    <section aria-labelledby="les-videre" className={styles.related}>
-      <h2 id="les-videre">Mer fra Uteguiden</h2>
-      <ul>
-        {getRelatedKnowledgeArticles(article).map((related) => (
-          <li key={related.path}>
-            <Link href={related.path} prefetch={false}>
-              {related.title}
-            </Link>
-          </li>
-        ))}
-        <li>
-          <Link href="/produkter/varmeplagg" prefetch={false}>
-            Se alle varmeplagg
-          </Link>
-        </li>
-        {article.slug === "cloudweave" && (
-          <li>
-            <Link href="/produkter/utekos-techdown" prefetch={false}>
-              Utekos TechDown™ med CloudWeave™
-            </Link>
-          </li>
-        )}
-        {(article.slug === "hvordan-holde-varmen-ute" ||
-          article.slug === "hvordan-forlenge-terassesesongen") && (
-          <li>
-            <Link href="/produkter/terrasse" prefetch={false}>
-              Varmeplagg til terrassen
-            </Link>
-          </li>
-        )}
-      </ul>
-    </section>
   );
 }
 

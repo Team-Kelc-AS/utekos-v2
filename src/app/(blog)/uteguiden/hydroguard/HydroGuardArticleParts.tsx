@@ -9,21 +9,22 @@ const images = {
   "/images/kunnskap/comfyrobe-mann-pa-kaien-sjo-utsikt-1600x900.webp": comfyrobe,
 };
 
-export function EditorialFigure({ src, alt, caption }: {
+export function EditorialFigure({ src, alt, caption, preload = false }: {
   src: string;
   alt: string;
   caption: string;
   editorialPrompt?: string;
+  preload?: boolean;
 }) {
   const image = images[src as keyof typeof images];
   // Preserve the supplied caption when its planned image is not available.
   if (!image) {
-    return <p className={articleStyles.captionNote}>{caption}</p>;
+    return <p data-reading-exclude className={articleStyles.captionNote}>{caption}</p>;
   }
   return (
     <figure className={styles.figure}>
       <span className={styles.figureFrame}>
-        <Image src={image} alt={alt} className={styles.figureImage}
+        <Image preload={preload} src={image} alt={alt} className={styles.figureImage}
           sizes="(min-width: 42rem) 640px, calc(100vw - 40px)" />
       </span>
       <figcaption className={styles.figcaption}>{caption}</figcaption>

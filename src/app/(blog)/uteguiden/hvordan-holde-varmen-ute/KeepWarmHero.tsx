@@ -22,7 +22,7 @@ export function KeepWarmHero() {
   })
 
   return (
-    <div className={styles.figure}>
+    <figure className={styles.figure}>
       <picture className={styles.figureFrame}>
         <source
           media='(min-width: 768px)'
@@ -34,6 +34,6 @@ export function KeepWarmHero() {
         {/* getImageProps supplies optimized sources without client-side image switching. */}
         <img {...mobile} alt={common.alt} className={styles.figureImage} />
       </picture>
-    </div>
+    </figure>
   )
 }

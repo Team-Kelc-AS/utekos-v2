@@ -15,7 +15,7 @@ export function ChristmasGiftArticleLayout({
   return (
     <KnowledgeArticleScaffold
       article={article}
-      heroPlacement="after-title"
+
       hero={
         <figure className={imageStyles.figure}>
           <span className={imageStyles.figureFrame}>

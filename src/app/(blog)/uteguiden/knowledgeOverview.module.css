@@ -233,6 +233,14 @@
   line-height: 1.4;
   text-wrap: pretty;
 }
+.recommendedDate {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--knowledge-ink-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
 @media (prefers-reduced-motion: reduce) {
   .recommendedCard {
     transition: none;

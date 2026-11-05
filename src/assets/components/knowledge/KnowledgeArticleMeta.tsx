@@ -1,65 +1,68 @@
-import Image from "next/image";
 import type { KnowledgeArticle } from "@/lib/knowledge/knowledgeArticles";
 import Link from "next/link";
 import { knowledgeAuthors } from "@/content/authors/knowledgeAuthors";
 import styles from "./knowledgeChrome.module.css";
+
 const dateFormatter = new Intl.DateTimeFormat("nb-NO", {
   dateStyle: "long",
   timeZone: "Europe/Oslo",
 });
+const monthFormatter = new Intl.DateTimeFormat("nb-NO", {
+  month: "long",
+  year: "numeric",
+  timeZone: "Europe/Oslo",
+});
 
-function formatTimestamp(value: string): string {
-  return dateFormatter.format(new Date(value));
-}
+type ArticleMeta = Pick<
+  KnowledgeArticle,
+  "publishedAt" | "publishedMonth" | "updatedAt" | "readingMinutes" | "wordCount" | "showReadingTime"
+>;
 
 export function KnowledgeArticleMeta({
   article,
   className,
 }: {
-  article: Partial<Pick<KnowledgeArticle, "publishedAt" | "readingMinutes">>;
+  article: ArticleMeta;
   className?: string;
 }) {
   const author = knowledgeAuthors.utekos;
+  // For an article without a later recorded revision, its first version is the latest known version.
+  const exactDate = article.updatedAt ?? article.publishedAt;
+  const updatedDate = exactDate ?? article.publishedMonth;
+  const updatedLabel = exactDate
+    ? dateFormatter.format(new Date(exactDate))
+    : article.publishedMonth
+      ? monthFormatter.format(new Date(`${article.publishedMonth}-01T12:00:00Z`))
+      : undefined;
 
   return (
-    <aside
-      className={[styles.authorCard, className].filter(Boolean).join(" ")}
-      aria-label="Forfatter og publiseringsinformasjon"
+    <div
+      className={[styles.articleMeta, className].filter(Boolean).join(" ")}
+      aria-label="Forfatter, oppdatering og lesetid"
+      data-article-meta
     >
-      <div className={styles.logoFrame}>
-        <Image
-          className={styles.logo}
-          src={author.avatarImage.src}
-          width={author.avatarImage.width}
-          height={author.avatarImage.height}
-          sizes="80px"
-          alt="Utekos"
-        />
-      </div>
-      <div>
-        <p className={styles.authorName}>
-          Av{" "}
-          <Link className={styles.authorLink} href={author.path} rel="author">
-            {author.name}
-          </Link>
-        </p>
-        {article.publishedAt || article.readingMinutes ? (
-          <p className={styles.publicationLine}>
-            {article.publishedAt ? (
-              <>
-                Publisert{" "}
-                <time dateTime={article.publishedAt}>
-                  {formatTimestamp(article.publishedAt)}
-                </time>
-              </>
-            ) : null}
-            {article.publishedAt && article.readingMinutes ? " · " : null}
-            {article.readingMinutes
-              ? `${article.readingMinutes} min lesetid`
-              : null}
-          </p>
-        ) : null}
-      </div>
-    </aside>
+      <span>
+        Av{" "}
+        <Link className={styles.authorLink} href={author.path} rel="author">
+          {author.name}
+        </Link>
+      </span>
+      {updatedDate ? (
+        <>
+          <span aria-hidden="true">·</span>
+          <span>
+            Oppdatert <time dateTime={updatedDate}>{updatedLabel}</time>
+          </span>
+        </>
+      ) : null}
+      {article.showReadingTime !== false && article.readingMinutes ? (
+        <>
+          <span aria-hidden="true">·</span>
+          <span data-reading-words={article.wordCount}>
+            {article.readingMinutes} min lesetid
+          </span>
+        </>
+      ) : null}
+    </div>
   );
 }

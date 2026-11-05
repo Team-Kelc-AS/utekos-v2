@@ -11,20 +11,14 @@
   overflow-wrap: normal;
 }
 
-.article.article h1 {
-  font-size: clamp(38px, 6vw, 56px);
-  line-height: 1.12;
-  letter-spacing: -0.03em;
-}
 
 .article.article h2 {
-  margin: 48px 0 16px;
   font-size: 26px;
   line-height: 1.2;
   letter-spacing: normal;
 }
 
-.article.article p {
+.article.article :global([data-article-body]) p {
   margin-block: 24px 0;
 }
 
@@ -50,8 +44,6 @@
   margin: 0;
 }
 
-.article .learnings,
-.article nav[aria-label="I denne artikkelen"],
 .article aside[data-tone] {
   --knowledge-ink: #f0eee9;
   --knowledge-ink-muted: #f0eee9;
@@ -109,31 +101,6 @@
   white-space: nowrap;
 }
 
-.breadcrumbs {
-  margin-bottom: clamp(32px, 5vw, 56px);
-  font-size: 14px;
-}
-
-.article .breadcrumbs ol {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.article .breadcrumbs li,
-.article .breadcrumbs li + li {
-  margin: 0;
-  padding: 0;
-}
-
-.breadcrumbs li + li::before {
-  content: "/";
-  margin-right: 8px;
-}
-
 .article .sources {
   margin-top: 48px;
   padding: 20px;
@@ -144,6 +111,7 @@
 
 .article .sources > summary {
   min-height: 44px;
+  align-content: center;
   cursor: pointer;
   font-weight: 800;
   line-height: 1.5;
@@ -175,8 +143,6 @@
   }
 
   .article.article h2 {
-    margin-top: 56px;
-    margin-bottom: 20px;
     font-size: 30px;
   }
 }

@@ -1,21 +1,32 @@
+import { MostReadArticles } from "@/components/knowledge/MostReadArticles";
+import articleStyles from "../knowledgeArticle.module.css";
 import { KnowledgeRegisteredImage } from "@/components/knowledge/KnowledgeRegisteredImage";
 import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
-import { KnowledgeArticleMeta } from "@/components/knowledge/KnowledgeArticleMeta";
+import { KnowledgeArticleIntro } from "@/components/knowledge/KnowledgeArticleIntro";
 import { PageAiSummary } from "@/components/ai-summary/PageAiSummary";
 import { KnowledgeLearnings } from "@/components/knowledge/KnowledgeLearnings";
 import { KnowledgeToc } from "@/components/knowledge/KnowledgeToc";
 import { KnowledgeSources } from "@/components/knowledge/KnowledgeSources";
 
+<article id="top" className={articleStyles.article}>
+
+<KnowledgeArticleIntro article={knowledgeArticles.winterStorage}>
+
 # Vinterlagring av campingvogn og bobil: Sjekkliste før vinteren
 
 Det krevende nordiske klimaet, preget av ekstreme temperatursvingninger, vedvarende høy luftfuktighet og strenge kuldeperioder, utsetter fritidskjøretøy for enorme påkjenninger. Forberedelse til vinteren, enten det innebærer stasjonær lagring eller aktiv bruk i vintermånedene, er den mest kritiske vedlikeholdsoppgaven for eiere av bobiler og campingvogner. Mangelfull vinterklargjøring er den primære årsaken til verditap, og kan resultere i katastrofale og kostbare skader som frostsprengte vanninstallasjoner, irreversibelt ødelagte batteribanker, dype strukturelle fuktskader og korrosjon i vitale gass- og varmeanlegg.
 
+</KnowledgeArticleIntro>
+
+
+
+<KnowledgeRegisteredImage article={knowledgeArticles.winterStorage} caption="AI-generert illustrasjon av vinterlagring. Bildet viser ikke et bestemt lagringsanlegg eller en teknisk prosedyre." preload />
+
+<div className={articleStyles.body} data-article-body>
+
 Denne dyptgående og autoritære rapporten, utarbeidet for utekosguiden, leverer en uttømmende teknisk analyse og en strategisk sjekkliste for vinterklargjøring. Ved å anvende beste SEO-praksis med beskrivende overskrifter, etableres en helhetlig forståelse for bevaring av verdier og optimalisering av funksjonalitet. Rapporten er strukturert i tydelige moduler som dekker fellesnevnere for alle fritidskjøretøy, spesifikke mekaniske krav for henholdsvis campingvogner og bobiler, samt inngående analyser av logistikk, fremkommelighet og komfort for de som velger å benytte kjøretøyet aktivt gjennom vintersesongen.
 
-<KnowledgeArticleMeta article={knowledgeArticles.winterStorage} />
 <PageAiSummary target={{ kind: "article", slug: "vinterlagring-av-campingvogn-og-bobil" }} />
-
-<KnowledgeRegisteredImage article={knowledgeArticles.winterStorage} caption="AI-generert illustrasjon av vinterlagring. Bildet viser ikke et bestemt lagringsanlegg eller en teknisk prosedyre." />
 
 <KnowledgeLearnings article={{
   "slug": "vinterlagring-av-campingvogn-og-bobil",
@@ -71,6 +82,8 @@ Dersom det er ønskelig å beskytte kjøretøyet med et overtrekk, er materialva
 
 Et annet fysisk fenomen som oppstår under langvarig stasjonær lagring, er "flat-spotting" på dekkene. Dette inntreffer når polymerene i gummiblandingen deformeres permanent under kjøretøyets konstante vekt på ett enkelt kontaktpunkt mot underlaget. Den mest effektive strategien for å motvirke denne strukturelle deformasjonen, er å øke lufttrykket i dekkene til maksimalt tillatt trykk før lagringsperioden påbegynnes. Det økte trykket stiver av dekkstammen og reduserer kontaktflaten. Det anbefales også å fysisk flytte kjøretøyet noen meter med jevne mellomrom, for eksempel en gang i måneden, for å distribuere belastningen over hele dekkets omkrets. Før lagring bør dekkene rengjøres grundig for steiner og kjemikalier, og de bør skjermes for direkte kontakt med løsemidler eller oljesøl på bakken.  
 
+<KnowledgeRegisteredImage article={knowledgeArticles.winterStorage} imageIndex={1} />
+
 ### Det kritiske vannsystemet og mekanikken bak frostsprengning
 
 Vannets termodynamiske egenskaper gjør det til en av de største truslene mot et fritidskjøretøy om vinteren. Når vann fryser til is, utvider volumet seg med omtrent ni prosent. I et lukket rørsystem skaper denne faseovergangen et enormt hydraulisk trykk som ubønnhørlig sprenger slanger, vannpumper, keramiske blandebatterier og kostbare varmtvannsberedere. Fullstendig tømming av vannsystemet er derfor det absolutt viktigste tiltaket før frostperioden inntreffer.  
@@ -98,6 +111,8 @@ Selv etter en grundig lufttømming vil det alltid stå vann igjen i vannlåsene 
 Svært mange fritidskjøretøy er utstyrt med varmeanlegg fra Truma, som inkluderer en integrert varmtvannsbereder. For å beskytte denne mot frost, benyttes en mekanisk, strømløs sikkerhets- og tappeventil kjent som Truma FrostControl. Denne ventilen fungerer som en automatisk vaktpost; den overvåker kontinuerlig omgivelsestemperaturen inne i kjøretøyet. Når temperaturen synker ned mot det kritiske nivået på cirka 3 °C, utløses en intern mekanisme som automatisk åpner kranen og dumper alt vannet fra berederen ut gjennom gulvet.  
 
 Ventilen er konstruert slik at den ikke lar seg lukke igjen før omgivelsestemperaturen stiger over cirka 7 °C. FrostControl finnes i ulike revisjoner, oftest identifisert ved en blå eller rød betjeningsknapp. For den vanlige modellen med blå bryter, utføres manuell tømming ved å dreie toppbryteren 90 grader, hvorpå den blå trykk-knappen nederst spretter ut og ventilen åpner seg. For å lukke systemet og fylle vann (forutsatt at temperaturen er høy nok), dreies bryteren tilbake til driftsstilling, og den blå knappen presses hardt inn til den går i inngrep med et klikk. Dersom ventilen nekter å holde seg lukket på kalde dager, indikerer dette at temperaturen i rommet er under 7 °C, og bodelsvarmen må da aktiveres en stund for å varme opp sensoren før systemet kan fylles på ny. FrostControl fungerer også som en overtrykksventil som åpner seg ved systemtrykk over 2,8 til 3,5 bar, og beskytter dermed berederen mot trykkstøt.  
+
+<KnowledgeRegisteredImage article={knowledgeArticles.winterStorage} imageIndex={2} />
 
 ### Fuktkontroll, kondensdannelse og optimal ventilasjon
 
@@ -181,6 +196,8 @@ For å forhindre denne fatale feilen, er alle seriøse litiumbatterier designet 
 
  
 
+<KnowledgeRegisteredImage article={knowledgeArticles.winterStorage} imageIndex={3} />
+
 ### Gassanlegg og Truma/Alde-systemer for oppvarming
 
 Gassanlegget er infrastrukturen som muliggjør oppvarming av bobilen gjennom kalde vinternetter. Gassvalget er den første parameteren som må adresseres. Flaskegass består primært av enten propan, butan eller en blanding (LPG). For vinterdrift er forskjellene kritiske. Propan har et ekstremt lavt kokepunkt og fordamper fra væske til brennbar gass ned til imponerende -40 °C, noe som sikrer en stabil gassforsyning uansett hvor streng kulden blir. Butan, derimot, slutter å fordampe i det øyeblikket temperaturen faller til 0 °C. I Norge består bytteflaskene utelukkende av tilnærmet ren propan, men eiere av fastmonterte gassflasker ("LPG-tanker") som fyller på stasjoner, spesielt utenfor Norden, må påse at fyllingen har et adekvat propaninnhold, da stasjoner ofte justerer blandingsforholdet etter sesong.  
@@ -188,6 +205,8 @@ Gassanlegget er infrastrukturen som muliggjør oppvarming av bobilen gjennom kal
 For å maksimere komforten og sikkerheten, velger mange eiere å oppgradere gassinstallasjonen med en automatisk omskifter og trykkregulator, slik som Truma DuoControl CS. Dette systemet tillater tilkobling av to gassflasker og overvåker trykket kontinuerlig. Når driftsflasken tømmes, svitsjer systemet umerkelig over til den fulle reserveflasken, slik at man unngår å våkne i en iskald bil klokken tre om natten for å manuelt bytte flaske ute i snøen. Bokstavene "CS" står for Crash Sensor (kollisjonssensor). Dette er en integrert, mekanisk pendel som utløses og umiddelbart stenger gasstilførselen dersom kjøretøyet utsettes for en deakselerasjon på 4.0 g +/- 1.0 g, typisk ved en kollisjon. Denne sikkerhetsmekanismen gjør det lovlig å ha gassvarmeanlegget i drift mens bobilen er i bevegelse, noe som sikrer en gjennomvarm bodel ved ankomst. Etter en utløsning (for eksempel ved kjøring i dype hull i veien), kan sensoren enkelt resettes ved å trykke inn en gul knapp på enheten.  
 
 Under krevende vinterforhold, med temperaturer rundt frysepunktet, oppstår en fysisk reaksjon inne i selve gassregulatoren. Den kraftige ekspansjonen når gassen går fra høyt trykk i flasken til 30 mbar arbeidstrykk, skaper kulde. Spor av fuktighet i gassen kan da fryse og danne ispropper eller propanhydrat som reduserer eller blokkerer gasstilførselen fullstendig. Løsningen på dette er Truma EisEx, et kompakt 12V varmeelement som klipses fast på regulatoren. Dette elementet produserer akkurat nok varme til å forhindre isdannelse, og sikrer en problemfri gassforsyning gjennom vinteren. For å forlenge levetiden til gassanlegget, er det sterkt anbefalt å installere Truma gassfiltre før regulatoren. Disse filtrene benytter utskiftbare pads for å fange opp og absorbere oljeholdige partikler (aerosoler) som ellers ville akkumulert seg og fortettet regulatorens presisjonsmekanikk over tid.  
+
+<KnowledgeRegisteredImage article={knowledgeArticles.winterStorage} imageIndex={4} />
 
 #### Vedlikehold av Alde vannbåren varme og glykolens kjemi
 
@@ -243,6 +262,8 @@ I en tradisjonell tilhengerkobling er det ønskelig med metall-mot-metall kontak
 Den ufravikelige regelen er at denne typen kobling **aldri under noen omstendighet må smøres med fett, olje eller silikon**. Hvis så mye som en dråpe fett kommer i kontakt med klossene, forsvinner all friksjon, og stabiliseringsfunksjonen som beskytter mot trafikkulykker, opphører totalt og umiddelbart. For å bevare effekten kreves strenge forberedelser. Før påkobling må bilens tilhengerkule rengjøres kirurgisk; maling, rust og fett må fjernes med bremserens eller aceton slik at kulen er fullstendig avfettet og tørr.  
 
 Dersom eieren opplever kraftig og irriterende knirking fra draget under rygging eller lavhastighetsmanøvrering ved ankomst til en campingplass, er dette et velkjent fenomen. Det indikerer som regel at friksjonsklossene har blitt "glasserte" – de har utviklet en hard, glatt og polert overflate på grunn av inntrengning av veistøv, forurensning fra en ikke tilstrekkelig rengjort kule, eller lett overflaterust som har slipt på belegget. Utbedringen er heldigvis enkel; man tar et ark med svært finkornet sandpapir og pusser overflaten på friksjonsklossene inne i hansken lett inntil den glasserte hinnen er brutt og materialet igjen fremstår matt og porøst. Etter en avblåsing av støv vil lyden som oftest være eliminert og effekten gjenopprettet.  
+
+<KnowledgeRegisteredImage article={knowledgeArticles.winterStorage} imageIndex={5} />
 
 ## Vinterbruk og Oppholdet – Tilgang til strøm, vann, tømming og brøytet plass
 
@@ -315,6 +336,12 @@ Fysikken tilsier at varm luft stiger og kald luft synker, og denne stratifiserin
 - **Inneklima og påkledning:** Tjukke, fôrede ulltøfler eller isolerende "camp booties" er et fundamentalt utstyrskrav for opphold i kjøretøyet. Kroppsvarmen tappes raskt gjennom bena på et kaldt linoleumsgulv, og tøflene eliminerer dette tapet. Videre er lag-på-lag-prinsippet ideelt, gjerne med et grunnlag av merinoull og en lett komprimerbar dunjakke over. Dette tillater svært hurtig temperaturregulering i det man beveger seg mellom den varme salongen, det kjølige annekset (forteltet) og det storslagne, frosne utemiljøet.
 - **Etablering av Utekos-arenaen:** Essensen av vintercamping ligger i kapasiteten til å flytte oppholdet ut av kjøretøyet. Man forlenger tiden som kan tilbringes komfortabelt utenfor vognen ved hjelp av målrettet utstyr. Massive sitteunderlag av reinskinn gir eksepsjonell isolasjon mot frosne plaststoler. For moderne teknologiske camperne utgjør batteridrevne, oppvarmede varmeseter (12V/USB powerbank-drevne) en betydelig oppgradering. Sentrum for leiren etableres oftest rundt en mobil bålpanne, montert trygt på avstand fra kjøretøyets gasskap og forteltduken. Rik tilgang på kvalitetstørket ved, supplert med rykende varm solbærtoddy eller kakao preparert inne på gassblusset, utgjør hjørnesteinen i det nordiske konseptet om "utekos" – kontrasten mellom den krevende vinterkulden og det varme, trygge mikroklimaet man har transportert med seg inn i villmarken.
 
+<KnowledgeRegisteredImage article={knowledgeArticles.winterStorage} imageIndex={6} />
+
+</div>
+
+<section data-reading-exclude>
+
 ## Referanseliste
 
 Nedenfor følger en oversikt over kildene og de faktiske nettadressene som danner det tekniske grunnlaget for denne guiden:
@@ -324,3 +351,9 @@ Nedenfor følger en oversikt over kildene og de faktiske nettadressene som danne
 Sources used in the report
 
 [](https://www.stamsaasfritid.no/innlegg/klargjoring-av-bobil-for-vinteren---vare-beste-tips)
+
+</section>
+
+<MostReadArticles currentSlug={knowledgeArticles.winterStorage.slug} />
+
+</article>

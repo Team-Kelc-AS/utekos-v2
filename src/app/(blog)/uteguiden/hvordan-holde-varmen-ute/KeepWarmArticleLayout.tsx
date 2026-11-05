@@ -8,7 +8,7 @@ export function KeepWarmArticleLayout({ children }: { children: ReactNode }) {
     <KnowledgeArticleScaffold
       article={knowledgeArticles.keepWarm}
       hero={<KeepWarmHero />}
-      heroPlacement="after-title"
+
     >
       {children}
     </KnowledgeArticleScaffold>

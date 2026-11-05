@@ -1,3 +1,4 @@
+import articleReading from "./articleReading.generated";
 import { hydroGuardArticle } from "./hydroguardArticle";
 import { sherpaCoreArticle } from "./sherpacoreArticle";
 import type { Route } from "next";
@@ -42,8 +43,12 @@ export type KnowledgeArticle = {
   description: string;
   articleSection: string;
   publishedAt?: string;
+  /** Display month when the exact publication day is not documented. */
+  publishedMonth?: string;
   updatedAt?: string;
   readingMinutes?: number;
+  wordCount?: number;
+  showReadingTime?: boolean;
   topics: readonly string[];
   learnings: readonly string[];
   toc: readonly KnowledgeTocEntry[];
@@ -126,7 +131,7 @@ const articleContent = {
     articleSection: "Julegaver",
     publishedAt: "2026-10-06",
     updatedAt: "2026-10-06",
-    readingMinutes: 8,
+
     topics: ["julegaver", "gaveasymmetri", "bekledning"],
     learnings: [
       "Hvorfor oppstår det et systematisk gap mellom giverens gode intensjoner og mottakerens faktiske opplevelse av gaven?",
@@ -283,7 +288,7 @@ const articleContent = {
     articleSection: "Terrasse og uterom",
     publishedAt: "2026-10-03",
     updatedAt: "2026-10-03",
-    readingMinutes: 6,
+
     topics: [
       "terrassesesong",
       "balkong",
@@ -432,7 +437,7 @@ const articleContent = {
     articleSection: "Materialer og isolasjon",
     publishedAt: "2026-09-23T12:53:06+02:00",
     updatedAt: "2026-09-24T09:30:00+02:00",
-    readingMinutes: 9,
+
     topics: [
       "CloudWeave",
       "syntetisk isolasjon",
@@ -479,7 +484,7 @@ const articleContent = {
     articleSection: "Materialer og isolasjon",
     publishedAt: "2026-09-23T12:22:40+02:00",
     updatedAt: "2026-09-24T09:30:00+02:00",
-    readingMinutes: 12,
+
     topics: [
       "innerlag",
       "ull",
@@ -582,7 +587,7 @@ const articleContent = {
     articleSection: "Kulde og varme",
     publishedAt: "2026-09-23T10:05:11+02:00",
     updatedAt: "2026-09-24T09:30:00+02:00",
-    readingMinutes: 17,
+
     topics: [
       "holde varmen ute",
       "lag-på-lag",
@@ -695,7 +700,7 @@ const articleContent = {
     articleSection: "Kulde og varme",
     publishedAt: "2026-09-23T08:00:00+02:00",
     updatedAt: "2026-09-24T09:30:00+02:00",
-    readingMinutes: 18,
+
     topics: [
       "kulde",
       "termoregulering",
@@ -794,7 +799,7 @@ const articleContent = {
     articleSection: "Materialer og isolasjon",
     publishedAt: "2026-09-24T08:00:00+02:00",
     updatedAt: "2026-09-24T08:00:00+02:00",
-    readingMinutes: 11,
+
     topics: [
       "glidelås",
       "YKK",
@@ -897,6 +902,7 @@ const articleContent = {
       "En dybdeanalyse av etymologi, historie, økonomi og sosiokulturelle normer i moderne turisme | Utekos",
     description: "",
     articleSection: "Glamping",
+    publishedMonth: "2026-10",
     topics: ["glamping", "historie", "turisme"],
     learnings: [],
     toc: [],
@@ -911,6 +917,7 @@ const articleContent = {
     description:
       "For å velge riktig glampingopphold og pakke riktig, må du kartlegge stedets standard for oppvarming, toalettforhold, adkomst og mattilbud, og deretter tilpasse utstyret ditt med lag-på-lag-bekledning og vanntett fottøy.",
     articleSection: "Glamping",
+    publishedMonth: "2026-10",
     topics: ["glamping", "Norge", "pakkeliste"],
     learnings: [],
     toc: [],
@@ -925,6 +932,9 @@ const articleContent = {
     description:
       "Det krevende nordiske klimaet, preget av ekstreme temperatursvingninger, vedvarende høy luftfuktighet og strenge kuldeperioder, utsetter fritidskjøretøy for enorme påkjenninger. Forberedelse til vinteren, enten det innebærer stasjonær lagring eller aktiv bruk i vintermånedene, er den mest kritiske vedlikeholdsoppgaven for eiere av bobiler og campingvogner. Mangelfull vinterklargjøring er den primære årsaken til verditap, og kan resultere i katastrofale og kostbare skader som frostsprengte vanninstallasjoner, irreversibelt ødelagte batteribanker, dype strukturelle fuktskader og korrosjon i vitale gass- og varmeanlegg.",
     articleSection: "Camping og bobil",
+    publishedMonth: "2026-10",
+    showReadingTime: false,
+
     topics: ["vinterlagring", "campingvogn", "bobil"],
     learnings: [],
     toc: [],
@@ -981,6 +991,7 @@ function enrichArticle(id: keyof typeof articleContent): KnowledgeArticle {
   const [title, metaDescription] = seoCopy[id];
   return {
     ...content,
+    ...articleReading[content.slug],
     metaTitle: `${title} | Utekos`,
     metaDescription,
     authorId: "utekos",

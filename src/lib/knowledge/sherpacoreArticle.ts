@@ -1,3 +1,4 @@
+import articleReading from "./articleReading.generated";
 import type { KnowledgeArticle } from "./knowledgeArticles";
 
 // Editorial copy is preserved. Internal BOM citation removed at user request.
@@ -5,6 +6,7 @@ import type { KnowledgeArticle } from "./knowledgeArticles";
 // First production publication: Vercel dpl_F74QUPn4HJP4agbfCvtSnp37uDjg ready timestamp.
 export const sherpaCoreArticle = {
   "slug": "sherpacore",
+  ...articleReading["sherpacore"],
   "path": "/uteguiden/sherpacore",
   "title": "Hva er SherpaCore™? Bli kjent med innsiden av Comfyrobe",
   "metaTitle": "SherpaCore™ – fôret i Comfyrobe | Utekos",
@@ -12,8 +14,7 @@ export const sherpaCoreArticle = {
   "description": "SherpaCore™ er betegnelsen på det innvendige fôrstoffet i Comfyrobe. Denne guiden forklarer hvordan tekstilstruktur, flatevekt på 250 g/m² og kapillær fukttransport fungerer i et syntetisk fleecemateriale.",
   "authorId": "utekos",
   "articleSection": "Materialer",
-  // Editorial estimate: article text including callouts, approximately 200 words/minute.
-  "readingMinutes": 4,
+
   "publishedAt": "2026-10-17T16:48:14.257Z",
   "topics": [
     "SherpaCore™",

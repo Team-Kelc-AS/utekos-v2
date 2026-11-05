@@ -19,6 +19,23 @@ type OverviewArticle = KnowledgeArticle
 
 const overviewArticles = knowledgeArticleList
 
+const publicationMonthFormatter = new Intl.DateTimeFormat('nb-NO', {
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'Europe/Oslo'
+})
+
+function ArticlePublicationMonth({ article }: { article: OverviewArticle }) {
+  const dateTime = article.publishedAt ?? article.publishedMonth
+  if (!dateTime) return null
+
+  const date = article.publishedAt ?? `${article.publishedMonth}-01T12:00:00Z`
+  const month = publicationMonthFormatter.format(new Date(date))
+  const label = month.charAt(0).toLocaleUpperCase('nb-NO') + month.slice(1)
+
+  return <time dateTime={dateTime}>{label}</time>
+}
+
 export function ArticleImage({
   article,
   cover = false,
@@ -80,6 +97,9 @@ function RecommendedArticleCard({ article }: { article: OverviewArticle }) {
         <div className={styles.recommendedCopy}>
           <span className={styles.recommendedCategory}>{article.articleSection}</span>
           <h4>{article.title.replace(' – ', ': ')}</h4>
+          <span className={styles.recommendedDate}>
+            <ArticlePublicationMonth article={article} />
+          </span>
         </div>
       </Link>
     </article>
@@ -97,13 +117,6 @@ function KnowledgeArticleCard({
   className?: string
   featured?: boolean
 }) {
-  const publishedDate = article.publishedAt ? new Intl.DateTimeFormat('nb-NO', {
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'Europe/Oslo'
-  }).format(new Date(article.publishedAt)) : null
-  const formattedDate = publishedDate && publishedDate.charAt(0).toLocaleUpperCase('nb-NO') + publishedDate.slice(1)
-
   return (
     <article className={cn(styles.articleCard, featured && styles.featuredCard, className)}>
       <Link
@@ -122,10 +135,10 @@ function KnowledgeArticleCard({
                 {article.articleSection}
               </Badge>
             </div>
+            <CardDescription className="font-medium text-[#f0eee9b3]">
+              <ArticlePublicationMonth article={article} />
+            </CardDescription>
             {featured && <p className={styles.featuredDescription}>{article.description}</p>}
-            {article.publishedAt && <CardDescription className="font-medium text-[#f0eee9b3]">
-              <time dateTime={article.publishedAt}>{formattedDate}</time>
-            </CardDescription>}
           </CardHeader>
           <CardFooter className="border-[#f0eee920] bg-transparent">
             <span className={cn(buttonVariants(), 'w-full rounded-full bg-[#b44701] font-bold text-[#f0eee9] transition-colors group-hover:bg-[#8a3600] motion-reduce:transition-none')}>

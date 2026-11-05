@@ -1,0 +1,63 @@
+{
+  "source": "google-analytics-4",
+  "propertyId": "489598217",
+  "metric": "screenPageViews",
+  "startDate": "2026-10-06",
+  "endDate": "2026-11-04",
+  "timeZone": "Europe/Oslo",
+  "fetchedAt": "2026-11-05T16:37:45Z",
+  "rows": [
+    {
+      "path": "/uteguiden/hva-skal-man-ha-innerst",
+      "views": 34
+    },
+    {
+      "path": "/uteguiden/sherpacore",
+      "views": 33
+    },
+    {
+      "path": "/uteguiden/hydroguard",
+      "views": 29
+    },
+    {
+      "path": "/uteguiden/vinterlagring-av-campingvogn-og-bobil",
+      "views": 28
+    },
+    {
+      "path": "/uteguiden/cloudweave",
+      "views": 25
+    },
+    {
+      "path": "/uteguiden/julegaven-til-den-som-har-alt",
+      "views": 23
+    },
+    {
+      "path": "/uteguiden/hvorfor-blir-man-kald",
+      "views": 21
+    },
+    {
+      "path": "/uteguiden/hvordan-holde-varmen-ute",
+      "views": 15
+    },
+    {
+      "path": "/uteguiden/ykk",
+      "views": 14
+    },
+    {
+      "path": "/uteguiden/hvordan-forlenge-terassesesongen",
+      "views": 11
+    },
+    {
+      "path": "/uteguiden/hva-er-glamping",
+      "views": 6
+    },
+    {
+      "path": "/uteguiden/glamping-i-norge",
+      "views": 4
+    },
+    {
+      "path": "/uteguiden/uteguiden",
+      "views": 1
+    }
+  ]
+}

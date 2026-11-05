@@ -13,7 +13,7 @@ export function Cite({
   targets?: Readonly<Record<number, { id: string; label: string }>>;
 }) {
   return (
-    <sup className={styles.cite}>
+    <sup className={styles.cite} data-citation>
       [
       {ids.map((id, index) => (
         <span key={id}>

@@ -29,6 +29,7 @@ export function KnowledgeCallout({
       className={styles.callout}
       data-tone={tone}
       data-appearance={appearance}
+      data-rule-of-thumb={/^(tommelregel|tommelfingerregel)/i.test(title) || undefined}
       aria-label={title}
     >
       <KnowledgeCalloutTitle title={title} />

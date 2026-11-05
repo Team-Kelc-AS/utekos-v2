@@ -1,7 +1,7 @@
 'use client';
 
 import { useObject } from '@ai-sdk/react';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronDown, Brain } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { pageSummarySchema, type SummaryTarget } from '@/lib/ai-summary/schema';
 import styles from './PageAiSummary.module.css';
@@ -44,12 +44,12 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
         aria-controls={regionId}
         onClick={() => started ? setOpen(!open) : activate()}
       >
-        <Sparkles size={20} aria-hidden="true" />
+        <Brain size={20} className="text-primary" aria-hidden="true" />
         <span>Det viktigste, kort fortalt <span className={styles.label}>AI-oppsummering</span></span>
         <ChevronDown size={20} aria-hidden="true" className={open ? styles.chevronOpen : undefined} />
       </button>
       <div id={regionId} hidden={!open} className={styles.content}>
-        <p className={styles.status} role="status">
+        <p className={`${styles.status}${isLoading ? " shimmer" : ""}`} role="status">
           {isLoading ? 'Lager en oppsummering av sidens innhold …' : failed ? 'Oppsummeringen kunne ikke lastes.' : 'AI-oppsummering basert på innholdet på denne siden.'}
         </p>
         {!failed && object ? (

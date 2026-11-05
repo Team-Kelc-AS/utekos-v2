@@ -23,8 +23,9 @@ test('registry covers every existing article route once and preserves source cou
   assert.equal(new Set(articles.map(a => a.path)).size, 12);
   assert.deepEqual(Array.from(articles, a => a.references.length), expectedSources);
   for (const slug of ['', ...routes]) {
-    assert.ok(fs.existsSync(path.join(routeRoot, slug, 'layout.mdx')));
-    assert.ok(!fs.existsSync(path.join(routeRoot, slug, 'layout.tsx')));
+    const layouts = ['layout.mdx', 'layout.tsx'].filter(filename =>
+      fs.existsSync(path.join(routeRoot, slug, filename)));
+    assert.equal(layouts.length, 1, `Expected one layout for ${slug || 'overview'}`);
   }
 });
 

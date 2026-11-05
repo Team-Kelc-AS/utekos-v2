@@ -7,11 +7,21 @@
   --knowledge-border: color-mix(in srgb, #001a18 20%, transparent);
   --knowledge-border-strong: color-mix(in srgb, #001a18 35%, transparent);
   --knowledge-surface: #f0eee9;
+  --knowledge-summary-surface: #010b0a;
   background: #f0eee9;
   color: var(--knowledge-ink);
 }
 
+/* Next.js may preserve an article inside a hidden route wrapper. */
+:global(body):has(
+  > .page .article:not([style*="display: none"], [style*="display: none"] *)
+) > :global(header) {
+  background-image: var(--utekos-gradient);
+}
+
 .article {
+  --knowledge-section-gap: 3rem;
+  --knowledge-subsection-gap: 2rem;
   width: min(100%, 52rem);
   margin-inline: auto;
   padding: clamp(3.5rem, 8vw, 7rem) clamp(1.25rem, 5vw, 2.5rem)
@@ -39,7 +49,6 @@
 }
 
 .article h2 {
-  margin: clamp(4rem, 9vw, 6rem) 0 1.25rem;
   padding: 0;
   font-size: clamp(2rem, 5vw, 3.25rem);
   font-weight: 800;
@@ -49,7 +58,6 @@
 }
 
 .article h3 {
-  margin: clamp(2.75rem, 6vw, 4rem) 0 1rem;
   padding: 0;
   font-size: clamp(1.45rem, 3vw, 2rem);
   font-weight: 800;
@@ -156,6 +164,26 @@
   outline-offset: 0.2rem;
 }
 
+.article.article [data-citation] {
+  top: auto;
+  vertical-align: baseline;
+  color: inherit;
+  font-size: 0.8em;
+  font-weight: 500;
+  line-height: inherit;
+}
+
+.article [data-citation] a:not([aria-hidden='true']) {
+  color: inherit;
+  font-weight: inherit;
+  text-decoration: none;
+}
+
+.article [data-citation] a:hover,
+.article [data-citation] a:focus-visible {
+  text-decoration: underline;
+}
+
 .article nav[aria-label='Innhold'] {
   margin-top: 2.5rem;
   padding: clamp(1.25rem, 4vw, 2rem);
@@ -219,8 +247,24 @@
   border-radius: 1.25rem;
 }
 
-.article section > h2:first-child {
-  margin-top: clamp(4rem, 9vw, 6rem);
+/* Article spacing takes precedence over the generic MDX heading margins. */
+.article.article h1 {
+  margin: 0;
+}
+
+.article.article h2 {
+  margin: var(--knowledge-section-gap) 0 1.25rem;
+}
+
+.article.article h3 {
+  margin: var(--knowledge-subsection-gap) 0 1rem;
+}
+
+@media (min-width: 56rem) {
+  .article {
+    --knowledge-section-gap: 3.5rem;
+    --knowledge-subsection-gap: 2.25rem;
+  }
 }
 
 @media (min-width: 1024px) {

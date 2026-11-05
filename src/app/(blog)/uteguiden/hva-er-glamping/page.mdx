@@ -1,13 +1,23 @@
+import { MostReadArticles } from "@/components/knowledge/MostReadArticles";
+import articleStyles from "../knowledgeArticle.module.css";
 import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
 import { PageAiSummary } from "@/components/ai-summary/PageAiSummary";
 import Image from "next/image";
 import imageStyles from "@/components/knowledge/knowledgeChrome.module.css";
-import { KnowledgeArticleMeta } from "@/components/knowledge/KnowledgeArticleMeta";
+import { KnowledgeArticleIntro } from "@/components/knowledge/KnowledgeArticleIntro";
 import { KnowledgeSources } from "@/components/knowledge/KnowledgeSources";
 import { KnowledgeLearnings } from "@/components/knowledge/KnowledgeLearnings";
 import { KnowledgeToc } from "@/components/knowledge/KnowledgeToc";
 
+<article id="top" className={articleStyles.article}>
+
+<KnowledgeArticleIntro article={knowledgeArticles.glamping}>
+
 # Fenomenet glamping: En dybdeanalyse av etymologi, historie, økonomi og sosiokulturelle normer i moderne turisme
+
+<p>{knowledgeArticles.glamping.metaDescription}</p>
+
+</KnowledgeArticleIntro>
 
 <figure className={imageStyles.figure}>
   <span className={imageStyles.figureFrame}>
@@ -15,6 +25,7 @@ import { KnowledgeToc } from "@/components/knowledge/KnowledgeToc";
       className={imageStyles.figureImage}
       src="/images/kunnskap/Luksuriøs-glamping-i-skumringsskogen.webp"
       alt="Luksuriøst oppsatt glampingtelt med oppreist dobbeltseng og koselig utendørs belysning i skogen ved solnedgang, moderne friluftsliv"
+      preload
       width={1672}
       height={941}
       sizes="(min-width: 1024px) 816px, (min-width: 832px) 752px, (min-width: 800px) calc(100vw - 80px), (min-width: 400px) 90vw, calc(100vw - 40px)"
@@ -22,7 +33,8 @@ import { KnowledgeToc } from "@/components/knowledge/KnowledgeToc";
   </span>
 </figure>
 
-<KnowledgeArticleMeta article={knowledgeArticles.glamping} />
+<div className={articleStyles.body} data-article-body>
+
 <PageAiSummary target={{ kind: "article", slug: "hva-er-glamping" }} />
 
 <KnowledgeLearnings
@@ -292,4 +304,10 @@ Glamping har udiskutabelt transformert seg fra å være et kuriøst nisjekonsept
 
 For at sektoren skal opprettholde sin eksplosive vekst frem mot 2035, står den imidlertid foran et eksistensielt oppgjør med sin egen identitet. Bransjen må forene innføringen av høykostnads velværefasiliteter med absolutte krav til bærekraft, og erstatte innholdsløs grønnvasking med kvantifiserbare, karbonpositive løsninger 1 . Gjør den det, vil glamping forbli selve definisjonen på det 21. århundrets erfaringsbaserte turisme.
 
+</div>
+
 <KnowledgeSources article={knowledgeArticles.glamping} />
+
+<MostReadArticles currentSlug={knowledgeArticles.glamping.slug} />
+
+</article>

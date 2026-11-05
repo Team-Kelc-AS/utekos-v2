@@ -4,17 +4,18 @@
   "private": true,
   "scripts": {
     "sync": "f() { git add . && git commit -m \"$1\" && git push; }; f",
-    "dev": "node scripts/build-ai-summary-sources.mjs && next dev",
-    "build": "node scripts/build-ai-summary-sources.mjs && node scripts/build-google-reviews.mjs && node scripts/performance/check-motion-budget.mjs && next build && node scripts/check-content-routes.mjs",
+    "dev": "node scripts/build-article-reading-times.mjs && node scripts/build-ai-summary-sources.mjs && next dev",
+    "build": "node scripts/build-article-reading-times.mjs && node scripts/build-ai-summary-sources.mjs && node scripts/build-google-reviews.mjs && node scripts/performance/check-motion-budget.mjs && next build && node scripts/check-content-routes.mjs",
     "build:reviews": "node scripts/build-google-reviews.mjs",
     "start": "next start",
     "pdf:worker": "node scripts/sync-pdf-worker.mjs",
     "lint": "eslint",
-    "typecheck": "next typegen && tsc --noEmit && node scripts/check-content-routes.mjs",
+    "typecheck": "node scripts/build-article-reading-times.mjs && next typegen && tsc --noEmit && node scripts/check-content-routes.mjs",
     "perf:motion": "node scripts/performance/check-motion-budget.mjs",
     "test:tracking": "node --test tests/*.test.cjs && NODE_OPTIONS='--conditions=react-server' tsx --test tests/tracking-gateway.test.ts",
     "tracking:contracts": "python3 scripts/tracking/vendor-contracts.py --manifest",
-    "build:ai-sources": "node scripts/build-ai-summary-sources.mjs"
+    "build:ai-sources": "node scripts/build-ai-summary-sources.mjs",
+    "build:article-reading": "node scripts/build-article-reading-times.mjs"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.157",

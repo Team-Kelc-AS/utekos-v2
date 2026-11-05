@@ -62,7 +62,7 @@ export function Cite({
     throw new Error("Cite: kilde mangler i targets.");
   if (!unique.length) return null;
   return (
-    <sup className={styles.citation}>
+    <sup className={styles.citation} data-citation>
       [
       {unique.map((id, index) => (
         <span key={id}>

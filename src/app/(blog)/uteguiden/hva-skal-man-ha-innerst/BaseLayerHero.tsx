@@ -22,7 +22,7 @@ export function BaseLayerHero() {
   })
 
   return (
-    <div className={styles.figure}>
+    <figure className={styles.figure}>
       <picture className={styles.figureFrame}>
         <source
           media='(min-width: 768px)'
@@ -34,6 +34,6 @@ export function BaseLayerHero() {
         {/* getImageProps supplies optimized sources without client-side image switching. */}
         <img {...mobile} alt={common.alt} className={styles.figureImage} />
       </picture>
-    </div>
+    </figure>
   )
 }
