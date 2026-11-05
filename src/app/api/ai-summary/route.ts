@@ -10,6 +10,9 @@ export const maxDuration = 45;
 const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
 
 export async function POST(request: Request) {
+  if (process.env.NEXT_PUBLIC_AI_SUMMARY_ENABLED !== 'true') {
+    return new Response('Ikke tilgjengelig.', { status: 404, headers });
+  }
   const url = new URL(request.url);
   const origin = request.headers.get('origin');
   if ((origin && origin !== url.origin) || request.headers.get('sec-fetch-site') === 'cross-site') {

@@ -13,6 +13,7 @@ const SummaryContent = dynamic(() => import('./PageAiSummaryContent').then(modul
 
 export function PageAiSummary({ target }: { target: SummaryTarget }) {
   const [active, setActive] = useState(false);
+  if (process.env.NEXT_PUBLIC_AI_SUMMARY_ENABLED !== 'true') return null;
   return (
     <section className={styles.card} data-appearance={target.kind} data-ai-summary={target.slug}>
       {active ? <SummaryContent target={target} /> : (

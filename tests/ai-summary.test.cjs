@@ -6,12 +6,12 @@ const { loadTypeScript } = require('./load-typescript.cjs');
 const source = { kind: 'article', slug: 'test-artikkel', title: 'Test', content: 'Kildetekst. '.repeat(30) };
 const summary = { summary: 'En oppsummering med tilstrekkelig lengde.', keyPoints: ['Første hovedpunkt', 'Andre hovedpunkt'], limitations: [] };
 
-function routeHarness({ configured = true, summaryKey = false, fail = false, valid = true, finishReason = 'stop', cacheReadError = false, cacheWriteError = false, waitForAbort = false, rateLimit = 0 } = {}) {
+function routeHarness({ enabled = true, configured = true, summaryKey = false, fail = false, valid = true, finishReason = 'stop', cacheReadError = false, cacheWriteError = false, waitForAbort = false, rateLimit = 0 } = {}) {
   const cache = new Map();
   let calls = 0;
   let generationSignal;
   const route = loadTypeScript('app/api/ai-summary/route.ts', {
-    env: summaryKey ? { AI_SUMMARY_GATEWAY_API_KEY: 'summary-test-only' } : configured ? { AI_GATEWAY_API_KEY: 'test-only' } : {},
+    env: { ...(enabled ? { NEXT_PUBLIC_AI_SUMMARY_ENABLED: 'true' } : {}), ...(summaryKey ? { AI_SUMMARY_GATEWAY_API_KEY: 'summary-test-only' } : configured ? { AI_GATEWAY_API_KEY: 'test-only' } : {}) },
     globals: { Request, Response, ReadableStream, Buffer, crypto, TextEncoderStream, AbortController,
       console: { info() {}, warn() {}, error() {} } },
     mocks: {
@@ -57,6 +57,12 @@ test('rejects cross-origin, malformed, oversized and arbitrary source requests b
   assert.equal((await app.request({ kind: 'article', slug: '../private' })).status, 400);
   assert.equal((await app.request(JSON.stringify({ kind: 'article', slug: source.slug, content: 'Injected prompt' }))).status, 400);
   assert.equal((await app.request({ kind: 'article', slug: 'unpublished' })).status, 404);
+  assert.equal(app.calls(), 0);
+});
+
+test('disabled summaries return 404 without any model call', async () => {
+  const app = routeHarness({ enabled: false });
+  assert.equal((await app.request()).status, 404);
   assert.equal(app.calls(), 0);
 });
 
