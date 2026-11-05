@@ -2,6 +2,7 @@ import 'server-only';
 
 import { getProduct } from '@/lib/shopify/getProduct';
 import { getProductHandles } from '@/lib/shopify/getProductHandles';
+import { getJudgeMeReviews } from '@/lib/products/judgeme';
 import { buildProductSummarySource } from './productSource';
 import { knowledgeArticleList } from '@/lib/knowledge/knowledgeArticles';
 import articleSources from './articleSources.generated.json';
@@ -19,5 +20,5 @@ export async function getSummarySource(target: SummaryTarget): Promise<SummarySo
   if (!handles.includes(target.slug)) return null;
   const product = await getProduct(target.slug);
   if (!product) return null;
-  return buildProductSummarySource(product);
+  return buildProductSummarySource(product, await getJudgeMeReviews(product.id));
 }

@@ -1,9 +1,9 @@
 'use client';
 
 import { useObject } from '@ai-sdk/react';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { Brain, ChevronDown, Star } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
-import { pageSummarySchema, type SummaryTarget } from '@/lib/ai-summary/schema';
+import { summaryResponseSchema, type SummaryTarget } from '@/lib/ai-summary/schema';
 import styles from './PageAiSummary.module.css';
 
 export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
@@ -13,7 +13,7 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
   const regionId = useId();
   const { object, submit, isLoading, error, stop, clear } = useObject({
     api: '/api/ai-summary',
-    schema: pageSummarySchema,
+    schema: summaryResponseSchema,
     onFinish: ({ object, error }) => setInvalid(Boolean(error) || !object),
     onError: () => setInvalid(true),
   });
@@ -44,37 +44,34 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
         aria-controls={regionId}
         onClick={() => started ? setOpen(!open) : activate()}
       >
-        <Sparkles size={20} aria-hidden="true" />
-        <span>Det viktigste, kort fortalt <span className={styles.label}>AI-oppsummering</span></span>
+        <Brain size={20} aria-hidden="true" />
+        <span>Kortversjonen</span>
         <ChevronDown size={20} aria-hidden="true" className={open ? styles.chevronOpen : undefined} />
       </button>
-      <div id={regionId} hidden={!open} className={styles.content}>
-        <p className={styles.status} role="status">
-          {isLoading ? 'Lager en oppsummering av sidens innhold …' : failed ? 'Oppsummeringen kunne ikke lastes.' : 'AI-oppsummering basert på innholdet på denne siden.'}
-        </p>
+      <div id={regionId} hidden={!open} className={styles.content} aria-busy={isLoading}>
+        {isLoading && !object?.content?.summary && <span className={styles.loader} role="status" aria-label="Laster" />}
         {!failed && object ? (
-          <div aria-busy={isLoading}>
-            {object.summary && <p className={styles.summary}>{object.summary}</p>}
-            {!!object.keyPoints?.length && <ul className={styles.points}>
-              {object.keyPoints.map((point, index) => point && <li key={index}>{point}</li>)}
-            </ul>}
-            {!!object.limitations?.length && <div className={styles.limitations}>
-              <p className={styles.subheading}>Verdt å merke seg</p>
-              <ul className={styles.points}>
-                {object.limitations.map((point, index) => point && <li key={index}>{point}</li>)}
-              </ul>
-            </div>}
+          <div>
+            {object.content?.summary && <p className={styles.summary}>{object.content.summary}</p>}
+            {target.kind === 'product' && object.reviews?.count !== undefined && object.reviews.average !== undefined && (
+              <p className={styles.rating}>
+                {object.reviews.count > 0 ? <><Star size={16} aria-hidden="true" />{object.reviews.average.toLocaleString('nb-NO', { maximumFractionDigits: 2 })}/5 · {object.reviews.count} {object.reviews.count === 1 ? 'omtale' : 'omtaler'} på Judge.me</> : 'Ingen produktomtaler ennå.'}
+              </p>
+            )}
+            {object.content?.reviewSummary && <p>{object.content.reviewSummary}</p>}
+            {object.reviews?.includedCount !== undefined && object.reviews.count !== undefined && object.reviews.includedCount < object.reviews.count && <p className={styles.note}>Omtaleteksten bygger på {object.reviews.includedCount} av {object.reviews.count} omtaler.</p>}
+            {!isLoading && target.kind === 'product' && object.reviews === null && <p className={styles.note}>Kundeomtaler er midlertidig utilgjengelige.</p>}
           </div>
         ) : null}
         {failed && <>
-          <p>Du finner hele {target.kind === 'product' ? 'produktbeskrivelsen og detaljene' : 'artikkelen'} på siden. Prøv gjerne igjen om litt.</p>
+          <p role="status">Oppsummeringen kunne ikke lastes.</p>
           <button type="button" className={styles.action} onClick={activate}>Prøv igjen</button>
         </>}
         {isLoading && <button type="button" className={styles.action} onClick={() => {
           clear(); setStarted(false); setOpen(false); setInvalid(false);
         }}>Avbryt</button>}
         {!isLoading && !failed && object && <p className={styles.note}>
-          AI kan gjøre feil og utelate nyanser. Les {target.kind === 'product' ? 'produktdetaljene' : 'hele artikkelen'} for sammenheng og forbehold.
+          AI-generert. Les {target.kind === 'product' ? 'produktdetaljene og omtalene' : 'hele artikkelen'} for alle nyanser.
         </p>}
       </div>
     </>

@@ -4,9 +4,11 @@ const test = require('node:test');
 const { loadTypeScript } = require('./load-typescript.cjs');
 
 const source = { kind: 'article', slug: 'test-artikkel', title: 'Test', content: 'Kildetekst. '.repeat(30) };
-const summary = { summary: 'En oppsummering med tilstrekkelig lengde.', keyPoints: ['Første hovedpunkt', 'Andre hovedpunkt'], limitations: [] };
+const summary = { summary: 'En oppsummering med tilstrekkelig lengde.', reviewSummary: '' };
 
-function routeHarness({ enabled = true, configured = true, summaryKey = false, fail = false, valid = true, finishReason = 'stop', cacheReadError = false, cacheWriteError = false, waitForAbort = false, rateLimit = 0 } = {}) {
+const responseSummary = { reviews: null, content: summary };
+
+function routeHarness({ resolvedSource = source, generated = summary, enabled = true, configured = true, summaryKey = false, fail = false, valid = true, finishReason = 'stop', cacheReadError = false, cacheWriteError = false, waitForAbort = false, rateLimit = 0 } = {}) {
   const cache = new Map();
   let calls = 0;
   let generationSignal;
@@ -15,7 +17,7 @@ function routeHarness({ enabled = true, configured = true, summaryKey = false, f
     globals: { Request, Response, ReadableStream, Buffer, crypto, TextEncoderStream, AbortController,
       console: { info() {}, warn() {}, error() {} } },
     mocks: {
-      '@/lib/ai-summary/source': { getSummarySource: async target => target.slug === source.slug ? source : null },
+      '@/lib/ai-summary/source': { getSummarySource: async target => target.slug === source.slug ? resolvedSource : null },
       '@/lib/ai-summary/rateLimit': { summaryRateLimit: () => rateLimit },
       '@vercel/functions': { getCache: () => ({
         get: async key => { if (cacheReadError) throw new Error('Cache unavailable'); return cache.get(key) ?? null; },
@@ -30,10 +32,10 @@ function routeHarness({ enabled = true, configured = true, summaryKey = false, f
           return {
             stream: (async function* () {
               if (fail) yield { type: 'error', error: new Error('Provider unavailable') };
-              else yield { type: 'text-delta', text: JSON.stringify(valid ? summary : { summary: 'short' }) };
+              else yield { type: 'text-delta', text: JSON.stringify(valid ? generated : { summary: 'short' }) };
               if (waitForAbort && !abortSignal.aborted) await new Promise(resolve => abortSignal.addEventListener('abort', resolve, { once: true }));
             })(),
-            output: Promise.resolve(valid ? summary : { summary: 'short' }),
+            output: Promise.resolve(valid ? generated : { summary: 'short' }),
             finishReason: Promise.resolve(finishReason),
             totalUsage: Promise.resolve({ inputTokens: 10, outputTokens: 10 }),
           };
@@ -70,10 +72,10 @@ test('streams one generation, validates it, and serves the next activation from 
   const app = routeHarness();
   const first = await app.request();
   assert.equal(first.headers.get('X-AI-Summary-Cache'), 'MISS');
-  assert.deepEqual(JSON.parse(await first.text()), summary);
+  assert.deepEqual(JSON.parse(await first.text()), responseSummary);
   const second = await app.request();
   assert.equal(second.headers.get('X-AI-Summary-Cache'), 'HIT');
-  assert.deepEqual(await second.json(), summary);
+  assert.deepEqual(await second.json(), responseSummary);
   assert.equal(app.calls(), 1);
   assert.equal(app.cache.size, 1);
 });
@@ -103,7 +105,7 @@ test('cache read failures stop generation; write failures preserve a valid respo
   assert.equal((await unavailable.request()).status, 503);
   assert.equal(unavailable.calls(), 0);
   const unwritable = routeHarness({ cacheWriteError: true });
-  assert.deepEqual(await (await unwritable.request()).json(), summary);
+  assert.deepEqual(await (await unwritable.request()).json(), responseSummary);
   assert.equal(unwritable.cache.size, 0);
 });
 
@@ -123,7 +125,7 @@ test('missing Gateway configuration returns 503 without a provider call', async 
 
 test('a dedicated summary key works without a shared key or OIDC fallback', async () => {
   const app = routeHarness({ configured: false, summaryKey: true });
-  assert.deepEqual(await (await app.request()).json(), summary);
+  assert.deepEqual(await (await app.request()).json(), responseSummary);
   assert.equal(app.calls(), 1);
 });
 
@@ -135,6 +137,45 @@ test('source text, model and source identity participate in the cache key', () =
     assert.notEqual(summaryCacheKey(updated, 'test/model'), original);
   }
   assert.notEqual(summaryCacheKey(source, 'test/new-model'), original);
+  assert.notEqual(summaryCacheKey({ ...source, reviews: { count: 1, average: 4, items: [] } }, 'test/model'), original);
+});
+
+test('compact responses enforce both word limits and reject unsupported customer claims', () => {
+  const { validateSummary } = loadTypeScript('lib/ai-summary/schema.ts');
+  assert.equal(validateSummary(summary, source), summary);
+  assert.throws(() => validateSummary({ ...summary, summary: 'ord '.repeat(36).trim() }, source), /word limit/);
+  assert.throws(() => validateSummary({ ...summary, reviewSummary: 'ord '.repeat(21).trim() }, source), /word limit/);
+  for (const reviews of [null, { average: 0, count: 0, items: [] }, { average: 5, count: 1, items: [{ rating: 5, title: '', body: '' }] }]) {
+    assert.throws(() => validateSummary({ ...summary, reviewSummary: 'Kundene liker produktet.' }, { ...source, reviews }), /unsupported review/);
+  }
+});
+
+test('product reviews keep live aggregates, criticism and bounded text without reviewer metadata', () => {
+  const { buildProductSummarySource } = loadTypeScript('lib/ai-summary/productSource.ts', {
+    mocks: { '@/lib/products/content': { getProductPageDescriptionText: () => 'Beskrivelse', getProductPageContent: () => null } },
+  });
+  const review = { id: 'private-id', author: 'Private name', date: '2026-11-01', verified: true, rating: 2, title: 'Trang passform', body: 'Passformen var for trang.' };
+  const result = buildProductSummarySource({ handle: 'produkt', title: 'Produkt', description: '' }, { average: 4.3, count: 57, reviews: Array.from({ length: 45 }, () => review) });
+  assert.equal(result.reviews.average, 4.3);
+  assert.equal(result.reviews.count, 57);
+  assert.equal(result.reviews.items.length, 40);
+  assert.equal(result.reviews.items[0].rating, 2);
+  assert.match(JSON.stringify(result.reviews), /Trang passform/);
+  assert.doesNotMatch(JSON.stringify(result.reviews), /Private name|private-id|verified|2026-11-01/);
+});
+
+test('product responses stream source ratings and retain them on cache hits', async () => {
+  const resolvedSource = { ...source, kind: 'product', reviews: { average: 4.3, count: 7, items: [{ rating: 2, title: 'Passform', body: 'For trang.' }] } };
+  const generated = { ...summary, reviewSummary: 'En kunde nevner trang passform.' };
+  const app = routeHarness({ resolvedSource, generated });
+  const first = await app.request();
+  const result = await first.json();
+  assert.deepEqual(result, { reviews: { average: 4.3, count: 7, includedCount: 1 }, content: generated });
+  assert.deepEqual(await (await app.request()).json(), result);
+  assert.equal(app.calls(), 1);
+  const missing = routeHarness({ resolvedSource });
+  await assert.rejects((await missing.request()).text(), /kunne ikke fullføres/);
+  assert.equal(missing.cache.size, 0);
 });
 
 test('rate limit resets after its window and bounds distinct clients', () => {
@@ -164,6 +205,7 @@ test('source resolution rejects unregistered articles and unpublished product ha
   let productCalls = 0;
   const { getSummarySource } = loadTypeScript('lib/ai-summary/source.ts', {
     mocks: {
+      '@/lib/products/judgeme': { getJudgeMeReviews() { throw new Error('Unexpected review request'); } },
       '@/lib/shopify/getProductHandles': { getProductHandles: async () => ['published'] },
       '@/lib/shopify/getProduct': { getProduct: async () => { productCalls++; return null; } },
       '@/lib/knowledge/knowledgeArticles': { knowledgeArticleList: [{ slug: 'registered', title: 'Tittel', description: 'Ingress' }] },

@@ -1,116 +1,99 @@
-# AI-oppsummering på produktsider og i Uteguiden
+# Kortversjonen
 
-Oppsummering aktiveres ved klikk. Ingen modellkall gjøres under sidevisning,
-prefetch eller bygg. AI-klienten og schema-valideringen lastes først etter
-aktivering. Eksisterende tekst, kjøpsflyt og metadata er fortsatt
-sidens primærinnhold. Resultatet strømmes som et strukturert objekt med et
-kort avsnitt, 2–4 hovedpunkter og eventuelle kildebelagte forbehold.
+Funksjonen er deaktivert som standard. Både UI og API krever
+`NEXT_PUBLIC_AI_SUMMARY_ENABLED=true`. Produksjon skal være deaktivert inntil
+brukeren godkjenner den reviderte versjonen. Kun preview-grenen
+`codex/ai-summary-production-ready` har aktiveringsvariabelen.
 
-## Kilder og oppdateringer
+## Innhold og datakilder
 
-- Produkter: samme lokale beskrivelse og trekkspilldata som produktsiden,
-  med Shopify-beskrivelsen som reserve når lokal tekst mangler. Bare publiserte
-  Storefront-handles aksepteres. Pris, lager, varianter og omtaler sendes ikke.
-- Artikler: MDX parses uten å kjøre kode. `build:ai-sources` lager en JSON-fil
-  som kun importeres på serveren. Alle 12 registrerte artikler har inngang til
-  funksjonen, også artiklene som ikke bruker `KnowledgeArticleScaffold`.
-- `pnpm dev` og `pnpm build` regenererer artikkelkildene. Ved endring i MDX
-  under en allerede startet utviklingsserver: kjør `pnpm build:ai-sources`.
-- Cache-nøkkelen bruker SHA-256 av tekst, sidens identitet, tittel, modell og
-  promptversjon/instrukser. Tekstendringer gir ny nøkkel. Ingen manuell
-  invalidering er nødvendig for korrekt innhold etter neste kildebygg.
+- Brain-ikon og tittelen «Kortversjonen». Ingen synlig genereringssetning;
+  en liten indikator har tilgjengelig status og respekterer redusert bevegelse.
+- Ett avsnitt på maksimalt 35 ord, inkludert vesentlige forbehold.
+  På produktsider kommer inntil 20 ord om kundeerfaringer i tillegg.
+  Tidligere hovedpunkter og egen forbeholdsliste er fjernet.
+- Produkter bruker samme lokale beskrivelse og trekkspilldata som siden,
+  med Shopify-beskrivelsen som reserve. Bare publiserte handles aksepteres.
+- Judge.me hentes med eksisterende `getJudgeMeReviews(product.id)` fra den
+  offentlige produktwidgeten. Den eksisterende adapteren kontrollerer produkt-ID
+  og publiserte omtaler, og cacher data i fem minutter. Butikkomtaler blandes
+  ikke inn i produktomtaler. Manglende data er ikke null omtaler.
+- Gjennomsnitt og totalantall kommer direkte fra Judge.me, uten modellberegning.
+  Modellen får maksimalt 40 nyeste omtaler, med stjerner og avgrenset tittel/tekst.
+  Navn, ID, kjøpsstatus og dato sendes ikke til modellen. Ved delvis dekning
+  viser UI hvor mange omtaler som inngår. Kritikk må beholdes; kundeerfaringer
+  skal ikke presenteres som dokumenterte produktegenskaper.
+- Artiklene bygges fra MDX uten å kjøre uttrykk/importer. Alle 12 registrerte
+  artikler støttes. `pnpm dev` og `pnpm build` regenererer kildene; ved redigering
+  under en kjørende server brukes `pnpm build:ai-sources`.
 
-## AI SDK og Vercel
+## Modell, streaming og cache
 
-Implementasjonen bruker AI SDK 7 `streamText`, `Output.object` og React
-`useObject`, kontrollert mot dokumentene i de installerte pakkene. AI Gateway
-er standard provider. Modellen `google/gemini-3.8-flash` ble funnet i Gateways
-modelliste 5. november 2026; `AI_SUMMARY_MODEL` kan overstyre den på serveren.
+AI SDK 7 `streamText`, `Output.object` og `useObject` brukes via AI Gateway.
+Modellen er `google/gemini-3.8-flash`, bekreftet i Gateways katalog 5. november
+2026. `reasoning: 'minimal'` erstatter leverandørens standardnivå. Outputtaket
+reduseres fra 2400 til 600 tokens, timeout fra 40 til 15 sekunder, uten automatisk
+modellretry. Funksjonsgrensen er 30 sekunder. `AI_SUMMARY_MODEL` kan overstyre
+modellen; et bytte må testes for støtten til reasoning og strukturert output.
 
-Gateway bruker `AI_SUMMARY_GATEWAY_API_KEY` når den er konfigurert, ellers
-`AI_GATEWAY_API_KEY` eller Vercel OIDC. Den dedikerte nøkkelen lar funksjonen
-ha eget budsjett uten å påvirke andre AI-funksjoner. En eksisterende nøkkel
-ble bekreftet som konfigurert for preview og production i det lokalt koblede
-Vercel-prosjektet. Dette er ikke bevis for at funksjonen er deployet eller at
-en produksjonsgenerering fungerer. Lokalt trengs gyldig Gateway-tilgang.
+Ingen modellkall skjer ved sidevisning, prefetch eller bygg. SDK-klienten
+lastes ved klikk. API-et strømmer først verifisert ratingmetadata og deretter
+modellens kompakte objekt. Resultatet valideres strukturelt og mot ordgrenser.
+Manglende omtaler kan aldri gi generert omtaletekst; tilgjengelig omtaletekst
+må faktisk tas med. Validering er ikke en semantisk faktasjekk.
 
-Vercel Runtime Cache (`@vercel/functions`, allerede installert) lagrer bare
-validerte, fullførte resultater i 24 timer. Dette lar kalde svar strømme og
-varme svar gjenbrukes uten et nytt modellkall. Cache-API-et bruker minne lokalt;
-faktisk delt cache og treffrate på Vercel må kontrolleres etter deploy.
-Cache-lesefeil stopper generering, mens skrivefeil logges uten å skjule et
-ellers gyldig svar. Feil, avbrudd og ufullstendige svar caches ikke. Både avbrutt HTTP-forespørsel
-og lukket responsstrøm stopper modellkallet via AbortSignal.
+Vercel Runtime Cache lagrer bare fullførte, validerte svar i 24 timer. SHA-256-
+nøkkelen inkluderer produkt-/artikkeltekst, omtaler, rating, antall, modell,
+reasoning og promptversjon. Endringer i kilden gir nytt svar etter at kildecachen
+oppdateres. Cache-lesefeil stopper generering; skrivefeil logges. Avbrudd og
+ufullstendige svar lagres ikke. HTTP-avbrudd stopper modellen.
 
-Forespørsler aksepterer bare `{ kind, slug }`, ikke vilkårlige URL-er, filbaner
-eller prompts. API-et avviser kryssorigin, ugyldig JSON og mer enn 512 bytes.
-Det har en avgrenset, instanslokal grense på 10 forespørsler/minutt per
-adressehash. Dette er ikke en distribuert kvote eller et globalt kostnadstak.
-Bruk AI Gateways budsjetter og Vercel Firewall ved behov for delte grenser.
-Generering har 40 sekunders timeout innenfor funksjonens grense på 45 sekunder,
-maks én vanlig retry og 2400 outputtokens. Grensen tar høyde for kalde
-modellkall som i produksjonskontrollen kunne overstige 25 sekunder.
+## Kostnader og kontroll
 
-Loggene har `ai_summary_cache_hit`, `ai_summary_completed`,
-`ai_summary_unconfigured`, `ai_summary_failed` og
-`ai_summary_cache_write_failed`, med request-ID, side, modell, varighet og
-tokenbruk. Prompt, respons, API-nøkler og klientadresse logges ikke.
-Ingen eksterne varsler eller modellfallback er konfigurert av denne endringen.
+`AI_SUMMARY_GATEWAY_API_KEY` er dedikert til funksjonen, med godkjent tak på
+10 USD per måned inkludert BYOK. Eksisterende autentiseringsreserve er
+`AI_GATEWAY_API_KEY` eller Vercel OIDC når dedikert nøkkel ikke er konfigurert;
+produksjon/preview skal derfor ha den dedikerte nøkkelen. Budsjettavslag gir
+feil og bytter ikke automatisk nøkkel eller modell.
 
-## Verifisering
+API-et tar bare `{ kind, slug }`, aldri fri tekst eller URL. Det avviser
+kryssorigin, ugyldig JSON og mer enn 512 bytes. Den instanslokale grensen på
+10 forespørsler/minutt er ikke et distribuert kostnadstak.
 
-```sh
-pnpm build:ai-sources
-node --test tests/ai-summary.test.cjs
-pnpm typecheck
-pnpm build
-```
+Logger registrerer request-ID, kilde/model, cachetreff, totalvarighet,
+kildetid, tid til første modelltekst, input/output- og reasoning-tokens.
+Prompt, svar, nøkler og klientadresse logges ikke. Ingen nye bakgrunnsjobber,
+varsler eller automatisk publisering er opprettet.
 
-Kontroller mobil og desktop: én inngang per produkt/artikkel, ingen kall før
-klikk, gradvis tekst, kollaps/gjenåpning uten nytt kall, avbryt, feil med
-«Prøv igjen», og fortsatt tilgjengelig originalinnhold. API-responsen har
-`X-AI-Summary-Cache: MISS` eller `HIT`. Schema-validering er ikke en semantisk
-faktasjekk; stikkprøver må også sammenlignes med kilden.
+## Verifisering og publisering
 
-### Releasekontroll 5. november 2026
+Kjør `node --test tests/ai-summary.test.cjs`, avgrenset ESLint, `pnpm typecheck`
+og `pnpm build`. Test aktivert versjon med preview-variabelen, ekte Gateway
+og Judge.me. Kontroller kald generering, første tekst, ordgrenser, direkte
+ratingtall, kritikk, manglende omtaler, delt cache MISS/HIT, mobil/desktop,
+feil/prøv igjen, avbryt og ingen forespørsel før klikk. Sammenlign modelltekst
+med kildene. Produksjonsaktivering krever nytt klarsignal etter AGENTS.md.
 
-Releasegrenen `codex/ai-summary-production-ready` er isolert fra produksjons-
-commit `91b4590471c7113a572a3cb628ee296c55642882`. Den inkluderer kun AI-kilder,
-API/UI, integrasjon på produkt-/artikkelsidene, avhengigheter og tester.
-Artikkeltekstene genereres fra innholdet i denne grenen.
+5. november ble den tidligere versjonen tatt ut i commit `587cf83`.
+Revisjonens målinger og skjermbilder lagres utenfor Git i
+`outputs/kortversjonen-20261105/` i den opprinnelige arbeidsmappen.
 
-- 13 kontrakttester dekker kildeavgrensning, cache, strømfeil, avbrudd,
-  ufullstendige svar, separat Gateway-nøkkel og ratebegrensning.
-- Full `pnpm typecheck`, avgrenset ESLint og `pnpm build` bestod i releasegrenen.
-  Bygget genererte 110 sider og validerte 30 interne MDX-lenker.
-  Lokalt bygg brukte eksisterende Shopify-miljø uten å skrive eller vise nøkler.
-- Preview skal verifisere ekte produkt- og artikkelsvar, Runtime Cache
-  `MISS → HIT`, ingen modellkall før klikk, mobil/desktop og avbryt/prøv igjen.
-- Begrensningen i minnet er per instans. Et Gateway-budsjett er separat og
-  må kontrolleres mot autentiseringsmetoden som faktisk brukes. Et prosjekt-
-  budsjett gjelder OIDC; en nøkkel trenger nøkkelbudsjett. Ikke bruk automatisk
-  fallback til annen nøkkel/modell når budsjettet er brukt opp.
-- Produksjon krever eget klarsignal etter `AGENTS.md`. Etter publisering må
-  eksakt commit, `READY`, alias og funksjon på `utekos.no` bekreftes.
+## Gjennomgåtte kilder
 
-Lokale sensitive miljøvariabler kan være utelatt av `vercel env run`.
-En lokal Gateway-test kan bruke eksisterende OIDC:
+- [Review Display Components](https://vercel.com/academy/ai-summary-app-with-nextjs/review-display-components)
+- [Modern Next.js Setup](https://vercel.com/academy/ai-summary-app-with-nextjs/modern-nextjs-setup)
+- [Dynamic Routes and Static Generation](https://vercel.com/academy/ai-summary-app-with-nextjs/dynamic-routes-static-generation)
+- [Type-Safe Data Layer](https://vercel.com/academy/ai-summary-app-with-nextjs/type-safe-data-layer)
+- [Streaming Summaries](https://vercel.com/academy/ai-summary-app-with-nextjs/streaming-summaries)
+- [AI Gateway Setup](https://vercel.com/academy/ai-summary-app-with-nextjs/ai-gateway-setup)
+- [Structured Output](https://vercel.com/academy/ai-summary-app-with-nextjs/structured-output)
+- [Prompt Engineering](https://vercel.com/academy/ai-summary-app-with-nextjs/prompt-engineering)
+- [First AI Summary](https://vercel.com/academy/ai-summary-app-with-nextjs/first-ai-summary)
+- [Smart Caching](https://vercel.com/academy/ai-summary-app-with-nextjs/smart-caching)
+- [Observability and Monitoring](https://vercel.com/academy/ai-summary-app-with-nextjs/observability-monitoring)
+- [AI SDK Google thinking configuration](https://ai-sdk.dev/providers/ai-sdk-providers/google)
 
-```sh
-vercel env run -e preview -- pnpm dev
-```
-
-En lokal test er ikke bevis for delt Runtime Cache. Preview-testen skal
-bruke den konkrete deployment-URL-en med eksisterende Vercel-autentisering.
-Ikke slå av Deployment Protection eller lagre testenes OIDC-token.
-
-Oppdaterte referanser:
-- https://ai-sdk.dev/docs/ai-sdk-core/generating-structured-data
-- https://ai-sdk.dev/docs/ai-sdk-ui/object-generation
-- https://vercel.com/docs/caching/runtime-cache
-- https://vercel.com/docs/ai-gateway/authentication-and-byok
-- https://vercel.com/academy/ai-summary-app-with-nextjs
-
-Academy-serien er gjennomgått, men dens `generateObject`-eksempler og gamle
-modellvalg er ikke brukt. Wikiens klikkmønster er videreført uten kunstig
-ventetid, vilkårlig lesing av MDX-filbaner eller den separate Watsonx-reserven.
+Prinsippene for datakilder, kort prompt, streaming, cache og målinger er
+anvendt på den eksisterende løsningen. Tutorialens eksempeldata, automatiske
+modellkall ved sidevisning og oppgitte ytelsestall er ikke brukt som bevis for
+Utekos. Installasjonens AI SDK 7- og Next.js-dokumentasjon styrer API-bruken.

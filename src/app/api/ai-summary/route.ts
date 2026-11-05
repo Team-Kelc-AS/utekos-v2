@@ -1,12 +1,12 @@
 import { createHash } from 'node:crypto';
 import { getCache } from '@vercel/functions';
 import { createGateway, createTextStreamResponse, Output, streamText } from 'ai';
-import { pageSummarySchema, summaryTargetSchema } from '@/lib/ai-summary/schema';
+import { pageSummarySchema, summaryResponseSchema, summaryTargetSchema, validateSummary } from '@/lib/ai-summary/schema';
 import { getSummarySource } from '@/lib/ai-summary/source';
-import { buildSummaryPrompt, summaryCacheKey, summaryInstructions, SUMMARY_MODEL } from '@/lib/ai-summary/prompt';
+import { buildSummaryPrompt, summaryCacheKey, summaryInstructions, SUMMARY_MODEL, SUMMARY_REASONING } from '@/lib/ai-summary/prompt';
 import { summaryRateLimit } from '@/lib/ai-summary/rateLimit';
 
-export const maxDuration = 45;
+export const maxDuration = 30;
 const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
 
 export async function POST(request: Request) {
@@ -58,6 +58,7 @@ export async function POST(request: Request) {
   const logContext = { requestId, ...target.data, model };
   try {
     const source = await getSummarySource(target.data);
+    const sourceMs = Date.now() - started;
     if (!source) return new Response('Siden finnes ikke.', { status: 404, headers });
     if (source.content.length < 100 || source.content.length > 110_000) {
       throw new Error('Invalid summary source length');
@@ -66,7 +67,8 @@ export async function POST(request: Request) {
     const cacheKey = summaryCacheKey(source, model);
     const cached = await cache.get(cacheKey);
     if (cached !== null) {
-      const summary = pageSummarySchema.parse(cached);
+      const summary = summaryResponseSchema.parse(cached);
+      validateSummary(summary.content, source);
       console.info(JSON.stringify({ event: 'ai_summary_cache_hit', ...logContext, durationMs: Date.now() - started }));
       return Response.json(summary, { headers: { ...headers, 'X-AI-Summary-Cache': 'HIT' } });
     }
@@ -84,24 +86,36 @@ export async function POST(request: Request) {
       system: summaryInstructions,
       prompt: buildSummaryPrompt(source),
       output: Output.object({ schema: pageSummarySchema }),
-      maxOutputTokens: 2400,
-      timeout: 40_000,
-      maxRetries: 1,
+      reasoning: SUMMARY_REASONING,
+      maxOutputTokens: 600,
+      timeout: 15_000,
+      maxRetries: 0,
       abortSignal,
       onError: () => {}, // The response stream below logs errors once, without prompt/provider payloads.
     });
 
+    const reviews = source.reviews ? {
+      average: source.reviews.average, count: source.reviews.count, includedCount: source.reviews.items.length,
+    } : null;
+    let firstTextMs: number | undefined;
     const stream = new ReadableStream<string>({
       async start(controller) {
         try {
+          // Ratings come directly from Judge.me, before any model text is streamed.
+          controller.enqueue(`{"reviews":${JSON.stringify(reviews)},"content":`);
           for await (const part of result.stream) {
-            if (part.type === 'text-delta') controller.enqueue(part.text);
+            if (part.type === 'text-delta') {
+              firstTextMs ??= Date.now() - started;
+              controller.enqueue(part.text);
+            }
             if (part.type === 'error') throw part.error;
             if (part.type === 'abort') throw new Error('Summary aborted');
           }
-          const summary = pageSummarySchema.parse(await result.output);
+          const content = validateSummary(pageSummarySchema.parse(await result.output), source);
+          const summary = summaryResponseSchema.parse({ reviews, content });
           if (await result.finishReason !== 'stop') throw new Error('Incomplete summary');
           abortSignal.throwIfAborted();
+          controller.enqueue('}');
           try {
             await cache.set(cacheKey, summary, {
               ttl: 86400, tags: ['page-ai-summary', `${source.kind}:${source.slug}`],
@@ -112,7 +126,9 @@ export async function POST(request: Request) {
           }
           const usage = await result.totalUsage;
           console.info(JSON.stringify({ event: 'ai_summary_completed', ...logContext,
-            durationMs: Date.now() - started, inputTokens: usage.inputTokens, outputTokens: usage.outputTokens }));
+            durationMs: Date.now() - started, sourceMs, firstTextMs,
+            inputTokens: usage.inputTokens, outputTokens: usage.outputTokens,
+            reasoningTokens: usage.outputTokenDetails?.reasoningTokens }));
           controller.close();
         } catch (error) {
           cancellation.abort();
