@@ -213,10 +213,10 @@ export const knowledgeImages = {
   "baseLayer": {
     "images": [
       {
-        "src": "/images/kunnskap/Enslig vandrer ved vinterfjorden.webp",
-        "alt": "En person står på en snødekket fjellrygg en kald vintermorgen med åpen vinterjakke, slik at det varme ullundertøyet (innerlaget) er synlig. Det er frost i luften og lav sol over snølandskapet.",
-        "width": 1122,
-        "height": 1402
+        "src": "/images/kunnskap/vintervandrer-i-snodekt-landskap.webp",
+        "alt": "Turgåer i snølandskap som åpner jakken for å vise ull-innerlag",
+        "width": 1600,
+        "height": 900
       },
       {
         "src": "/images/kunnskap/Vinterpause med varm drikke og fjordutsikt.webp",
