@@ -41,8 +41,8 @@ preview. En direkte sammenligning av tre modeller viste at 3.8 Flash med `low`
 beholdt tydelige material-/produktforbehold med langt lavere latenstid.
 Outputtaket reduseres fra 2400 til 1600 tokens for å gi plass til både intern
 resonnering og gyldig JSON, mens synlig tekst har egne strenge ordgrenser.
-Timeout reduseres fra 40 til 15 sekunder, uten automatisk
-modellretry. Funksjonsgrensen er 30 sekunder. `AI_SUMMARY_MODEL` kan overstyre
+Timeout reduseres fra 40 til 15 sekunder, med maksimalt én retry ved
+midlertidig leverandørfeil innenfor samme tidsgrense. Funksjonsgrensen er 30 sekunder. `AI_SUMMARY_MODEL` kan overstyre
 modellen; et bytte må testes for støtten til reasoning og strukturert output.
 
 Ingen modellkall skjer ved sidevisning, prefetch eller bygg. SDK-klienten
@@ -56,6 +56,15 @@ nøkkelen inkluderer produkt-/artikkeltekst, omtaler, rating, antall, modell,
 reasoning og promptversjon. Endringer i kilden gir nytt svar etter at kildecachen
 oppdateres. Cache-lesefeil stopper generering; skrivefeil logges. Avbrudd og
 ufullstendige svar lagres ikke. HTTP-avbrudd stopper modellen.
+`vercel.json` aktiverer Vercels nødvendige `supportsCancellation` kun for
+`src/app/api/ai-summary/route.ts`; klientens abortsignal alene er ikke nok på
+plattformen.
+
+Et validert produkt-/omtalegrunnlag lagres også delt i fem minutter. Derfor
+trenger et cachet svar ikke vente på Shopify/Judge.me ved hvert klikk eller
+ved bytte av serverinstans. Kildeendringer, også avpublisering, kan bruke inntil
+fem minutter på å slå gjennom. Ukjent/feilet omtalegrunnlag caches ikke og gir
+«Prøv igjen» uten modellkall; null publiserte omtaler er fortsatt et gyldig svar.
 
 ## Kostnader og kontroll
 

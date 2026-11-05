@@ -24,15 +24,16 @@ export const summaryResponseSchema = z.object({
 });
 
 export type PageSummary = z.infer<typeof pageSummarySchema>;
-export type SummarySource = SummaryTarget & {
-  title: string;
-  content: string;
-  reviews?: {
-    average: number;
-    count: number;
-    items: { rating: number; title: string; body: string }[];
-  } | null;
-};
+export const summarySourceSchema = summaryTargetSchema.extend({
+  title: z.string().min(1).max(500),
+  content: z.string().min(100).max(110_000),
+  reviews: z.object({
+    average: z.number().min(0).max(5),
+    count: z.number().int().nonnegative(),
+    items: z.array(z.object({ rating: z.number().int().min(1).max(5), title: z.string().max(200), body: z.string().max(1500) })).max(40),
+  }).nullable().optional(),
+});
+export type SummarySource = z.infer<typeof summarySourceSchema>;
 
 export function validateSummary(summary: PageSummary, source: SummarySource): PageSummary {
   if (summary.summary.split(/\s+/).length > 35 || summary.reviewSummary.split(/\s+/).length > 20) {

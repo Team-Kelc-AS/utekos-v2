@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { getCache } from '@vercel/functions';
 import { createGateway, createTextStreamResponse, Output, streamText } from 'ai';
-import { pageSummarySchema, summaryResponseSchema, summaryTargetSchema, validateSummary } from '@/lib/ai-summary/schema';
+import { pageSummarySchema, summaryResponseSchema, summarySourceSchema, summaryTargetSchema, validateSummary } from '@/lib/ai-summary/schema';
 import { getSummarySource } from '@/lib/ai-summary/source';
 import { buildSummaryPrompt, summaryCacheKey, summaryInstructions, SUMMARY_MODEL, SUMMARY_REASONING } from '@/lib/ai-summary/prompt';
 import { summaryRateLimit } from '@/lib/ai-summary/rateLimit';
@@ -57,13 +57,23 @@ export async function POST(request: Request) {
   const model = process.env.AI_SUMMARY_MODEL?.trim() || SUMMARY_MODEL;
   const logContext = { requestId, ...target.data, model };
   try {
-    const source = await getSummarySource(target.data);
-    const sourceMs = Date.now() - started;
-    if (!source) return new Response('Siden finnes ikke.', { status: 404, headers });
-    if (source.content.length < 100 || source.content.length > 110_000) {
-      throw new Error('Invalid summary source length');
-    }
     const cache = getCache({ namespace: 'page-ai-summary', keyHashFunction: key => key });
+    // Share product/review snapshots across instances; a warm summary must not
+    // wait for Shopify and Judge.me again on every activation.
+    const sourceKey = `source-v1:${target.data.slug}`;
+    const cachedSource = target.data.kind === 'product' ? await cache.get(sourceKey) : null;
+    const resolvedSource = cachedSource ?? await getSummarySource(target.data);
+    if (!resolvedSource) return new Response('Siden finnes ikke.', { status: 404, headers });
+    const source = summarySourceSchema.parse(resolvedSource);
+    if (source.kind === 'product' && !source.reviews) throw new Error('Product reviews unavailable');
+    if (source.kind === 'product' && cachedSource === null) {
+      try {
+        await cache.set(sourceKey, source, { ttl: 300, tags: ['page-ai-summary', `product:${source.slug}`], name: `source/${source.slug}` });
+      } catch (error) {
+        console.error(JSON.stringify({ event: 'ai_summary_source_cache_write_failed', ...logContext, error: error instanceof Error ? error.name : 'UnknownError' }));
+      }
+    }
+    const sourceMs = Date.now() - started;
     const cacheKey = summaryCacheKey(source, model);
     const cached = await cache.get(cacheKey);
     if (cached !== null) {
@@ -93,7 +103,7 @@ export async function POST(request: Request) {
       },
       maxOutputTokens: 1600,
       timeout: 15_000,
-      maxRetries: 0,
+      maxRetries: 1,
       abortSignal,
       onError: () => {}, // The response stream below logs errors once, without prompt/provider payloads.
     });

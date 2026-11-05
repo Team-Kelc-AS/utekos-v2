@@ -11,13 +11,14 @@ const responseSummary = { reviews: null, content: summary };
 function routeHarness({ resolvedSource = source, generated = summary, enabled = true, configured = true, summaryKey = false, fail = false, valid = true, finishReason = 'stop', cacheReadError = false, cacheWriteError = false, waitForAbort = false, rateLimit = 0 } = {}) {
   const cache = new Map();
   let calls = 0;
+  let sourceCalls = 0;
   let generationSignal;
   const route = loadTypeScript('app/api/ai-summary/route.ts', {
     env: { ...(enabled ? { NEXT_PUBLIC_AI_SUMMARY_ENABLED: 'true' } : {}), ...(summaryKey ? { AI_SUMMARY_GATEWAY_API_KEY: 'summary-test-only' } : configured ? { AI_GATEWAY_API_KEY: 'test-only' } : {}) },
     globals: { Request, Response, ReadableStream, Buffer, crypto, TextEncoderStream, AbortController,
       console: { info() {}, warn() {}, error() {} } },
     mocks: {
-      '@/lib/ai-summary/source': { getSummarySource: async target => target.slug === source.slug ? resolvedSource : null },
+      '@/lib/ai-summary/source': { getSummarySource: async target => { sourceCalls++; return target.slug === source.slug ? resolvedSource : null; } },
       '@/lib/ai-summary/rateLimit': { summaryRateLimit: () => rateLimit },
       '@vercel/functions': { getCache: () => ({
         get: async key => { if (cacheReadError) throw new Error('Cache unavailable'); return cache.get(key) ?? null; },
@@ -47,11 +48,11 @@ function routeHarness({ resolvedSource = source, generated = summary, enabled = 
       },
     },
   });
-  const request = (body = source, headers = {}) => route.POST(new Request('https://utekos.no/api/ai-summary', {
+  const request = (body = resolvedSource, headers = {}) => route.POST(new Request('https://utekos.no/api/ai-summary', {
     method: 'POST', headers: { 'Content-Type': 'application/json', ...headers },
     body: typeof body === 'string' ? body : JSON.stringify({ kind: body.kind, slug: body.slug }),
   }));
-  return { request, cache, calls: () => calls, generationSignal: () => generationSignal };
+  return { request, cache, calls: () => calls, sourceCalls: () => sourceCalls, generationSignal: () => generationSignal };
 }
 
 test('rejects cross-origin, malformed, oversized and arbitrary source requests before generation', async () => {
@@ -176,9 +177,17 @@ test('product responses stream source ratings and retain them on cache hits', as
   assert.deepEqual(result, { reviews: { average: 4.3, count: 7, includedCount: 1 }, content: generated });
   assert.deepEqual(await (await app.request()).json(), result);
   assert.equal(app.calls(), 1);
+  assert.equal(app.sourceCalls(), 1);
   const missing = routeHarness({ resolvedSource });
   await assert.rejects((await missing.request()).text(), /kunne ikke fullføres/);
-  assert.equal(missing.cache.size, 0);
+  assert.equal(missing.cache.size, 1); // Only the validated source, never the invalid summary.
+});
+
+test('unavailable product reviews fail without generating or caching a misleading summary', async () => {
+  const app = routeHarness({ resolvedSource: { ...source, kind: 'product', reviews: null } });
+  assert.equal((await app.request()).status, 503);
+  assert.equal(app.calls(), 0);
+  assert.equal(app.cache.size, 0);
 });
 
 test('rate limit resets after its window and bounds distinct clients', () => {
