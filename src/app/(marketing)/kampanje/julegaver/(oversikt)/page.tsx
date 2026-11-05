@@ -1,16 +1,11 @@
-import { ArrowRight, Calendar, Gift, ShieldCheck } from "lucide-react";
-import {
-  LocationIcon,
-  MerchantTruckIcon,
-  PaymentOutlineIcon,
-} from "@/components/utekos-icons";
+import { Calendar, Gift, ShieldCheck } from "lucide-react";
+import { LocationIcon, PaymentOutlineIcon } from "@/components/utekos-icons";
 
-import { ChristmasCampaignBreadcrumbs } from "../components/ChristmasCampaignBreadcrumbs";
 import { ChristmasCampaignPrice } from "../components/ChristmasCampaignPrice";
+import { Hero } from "../components/Hero";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { SantaHat } from "../components/SantaHat";
 import comfyFrontUBakgrunn1080 from "@public/images/campaigns/julegaver/comfy-front-u-bakgrunn-1080.png";
 import dunFrontHvitBakgrunn1080 from "@public/images/campaigns/julegaver/dun-front-hvit-bakgrunn-1080.png";
 import mikroFront1080 from "@public/images/campaigns/julegaver/mikro-front-1080.png";
@@ -40,53 +35,20 @@ export const metadata: Metadata = {
   },
 };
 export default function ChristmasCampaign() {
+  // Activity keeps inactive pages mounted; only theme the header for a visible page.
   return (
-    <div className="bg-background pb-20">
-      <article className="relative overflow-hidden bg-card pt-24 pb-16 text-center text-card-foreground md:pt-32">
-        <div className="relative z-10 container mx-auto px-4">
-          <ChristmasCampaignBreadcrumbs currentLabel="Julegaver" />
-          <div className="bg-secondary text-secondary-foreground inline-flex items-center gap-2 rounded-full border border-border px-4 py-1.5 backdrop-blur-sm">
-            <Gift className="h-4 w-4" />
-            <span className="text-sm font-medium">Julegaver fra Utekos®</span>
-          </div>
-          <h1 className="font-google-sans mt-8 text-4xl font-extrabold text-card-foreground sm:text-6xl">
-            <span className="relative inline-block">
-              Gi bort
-              <SantaHat className="absolute -top-8 -left-6 h-16 w-16 -rotate-12 drop-shadow-xl md:-top-10 md:-left-8 md:h-20 md:w-20" />
-            </span>
-            <span className="block text-card-foreground">
-              funksjonell varme
-            </span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Den perfekte gaven til livsnyteren som har alt – unntatt varmen.
-            Sikre deg høstens store trend.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="#bestselgere"
-              className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-white shadow-lg shadow-primary/20 transition-all hover:scale-105 hover:bg-primary"
-            >
-              Se gavetipsene
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <MerchantTruckIcon tone="orange" className="h-4 w-4" />
-              <span>Fri frakt over 999kr</span>
-            </div>
-          </div>
-        </div>
-      </article>
-
+    <div
+      className="bg-background pb-20 [body:has(>&:not([style*='display:_none']))>header]:bg-[#b22222]! [body:has(>&:not([style*='display:_none']))>header]:bg-[radial-gradient(ellipse_at_center,#ff0000_0%,#f90b0b_18%,#eb3300_34%,#e40a2d_50%,#e10600_66%,#dc011c_82%,#b22222_100%)]!"
+    >
+      <Hero />
       <article className="border-y border-border bg-card py-8 text-card-foreground">
         <div className="container mx-auto px-4">
           <div className="grid gap-8 text-center sm:grid-cols-3">
-            {/* 1. Lager/Logistikk - Erstatter "Bestill innen..." */}
             <div className="flex flex-col items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10">
+              <div className="flex size-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10">
                 <LocationIcon
                   tone="orange"
-                  className="h-6 w-6 text-primary"
+                  className="size-6 text-primary"
                 />{" "}
               </div>
               <div>
@@ -101,8 +63,8 @@ export default function ChristmasCampaign() {
 
             {/* 2. Bytterett (Beholdes) */}
             <div className="flex flex-col items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10">
-                <ShieldCheck className="h-6 w-6 text-primary" />
+              <div className="flex size-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10">
+                <ShieldCheck className="size-6 text-primary" />
               </div>
               <div>
                 <h3 className="font-sans font-semibold text-foreground">
@@ -115,10 +77,10 @@ export default function ChristmasCampaign() {
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10">
+              <div className="flex size-12 items-center justify-center rounded-full bg-background ring-1 ring-white/10">
                 <PaymentOutlineIcon
                   tone="orange"
-                  className="h-6 w-6 text-primary"
+                  className="size-6 text-primary"
                 />
               </div>
               <div>
@@ -300,7 +262,7 @@ export default function ChristmasCampaign() {
             className="group hover:bg-muted flex flex-col items-center rounded-xl bg-card p-8 text-center text-card-foreground transition-colors"
           >
             <div className="mb-4 rounded-full bg-primary/20 p-4 transition-transform group-hover:scale-110">
-              <Gift className="h-8 w-8 text-primary" />
+              <Gift className="size-8 text-primary" />
             </div>
             <h3 className="font-sans font-semibold text-lg">
               Hele kolleksjonen
@@ -315,7 +277,7 @@ export default function ChristmasCampaign() {
             className="group hover:bg-muted flex flex-col items-center rounded-xl bg-card p-8 text-center text-card-foreground transition-colors"
           >
             <div className="mb-4 rounded-full bg-havdyp/20 p-4 transition-transform group-hover:scale-110">
-              <ShieldCheck className="h-8 w-8 text-secondary-foreground" />
+              <ShieldCheck className="size-8 text-secondary-foreground" />
             </div>
             <h3 className="font-sans font-semibold text-lg">Lær mer</h3>
             <p className="text-sm text-muted-foreground">
@@ -328,7 +290,7 @@ export default function ChristmasCampaign() {
             className="group hover:bg-muted flex flex-col items-center rounded-xl bg-card p-8 text-center text-card-foreground transition-colors"
           >
             <div className="mb-4 rounded-full bg-jungle/20 p-4 transition-transform group-hover:scale-110">
-              <Calendar className="h-8 w-8 text-primary" />
+              <Calendar className="size-8 text-primary" />
             </div>
             <h3 className="font-sans font-semibold text-lg">
               Usikker på størrelse?

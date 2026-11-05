@@ -111,7 +111,7 @@ function KnowledgeArticleCard({
         href={article.path}
         className="group flex h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b44701] focus-visible:ring-offset-4"
       >
-        <Card className="relative flex w-full flex-col overflow-hidden border border-[#f0eee930] bg-[#012622] pt-0 text-[#f0eee9] transition-colors duration-200 group-hover:border-[#b44701] motion-reduce:transition-none">
+        <Card className="relative flex w-full flex-col overflow-hidden border border-[#f0eee930] bg-[#012622] bg-(image:--overview-gradient) pt-0 text-[#f0eee9] transition-colors duration-200 group-hover:border-[#b44701] motion-reduce:transition-none">
           <ArticleImage article={article} cover featured={featured} />
           <CardHeader className="flex-1 pt-6 pb-4">
             <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
@@ -127,7 +127,7 @@ function KnowledgeArticleCard({
               <time dateTime={article.publishedAt}>{formattedDate}</time>
             </CardDescription>}
           </CardHeader>
-          <CardFooter className="border-[#f0eee920] bg-[#001a18]">
+          <CardFooter className="border-[#f0eee920] bg-transparent">
             <span className={cn(buttonVariants(), 'w-full rounded-full bg-[#b44701] font-bold text-[#f0eee9] transition-colors group-hover:bg-[#8a3600] motion-reduce:transition-none')}>
               Les artikkelen
             </span>

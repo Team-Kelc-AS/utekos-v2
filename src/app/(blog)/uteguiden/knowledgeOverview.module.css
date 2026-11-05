@@ -5,6 +5,18 @@
   --knowledge-border: color-mix(in srgb, #001a18 22%, transparent);
   --overview-surface: #f0eee9;
   --overview-card: color-mix(in srgb, #001a18 4%, #f0eee9);
+  --overview-gradient: linear-gradient(
+    90deg,
+    #000a09,
+    #01110f,
+    #011816,
+    #02231f,
+    #022e28,
+    #02231f,
+    #011816,
+    #01110f,
+    #000a09
+  );
   padding-bottom: clamp(4rem, 8vw, 7rem);
   background: var(--overview-surface);
   color: var(--knowledge-ink);
@@ -27,7 +39,7 @@
   margin-top: 2rem;
   padding: 2rem;
   border-radius: 2rem;
-  background: #012622;
+  background: var(--overview-gradient);
   color: #f0eee9;
   font-optical-sizing: none;
   /* Google Sans Flex v4.005 STAT maps the 120pt variant to opsz 120. */
@@ -178,6 +190,8 @@
   min-width: 0;
 }
 .recommendedCard {
+  --knowledge-ink: #f0eee9;
+  --knowledge-ink-muted: #f0eee9b3;
   display: grid;
   grid-template-columns: 96px minmax(0, 1fr);
   align-items: center;
@@ -186,7 +200,7 @@
   padding: 1rem 1.5rem;
   border: 1px solid var(--knowledge-border);
   border-radius: 1.25rem;
-  background: var(--overview-surface);
+  background: var(--overview-gradient);
   color: var(--knowledge-ink);
   text-decoration: none;
   transition:
@@ -195,7 +209,6 @@
 }
 .recommendedCard:hover {
   border-color: #b44701;
-  background: var(--overview-card);
 }
 .recommendedImage {
   display: block;
