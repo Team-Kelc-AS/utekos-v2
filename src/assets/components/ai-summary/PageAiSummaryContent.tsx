@@ -1,7 +1,7 @@
 "use client";
 
 import { useObject } from "@ai-sdk/react";
-import { Brain, ChevronDown, Star } from "lucide-react";
+import { Brain, ChevronDown } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   productSummaryResponseSchema,
@@ -98,7 +98,6 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
                 >
                   {object.reviews.count > 0 ? (
                     <>
-                      <Star size={16} className="shrink-0" aria-hidden="true" />
                       {object.reviews.average.toLocaleString("nb-NO", {
                         maximumFractionDigits: 2,
                       })}
