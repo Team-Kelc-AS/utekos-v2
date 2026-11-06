@@ -1065,8 +1065,35 @@ test(`Meta preserves first PageView identifiers when browser cookies are ${cooki
   const pixel = await api.page.evaluate(() => __pixelIdentity.find(p => p.name === 'ViewContent'));
   assert.ok(pixel?.cookie.includes(`_fbc=${fbc}`), 'Pixel can read the restored click cookie');
   assert.ok(pixel?.cookie.includes(`_fbp=${fbp}`), 'Pixel can read the restored browser cookie');
+  assert.deepEqual(api.requests.filter(request => request.path === '/api/log' && request.body.event === 'client_error'), [],
+    'successful cookie restoration must not be logged as a client error');
 });
 }
+}
+
+for (const safariMode of [false, true]) {
+test(`Meta failed cookie restoration logs one safe reason and preserves event identifiers (webkit=${safariMode})`, async t => {
+  const fbc = `fb.1.${Date.now()}.OfflineLandingClick.AQQCAQMC`;
+  const fbp = `fb.1.${Date.now()}.123456789.AQQCAQMC`;
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineLandingClick', {
+    deferCommerce: true, deferObservers: true, metaCookie: fbc, metaFbpCookie: fbp, safariMode,
+  });
+  await api.waitFor('page_view');
+  const report = api.page.waitForRequest(request => request.url().endsWith('/api/log'));
+  const restored = await api.page.evaluate(async event => {
+    Object.defineProperty(document, 'cookie', { get: () => '', set: () => {} });
+    const first = await UtekosTrackingHarness.enrichCanonicalEventWithMetaAttribution(event);
+    await UtekosTrackingHarness.enrichCanonicalEventWithMetaAttribution(event);
+    return first;
+  }, api.events('page_view')[0]);
+  const payload = (await report).postDataJSON();
+  assert.equal(payload.data.message, 'MetaCookieContinuityRestoreFailed');
+  assert.equal(restored.browser_id.fbc, fbc);
+  assert.equal(restored.browser_id.fbp, fbp);
+  assert.deepEqual(restored.click_id, api.events('page_view')[0].click_id);
+  assert.doesNotMatch(JSON.stringify(payload), /OfflineLandingClick|AQQCAQMC|123456789/);
+  assert.equal(api.requests.filter(request => request.path === '/api/log').length, 1);
+});
 }
 
 for (const safariMode of [false, true]) {

@@ -166,6 +166,31 @@ test('Meta collection deadline keeps its fixed reason through browser and backen
   }
 });
 
+test('fixed tracking failure reasons survive browser and backend without private details', () => {
+  const messages = bundled('..', 'src/lib/observability/client/sanitizeClientErrorBeacon.ts');
+  const codes = [
+    ['meta_cookie_continuity_restore_failed', 'MetaCookieContinuityRestoreFailed'],
+    ['customer_matching_unavailable', 'CustomerMatchingUnavailable'],
+    ['dispatch_failed', 'CanonicalDispatchFailed'],
+    ['event_contract_invalid', 'EventContractInvalid'],
+  ];
+  for (const [reason, code] of codes) {
+    const raw = `operation: Error: ${reason} private@example.com token=secret`;
+    assert.equal(messages.sanitizeClientErrorMessage(raw), code);
+    const sent = frontend.clientLogPayloadSchema.parse({
+      event: 'client_error', level: 'error',
+      data: { source: 'window_error', operation: 'caught', message: code },
+      context: { pathname: '/' },
+    });
+    const logged = backend.toAppLogInput(backend.clientLogPayloadSchema.parse(sent));
+    assert.equal(logged.data.message, code);
+    assert.doesNotMatch(JSON.stringify(logged), /private|token|secret/);
+    assert.equal(appContract.appLogInputSchema.safeParse(logged).success, true);
+    assert.equal(messages.sanitizeClientErrorMessage(reason + '_private'), 'ClientError');
+    assert.equal(messages.sanitizeClientErrorMessage(code + 'Private'), 'ClientError');
+  }
+});
+
 test('syntax categories survive both sanitizers without copying tokens or response contents', () => {
   const messages = bundled('..', 'src/lib/observability/client/sanitizeClientErrorBeacon.ts');
   for (const [raw, category] of [

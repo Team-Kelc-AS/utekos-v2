@@ -357,12 +357,10 @@ function preserveFirstMetaIdentifiers(input: {
   const fbpNeedsRestore = Boolean(fbp && !allCookieValuesMatch('_fbp', fbp))
   const restoredFbc = !fbcNeedsRestore || (fbc !== undefined && writeMetaCookie('_fbc', fbc))
   const restoredFbp = !fbpNeedsRestore || (fbp !== undefined && writeMetaCookie('_fbp', fbp))
-  if ((fbcNeedsRestore || fbpNeedsRestore) && !continuityReported) {
+  if ((!restoredFbc || !restoredFbp) && !continuityReported) {
     continuityReported = true
     reportClientCaughtError(
-      new Error(restoredFbc && restoredFbp ?
-        'meta_cookie_continuity_repaired'
-      : 'meta_cookie_continuity_restore_failed'),
+      new Error('meta_cookie_continuity_restore_failed'),
       'meta.identifier_continuity'
     )
   }

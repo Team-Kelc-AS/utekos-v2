@@ -3,6 +3,13 @@ import { sanitizeClientErrorFilename as sanitizeFilename } from '../logging/sani
 const KNOWN_ERROR =
   /\b(?:AbortError|TypeError|ReferenceError|SyntaxError|RangeError|TimeoutError|URIError|ZodError|Error)\b/
 
+const TRACKING_FAILURES = [
+  [/\b(?:meta_cookie_continuity_restore_failed|MetaCookieContinuityRestoreFailed)\b/, 'MetaCookieContinuityRestoreFailed'],
+  [/\b(?:customer_matching_unavailable|CustomerMatchingUnavailable)\b/, 'CustomerMatchingUnavailable'],
+  [/\b(?:dispatch_failed|CanonicalDispatchFailed)\b/, 'CanonicalDispatchFailed'],
+  [/\b(?:event_contract_invalid|EventContractInvalid)\b/, 'EventContractInvalid']
+] as const
+
 export function sanitizeClientErrorMessage(
   message: string
 ): string {
@@ -17,6 +24,9 @@ export function sanitizeClientErrorMessage(
   // The SDK may still be pending while canonical events continue via fallback.
   if (/\b(?:meta_parameter_collection_timeout|MetaParameterCollectionTimeout)\b/.test(message)) {
     return 'MetaParameterCollectionTimeout'
+  }
+  for (const [pattern, code] of TRACKING_FAILURES) {
+    if (pattern.test(message)) return code
   }
   if (/\bSyntaxError\b/.test(message)) {
     // Fixed categories only: never retain the offending token, code or response body.
