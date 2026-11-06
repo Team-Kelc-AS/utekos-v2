@@ -11,9 +11,9 @@ export type SummaryTarget = z.infer<typeof summaryTargetSchema>;
 
 export const pageSummarySchema = z.object({
   summary: z.string().trim().min(20).max(350)
-    .describe('En til to korte setninger på bokmål, maksimalt 35 ord, inkludert det viktigste forbeholdet.'),
+    .describe('En til to varme, selvsikre setninger på bokmål, maksimalt 35 ord, om produktets særegne fordeler for kunden.'),
   reviewSummary: z.string().trim().max(220)
-    .describe('Maksimalt 20 ord om faktiske produktomtaler. Tom streng når kilden mangler omtaletekst, eller siden er en artikkel.'),
+    .describe('Ett positivt kundehøydepunkt fra én relevant produktomtale med 4 eller 5 stjerner, maksimalt 20 ord. Parafrase tilskrevet én kunde. Tom streng uten egnet positiv omtale.'),
 });
 
 export const articleSummarySchema = z.object({
@@ -82,10 +82,9 @@ export function validateSummary(summary: PageSummary | ArticleSummary, source: S
   if (summary.summary.split(/\s+/).length > 35 || summary.reviewSummary.split(/\s+/).length > 20) {
     throw new Error('Summary word limit exceeded');
   }
-  const hasReviewText = source.kind === 'product' && source.reviews?.items.some(review => review.title || review.body);
+  const hasReviewText = source.reviews?.items.some(review => review.rating >= 4 && (review.title.trim() || review.body.trim()));
   if (!hasReviewText && summary.reviewSummary) {
     throw new Error('Summary contains unsupported review claims');
   }
-  if (hasReviewText && !summary.reviewSummary) throw new Error('Summary omitted available reviews');
   return summary;
 }

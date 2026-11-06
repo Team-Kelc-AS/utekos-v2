@@ -84,6 +84,12 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
                 {object.content.summary}
               </p>
             )}
+            {target.kind === "product" && object.content?.summary && (
+              <p className={`${paragraphClassName} text-base!`}>
+                Gratis frakt fra 999 kr. Gratis størrelsesbytte på plagg.
+                {" "}90 % levert innen to virkedager.
+              </p>
+            )}
             {target.kind === "product" &&
               object.reviews?.count !== undefined &&
               object.reviews.average !== undefined && (
@@ -107,6 +113,7 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
               )}
             {object.content?.reviewSummary && (
               <p className={`${paragraphClassName} text-base!`}>
+                <span className="font-extrabold">Et kundehøydepunkt: </span>
                 {object.content.reviewSummary}
               </p>
             )}
@@ -114,7 +121,7 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
               object.reviews.count !== undefined &&
               object.reviews.includedCount < object.reviews.count && (
                 <p className={noteClassName}>
-                  Omtaleteksten bygger på {object.reviews.includedCount} av{" "}
+                  Kundeutvalget omfatter {object.reviews.includedCount} av{" "}
                   {object.reviews.count} omtaler.
                 </p>
               )}

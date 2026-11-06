@@ -10,8 +10,19 @@ Produktoppsummeringen følger produktvariantens mørke trekkspillgradient.
 - Brain-ikon og tittelen «Kortversjonen» på produkter, og «Oppsummer denne
   artikkelen for meg» på artikler. Ingen synlig genereringssetning;
   en liten indikator har tilgjengelig status og respekterer redusert bevegelse.
-- Produkter har ett avsnitt på maksimalt 35 ord, inkludert vesentlige forbehold,
-  og inntil 20 ord om kundeerfaringer i tillegg.
+- Produkter har ett avsnitt på maksimalt 35 ord med én til to særegne,
+  kildebelagte fordeler og inntil 20 ord med ett positivt kundehøydepunkt.
+  Tonen følger lokal brand-voice («Curiously Bold»): varm, optimistisk,
+  selvsikker, konkret og menneskelig, uten overdrevne superlativer.
+  Kritikk og negative sammenligninger inngår ikke i Kortversjonen.
+  Påstander som krever vesentlige forbehold erstattes med en annen dokumentert
+  fordel; begrensninger skal ikke fjernes for å overdrive produktets ytelse.
+- En fast tekstlinje utenfor modellteksten sikrer at kjøpsfordelene alltid
+  vises: «Gratis frakt fra 999 kr. Gratis størrelsesbytte på plagg.
+  90 % levert innen to virkedager.» Fraktgrense og størrelsesbytte følger
+  butikkens lokale vilkår; 90 %-tallet er oppgitt av brukeren i bestillingen
+  6. november 2026, ikke beregnet av modellen eller verifisert mot leveringsdata.
+  Dette er en leveringsandel, ikke en garanti om leveringstid for hver ordre.
 - Artikler har 950–1000 tegn med mellomrom, fordelt på «Omfang» (ca. 15 %),
   «Hva lærer du?» (ca. 20 %) og «Rask oppsummering av innhold» (ca. 65 %).
   Den siste delen har 3–5 hovedpunkter med minst ett underpunkt. Fordelingen
@@ -29,7 +40,12 @@ Produktoppsummeringen følger produktvariantens mørke trekkspillgradient.
 - Gjennomsnitt og totalantall kommer direkte fra Judge.me, uten modellberegning.
   Modellen får maksimalt 40 publiserte omtaler, med stjerner og avgrenset tittel/tekst.
   Navn, ID, kjøpsstatus og dato sendes ikke til modellen. Ved delvis dekning
-  viser UI hvor mange omtaler som inngår. Kritikk må beholdes; kundeerfaringer
+  viser UI hvor mange omtaler som inngår i kildeutvalget. Hele kildeutvalget
+  beholdes, inkludert kritikk. Modellen velger ett relevant positivt høydepunkt
+  fra en omtale med 4 eller 5 stjerner, helst 5, og tilskriver det én kunde.
+  UI merker dette «Et kundehøydepunkt», ikke en oppsummering av alle omtalene.
+  Hvis utvalget mangler egnet positiv omtale, forblir feltet tomt.
+  Rating og antall påvirkes ikke av utvalget av høydepunkt. Kundeerfaringer
   skal ikke presenteres som dokumenterte produktegenskaper.
 - Artiklene bygges fra MDX uten å kjøre uttrykk/importer. Alle 12 registrerte
   artikler støttes. `pnpm dev` og `pnpm build` regenererer kildene; ved redigering

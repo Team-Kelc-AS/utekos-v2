@@ -231,15 +231,21 @@ test('source text, model and source identity participate in the cache key', () =
   assert.notEqual(summaryCacheKey({ ...source, reviews: { count: 1, average: 4, items: [] } }, 'test/model'), original);
 });
 
-test('compact responses enforce both word limits and reject unsupported customer claims', () => {
+test('compact responses enforce both word limits and require a highly rated source for customer highlights', () => {
   const { validateSummary } = loadTypeScript('lib/ai-summary/schema.ts');
   const product = { ...source, kind: 'product' };
   assert.equal(validateSummary(summary, product), summary);
   assert.throws(() => validateSummary({ ...summary, summary: 'ord '.repeat(36).trim() }, product), /word limit/);
   assert.throws(() => validateSummary({ ...summary, reviewSummary: 'ord '.repeat(21).trim() }, product), /word limit/);
-  for (const reviews of [null, { average: 0, count: 0, items: [] }, { average: 5, count: 1, items: [{ rating: 5, title: '', body: '' }] }]) {
+  for (const reviews of [null, { average: 0, count: 0, items: [] }, { average: 5, count: 1, items: [{ rating: 5, title: '', body: '' }] }, { average: 2, count: 1, items: [{ rating: 2, title: 'Passform', body: 'For trang.' }] }]) {
+    assert.equal(validateSummary(summary, { ...product, reviews }), summary);
     assert.throws(() => validateSummary({ ...summary, reviewSummary: 'Kundene liker produktet.' }, { ...product, reviews }), /unsupported review/);
   }
+  const reviews = { average: 5, count: 1, items: [{ rating: 5, title: 'Varm og god', body: 'Herlig på terrassen.' }] };
+  const highlight = { ...summary, reviewSummary: 'En kunde trekker frem god varme på terrassen.' };
+  assert.equal(validateSummary(highlight, { ...product, reviews }), highlight);
+  // Even a highly rated review may discuss another product or lack relevant praise.
+  assert.equal(validateSummary(summary, { ...product, reviews }), summary);
 });
 
 // Known section sizes, including the literal headings and block separators.
@@ -313,18 +319,18 @@ test('product reviews keep live aggregates, criticism and bounded text without r
 });
 
 test('product responses stream source ratings and retain them on cache hits', async () => {
-  const resolvedSource = { ...source, kind: 'product', reviews: { average: 4.3, count: 7, items: [{ rating: 2, title: 'Passform', body: 'For trang.' }] } };
-  const generated = { ...summary, reviewSummary: 'En kunde nevner trang passform.' };
+  const resolvedSource = { ...source, kind: 'product', reviews: { average: 4.3, count: 7, items: [{ rating: 2, title: 'Passform', body: 'For trang.' }, { rating: 5, title: 'Varm og god', body: 'Herlig på terrassen.' }] } };
+  const generated = { ...summary, reviewSummary: 'En kunde trekker frem god varme på terrassen.' };
   const app = routeHarness({ resolvedSource, generated });
   const first = await app.request();
   const result = await first.json();
-  assert.deepEqual(result, { reviews: { average: 4.3, count: 7, includedCount: 1 }, content: generated });
+  assert.deepEqual(result, { reviews: { average: 4.3, count: 7, includedCount: 2 }, content: generated });
   assert.deepEqual(await (await app.request()).json(), result);
   assert.equal(app.calls(), 1);
   assert.equal(app.sourceCalls(), 1);
-  const missing = routeHarness({ resolvedSource });
-  await assert.rejects((await missing.request()).text(), /kunne ikke fullføres/);
-  assert.equal(missing.cache.size, 1); // Only the validated source, never the invalid summary.
+  const unsupported = routeHarness({ resolvedSource: { ...resolvedSource, reviews: { average: 2, count: 1, items: [resolvedSource.reviews.items[0]] } }, generated });
+  await assert.rejects((await unsupported.request()).text(), /kunne ikke fullføres/);
+  assert.equal(unsupported.cache.size, 1); // Only the validated source, never the invalid summary.
 });
 
 test('unavailable product reviews fail without generating or caching a misleading summary', async () => {
