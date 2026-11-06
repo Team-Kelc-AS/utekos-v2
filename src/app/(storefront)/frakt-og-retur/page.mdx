@@ -6,6 +6,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { christmasReturnPolicy } from "@/lib/commerce/returnPolicy";
+import { DocsTableOfContents } from "@/components/knowledge/DocsTableOfContents";
+import { shippingReturnsToc } from "./shippingReturnsToc";
 
 <header className={styles.header}>
 <Badge variant="ghost" className={styles.eyebrow}>Kundeservice</Badge>
@@ -25,28 +27,20 @@ import { christmasReturnPolicy } from "@/lib/commerce/returnPolicy";
 </header>
 
 <Card className={styles.overviewCard}>
-<CardHeader>
-<CardTitle><h2 className={styles.overviewTitle}>Det viktigste først</h2></CardTitle>
-</CardHeader>
 <CardContent>
 <ShippingReturnsSummary className={styles.overview} />
 </CardContent>
 </Card>
 
-<div className={styles.layout}>
+<div className={styles.layout} data-knowledge-layout>
 <aside className={styles.sidebar}>
 
-<TableOfContents
-  title="Finn svaret ditt"
-  entries={[
-    { id: "frakt-og-levering", label: "Fraktpris og leveringstid" },
-    { id: "slik-returnerer-du", label: "Retur og returadresse" },
-    { id: "storrelsesbytte", label: "Gratis størrelsesbytte" },
-    { id: "refusjon", label: "Refusjon og behandlingstid" },
-    { id: "reklamasjon", label: "Reklamasjon og skader" },
-    { id: "ofte-stilte-sporsmal", label: "Ofte stilte spørsmål" },
-  ]}
-/>
+<div className={styles.mobileToc}>
+<DocsTableOfContents article={shippingReturnsToc} title="Finn svaret ditt" variant="accordion" />
+</div>
+<div className={styles.desktopToc}>
+<DocsTableOfContents article={shippingReturnsToc} title="Finn svaret ditt" variant="list" />
+</div>
 
 <Card className={styles.contact}>
 <CardHeader>
@@ -66,7 +60,7 @@ import { christmasReturnPolicy } from "@/lib/commerce/returnPolicy";
 </Card>
 </aside>
 
-<div className={styles.policy}>
+<article className={styles.policy}>
 <section id="frakt-og-levering" aria-labelledby="frakt-og-levering-heading">
 
 <h2 id="frakt-og-levering-heading">Fraktpris og leveringstid</h2>
@@ -260,5 +254,5 @@ Trenger du hjelp med modell eller størrelse før du bestiller? [Spør kundeserv
 
 <p className={styles.company}>Ansvarlig for vilkårene: Utekos / KELC AS. Siden er oppdatert <time dateTime="2026-11-06">6. november 2026</time>. Lovfestede forbrukerrettigheter gjelder i tillegg.</p>
 </div>
-</div>
+</article>
 </div>

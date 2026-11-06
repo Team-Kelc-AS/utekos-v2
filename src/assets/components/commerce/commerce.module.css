@@ -88,6 +88,32 @@
 .dialog::backdrop {
   background: #010b0ab3;
 }
+.cardDialog {
+  --card: #012622;
+  --card-foreground: #f0eee9;
+  --foreground: #f0eee9;
+  padding: 0;
+  background: var(--card);
+  color: var(--card-foreground);
+  border-color: #f0eee91f;
+}
+.dialogCard {
+  --card-spacing: 1.5rem;
+  gap: 1.5rem;
+  border-radius: inherit;
+  box-shadow: none;
+}
+.cardDialogHeading { align-items: center; }
+.cardDialogHeading h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.cardDialogFooter {
+  background: #001a18;
+  border-top-color: #f0eee91f;
+}
 .drawer {
   --foreground: #f0eee9;
   inset: 0 0 0 auto;

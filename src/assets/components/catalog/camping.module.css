@@ -14,8 +14,8 @@
 .page h1, .page h2, .page h3, .page h4 { font-weight: 800; }
 .page h2 { font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.15; }
 .hero { display: grid; align-items: center; gap: 2rem; margin-block: 2.5rem 4rem; }
-.hero h1 { font-size: clamp(2.25rem, 4.6vw, 3.9rem); line-height: 1.04; letter-spacing: -.035em; max-width: 14ch; text-wrap: balance; }
-.hero p { max-width: 48ch; margin-block: 1.5rem; font-size: 1.125rem; line-height: 1.65; }
+.hero h1 { font-size: clamp(2.25rem, 4.6vw, 3.9rem); line-height: 1.04; letter-spacing: -.035em; max-width: 28ch; text-wrap: balance; }
+.hero p { max-width: 55ch; margin-block: 0 1.5rem; font-size: 1.125rem; line-height: 1.65; }
 .heroImage, .productImage { display: block; width: 100%; height: auto; }
 .heroImage { border-radius: .75rem; }
 .heroLink { display: inline-flex; align-items: center; gap: 1.5rem; min-height: 44px; text-decoration: underline; text-underline-offset: .25em; }
@@ -38,18 +38,18 @@
 .page :is(a, button, summary):focus-visible, .purchase :is(button, summary, [tabindex]):focus-visible { outline: 2px solid #f0eee9; outline-offset: 4px; }
 .afterProducts { display: grid; gap: 2rem; margin-top: 3rem; padding-block: 2rem; border-top: 1px solid #f0eee930; }
 .explanation p { line-height: 1.8; max-width: 64ch; }
-.membership { display: flex; align-items: flex-start; gap: 1.5rem; padding: 1.5rem; background: var(--card); border-radius: .75rem; }
+.membership { display: flex; align-items: flex-start; gap: 1.5rem; padding: 1.5rem; background: var(--color-nbcc-red); border-radius: .75rem; }
 .membership h2 { font-size: 1.5rem; }
 .membership p { margin-block: .75rem; line-height: 1.65; }
-.membership a, .policy a { display: inline-block; min-height: 44px; text-decoration: underline; text-underline-offset: .2em; }
+.membership a, .policyFooterLink { display: inline-flex; align-items: center; min-height: 44px; text-decoration: underline; text-underline-offset: .2em; }
 .nbccLogo { display: block; width: 5rem; height: auto; flex: none; }
 .guidance { display: grid; gap: 2.5rem; margin-top: 2rem; }
 .pagination { display: flex; gap: 1rem; padding-block: 1.5rem; }
-.policy { padding-top: .5rem; }
 .policySummary > div { padding-block: 1rem; border-bottom: 1px solid #f0eee930; }
+.policySummary > div:first-child { padding-top: 0; }
+.policySummary > div:last-child { padding-bottom: 0; border-bottom: 0; }
 .policySummary dt { margin-bottom: .5rem; font-weight: 800; }
 .policySummary dd { margin: 0; line-height: 1.65; }
 .policySummary span { display: block; }
-.policy a { margin-top: 1rem; }
-@media (min-width: 900px) { .hero { grid-template-columns: 1fr 1fr; gap: 3rem; } .afterProducts { grid-template-columns: 1.1fr 1fr; gap: 3rem; } }
+@media (min-width: 900px) { .afterProducts { grid-template-columns: 1.1fr 1fr; gap: 3rem; } }
 @media (max-width: 420px) { .membership { flex-direction: column; } }

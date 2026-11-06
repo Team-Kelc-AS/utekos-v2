@@ -10,6 +10,7 @@
   --knowledge-link: #f0eee9;
   --knowledge-surface: var(--policy-card);
   --knowledge-border: var(--policy-line);
+  --knowledge-border-strong: var(--policy-line);
   --card: var(--policy-card);
   --card-foreground: #f0eee9;
   background-color: var(--policy-base);
@@ -94,12 +95,15 @@
 
 .layout { display: grid; align-items: start; gap: 3rem; padding-bottom: 4rem; }
 .sidebar, .policy { min-width: 0; }
+.desktopToc { display: none; }
 .page .sidebar nav {
   margin: 0;
   border: 0;
   background-color: var(--policy-card);
   background-image: linear-gradient(148deg, var(--policy-card), var(--policy-base) 70%, var(--policy-deep));
   box-shadow: inset 0 0 0 .5px var(--policy-line), 0 16px 36px #010b0a30;
+  padding: 1.25rem;
+  border-radius: .75rem;
 }
 .page .sidebar nav a { text-decoration-color: color-mix(in srgb, #f0eee9 40%, transparent); }
 .page .contact { --policy-card-gradient: linear-gradient(142deg, var(--policy-deep), var(--policy-card) 65%, var(--policy-base)); margin-top: 1.5rem; }
@@ -161,8 +165,11 @@
   .overview { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-@media (min-width: 62rem) {
+@media (min-width: 80rem) {
   .layout { grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 4rem; }
+  .sidebar { position: sticky; top: 2rem; max-height: calc(100dvh - 4rem); overflow-y: auto; }
+  .mobileToc { display: none; }
+  .desktopToc { display: block; }
 }
 
 @media print {

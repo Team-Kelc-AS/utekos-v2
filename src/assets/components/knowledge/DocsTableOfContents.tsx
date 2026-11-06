@@ -15,9 +15,11 @@ import styles from "./docsTableOfContents.module.css";
 export function DocsTableOfContents({
   article,
   variant,
+  title = "I denne artikkelen",
 }: {
   article: Pick<KnowledgeArticle, "slug" | "toc">;
   variant: "accordion" | "list";
+  title?: string;
 }) {
   const navRef = useRef<HTMLElement>(null);
   const [activeId, setActiveId] = useState<string | null>(article.toc[0]?.id ?? null);
@@ -109,7 +111,7 @@ export function DocsTableOfContents({
               headingLevel={2}
               typography="inherit"
             >
-              I denne artikkelen
+              {title}
             </AccordionTrigger>
             <AccordionContent variant="settings" typography="inherit" keepMounted>
               {links}
@@ -118,7 +120,7 @@ export function DocsTableOfContents({
         </Accordion>
       ) : (
         <>
-          <h2 id={headingId}>I denne artikkelen</h2>
+          <h2 id={headingId}>{title}</h2>
           {links}
         </>
       )}

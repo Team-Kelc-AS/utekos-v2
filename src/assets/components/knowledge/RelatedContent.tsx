@@ -13,7 +13,7 @@ const categoryGuides: Record<ListingKey, readonly ArticleKey[]> = {
   all: ["keepWarm", "baseLayer", "cloudweave"],
   varmeplagg: ["keepWarm", "baseLayer", "cloudweave"],
   tilbehor: ["keepWarm", "ykk"],
-  "camping-og-bobil": ["keepWarm", "baseLayer"],
+  "camping-og-bobil": ["christmasGift", "winterStorage", "keepWarm", "baseLayer", "cold", "glampingNorway"],
   hytte: ["keepWarm", "cold"],
   terrasse: ["terrace", "keepWarm"],
   glamping: ["keepWarm", "baseLayer"],
