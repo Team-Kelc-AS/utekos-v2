@@ -6,9 +6,11 @@ import { cn } from 'cn'
 import {
   knowledgeArticleList,
   knowledgeArticles,
+  getEditorialKnowledgeArticles,
   type KnowledgeArticle
 } from '@/lib/knowledge/knowledgeArticles'
 import styles from './knowledgeOverview.module.css'
+import { knowledgeCardDescription } from '@/lib/knowledge/knowledgeCardDescriptions'
 import { KnowledgeArticlePagination } from './KnowledgeArticlePagination'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
@@ -17,7 +19,7 @@ import { ImageHoverZoom } from '@/components/ImageHoverZoom'
 
 type OverviewArticle = KnowledgeArticle
 
-const overviewArticles = knowledgeArticleList
+const overviewArticles = getEditorialKnowledgeArticles(knowledgeArticleList)
 
 const publicationMonthFormatter = new Intl.DateTimeFormat('nb-NO', {
   month: 'long',
@@ -138,7 +140,7 @@ function KnowledgeArticleCard({
             <CardDescription className="font-medium text-[#f0eee9b3]">
               <ArticlePublicationMonth article={article} />
             </CardDescription>
-            {featured && <p className={styles.featuredDescription}>{article.description}</p>}
+            {featured && <p className={styles.featuredDescription}>{knowledgeCardDescription(article)}</p>}
           </CardHeader>
           <CardFooter className="border-[#f0eee920] bg-transparent">
             <span className={cn(buttonVariants(), 'w-full rounded-full bg-[#b44701] font-bold text-[#f0eee9] transition-colors group-hover:bg-[#8a3600] motion-reduce:transition-none')}>

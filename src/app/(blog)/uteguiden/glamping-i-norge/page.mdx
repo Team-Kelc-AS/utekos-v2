@@ -1,3 +1,4 @@
+import { KnowledgeArticleNavigation, KnowledgeArticleReadingTools } from "@/components/knowledge/KnowledgeArticleScaffold";
 import { MostReadArticles } from "@/components/knowledge/MostReadArticles";
 import articleStyles from "../knowledgeArticle.module.css";
 import { KnowledgeArticleIntro } from "@/components/knowledge/KnowledgeArticleIntro";
@@ -6,36 +7,29 @@ import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
 import { KnowledgeRegisteredImage } from "@/components/knowledge/KnowledgeRegisteredImage";
 import chrome from "@/components/knowledge/knowledgeChrome.module.css";
 
+<KnowledgeArticleNavigation article={knowledgeArticles.glampingNorway}>
 <article id="top" className={articleStyles.article}>
 
 <KnowledgeArticleIntro article={knowledgeArticles.glampingNorway}>
 
 # Glamping i Norge: Dette bør du sjekke før du bestiller – og pakke før du drar
 
-<p className={chrome.ingress}>For å velge riktig glampingopphold og pakke riktig, må du kartlegge stedets standard for oppvarming, toalettforhold, adkomst og mattilbud, og deretter tilpasse utstyret ditt med lag-på-lag-bekledning og vanntett fottøy.</p>
-
+<p className={chrome.ingress}>
+  {"For å velge riktig glampingopphold og pakke riktig, må du kartlegge stedets standard for oppvarming, toalettforhold, adkomst og mattilbud, og deretter tilpasse utstyret ditt med lag-på-lag-bekledning og vanntett fottøy."}
+</p>
 
 </KnowledgeArticleIntro>
 
-
-<KnowledgeRegisteredImage article={knowledgeArticles.glampingNorway} preload />
+<KnowledgeRegisteredImage
+  article={knowledgeArticles.glampingNorway}
+  preload
+/>
 
 <div className={articleStyles.body} data-article-body>
 
 <PageAiSummary target={{ kind: "article", slug: "glamping-i-norge" }} />
 
-<section className={chrome.toc} role="navigation" aria-labelledby="i-denne-artikkelen">
-
-## I denne artikkelen
-
-* [Hvilke oppvarmingsmuligheter avgjør om glampingstedet kan brukes komfortabelt?](#hvilke-oppvarmingsmuligheter-avgjør-om-glampingstedet-kan-brukes-komfortabelt)
-* [Hvilken standard kan du forvente av toalett- og dusjfasilitetene på ulike destinasjoner?](#hvilken-standard-kan-du-forvente-av-toalett--og-dusjfasilitetene-på-ulike-destinasjoner)
-* [Hvor fysisk krevende er adkomsten fra transportmiddelet til selve boenheten?](#hvor-fysisk-krevende-er-adkomsten-fra-transportmiddelet-til-selve-boenheten)
-* [Hvilke fasiliteter for matlaging og servering finnes tilgjengelig i villmarken?](#hvilke-fasiliteter-for-matlaging-og-servering-finnes-tilgjengelig-i-villmarken)
-* [Hvordan påvirker de uforutsigbare norske væromslagene glampingopplevelsen?](#hvordan-påvirker-de-uforutsigbare-norske-væromslagene-glampingopplevelsen)
-* [Hvilke klær og hvilket spesialutstyr er strengt nødvendig å pakke i sekken?](#hvilke-klær-og-hvilket-spesialutstyr-er-strengt-nødvendig-å-pakke-i-sekken)
-
-</section>
+<KnowledgeArticleReadingTools article={knowledgeArticles.glampingNorway} />
 
 ## Hvilke oppvarmingsmuligheter avgjør om glampingstedet kan brukes komfortabelt?
 
@@ -121,10 +115,10 @@ Forskningsartikkelen "Consumers' Motivations and Obstacles for Glamping Tourism"
 <details className={chrome.sourcesDetails}>
 <summary className={chrome.sourcesSummary} id="referanser">Referanser</summary>
 
-* [1] Innovasjon Norge / Visit Norway (u.å.). Glamping hele året | Glamorøs camping.
-* [2] DNT (2023). Digitalt friluftskurs: Bekledning og tursekken - DNT.
-* [3] Consumers' Motivations and Obstacles for Glamping Tourism (Forskning/Avhandling).
-* [4] Brukergenerert innhold / Estetiske teorier og atmosfære (Sustainability 2023, 15, 581).
+- [1] Innovasjon Norge / Visit Norway (u.å.). Glamping hele året | Glamorøs camping.
+- [2] DNT (2023). Digitalt friluftskurs: Bekledning og tursekken - DNT.
+- [3] Consumers' Motivations and Obstacles for Glamping Tourism (Forskning/Avhandling).
+- [4] Brukergenerert innhold / Estetiske teorier og atmosfære (Sustainability 2023, 15, 581).
 
 </details>
 </section>
@@ -132,3 +126,4 @@ Forskningsartikkelen "Consumers' Motivations and Obstacles for Glamping Tourism"
 <MostReadArticles currentSlug={knowledgeArticles.glampingNorway.slug} />
 
 </article>
+</KnowledgeArticleNavigation>

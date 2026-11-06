@@ -1,3 +1,4 @@
+import { KnowledgeArticleNavigation, KnowledgeArticleReadingTools } from "@/components/knowledge/KnowledgeArticleScaffold";
 import { MostReadArticles } from "@/components/knowledge/MostReadArticles";
 import articleStyles from "../knowledgeArticle.module.css";
 import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
@@ -7,8 +8,8 @@ import imageStyles from "@/components/knowledge/knowledgeChrome.module.css";
 import { KnowledgeArticleIntro } from "@/components/knowledge/KnowledgeArticleIntro";
 import { KnowledgeSources } from "@/components/knowledge/KnowledgeSources";
 import { KnowledgeLearnings } from "@/components/knowledge/KnowledgeLearnings";
-import { KnowledgeToc } from "@/components/knowledge/KnowledgeToc";
 
+<KnowledgeArticleNavigation article={knowledgeArticles.glamping}>
 <article id="top" className={articleStyles.article}>
 
 <KnowledgeArticleIntro article={knowledgeArticles.glamping}>
@@ -54,45 +55,7 @@ import { KnowledgeToc } from "@/components/knowledge/KnowledgeToc";
   }}
 />
 
-<KnowledgeToc
-  article={{
-    slug: "hva-er-glamping",
-    toc: [
-      {
-        id: "introduksjon-og-leksikalsk-grunnlag-definisjonen-av-et-paradigmeskifte",
-        label: "Definisjonen og leksikalsk grunnlag",
-      },
-      {
-        id: "den-historiske-evolusjonen-fra-kongelige-paviljonger-til-postmoderne-eskapisme",
-        label: "Den historiske evolusjonen av luksustelting",
-      },
-      {
-        id: "demografisk-profil-og-forbrukerpsykologi-hvem-er-glamperen",
-        label: "Demografisk profil og forbrukerpsykologi",
-      },
-      {
-        id: "arkitektoniske-normer-estetikk-og-kommersielt-tilbud",
-        label: "Arkitektoniske normer og det kommersielle tilbudet",
-      },
-      {
-        id: "den-globale-økonomien-markedsstørrelse-capex-opex-og-finansiell-analyse",
-        label: "Den globale glampingøkonomien og finansiell analyse",
-      },
-      {
-        id: "den-norske-konteksten-allemannsrett-reguleringer-og-unik-arkitektur",
-        label: "Glamping i en norsk kontekst (allemannsrett og reguleringer)",
-      },
-      {
-        id: "bærekraft-økoturisme-og-kritikken-mot-grønnvasking",
-        label: "Bærekraft, økoturisme og kritikken mot grønnvasking",
-      },
-      {
-        id: "avsluttende-betraktninger",
-        label: "Avsluttende betraktninger og fremtidsutsikter",
-      },
-    ],
-  }}
-/>
+<KnowledgeArticleReadingTools article={knowledgeArticles.glamping} />
 
 ## Introduksjon og leksikalsk grunnlag: Definisjonen av et paradigmeskifte
 
@@ -312,3 +275,4 @@ For at sektoren skal opprettholde sin eksplosive vekst frem mot 2035, står den 
 <MostReadArticles currentSlug={knowledgeArticles.glamping.slug} />
 
 </article>
+</KnowledgeArticleNavigation>

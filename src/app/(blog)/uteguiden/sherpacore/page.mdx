@@ -2,7 +2,6 @@ import { KnowledgeArticleIntro } from "@/components/knowledge/KnowledgeArticleIn
 import { KnowledgeArticleScaffold } from "@/components/knowledge/KnowledgeArticleScaffold";
 import { sherpaCoreArticle } from "@/lib/knowledge/sherpacoreArticle";
 import { EditorialFigure } from "./SherpaCoreArticleParts";
-import { ArticleReadingProgress } from "@/components/knowledge/ArticleReadingProgress";
 import articleStyles from "../knowledgeArticle.module.css";
 import chrome from "@/components/knowledge/knowledgeChrome.module.css";
 import styles from "./sherpacore.module.css";
@@ -21,8 +20,6 @@ import styles from "./sherpacore.module.css";
   caption="Den krusede overflaten i sherpa-fleece er konstruert av syntetiske polyesterfibre for å etterligne strukturen i ull uten bruk av animalske fibre."
 preload />}
   footer={<>
-<ArticleReadingProgress />
-{/* 5. Tilbake til toppen-pille */}
 
 <div className={chrome.backToTopWrap}>
   <a href="#top" className={chrome.backToTop} aria-label="Tilbake til toppen">
@@ -30,8 +27,6 @@ preload />}
     ↑ Tilbake til toppen{" "}
   </a>
 </div>
-
-{/* 6. Kilder (N) */}
 
 <details id="kilder" className={chrome.sources}>
   <summary className={chrome.sourcesSummary}>Kilder (6)</summary>
@@ -113,7 +108,8 @@ preload />}
 
 {/* 2. Hva du vil lære */}
 
-<aside data-ai-source-exclude
+<aside
+  data-ai-source-exclude
   className={`${chrome.learnings} ${styles.panel}`}
   aria-labelledby="learning-heading"
 >
@@ -144,39 +140,8 @@ preload />}
 
 {/* 3. I denne artikkelen */}
 
-<nav aria-label="I denne artikkelen" className={chrome.toc}>
-  <h2> I denne artikkelen </h2>
-  <ol className={chrome.tocList}>
-    <li>
-      <a href="#hva-sherpa-betyr">Hva sherpa-begrepet betyr</a>
-    </li>
-    <li>
-      <a href="#hvordan-fleece-gir-varme">Hvordan fleece bidrar til varme</a>
-    </li>
-    <li>
-      <a href="#hva-250-gm2-betyr">Hva 250 g/m² betyr</a>
-    </li>
-    <li>
-      <a href="#hvordan-polyester-handterer-vann">Hvordan polyesterstoff håndterer vann</a>
-    </li>
-    <li>
-      <a href="#mykhet-og-komfort">Mykhet og termofysiologisk komfort</a>
-    </li>
-    <li>
-      <a href="#forets-rolle-i-comfyrobe">Fôrets rolle i Comfyrobe</a>
-    </li>
-    <li>
-      <a href="#vanlige-kundesporsmal">Vanlige spørsmål om SherpaCore™</a>
-    </li>
-    <li>
-      <a href="#kilder">Kilder</a>
-    </li>
-  </ol>
-</nav>
 
 {/* Bilde 1 */}
-
-
 
 <h2 id="hva-sherpa-betyr">Hva sherpa-begrepet betyr</h2>
 
@@ -262,9 +227,12 @@ vann selve fiberkjernen holder igjen <Cite ids={[4]} />.
 
 Tekstilfaglig måles bærekomfort gjennom tre faktorer: varme- og
 fuktregulering, hudfølelse (skin-sensorial comfort) og ergonomisk passform{" "}
+
 <Cite ids={[6]} />. SherpaCore™ er behandlet med antinuppe-prosess
 (anti-pilling) for å bevare den myke overflaten mot huden over tid, samtidig som
-en romslig passform i plagget gir plass til luftlag og bevegelse <Cite ids={[5]} /><Cite ids={[6]} />.
+en romslig passform i plagget gir plass til luftlag og bevegelse
+<Cite ids={[5]} />
+<Cite ids={[6]} />.
 
 <h2 id="forets-rolle-i-comfyrobe">Fôrets rolle i Comfyrobe</h2>
 

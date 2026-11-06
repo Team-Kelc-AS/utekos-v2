@@ -2,7 +2,8 @@ import "server-only";
 
 import type { ReactNode } from "react";
 import { ImageCardSection } from "@/components/ImageCardSection";
-import type { KnowledgeArticle } from "@/lib/knowledge/knowledgeArticles";
+import { getEditorialKnowledgeArticles, type KnowledgeArticle } from "@/lib/knowledge/knowledgeArticles";
+import { knowledgeCardDescription } from "@/lib/knowledge/knowledgeCardDescriptions";
 
 export function KnowledgeGuideCards({
   articles,
@@ -17,10 +18,10 @@ export function KnowledgeGuideCards({
     <ImageCardSection
       id={id}
       title="Råd fra Uteguiden"
-      cards={articles.map((article) => ({
+      cards={getEditorialKnowledgeArticles(articles).map((article) => ({
         href: article.path,
         title: article.title,
-        description: article.description,
+        description: knowledgeCardDescription(article),
         image: article.cardImage,
         imageHoverZoom: true,
         badge: "Uteguiden",

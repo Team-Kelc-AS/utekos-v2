@@ -908,7 +908,40 @@ const articleContent = {
     updatedAt: "2026-11-05",
     topics: ["glamping", "historie", "turisme"],
     learnings: [],
-    toc: [],
+    toc: [
+      {
+        "id": "introduksjon-og-leksikalsk-grunnlag-definisjonen-av-et-paradigmeskifte",
+        "label": "Introduksjon og leksikalsk grunnlag: Definisjonen av et paradigmeskifte"
+      },
+      {
+        "id": "den-historiske-evolusjonen-fra-kongelige-paviljonger-til-postmoderne-eskapisme",
+        "label": "Den historiske evolusjonen: Fra kongelige paviljonger til postmoderne eskapisme"
+      },
+      {
+        "id": "demografisk-profil-og-forbrukerpsykologi-hvem-er-glamperen",
+        "label": "Demografisk profil og forbrukerpsykologi: Hvem er \"Glamperen\"?"
+      },
+      {
+        "id": "arkitektoniske-normer-estetikk-og-kommersielt-tilbud",
+        "label": "Arkitektoniske normer, estetikk og kommersielt tilbud"
+      },
+      {
+        "id": "den-globale-økonomien-markedsstørrelse-capex-opex-og-finansiell-analyse",
+        "label": "Den globale økonomien: markedsstørrelse, CapEx, OpEx og finansiell analyse"
+      },
+      {
+        "id": "den-norske-konteksten-allemannsrett-reguleringer-og-unik-arkitektur",
+        "label": "Den norske konteksten: Allemannsrett, reguleringer og unik arkitektur"
+      },
+      {
+        "id": "bærekraft-økoturisme-og-kritikken-mot-grønnvasking",
+        "label": "Bærekraft, økoturisme og kritikken mot grønnvasking"
+      },
+      {
+        "id": "avsluttende-betraktninger",
+        "label": "Avsluttende betraktninger"
+      }
+    ],
     references: glampingReferences,
   },
   glampingNorway: {
@@ -924,7 +957,36 @@ const articleContent = {
     updatedAt: "2026-11-05",
     topics: ["glamping", "Norge", "pakkeliste"],
     learnings: [],
-    toc: [],
+    toc: [
+      {
+        "id": "hvilke-oppvarmingsmuligheter-avgjør-om-glampingstedet-kan-brukes-komfortabelt",
+        "label": "Hvilke oppvarmingsmuligheter avgjør om glampingstedet kan brukes komfortabelt?"
+      },
+      {
+        "id": "hvilken-standard-kan-du-forvente-av-toalett--og-dusjfasilitetene-på-ulike-destinasjoner",
+        "label": "Hvilken standard kan du forvente av toalett- og dusjfasilitetene på ulike destinasjoner?"
+      },
+      {
+        "id": "hvor-fysisk-krevende-er-adkomsten-fra-transportmiddelet-til-selve-boenheten",
+        "label": "Hvor fysisk krevende er adkomsten fra transportmiddelet til selve boenheten?"
+      },
+      {
+        "id": "hvilke-fasiliteter-for-matlaging-og-servering-finnes-tilgjengelig-i-villmarken",
+        "label": "Hvilke fasiliteter for matlaging og servering finnes tilgjengelig i villmarken?"
+      },
+      {
+        "id": "hvordan-påvirker-de-uforutsigbare-norske-væromslagene-glampingopplevelsen",
+        "label": "Hvordan påvirker de uforutsigbare norske væromslagene glampingopplevelsen?"
+      },
+      {
+        "id": "hvilke-klær-og-hvilket-spesialutstyr-er-strengt-nødvendig-å-pakke-i-sekken",
+        "label": "Hvilke klær og hvilket spesialutstyr er strengt nødvendig å pakke i sekken?"
+      },
+      {
+        "id": "konklusjon-slik-sikrer-du-den-perfekte-balansen-mellom-natur-og-luksus",
+        "label": "Konklusjon: Slik sikrer du den perfekte balansen mellom natur og luksus"
+      }
+    ],
     references: [],
   },
   winterStorage: {
@@ -942,7 +1004,32 @@ const articleContent = {
 
     topics: ["vinterlagring", "campingvogn", "bobil"],
     learnings: [],
-    toc: [],
+    toc: [
+      {
+        "id": "felles-for-begge--valg-av-lagringssted-vann-fukt-rengjøring-skadedyr-og-tilsyn",
+        "label": "Felles for begge – Valg av lagringssted, vann, fukt, rengjøring, skadedyr og tilsyn"
+      },
+      {
+        "id": "særlig-for-bobil--motor-drivstoff-og-elektriske-systemer",
+        "label": "Særlig for bobil – Motor, drivstoff og elektriske systemer"
+      },
+      {
+        "id": "særlig-for-campingvogn--oppstilling-støttebein-drag-og-kobling",
+        "label": "Særlig for campingvogn – Oppstilling, støttebein, drag og kobling"
+      },
+      {
+        "id": "vinterbruk-og-oppholdet--tilgang-til-strøm-vann-tømming-og-brøytet-plass",
+        "label": "Vinterbruk og Oppholdet – Tilgang til strøm, vann, tømming og brøytet plass"
+      },
+      {
+        "id": "reisen--vinterutrustning-vær-og-fremkommelighet",
+        "label": "Reisen – Vinterutrustning, vær og fremkommelighet"
+      },
+      {
+        "id": "komforten--klær-og-utstyr-til-tiden-både-inne-og-ute",
+        "label": "Komforten – Klær og utstyr til tiden både inne og ute"
+      }
+    ],
     references: winterStorageReferences,
   },
 } as const satisfies Record<string, ArticleContent>;
@@ -1032,10 +1119,18 @@ export const knowledgeArticleList: readonly KnowledgeArticle[] =
 
 validateKnowledgeArticles(knowledgeArticleList);
 
+/** Editorial priority only; measured readership uses the original registry. */
+export function getEditorialKnowledgeArticles(
+  articles: readonly KnowledgeArticle[] = knowledgeArticleList,
+): readonly KnowledgeArticle[] {
+  const featured = knowledgeArticles.christmasGift;
+  return [featured, ...articles.filter(article => article.path !== featured.path)];
+}
+
 /** Every registered guide is discoverable, excluding the current article itself. */
 export function getRelatedKnowledgeArticles(
   article: KnowledgeArticle,
   articles: readonly KnowledgeArticle[] = knowledgeArticleList,
 ): readonly KnowledgeArticle[] {
-  return articles.filter((related) => related.path !== article.path);
+  return getEditorialKnowledgeArticles(articles).filter((related) => related.path !== article.path);
 }

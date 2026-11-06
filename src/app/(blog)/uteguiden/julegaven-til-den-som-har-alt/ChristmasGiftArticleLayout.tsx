@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { ArticleReadingProgress } from "@/components/knowledge/ArticleReadingProgress";
 import { KnowledgeArticleScaffold } from "@/components/knowledge/KnowledgeArticleScaffold";
 import imageStyles from "@/components/knowledge/knowledgeChrome.module.css";
 import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
@@ -34,7 +33,6 @@ export function ChristmasGiftArticleLayout({
         </figure>
       }
     >
-      <ArticleReadingProgress />
       {children}
     </KnowledgeArticleScaffold>
   );

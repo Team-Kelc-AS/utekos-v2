@@ -51,7 +51,40 @@ export const sherpaCoreArticle = {
     "alt": "Nærbilde av lyst sherpa-fôr, mørkt ytterstoff og glidelås med Comfyrobe-merke."
   },
   "learnings": [],
-  "toc": [],
+  "toc": [
+      {
+        "id": "hva-sherpa-betyr",
+        "label": "Hva sherpa-begrepet betyr"
+      },
+      {
+        "id": "hvordan-fleece-gir-varme",
+        "label": "Hvordan fleece bidrar til varme"
+      },
+      {
+        "id": "hva-250-gm2-betyr",
+        "label": "Hva 250 g/m² betyr"
+      },
+      {
+        "id": "hvordan-polyester-handterer-vann",
+        "label": "Hvordan polyesterstoff håndterer vann"
+      },
+      {
+        "id": "mykhet-og-komfort",
+        "label": "Mykhet og termofysiologisk komfort"
+      },
+      {
+        "id": "forets-rolle-i-comfyrobe",
+        "label": "Fôrets rolle i Comfyrobe"
+      },
+      {
+        "id": "vanlige-kundesporsmal",
+        "label": "Vanlige spørsmål om SherpaCore™"
+      },
+      {
+        "id": "kilder",
+        "label": "Kilder"
+      }
+    ],
   "references": [
     {
       "title": "Thermal Pro™ – High-loft & Sherpa Fleece Insulation Fabrics",

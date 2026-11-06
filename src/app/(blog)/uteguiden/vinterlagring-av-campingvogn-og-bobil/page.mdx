@@ -1,3 +1,4 @@
+import { KnowledgeArticleNavigation, KnowledgeArticleReadingTools } from "@/components/knowledge/KnowledgeArticleScaffold";
 import { MostReadArticles } from "@/components/knowledge/MostReadArticles";
 import articleStyles from "../knowledgeArticle.module.css";
 import { KnowledgeRegisteredImage } from "@/components/knowledge/KnowledgeRegisteredImage";
@@ -5,9 +6,9 @@ import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
 import { KnowledgeArticleIntro } from "@/components/knowledge/KnowledgeArticleIntro";
 import { PageAiSummary } from "@/components/ai-summary/PageAiSummary";
 import { KnowledgeLearnings } from "@/components/knowledge/KnowledgeLearnings";
-import { KnowledgeToc } from "@/components/knowledge/KnowledgeToc";
 import { KnowledgeSources } from "@/components/knowledge/KnowledgeSources";
 
+<KnowledgeArticleNavigation article={knowledgeArticles.winterStorage}>
 <article id="top" className={articleStyles.article}>
 
 <KnowledgeArticleIntro article={knowledgeArticles.winterStorage}>
@@ -40,35 +41,7 @@ Denne dyptgående og autoritære rapporten, utarbeidet for utekosguiden, leverer
   ]
 }} />
 
-<KnowledgeToc article={{
-  "slug": "vinterlagring-av-campingvogn-og-bobil",
-  "toc": [
-    {
-      "id": "felles-for-begge--valg-av-lagringssted-vann-fukt-rengjøring-skadedyr-og-tilsyn",
-      "label": "Felles for begge – Valg av lagringssted, vann, fukt, rengjøring, skadedyr og tilsyn"
-    },
-    {
-      "id": "særlig-for-bobil--motor-drivstoff-og-elektriske-systemer",
-      "label": "Særlig for bobil – Motor, drivstoff og elektriske systemer"
-    },
-    {
-      "id": "særlig-for-campingvogn--oppstilling-støttebein-drag-og-kobling",
-      "label": "Særlig for campingvogn – Oppstilling, støttebein, drag og kobling"
-    },
-    {
-      "id": "vinterbruk-og-oppholdet--tilgang-til-strøm-vann-tømming-og-brøytet-plass",
-      "label": "Vinterbruk og Oppholdet – Tilgang til strøm, vann, tømming og brøytet plass"
-    },
-    {
-      "id": "reisen--vinterutrustning-vær-og-fremkommelighet",
-      "label": "Reisen – Vinterutrustning, vær og fremkommelighet"
-    },
-    {
-      "id": "komforten--klær-og-utstyr-til-tiden-både-inne-og-ute",
-      "label": "Komforten – Klær og utstyr til tiden både inne og ute"
-    }
-  ]
-}} />
+<KnowledgeArticleReadingTools article={knowledgeArticles.winterStorage} />
 
 ## Felles for begge – Valg av lagringssted, vann, fukt, rengjøring, skadedyr og tilsyn
 
@@ -353,3 +326,4 @@ Nedenfor følger en oversikt over kildene og de faktiske nettadressene som danne
 <MostReadArticles currentSlug={knowledgeArticles.winterStorage.slug} />
 
 </article>
+</KnowledgeArticleNavigation>

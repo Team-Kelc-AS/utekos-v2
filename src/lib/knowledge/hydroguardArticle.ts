@@ -48,7 +48,40 @@ export const hydroGuardArticle = {
     "alt": "Hender som holder et snitt av ytterstoffet for å vise kontrasten mellom den matte utsiden og det jevne PU-belegget på baksiden i et nordisk arbeidsrom."
   },
   "learnings": [],
-  "toc": [],
+  "toc": [
+      {
+        "id": "hva-hydroguard-er",
+        "label": "Hva HydroGuard™ er"
+      },
+      {
+        "id": "hva-peach-skin-betyr",
+        "label": "Hva peach skin betyr"
+      },
+      {
+        "id": "hva-pu-belegget-gjor",
+        "label": "Hva PU-belegget gjør"
+      },
+      {
+        "id": "vanntetthet-og-pusteevne",
+        "label": "Hvordan vanntetthet og pusteevne kan kombineres"
+      },
+      {
+        "id": "vanntett-og-vannavvisende",
+        "label": "Forskjellen på vanntett og vannavvisende"
+      },
+      {
+        "id": "pusteevne-og-gramvekt",
+        "label": "Hva pusteevne og 130 g/m² betyr"
+      },
+      {
+        "id": "samspillet-med-sherpacore",
+        "label": "Samspillet med SherpaCore™"
+      },
+      {
+        "id": "vedlikehold-og-vask",
+        "label": "Vedlikehold og vask"
+      }
+    ],
   "references": [
     {
       "title": "1305UNISEX_DRYROBE Bill of Materials (Style #1305UNISEX, side 29, komponent ZUzuC HydroGuard™ og JTGsw SherpaCore™)",

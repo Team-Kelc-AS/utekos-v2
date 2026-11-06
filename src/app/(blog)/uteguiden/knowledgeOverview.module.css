@@ -1,10 +1,22 @@
 .overview {
-  --knowledge-ink: #010b0a;
-  --knowledge-ink-muted: #012622;
-  --knowledge-link: #b44701;
-  --knowledge-border: color-mix(in srgb, #001a18 22%, transparent);
-  --overview-surface: #f0eee9;
-  --overview-card: color-mix(in srgb, #001a18 4%, #f0eee9);
+  --knowledge-ink: #f0eee9;
+  --knowledge-ink-muted: #f0eee9;
+  --knowledge-link: #f0eee9;
+  --knowledge-border: color-mix(in srgb, #f0eee9 25%, transparent);
+  --overview-surface: #001211;
+  --overview-card: #012622;
+  --overview-page-gradient: linear-gradient(
+    90deg in oklch,
+    #010b0a 0%,
+    #001211 12.5%,
+    #001a18 25%,
+    #001f1c 37.5%,
+    #012622 50%,
+    #001f1c 62.5%,
+    #001a18 75%,
+    #001211 87.5%,
+    #010b0a 100%
+  );
   --overview-gradient: linear-gradient(
     90deg,
     #000a09,
@@ -18,10 +30,19 @@
     #000a09
   );
   padding-bottom: clamp(4rem, 8vw, 7rem);
-  background: var(--overview-surface);
+  background-color: var(--overview-surface);
+  background-image: var(--overview-page-gradient);
   color: var(--knowledge-ink);
   font-family: var(--font-google-sans-flex), sans-serif;
   font-weight: 500;
+}
+
+/* Match the footer only while the overview is the visible route. */
+:global(body):has(
+  > main .overview:not([style*="display: none"], [style*="display: none"] *)
+) > :global(header) {
+  background-color: #001211;
+  background-image: var(--background-gradient);
 }
 
 .contentWidth {
@@ -140,6 +161,9 @@
   font-weight: 800;
   min-height: 44px;
   text-underline-offset: 0.25em;
+  padding-inline: 1rem;
+  background: #b44701;
+  border-radius: 12px;
 }
 .sectionTitle {
   margin: 0 0 1.5rem;
@@ -373,22 +397,6 @@
   }
   .topicNav a {
     width: 100%;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .overview {
-    --knowledge-ink: #f0eee9;
-    --knowledge-ink-muted: #f0eee9;
-    --knowledge-link: #f0eee9;
-    --knowledge-border: color-mix(in srgb, #f0eee9 25%, transparent);
-    --overview-surface: #001a18;
-    --overview-card: #012622;
-  }
-  .heroLink {
-    padding-inline: 1rem;
-    background: #b44701;
-    border-radius: 12px;
   }
 }
 

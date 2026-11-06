@@ -1,3 +1,4 @@
+import { KnowledgeArticleNavigation, KnowledgeArticleReadingTools } from "@/components/knowledge/KnowledgeArticleScaffold";
 import { KnowledgeArticleIntro } from "@/components/knowledge/KnowledgeArticleIntro";
 import { PageAiSummary } from "@/components/ai-summary/PageAiSummary";
 import { hydroGuardArticle } from "@/lib/knowledge/hydroguardArticle";
@@ -9,6 +10,7 @@ import articleStyles from "../knowledgeArticle.module.css";
 import chrome from "@/components/knowledge/knowledgeChrome.module.css";
 import styles from "./hydroguard.module.css";
 
+<KnowledgeArticleNavigation article={hydroGuardArticle}>
 <article id="top" className={`${articleStyles.article} ${articleStyles.body} ${styles.article}`}>
 
 <KnowledgeArticleIntro article={hydroGuardArticle}>
@@ -57,29 +59,7 @@ preload />
 
 </aside>
 
-<TableOfContents
-  className={chrome.toc}
-  title="I denne artikkelen"
-  entries={[
-    { label: "Hva HydroGuard™ er", id: "hva-hydroguard-er" },
-    { label: "Hva peach skin betyr", id: "hva-peach-skin-betyr" },
-    { label: "Hva PU-belegget gjør", id: "hva-pu-belegget-gjor" },
-    {
-      label: "Hvordan vanntetthet og pusteevne kombineres",
-      id: "vanntetthet-og-pusteevne",
-    },
-    {
-      label: "Forskjellen på vanntett og vannavvisende",
-      id: "vanntett-og-vannavvisende",
-    },
-    {
-      label: "Hva pusteevne og 130 g/m² betyr",
-      id: "pusteevne-og-gramvekt",
-    },
-    { label: "Samspillet med SherpaCore™", id: "samspillet-med-sherpacore" },
-    { label: "Vedlikehold og vask", id: "vedlikehold-og-vask" },
-  ]}
-/>
+<KnowledgeArticleReadingTools article={hydroGuardArticle} />
 
 {/* 4. Brødtekst */}
 
@@ -258,3 +238,4 @@ Selv om ytterstoffet isolert sett er spesifisert for vask ved
 <MostReadArticles currentSlug="hydroguard" />
 
 </article>
+</KnowledgeArticleNavigation>
