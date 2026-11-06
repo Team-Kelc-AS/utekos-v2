@@ -33,7 +33,7 @@ export default {
     "readingMinutes": 4
   },
   "julegaven-til-den-som-har-alt": {
-    "wordCount": 3377,
+    "wordCount": 3388,
     "readingMinutes": 13
   },
   "sherpacore": {

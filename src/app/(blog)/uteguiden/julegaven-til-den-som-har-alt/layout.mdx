@@ -1,7 +1,23 @@
 import { ChristmasArticleJsonLd } from "./components/ChristmasArticleJsonLd";
 import { buildKnowledgeMetadata } from "@/lib/knowledge/buildKnowledgeMetadata";
 import { knowledgeArticles } from "@/lib/knowledge/knowledgeArticles";
-export const metadata = buildKnowledgeMetadata(knowledgeArticles.christmasGift);
+import { absoluteUrl } from "@/lib/seo/site";
+
+export const metadata = (() => {
+  const articleMetadata = buildKnowledgeMetadata(knowledgeArticles.christmasGift);
+  return {
+    ...articleMetadata,
+    twitter: {
+      ...articleMetadata.twitter,
+      images: [
+        {
+          url: absoluteUrl("/images/kunnskap/julegaver-spadd-i-krystallkulen.jpg"),
+          alt: "Jakten på julegaven til den som har alt",
+        },
+      ],
+    },
+  };
+})();
 export default function ArticleLayout({ children }) {
   return children;
 }
