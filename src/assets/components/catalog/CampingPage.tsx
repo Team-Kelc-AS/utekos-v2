@@ -7,7 +7,7 @@ import { ShippingReturnsSummary } from '@/components/commerce/ShippingReturnsSum
 import { categories, listingPath } from '@/lib/catalog/categories';
 import { NBCC_PATH } from '@/lib/nbcc/content';
 import { getProduct } from '@/lib/shopify/getProduct';
-import { publicVariants } from '@/lib/products/variants';
+import { campingVariantCards } from '@/lib/catalog/campingVariantCards';
 import { readCategoryListing, type CategoryPageProps } from './CategoryPage';
 import { InfoDialogButton } from './InfoDialogButton';
 import { ProductCarousel } from '@/components/ProductCard/ProductCarousel';
@@ -22,9 +22,7 @@ export async function CampingPage({ searchParams }: CategoryPageProps) {
   const { products, page, hasNextPage } = await readCategoryListing(categoryKey, searchParams);
   // Resolve image dimensions before the first paint, so the grid reserves its native heights.
   const models = await Promise.all(products.map(product => getProduct(product.handle)));
-  const cards = models.filter(product => product !== null).flatMap(product =>
-    publicVariants(product).map(variant => ({ product, variant })),
-  );
+  const cards = campingVariantCards(models.filter(product => product !== null));
   return <main className={styles.page} data-tracking-route={listingPath(categoryKey)}>
     <div className={styles.container}>
       <Breadcrumbs items={[{ label: 'Forsiden', href: '/' }, { label: 'Produkter', href: '/produkter' }, { label: category.label }]} />

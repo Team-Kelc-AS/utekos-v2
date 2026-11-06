@@ -17,7 +17,8 @@
 .hero h1 { font-size: clamp(2.25rem, 4.6vw, 3.9rem); line-height: 1.04; letter-spacing: -.035em; max-width: 28ch; text-wrap: balance; }
 .hero p { max-width: 55ch; margin-block: 0 1.5rem; font-size: 1.125rem; line-height: 1.65; }
 .heroImage, .productImage { display: block; width: 100%; height: auto; }
-.heroImage { border-radius: .75rem; }
+/* Mask the source's white bottom row and its resampling halo, keeping its ratio. */
+.heroImage { border-radius: .75rem; clip-path: inset(0 0 2px 0 round .75rem); }
 .heroLink { display: inline-flex; align-items: center; gap: 1.5rem; min-height: 44px; text-decoration: underline; text-underline-offset: .25em; }
 .sectionHeading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: .5rem 2rem; margin-bottom: 1.5rem; }
 /* Help stays outside the unchanged homepage product card. */
