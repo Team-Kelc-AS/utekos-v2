@@ -86,7 +86,7 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
             )}
             {target.kind === "product" && object.content?.summary && (
               <p className={`${paragraphClassName} text-base!`}>
-                Gratis frakt fra 999 kr. Gratis størrelsesbytte på plagg.
+                Gratis frakt fra 999 kr. Gratis størrelsesbytte.
                 {" "}90 % levert innen to virkedager.
               </p>
             )}

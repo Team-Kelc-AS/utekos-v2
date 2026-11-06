@@ -18,7 +18,7 @@ Produktoppsummeringen følger produktvariantens mørke trekkspillgradient.
   Påstander som krever vesentlige forbehold erstattes med en annen dokumentert
   fordel; begrensninger skal ikke fjernes for å overdrive produktets ytelse.
 - En fast tekstlinje utenfor modellteksten sikrer at kjøpsfordelene alltid
-  vises: «Gratis frakt fra 999 kr. Gratis størrelsesbytte på plagg.
+  vises: «Gratis frakt fra 999 kr. Gratis størrelsesbytte.
   90 % levert innen to virkedager.» Fraktgrense og størrelsesbytte følger
   butikkens lokale vilkår; 90 %-tallet er oppgitt av brukeren i bestillingen
   6. november 2026, ikke beregnet av modellen eller verifisert mot leveringsdata.
