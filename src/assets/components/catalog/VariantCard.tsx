@@ -12,6 +12,8 @@ import { dunSelection } from '@/lib/reservations/dun';
 import { productVariantColorSheet } from '@/lib/products/variantColorSheets';
 import { ProductCardFlip } from '@/components/ProductCard/ProductCardFlip';
 import { ProductCardColorSheet } from '@/components/ProductCard/ProductCardColorSheet';
+import { ProductCardVideo } from '@/components/ProductCard/ProductCardVideo';
+import { productVariantVideo } from '@/lib/products/variantVideos';
 import { VariantCardActions } from './VariantCardActions';
 import styles from './ProductOverview.module.css';
 
@@ -22,11 +24,13 @@ export function VariantCard({ card, eager = false }: { card: OverviewCard; eager
   const href = variantHref(product.handle, variant, product.variants.nodes);
   const gender = variant.selectedOptions.find(option => optionParam(option.name) === 'kjonn')?.value;
   const colorSheet = productVariantColorSheet(product.handle, variant);
-  const front = <div className={styles.front}>
-    <Link href={href} prefetch={false} className={styles.imageLink} aria-label={`Se ${title}`}>
+  const video = product.handle === 'comfyrobe' ? productVariantVideo(product.handle, variant) : undefined;
+  const imageContent = <Link href={href} prefetch={false} className={styles.imageLink} aria-label={`Se ${title}`}>
       <Image src={image.url} alt={image.altText || title} width={image.width} height={image.height}
         className={styles.image} sizes={sizes} loading={eager ? 'eager' : 'lazy'} />
-    </Link>
+    </Link>;
+  const front = <div className={styles.front}>
+    {video ? <ProductCardVideo {...video} poster={image.url} label={title}>{imageContent}</ProductCardVideo> : imageContent}
     {gender && <span className={styles.gender}>{gender}</span>}
     <div className={styles.wishlist}>
       <WishlistButton productId={product.id} handle={product.handle} variantId={variant.id}

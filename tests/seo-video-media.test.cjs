@@ -30,6 +30,21 @@ test('products and default variants without a film do not advertise another vari
   assert.equal(getProductSitemapVideos({ handle: 'utekos-svale', variants: { nodes: [] } }).length, 0);
 });
 
+test('Comfyrobe XL uses the supplied local video with the existing variant cover', () => {
+  const xl = { ...variant('XL'), id: 'gid://shopify/ProductVariant/100', image: { url: '/images/products/comfyrobe/comfy-xl.webp' } };
+  const source = productVariantVideo('comfyrobe', xl);
+  assert.equal(source.src, '/assets/videos/comfy-video-1.mp4');
+  assert.equal(source.poster, xl.image.url);
+  assert.equal(source.width / source.height, 3 / 4);
+  assert.ok(fs.statSync(path.join(__dirname, '../public', source.src)).size > 0);
+  assert.equal(productVariantVideo('comfyrobe', variant('XS')), undefined);
+  assert.equal(productVariantVideo('comfyrobe', variant('M')), undefined);
+  const entries = getProductSitemapVideos({ handle: 'comfyrobe', variants: { nodes: [variant('XS'), xl] } });
+  assert.equal(entries.length, 1);
+  assert.equal(entries[0].content_loc, `https://utekos.no${source.src}`);
+  assert.equal(entries[0].thumbnail_loc, `https://utekos.no${xl.image.url}`);
+});
+
 test('sitemap and player share existing local posters without invented dates', () => {
   const sources = [...Object.values(homeVideos)];
   for (const handle of ['utekos-techdown']) {

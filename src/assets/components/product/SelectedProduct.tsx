@@ -101,6 +101,7 @@ export async function SelectedProduct({
             title={title}
             mobileFullWidth={fullWidthMobileGallery}
             video={productVariantVideo(product.handle, variant)}
+            mobileVideo={isComfyrobe}
             videoLabel={`${title} – ${label}`}
             showMobileControls={product.handle !== "utekos-techdown"}
           />

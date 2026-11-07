@@ -5,8 +5,9 @@ import type { ProductVideoSource } from '@/lib/products/variantVideos';
 import { usesDesktopPortraitFrame } from '@/lib/products/gallery/desktopPortraitFrame';
 import { GalleryControls } from './GalleryControls';
 import { DesktopProductVideo } from './DesktopProductVideo';
+import { ProductCardVideo } from '@/components/ProductCard/ProductCardVideo';
 import styles from './product.module.css';
-export function ProductGallery({ desktop, mobile, title, video, videoLabel, showMobileControls = true, mobileFullWidth = false }: { desktop: ProductImage[]; mobile: ProductImage[]; title: string; video?: ProductVideoSource; videoLabel?: string; showMobileControls?: boolean; mobileFullWidth?: boolean }) {
+export function ProductGallery({ desktop, mobile, title, video, videoLabel, mobileVideo = false, showMobileControls = true, mobileFullWidth = false }: { desktop: ProductImage[]; mobile: ProductImage[]; title: string; video?: ProductVideoSource; videoLabel?: string; mobileVideo?: boolean; showMobileControls?: boolean; mobileFullWidth?: boolean }) {
   if (!desktop.length && !mobile.length) return <div className={styles.missingImage}>Produktbilde er ikke tilgjengelig for denne varianten.</div>;
   const desktopImages = desktop;
   const mobileImages = mobile;
@@ -30,7 +31,10 @@ export function ProductGallery({ desktop, mobile, title, video, videoLabel, show
         <img {...desktopProps} alt={alt} data-gallery-desktop-alt={large.altText || title} data-gallery-mobile-alt={small.altText || title} className={styles.productImage} />
       </picture></div>;
     return <figure key={`${large.id ?? large.url}-${small.id ?? small.url}`} className={styles.slide} data-gallery-viewport={viewport} aria-label={`Bilde ${index + 1}`}>
-      {index === 0 && video ? <DesktopProductVideo video={video} label={videoLabel ?? title}>{picture}</DesktopProductVideo> : picture}
+      {index === 0 && video ? mobileVideo
+        ? <ProductCardVideo key={video.src} {...video} poster={small.url} label={videoLabel ?? title} mobileOnly>{picture}</ProductCardVideo>
+        : <DesktopProductVideo video={video} label={videoLabel ?? title}>{picture}</DesktopProductVideo>
+        : picture}
     </figure>;
   })}</GalleryControls>;
 }

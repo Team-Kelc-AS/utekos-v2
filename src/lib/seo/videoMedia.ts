@@ -26,7 +26,7 @@ function sitemapVideo(video: { src: string; poster: string; title: string; descr
     title: video.title,
     description: video.description,
     thumbnail_loc: absoluteUrl(video.poster),
-    content_loc: video.src,
+    content_loc: absoluteUrl(video.src),
   };
 }
 

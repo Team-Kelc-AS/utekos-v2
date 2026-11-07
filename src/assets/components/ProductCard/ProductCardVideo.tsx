@@ -7,7 +7,7 @@ import styles from './ProductCardVideo.module.css';
 
 export type ProductCardVideoSource = ProductVideoSource;
 
-export function ProductCardVideo({ src, width, height, poster, label, children, desktopOnly = false, onPlayingChange }: ProductCardVideoSource & { label: string; children: ReactNode; desktopOnly?: boolean; onPlayingChange?: (playing: boolean) => void }) {
+export function ProductCardVideo({ src, width, height, poster, label, children, desktopOnly = false, mobileOnly = false, onPlayingChange }: ProductCardVideoSource & { label: string; children: ReactNode; desktopOnly?: boolean; mobileOnly?: boolean; onPlayingChange?: (playing: boolean) => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playRef = useRef<HTMLButtonElement>(null);
   const attempt = useRef({ generation: 0 });
@@ -27,15 +27,16 @@ export function ProductCardVideo({ src, width, height, poster, label, children, 
   useEffect(() => {
     const video = videoRef.current;
     const playback = attempt.current;
-    const desktop = desktopOnly ? matchMedia('(min-width: 768px)') : null;
-    const onViewportChange = () => { if (!desktop?.matches) showImage(); };
-    desktop?.addEventListener('change', onViewportChange);
+    const query = desktopOnly ? '(min-width: 768px)' : mobileOnly ? '(max-width: 767px)' : null;
+    const viewport = query ? matchMedia(query) : null;
+    const onViewportChange = () => { if (!viewport?.matches) showImage(); };
+    viewport?.addEventListener('change', onViewportChange);
     return () => {
       playback.generation++;
       video?.pause();
-      desktop?.removeEventListener('change', onViewportChange);
+      viewport?.removeEventListener('change', onViewportChange);
     };
-  }, [desktopOnly, showImage]);
+  }, [desktopOnly, mobileOnly, showImage]);
 
   function playbackFailed() {
     showImage();
@@ -44,7 +45,7 @@ export function ProductCardVideo({ src, width, height, poster, label, children, 
 
   function play() {
     const video = videoRef.current;
-    if (!video || (desktopOnly && !matchMedia('(min-width: 768px)').matches)) return;
+    if (!video || (desktopOnly && !matchMedia('(min-width: 768px)').matches) || (mobileOnly && !matchMedia('(max-width: 767px)').matches)) return;
     const currentAttempt = ++attempt.current.generation;
     // A poster on a hidden video is still downloaded, even with preload="none".
     // Activate it synchronously with play so it can cover the first-frame wait.
@@ -62,7 +63,7 @@ export function ProductCardVideo({ src, width, height, poster, label, children, 
     requestAnimationFrame(() => video.focus({ preventScroll: true }));
   }
 
-  return <div className={`${styles.media}${desktopOnly ? ` ${styles.desktopOnly}` : ''}`}>
+  return <div className={`${styles.media}${desktopOnly ? ` ${styles.desktopOnly}` : ''}${mobileOnly ? ` ${styles.mobileOnly}` : ''}`}>
     <div className={styles.image} hidden={playing}>
       {children}
       <button ref={playRef} type="button" className={styles.play} onClick={play} aria-label={`Spill av video av ${label}`}>

@@ -24,3 +24,7 @@
   .desktopOnly .play, .desktopOnly .video { display: none; }
   .desktopOnly .image[hidden] { display: block; }
 }
+@media (min-width: 768px) {
+  .mobileOnly .play, .mobileOnly .video { display: none; }
+  .mobileOnly .image[hidden] { display: block; }
+}
