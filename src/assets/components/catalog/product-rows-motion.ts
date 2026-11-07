@@ -26,6 +26,8 @@ export function animateProductRows(root: HTMLElement) {
       try {
         // Animate slides, leaving Embla's track transform and card flips untouched.
         row.querySelectorAll<HTMLElement>('[data-slot="carousel-item"]').forEach((slide, index) => {
+          // Keep video controls stationary when pointer interaction ends the reveal.
+          if (slide.querySelector('video')) return;
           controls.push(animate(slide, {
             opacity: initiallyVisible.has(row) ? [1, 1] : [0, 1],
             transform: ["translate(18px, 24px)", "translate(0px, 0px)"],

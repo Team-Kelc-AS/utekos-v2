@@ -357,7 +357,7 @@
 }
 
 /* Enhancement is armed only after the deferred module loads. */
-.row[data-row-motion="waiting"] .slide {
+.row[data-row-motion="waiting"] .slide:not(:has(video)) {
   opacity: 0;
   transform: translate(18px, 24px);
 }
