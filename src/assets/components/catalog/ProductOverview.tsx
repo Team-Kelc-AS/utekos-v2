@@ -8,7 +8,6 @@ import { CategoryPage, type CategoryPageProps } from "./CategoryPage";
 import {
   Carousel,
   CarouselContent,
-  CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
@@ -21,6 +20,7 @@ import { getProductListing } from "@/lib/shopify/getProductListing";
 import { getProduct } from "@/lib/shopify/getProduct";
 import { VariantCard } from "./VariantCard";
 import { ProductRowsMotion } from "./ProductRowsMotion";
+import { MobileFirstCarouselItems } from "@/components/ProductCard/MobileFirstCarouselItems";
 import { SkreddersyBanner } from "./SkreddersyBanner";
 import { NbccMembershipSection } from "./NbccMembershipSection";
 import styles from "./ProductOverview.module.css";
@@ -79,14 +79,19 @@ export async function ProductOverview({ searchParams }: CategoryPageProps) {
                 }}
               >
                 <CarouselContent className={styles.track}>
+                  <MobileFirstCarouselItems className={styles.slide} mobileFirstIndex={row.cards.findIndex(card =>
+                    card.product.handle === "comfyrobe" && card.variant.selectedOptions.some(
+                      option => option.name === "Størrelse" && option.value === "XL",
+                    ),
+                  )}>
                   {row.cards.map((card, index) => (
-                    <CarouselItem key={card.variant.id} className={styles.slide}>
                       <VariantCard
+                        key={card.variant.id}
                         card={card}
                         eager={rowIndex === 0 && index < 2}
                       />
-                    </CarouselItem>
                   ))}
+                  </MobileFirstCarouselItems>
                 </CarouselContent>
                 <CarouselPrevious
                   aria-label="Forrige variant"

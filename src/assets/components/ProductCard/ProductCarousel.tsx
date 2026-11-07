@@ -3,10 +3,12 @@
 import { Children, useId, type ReactNode } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import styles from './ProductCarousel.module.css';
+import { useMobileFirstItems } from './useMobileFirstItems';
 
-export function ProductCarousel({ children, label = "Produktvarianter på lager" }: { children: ReactNode; label?: string }) {
+export function ProductCarousel({ children, label = "Produktvarianter på lager", mobileFirstIndex }: { children: ReactNode; label?: string; mobileFirstIndex?: number }) {
   const id = useId();
-  const count = Children.count(children);
+  const items = useMobileFirstItems(Children.toArray(children), mobileFirstIndex);
+  const count = items.length;
 
   return <Carousel
     className={styles.carousel}
@@ -19,7 +21,7 @@ export function ProductCarousel({ children, label = "Produktvarianter på lager"
       <CarouselNext className="static inset-auto m-0" aria-label="Neste produktvariant" aria-controls={id} />
     </div>
     <CarouselContent id={id} className={`ml-0 ${styles.rail}`}>
-      {Children.map(children, (child, index) => <CarouselItem className="basis-(--card-basis) pl-0" aria-label={`${index + 1} av ${count}`}>
+      {Children.map(items, (child, index) => <CarouselItem className="basis-(--card-basis) pl-0" aria-label={`${index + 1} av ${count}`}>
         {child}
       </CarouselItem>)}
     </CarouselContent>

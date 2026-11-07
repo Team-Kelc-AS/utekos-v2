@@ -28,8 +28,8 @@ const definitions: Definition[] = [
   ] },
   { id: 'comfyrobe', handle: 'comfyrobe', label: 'Comfyrobe™', color: 'Fjellnatt', cards: [
     { size: 'XS', label: 'S/XS', image: '/images/products/comfyrobe/comfyrobe-normal-fit-woman-card-1000x1500.webp' },
-    { size: 'M', label: 'M/L', image: '/images/products/comfyrobe/comfyrobe-medium-card-1000x1500.jpg' },
-    { size: 'XL', label: 'L/XXL', image: '/images/products/comfyrobe/comfyrobe-oversized-fit-on-woman-card-1000x1500.webp' },
+    { size: 'M', label: 'M/L', image: '/images/products/comfyrobe/cards/comfy-m-2x3.webp', width: 2000, height: 3000 },
+    { size: 'XL', label: 'L/XXL', image: '/images/products/comfyrobe/cards/comfy-img-2.webp', width: 940, height: 1440 },
   ] },
 ];
 

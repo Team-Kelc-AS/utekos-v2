@@ -65,8 +65,8 @@ test('the original row order, exact variant assignments, labels and image files 
     ]],
     ['comfyrobe', 'Comfyrobe™ og Utekos Stapper™', [
       [51, 'Comfyrobe™ S/XS', '/images/products/comfyrobe/comfyrobe-normal-fit-woman-card-1000x1500.webp'],
-      [52, 'Comfyrobe™ M/L', '/images/products/comfyrobe/comfyrobe-medium-card-1000x1500.jpg'],
-      [53, 'Comfyrobe™ L/XXL', '/images/products/comfyrobe/comfyrobe-oversized-fit-on-woman-card-1000x1500.webp'],
+      [52, 'Comfyrobe™ M/L', '/images/products/comfyrobe/cards/comfy-m-2x3.webp'],
+      [53, 'Comfyrobe™ L/XXL', '/images/products/comfyrobe/cards/comfy-img-2.webp'],
       [61, 'Utekos Stapper™', '/images/products/Stapper-1000x1500.jpg'],
     ]],
   ];
@@ -130,7 +130,7 @@ test('Comfyrobe labels map to Shopify XS, M and XL without inferring other sizes
 test('curated images keep original dimensions and accessories use their own media', () => {
   const products = catalogue();
   const cards = flatten(productOverviewRows(products));
-  for (const [number, width, height] of [[31, 2000, 3000], [41, 2000, 3000], [42, 1333, 2000]]) {
+  for (const [number, width, height] of [[31, 2000, 3000], [41, 2000, 3000], [42, 1333, 2000], [53, 940, 1440]]) {
     const card = cards.find(card => card.variant.id === id(number));
     assert.equal(card.image.width, width);
     assert.equal(card.image.height, height);
@@ -140,8 +140,8 @@ test('curated images keep original dimensions and accessories use their own medi
   assert.equal(stapper.image.width, 1000);
   assert.equal(stapper.image.height, 1500);
   const medium = cards.find(card => card.variant.id === id(52));
-  assert.equal(medium.image.width, 1000);
-  assert.equal(medium.image.height, 1500);
+  assert.equal(medium.image.width, 2000);
+  assert.equal(medium.image.height, 3000);
 });
 
 test('missing products and an empty catalogue do not create placeholder cards', () => {

@@ -6,6 +6,15 @@ const baseURL = process.env.COMFY_VIDEO_BASE_URL;
 const src = '/assets/videos/comfy-video-1.mp4';
 const videoSelector = `video[src="${src}"]`;
 
+async function waitForXLPosition(page, rootSelector, attribute, xlId, atStart) {
+  await page.waitForFunction(({ rootSelector, attribute, xlId, atStart }) => {
+    const root = document.querySelector(rootSelector);
+    const card = Array.from(root.querySelectorAll(`[${attribute}]`)).find(card => card.getAttribute(attribute) === xlId);
+    const offset = card.getBoundingClientRect().left - root.querySelector('[data-slot="carousel-content"]').getBoundingClientRect().left;
+    return atStart ? offset >= -1 : offset < -2;
+  }, { rootSelector, attribute, xlId, atStart });
+}
+
 async function openPage(browser, pathname, width) {
   const page = await browser.newPage({ viewport: { width, height: 1000 } });
   page.setDefaultTimeout(15_000);
@@ -47,6 +56,61 @@ async function play(page, container, requests) {
 }
 
 for (const [name, engine] of Object.entries({ chromium, webkit })) {
+  test(`Comfyrobe XL comes first on mobile with the desktop order preserved (${name})`, {
+    skip: !baseURL, timeout: 90_000,
+  }, async () => {
+    const browser = await engine.launch();
+    try {
+      for (const pathname of ['/', '/produkter']) {
+        const { page } = await openPage(browser, pathname, 390);
+        const rootSelector = pathname === '/'
+          ? 'section[data-tracking-list]:has([data-product-card])'
+          : '[data-product-row="comfyrobe"]';
+        const attribute = pathname === '/' ? 'data-product-card' : 'data-variant-card';
+        const cardSelector = `${rootSelector} [${attribute}]`;
+        const root = page.locator(rootSelector);
+        const xl = root.locator(`[${attribute}]:has(${videoSelector})`);
+        const xlId = await xl.getAttribute(attribute);
+        assert.equal(await page.locator(cardSelector).first().getAttribute(attribute), xlId);
+        await root.scrollIntoViewIfNeeded();
+        await root.locator('[data-slot="carousel"]').waitFor({ state: 'visible' });
+        assert.equal(await page.locator(cardSelector).first().getAttribute(attribute), xlId);
+        await page.setViewportSize({ width: 1440, height: 1000 });
+        await page.waitForFunction(({ selector, attribute, xlId }) => document.querySelector(selector)?.getAttribute(attribute) !== xlId,
+          { selector: cardSelector, attribute, xlId });
+        const desktopOrder = await page.locator(cardSelector).evaluateAll((cards, attribute) => cards.map(card => card.getAttribute(attribute)), attribute);
+        if (pathname === '/produkter') assert.equal(await page.locator(cardSelector).first().getAttribute('aria-label'), 'Comfyrobe™ S/XS');
+        await page.setViewportSize({ width: 390, height: 1000 });
+        await page.waitForFunction(({ selector, attribute, xlId }) => document.querySelector(selector)?.getAttribute(attribute) === xlId,
+          { selector: cardSelector, attribute, xlId });
+        const mobileOrder = await page.locator(cardSelector).evaluateAll((cards, attribute) => cards.map(card => card.getAttribute(attribute)), attribute);
+        assert.deepEqual(mobileOrder, [xlId, ...desktopOrder.filter(id => id !== xlId)]);
+        await root.locator('[data-slot="carousel-next"]').click();
+        await waitForXLPosition(page, rootSelector, attribute, xlId, false);
+        await root.locator('[data-slot="carousel-previous"]').click();
+        await waitForXLPosition(page, rootSelector, attribute, xlId, true);
+        await root.locator('[data-slot="carousel-next"]').press('ArrowRight');
+        await waitForXLPosition(page, rootSelector, attribute, xlId, false);
+        await root.locator('[data-slot="carousel-next"]').press('ArrowLeft');
+        await waitForXLPosition(page, rootSelector, attribute, xlId, true);
+        const imageBox = await xl.locator('img').first().boundingBox();
+        const dragY = imageBox.y + imageBox.height * 0.25;
+        await page.mouse.move(imageBox.x + imageBox.width * 0.85, dragY);
+        await page.mouse.down();
+        await page.mouse.move(imageBox.x + imageBox.width * 0.1, dragY, { steps: 12 });
+        await page.mouse.up();
+        await waitForXLPosition(page, rootSelector, attribute, xlId, false);
+        await root.locator('[data-slot="carousel-previous"]').click();
+        await waitForXLPosition(page, rootSelector, attribute, xlId, true);
+        assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+        await root.screenshot({ path: `/tmp/utekos-comfy-xl-first-${name}-${pathname === '/' ? 'home' : 'catalog'}.png` });
+        await page.close();
+      }
+    } finally {
+      await browser.close();
+    }
+  });
+
   test(`Comfyrobe XL cards play the supplied film and restore their covers (${name})`, {
     skip: !baseURL, timeout: 150_000,
   }, async () => {

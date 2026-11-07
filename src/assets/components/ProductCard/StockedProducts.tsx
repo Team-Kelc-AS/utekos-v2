@@ -15,6 +15,8 @@ import { homeProducts } from "@/lib/catalog/homeProducts";
 import { productVariantVideo } from "@/lib/products/variantVideos";
 import stapperImage from "@public/images/kunnskap/stapper_45.webp";
 import techdownLitenImage from "@public/images/products/techdown_liten_in_hammock_915x1188.webp";
+import comfyrobeXlImage from "@public/images/products/comfyrobe/cards/comfy-img-3.webp";
+import comfyrobeMImage from "@public/images/products/comfyrobe/cards/comfy-m-4x5.webp";
 import styles from "@/components/ProductCard/ProductCarousel.module.css";
 
 const sectionClassName = `${googleSansFlex.variable} ${styles.section} font-sans`;
@@ -48,8 +50,11 @@ export async function StockedProducts({
       await getProductCards(),
       excludeProductHandle,
       includeStapper,
-    ).map((card) =>
-      card.product.handle === "utekos-stapper"
+    ).map((card) => {
+      const comfyrobeImage = card.variant.selectedOptions.some(
+        (option) => ["Størrelse", "Size", "Str"].includes(option.name) && option.value === "M",
+      ) ? comfyrobeMImage : comfyrobeXlImage;
+      return card.product.handle === "utekos-stapper"
         ? {
             ...card,
             variant: {
@@ -63,6 +68,25 @@ export async function StockedProducts({
               },
             },
           }
+        : route === "/" &&
+            card.product.handle === "comfyrobe" &&
+            card.variant.selectedOptions.some(
+              (option) => ["Størrelse", "Size", "Str"].includes(option.name) && ["M", "XL"].includes(option.value),
+            )
+          ? {
+              ...card,
+              variant: {
+                ...card.variant,
+                image: {
+                  url: comfyrobeImage.src,
+                  width: comfyrobeImage.width,
+                  height: comfyrobeImage.height,
+                  altText: comfyrobeImage === comfyrobeMImage
+                    ? "Mann i marineblå Comfyrobe vist fra siden med hetten nede."
+                    : "Mann i marineblå Comfyrobe som lener seg mot en dørkarm.",
+                },
+              },
+            }
         : route === "/" &&
             card.product.handle === "utekos-techdown" &&
             card.variant.selectedOptions.some(
@@ -80,8 +104,8 @@ export async function StockedProducts({
                 },
               },
             }
-          : card,
-    );
+          : card;
+    });
   } catch (error) {
     unstable_rethrow(error);
     console.error("Product cards unavailable", error);
@@ -114,7 +138,11 @@ export async function StockedProducts({
       <h2 id={headingId}>{title}</h2>
       {introduction}
       {cards.length ? (
-        <ProductCarousel>
+        <ProductCarousel mobileFirstIndex={route === "/" ? cards.findIndex(card =>
+          card.product.handle === "comfyrobe" && card.variant.selectedOptions.some(
+            option => ["Størrelse", "Size", "Str"].includes(option.name) && option.value === "XL",
+          ),
+        ) : undefined}>
           {cards.map((card) => (
             <ProductCard
               key={card.variant.id}
