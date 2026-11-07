@@ -56,11 +56,6 @@ const nextConfig: NextConfig = {
     return [
       { source: "/produkter/utekos-svale", destination: "/produkter", permanent: true },
       {
-        source: "/gaveguide",
-        destination: "/handlehjelp/klarna",
-        permanent: true,
-      },
-      {
         source: "/skreddersy-varmen",
         destination: "/produkter/utekos-techdown",
         permanent: true,
