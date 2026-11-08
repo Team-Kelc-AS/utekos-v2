@@ -145,15 +145,18 @@ export async function forwardTrackingRequest(request: NextRequest) {
     };
     const bridgeUrl = qa ? QA_BRIDGE_URL : BRIDGE_URL;
     const token = await getVercelOidcToken({ audience: bridgeUrl });
-    // Preview remains protected by Vercel SSO. Trusted Sources checks the
-    // caller's default project OIDC separately from our strict bridge audience.
-    const trustedSourceToken = qa ? await getVercelOidcToken() : undefined;
+    // Vercel Deployment Protection is enforced independently of the
+    // backend's strict OIDC audience. Use a branch-scoped QA automation secret,
+    // never production's token, and never forward it from the browser.
+    const qaBypass = qa ? process.env.TRACKING_QA_PROTECTION_BYPASS : undefined;
+    if (qa && (!qaBypass || !/^[A-Za-z0-9]{32}$/.test(qaBypass)))
+      return failure(503, 'qa_protection_bypass_unconfigured', requestId);
     const upstream = await fetch(bridgeUrl, {
       method: 'POST', redirect: 'manual', cache: 'no-store',
       headers: {
         authorization: `Bearer ${token}`,
         'content-type': 'application/json',
-        ...(trustedSourceToken ? { 'x-vercel-trusted-oidc-idp-token': trustedSourceToken } : {})
+        ...(qaBypass ? { 'x-vercel-protection-bypass': qaBypass } : {})
       },
       body: JSON.stringify({ version: 1, operation, method: request.method,
         ...(search ? { search } : {}), bodyBase64: Buffer.from(raw).toString('base64'), context, headers }),
