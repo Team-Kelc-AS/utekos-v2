@@ -1,11 +1,11 @@
 import { proxyServerGtmRequest } from '@/lib/analytics/serverGtmGateway/proxyServerGtmRequest'
-import { isTrackingOrigin, productionTrackingEnabled } from '@/lib/tracking/environment'
+import { isTrackingOrigin, productionTrackingEnabled, previewTrackingEnabled } from '@/lib/tracking/environment'
 
 async function gateway(
   request: Request,
   context: { params: Promise<{ path?: string[] }> }
 ) {
-  if (!productionTrackingEnabled() || !isTrackingOrigin(request.url)) {
+  if (previewTrackingEnabled() || !productionTrackingEnabled() || !isTrackingOrigin(request.url)) {
     return new Response(null, {
       status: 404,
       headers: {

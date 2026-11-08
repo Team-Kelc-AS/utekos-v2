@@ -3,10 +3,10 @@ import { browserPageViewSession } from '@/lib/analytics/pageViewSession';
 import { readBrowserReporterContext } from '@/lib/analytics/browserReporterContext';
 import { enrichCanonicalBrowserJourneyContext } from '@/lib/analytics/internalJourneyContext';
 import { journeyEventSchema, sanitizeJourneyPath, type JourneyEvent } from '@/lib/observability/journey/contract';
-import { productionTrackingEnabled, isTrackingOrigin } from './environment';
+import { productionTrackingEnabled, previewTrackingEnabled, isTrackingOrigin } from './environment';
 import { deliverCanonicalEvent } from './delivery';
 export function createJourneyReporter() {
-  if (!productionTrackingEnabled() || !isTrackingOrigin(location.href)) return () => {};
+  if (!productionTrackingEnabled() || previewTrackingEnabled() || !isTrackingOrigin(location.href)) return () => {};
   const page = browserPageViewSession.get(undefined); const context = readBrowserReporterContext();
   if (!page || !context) return () => {};
   const identity = enrichCanonicalBrowserJourneyContext({ consent: context.consent, page_view_id: page.pageViewId, journey_id: undefined as string | undefined, previous_page_view_id: undefined as string | undefined });

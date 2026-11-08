@@ -9,7 +9,7 @@ export function applyProxyMetaCookies(
   if (cookies.length === 0) return response
   const hostname = request.nextUrl.hostname
   const domain =
-    hostname === 'utekos.no' || hostname.endsWith('.utekos.no') ?
+    hostname !== 'preview.utekos.no' && (hostname === 'utekos.no' || hostname.endsWith('.utekos.no')) ?
       'utekos.no'
     : undefined
 

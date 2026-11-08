@@ -3,10 +3,11 @@ import dynamic from 'next/dynamic';
 import Script from 'next/script';
 import { useBrowserTrackingEnabled } from './useBrowserTrackingEnabled';
 import { usePathname } from 'next/navigation';
+import { previewTrackingEnabled } from './environment';
 const Runtime = dynamic(() => import('./TrackingRuntime'), { ssr: false });
 export function Tracking() {
   const enabled = useBrowserTrackingEnabled();
   const pathname = usePathname();
   if (!enabled || pathname.startsWith('/klarna/identity/')) return null;
-  return <><Script src="/analytics/meta-pixel-canonical-v1.js" strategy="afterInteractive" /><Runtime /></>;
+  return <>{!previewTrackingEnabled() && <Script src="/analytics/meta-pixel-canonical-v1.js" strategy="afterInteractive" />}<Runtime /></>;
 }

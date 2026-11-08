@@ -11,7 +11,7 @@ import { resolveTrackingAuthorization } from '@/lib/consent/resolveTrackingAutho
 import { canonicalGenerateLeadSchema, buildGenerateLeadDataLayerEvent, type GenerateLeadDataLayerEvent } from '@/lib/analytics/generateLeadEvent';
 import { BRIDGE_URL } from './bridge-contract';
 import { identityCookieHeader, verifiedFacebookLoginId } from './backend';
-import { productionTrackingEnabled, isTrackingOrigin } from './environment';
+import { productionTrackingEnabled, previewTrackingEnabled, isTrackingOrigin } from './environment';
 
 /** The same accepted Resend receipt keeps the same lead ID across lost responses. */
 export function submissionIdFromReceipt(receiptId: string) {
@@ -21,7 +21,7 @@ export function submissionIdFromReceipt(receiptId: string) {
   return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
 }
 async function formRequest(form: FormData) {
-  if (!productionTrackingEnabled()) return;
+  if (!productionTrackingEnabled() || previewTrackingEnabled()) return;
   const incoming = new Headers(await headers());
   const origin = incoming.get('origin');
   if (!origin || !isTrackingOrigin(origin)) return;

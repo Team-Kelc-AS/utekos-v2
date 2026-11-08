@@ -96,7 +96,7 @@ function writeMetaCookie(name: '_fbc' | '_fbp', value: string): boolean {
   if (remainingSeconds < 1) return false
   const hostname = window.location.hostname
   const domain =
-    hostname === 'utekos.no' || hostname.endsWith('.utekos.no') ?
+    hostname !== 'preview.utekos.no' && (hostname === 'utekos.no' || hostname.endsWith('.utekos.no')) ?
       '; Domain=.utekos.no'
     : ''
   const secure = window.location.protocol === 'https:' ? '; Secure' : ''
@@ -210,8 +210,8 @@ function saveMetaIdentifierStorage(
 }
 
 function deleteMetaCookie(name: '_fbc' | '_fbp' | '_fbi') {
-  const domain = window.location.hostname === 'utekos.no' ||
-    window.location.hostname.endsWith('.utekos.no') ? '; Domain=.utekos.no' : ''
+  const domain = window.location.hostname !== 'preview.utekos.no' &&
+    (window.location.hostname === 'utekos.no' || window.location.hostname.endsWith('.utekos.no')) ? '; Domain=.utekos.no' : ''
   try {
     document.cookie = `${name}=; Path=/; Max-Age=0`
     if (domain) document.cookie = `${name}=; Path=/; Max-Age=0${domain}`

@@ -3,7 +3,7 @@ import 'server-only'
 /* eslint-disable @next/next/no-before-interactive-script-outside-document -- Rendered only by the App Router root layout. Next's App Router supports beforeInteractive there. */
 
 import Script from 'next/script'
-import { productionTrackingEnabled } from './environment'
+import { productionTrackingEnabled, previewTrackingEnabled } from './environment'
 import { GOOGLE_TAG_MANAGER_BOOTSTRAP } from './googleTagManagerBootstrap'
 import { STAPE_CUSTOM_LOADER } from './stapeCustomLoader'
 import { WEB_CRAWLER_PATTERN } from './webCrawler'
@@ -14,7 +14,7 @@ const PRODUCTION_ORIGIN_GUARD =
   `(window.location.origin==='https://utekos.no'||window.location.origin==='https://www.utekos.no')&&!${WEB_CRAWLER_PATTERN}.test(navigator.userAgent)`
 
 export function StapeScripts() {
-  if (!productionTrackingEnabled()) return null
+  if (!productionTrackingEnabled() || previewTrackingEnabled()) return null
 
   return (
     <>

@@ -6,6 +6,7 @@ import { isDocumentNavigation } from "@/lib/tracking/documentRequest";
 import {
   isTrackingOrigin,
   productionTrackingEnabled,
+  previewTrackingEnabled,
 } from "@/lib/tracking/environment";
 import { telemetryRewriteUrl } from "@/lib/tracking/telemetryRoutes";
 import { isWebCrawler } from "@/lib/tracking/webCrawler";
@@ -21,7 +22,7 @@ export function proxy(request: NextRequest) {
   const enabled = productionTrackingEnabled() && isTrackingOrigin(request.url);
 
   if (request.nextUrl.pathname.startsWith("/telemetry/v1/")) {
-    const target = enabled ? telemetryRewriteUrl(new URL(request.url)) : null;
+    const target = enabled && !previewTrackingEnabled() ? telemetryRewriteUrl(new URL(request.url)) : null;
     return noStore(
       target
         ? NextResponse.rewrite(target)
@@ -57,12 +58,10 @@ export function proxy(request: NextRequest) {
 
   // The master ID is available before the loader executes. Preserve valid IDs
   // and refresh the pinned 400-day lifetime on document responses only.
-  return noStore(
-    applyCookieKeeperUserIdCookie(
-      applyProxyMetaCookies(response, request, metaCookies),
-      request,
-    ),
-  );
+  const withMetaCookies = applyProxyMetaCookies(response, request, metaCookies);
+  // Preview never writes the production-wide Stape master cookie.
+  return noStore(previewTrackingEnabled() ? withMetaCookies :
+    applyCookieKeeperUserIdCookie(withMetaCookies, request));
 }
 
 export const config = {

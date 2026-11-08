@@ -9,6 +9,7 @@ import { extractFbclidFromFbc } from './extractFbclidFromFbc'
 import { readObservedMetaFbclid } from './metaFbclid'
 import { selectMetaFbcCookie } from './selectMetaFbcCookie'
 import { reportClientCaughtError } from '@/lib/observability/client/reportClientCaughtError'
+import { previewTrackingEnabled } from '@/lib/tracking/environment'
 
 function marketingAllowed() {
   return typeof window !== 'undefined'
@@ -180,6 +181,10 @@ export async function ensureMetaClientParameterContext(
   }
 
   if (window.location.href !== input.pageUrl) return readPersistedIdentifiers()
+
+  // The Meta SDK's automatic eTLD+1 cookie writer could modify production
+  // cookies from preview. Keep QA host-only and use the server/proxy cookies.
+  if (previewTrackingEnabled()) return readPersistedIdentifiers()
 
   const observedClick = readObservedMetaFbclid(input.pageUrl)
   if (observedClick.invalid) return readPersistedIdentifiers()

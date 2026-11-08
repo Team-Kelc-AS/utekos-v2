@@ -77,7 +77,7 @@ export function createBrowserEvent(
     schema_version: 1,
     event_name: eventName,
     source: "web",
-    environment: "production",
+    environment: context.environment,
     event_id: overrides.event_id ?? crypto.randomUUID(),
     event_time:
       overrides.event_time ??

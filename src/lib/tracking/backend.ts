@@ -7,8 +7,8 @@ import { geolocation, ipAddress } from '@vercel/functions/headers';
 import type { NextRequest } from 'next/server';
 import { FACEBOOK_SESSION_COOKIE, readSession } from '@/lib/facebook-login/session';
 import { KLARNA_IDENTITY_SESSION_COOKIE, klarnaIdentityConfig, readKlarnaSession } from '@/lib/klarna/identity';
-import { BRIDGE_URL, isBridgeOperation, isCallbackOperation } from './bridge-contract';
-import { productionTrackingEnabled, isTrackingOrigin } from './environment';
+import { BRIDGE_URL, QA_BRIDGE_URL, isBridgeOperation, isCallbackOperation } from './bridge-contract';
+import { productionTrackingEnabled, previewTrackingEnabled, isTrackingOrigin } from './environment';
 import { isMetaCrawler, isBrowserTelemetryOperation } from './metaCrawler';
 import { CANONICAL_EVENT_BRIDGE_TIMEOUT_MS } from './timeouts';
 import { scheduleVercelCommerceEvent } from './vercelCommerceEvents';
@@ -62,11 +62,28 @@ function failure(status: number, code: string, requestId: string) {
     'Cache-Control': 'private, no-store', 'x-utekos-storefront-request-id': requestId,
   } });
 }
+const QA_EVENTS = new Set([
+  '/api/events/page-view', '/api/events/page-view/capture',
+  '/api/events/view-item', '/api/events/view-item-list', '/api/events/view-category',
+  '/api/events/select-item', '/api/events/add-to-cart', '/api/events/remove-from-cart',
+  '/api/events/view-cart', '/api/events/begin-checkout', '/api/events/scroll-depth',
+  '/api/events/variant-select', '/api/events/add-to-wishlist',
+  '/api/events/view-promotion', '/api/events/select-promotion',
+  '/api/events/hero-interact', '/api/events/interact-with-accordion',
+  '/api/events/open-quick-view', '/api/events/video-progress',
+  '/api/events/size-guide-view', '/api/events/filter-apply', '/api/events/sort-apply',
+  '/api/events/web-vital', '/api/events/form-start', '/api/events/form-error',
+  '/api/events/search', '/api/events/view-search-results',
+  '/api/meta/client-ip', '/api/meta/parameter-context'
+]);
+
 export async function forwardTrackingRequest(request: NextRequest) {
   const requestId = crypto.randomUUID();
   const { pathname: operation, search, origin } = new URL(request.url);
   if (!isBridgeOperation(operation)) return failure(404, 'unknown_operation', requestId);
   const callback = isCallbackOperation(operation);
+  const qa = previewTrackingEnabled();
+  if (qa && !QA_EVENTS.has(operation)) return failure(403, 'qa_operation_not_allowed', requestId);
   // Payment/webhook continuity is independent of the browser marketing switch.
   const identityProfileOperation = operation === '/api/identity/klarna/prospect';
   const enabled = callback || identityProfileOperation
@@ -115,7 +132,7 @@ export async function forwardTrackingRequest(request: NextRequest) {
     }
     const deploySha = process.env.VERCEL_GIT_COMMIT_SHA;
     const context = {
-      publicOrigin: origin, environment: 'production', requestId,
+      publicOrigin: origin, environment: qa ? 'preview' : 'production', requestId,
       ...(deploySha && /^[a-f0-9]{40}$/.test(deploySha) ? { deploySha } : {}),
       ...(ip && isIP(ip) ? { clientIpAddress: ip } : {}),
       ...(request.headers.get('user-agent') ? { userAgent: request.headers.get('user-agent')!.slice(0, 2048) } : {}),
@@ -126,8 +143,9 @@ export async function forwardTrackingRequest(request: NextRequest) {
       ...(facebookLoginId ? { facebookLoginId } : {}),
       ...(klarnaIdentityKey ? { klarnaIdentityKey } : {}),
     };
-    const token = await getVercelOidcToken({ audience: BRIDGE_URL });
-    const upstream = await fetch(BRIDGE_URL, {
+    const bridgeUrl = qa ? QA_BRIDGE_URL : BRIDGE_URL;
+    const token = await getVercelOidcToken({ audience: bridgeUrl });
+    const upstream = await fetch(bridgeUrl, {
       method: 'POST', redirect: 'manual', cache: 'no-store',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
       body: JSON.stringify({ version: 1, operation, method: request.method,
@@ -141,7 +159,7 @@ export async function forwardTrackingRequest(request: NextRequest) {
     }
     for (const value of upstream.headers.getSetCookie()) responseHeaders.append('set-cookie', value);
     responseHeaders.set('x-utekos-storefront-request-id', requestId);
-    scheduleVercelCommerceEvent(operation, upstream.status, raw, request, ip && isIP(ip) ? ip : undefined);
+    if (!qa) scheduleVercelCommerceEvent(operation, upstream.status, raw, request, ip && isIP(ip) ? ip : undefined);
     return new Response(upstream.body, { status: upstream.status, headers: responseHeaders });
   } catch (error) {
     // Never include payload, full URL, credentials, or personal data in logs.

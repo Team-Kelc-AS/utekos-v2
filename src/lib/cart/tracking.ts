@@ -1,7 +1,7 @@
 'use client';
 import type { CanonicalBeginCheckout } from '@/lib/analytics/beginCheckoutEvent';
 import type { Cart, CartResult } from './types';
-import { productionTrackingEnabled, isTrackingOrigin } from '@/lib/tracking/environment';
+import { productionTrackingEnabled, previewTrackingEnabled, isTrackingOrigin } from '@/lib/tracking/environment';
 import { emitStorefrontAction } from '@/lib/tracking/browser-events';
 import type { ComfyBuyNowSize } from './comfyBuyNow';
 
@@ -33,6 +33,7 @@ export async function persistCheckoutPreparation(
   method: CheckoutTrackingMethod,
   buyNowSize?: ComfyBuyNowSize,
 ) {
+  if (previewTrackingEnabled()) throw new Error('Live Shopify checkout is disabled during isolated tracking QA');
   const event = await prepareCheckoutTracking(cart, method);
   const campaign = event
     ? (await import('@/lib/analytics/campaignAttributionSessionStore')).resolveCampaignAttribution(window.location.href)

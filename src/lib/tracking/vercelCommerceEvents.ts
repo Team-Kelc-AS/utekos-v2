@@ -50,6 +50,7 @@ export function scheduleVercelCommerceEvent(
   request: Request,
   clientIpAddress?: string
 ): void {
+  if (process.env.VERCEL_ENV !== 'production') return
   const event = acceptedVercelCommerceEvent(operation, status, body)
   if (!event) return
 
