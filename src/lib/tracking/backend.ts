@@ -145,9 +145,16 @@ export async function forwardTrackingRequest(request: NextRequest) {
     };
     const bridgeUrl = qa ? QA_BRIDGE_URL : BRIDGE_URL;
     const token = await getVercelOidcToken({ audience: bridgeUrl });
+    // Preview remains protected by Vercel SSO. Trusted Sources checks the
+    // caller's default project OIDC separately from our strict bridge audience.
+    const trustedSourceToken = qa ? await getVercelOidcToken() : undefined;
     const upstream = await fetch(bridgeUrl, {
       method: 'POST', redirect: 'manual', cache: 'no-store',
-      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+      headers: {
+        authorization: `Bearer ${token}`,
+        'content-type': 'application/json',
+        ...(trustedSourceToken ? { 'x-vercel-trusted-oidc-idp-token': trustedSourceToken } : {})
+      },
       body: JSON.stringify({ version: 1, operation, method: request.method,
         ...(search ? { search } : {}), bodyBase64: Buffer.from(raw).toString('base64'), context, headers }),
       signal: AbortSignal.timeout(operation.startsWith('/api/events/') ? CANONICAL_EVENT_BRIDGE_TIMEOUT_MS : 8000),
