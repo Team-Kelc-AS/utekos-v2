@@ -71,7 +71,7 @@ export function articleReadingMetrics(markdown) {
 }
 
 export async function buildArticleReadingTimes() {
-  const directory = path.join(root, 'src/app/(blog)/uteguiden');
+  const directory = path.join(root, 'src/app/(site)/(blog)/uteguiden');
   const metrics = {};
   for (const entry of (await readdir(directory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
     if (!entry.isDirectory()) continue;

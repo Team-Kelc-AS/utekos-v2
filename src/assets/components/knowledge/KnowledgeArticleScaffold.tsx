@@ -13,7 +13,7 @@ import { DocsTableOfContents } from "./DocsTableOfContents";
 import { ArticleReadingProgress } from "./ArticleReadingProgress";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
-import articleStyles from "@/app/(blog)/uteguiden/knowledgeArticle.module.css";
+import articleStyles from "@/app/(site)/(blog)/uteguiden/knowledgeArticle.module.css";
 
 export function KnowledgeArticleScaffold({
   article,

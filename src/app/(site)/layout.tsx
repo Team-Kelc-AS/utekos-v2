@@ -1,4 +1,4 @@
-import "./globals.css";
+import "../globals.css";
 import { Suspense } from "react";
 import { StapeScripts } from "@/lib/tracking/StapeScripts";
 import { Tracking } from "@/lib/tracking/Tracking";

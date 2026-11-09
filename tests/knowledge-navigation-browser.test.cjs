@@ -9,7 +9,7 @@ const { knowledgeArticleList: articles } = loadTypeScript('lib/knowledge/knowled
 const baseURL = process.env.KNOWLEDGE_NAV_BASE_URL;
 
 test('navigation audit covers every Uteguiden article route', () => {
-  const root = path.resolve(__dirname, '../src/app/(blog)/uteguiden');
+  const root = path.resolve(__dirname, '../src/app/(site)/(blog)/uteguiden');
   const routes = fs.readdirSync(root, { withFileTypes: true })
     .filter(entry => entry.isDirectory() && ['page.mdx', 'page.tsx'].some(file =>
       fs.existsSync(path.join(root, entry.name, file))))

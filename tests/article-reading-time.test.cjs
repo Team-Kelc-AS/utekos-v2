@@ -46,7 +46,7 @@ test('all registered articles use current generated body counts rather than edit
   const { articleReadingMetrics } = await reading;
   const { knowledgeArticleList } = loadTypeScript('lib/knowledge/knowledgeArticles.ts');
   for (const article of knowledgeArticleList) {
-    const markdown = fs.readFileSync(path.join(__dirname, '../src/app/(blog)/uteguiden', article.slug, 'page.mdx'), 'utf8');
+    const markdown = fs.readFileSync(path.join(__dirname, '../src/app/(site)/(blog)/uteguiden', article.slug, 'page.mdx'), 'utf8');
     const expected = articleReadingMetrics(markdown);
     assert.equal(article.wordCount, expected.wordCount, article.slug);
     assert.equal(article.readingMinutes, expected.readingMinutes, article.slug);

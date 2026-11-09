@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./brand-tokens.css";
 @import "./typeset.css";
 @import "shadcn/tailwind.css";
 @import "tw-animate-css";

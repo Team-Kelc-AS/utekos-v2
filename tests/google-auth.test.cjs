@@ -51,8 +51,8 @@ function fixture({ providerAvailable = true, verifiedUser = user, tokenValid = t
   });
   return {
     requests, load,
-    start: load('app/(account)/auth/google/route.ts').GET,
-    callback: load('app/(account)/auth/callback/route.ts').GET,
+    start: load('app/(site)/(account)/auth/google/route.ts').GET,
+    callback: load('app/(site)/(account)/auth/callback/route.ts').GET,
     status: load('app/api/identity/google/status/route.ts').GET,
     disconnect: load('app/api/identity/google/disconnect/route.ts').POST,
   };
@@ -134,7 +134,7 @@ test('misconfigured providers fail visibly on Utekos without a Shopify fallback'
   const result = await f.start(request('/auth/google'));
   assert.equal(new URL(result.headers.get('location')).pathname, '/auth/error');
   assert.doesNotMatch(result.headers.get('location'), /shopify|missing.OAuth.secret/);
-  const noConfig = f.load('app/(account)/auth/google/route.ts', {});
+  const noConfig = f.load('app/(site)/(account)/auth/google/route.ts', {});
   assert.equal(new URL((await noConfig.GET(request('/auth/google'))).headers.get('location')).pathname, '/auth/error');
 });
 

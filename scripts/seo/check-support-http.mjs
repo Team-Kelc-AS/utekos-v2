@@ -52,7 +52,7 @@ function inspect(html, key) {
   assert.equal(value('og:locale', 'property'), 'nb_NO');
   assert.equal(value('twitter:card'), 'summary_large_image');
   assert.equal(value('twitter:image'), value('og:image', 'property'));
-  assert.equal(value('twitter:image:alt').trim(), fs.readFileSync(`src/app/(storefront)${page.path}/opengraph-image.alt.txt`, 'utf8').trim());
+  assert.equal(value('twitter:image:alt').trim(), fs.readFileSync(`src/app/(site)/(storefront)${page.path}/opengraph-image.alt.txt`, 'utf8').trim());
   assert.equal(value('twitter:image:alt'), value('og:image:alt', 'property'));
   assert.equal(value('og:image:width', 'property'), '1200');
   assert.equal(value('og:image:height', 'property'), '630');
@@ -126,7 +126,7 @@ for (const [key, page] of Object.entries(supportPages)) {
       const imageResponse = await fetch(base + imageUrl.pathname + imageUrl.search);
       assert.equal(imageResponse.status, 200);
       assert.ok(imageResponse.headers.get('content-type')?.startsWith('image/jpeg'));
-      assert.deepEqual(Buffer.from(await imageResponse.arrayBuffer()), fs.readFileSync(`src/app/(storefront)${page.path}/opengraph-image.jpg`));
+      assert.deepEqual(Buffer.from(await imageResponse.arrayBuffer()), fs.readFileSync(`src/app/(site)/(storefront)${page.path}/opengraph-image.jpg`));
     } else assert.deepEqual(contentSnapshot($), desktop, `${key} same primary content for ${agent}`);
     results.push({ route: page.path, agent, status: response.status, headerRobots, headBytes: headEnd, bytes: Buffer.byteLength(html), image: imageUrl.href, types });
   }

@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { Buffer } from "node:buffer";
 import { PDFDocument, rgb, type PDFFont } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
-import type { DealerInquiryValues } from "@/app/(storefront)/bli-forhandler/form-state";
+import type { DealerInquiryValues } from "@/app/(site)/(storefront)/bli-forhandler/form-state";
 import type { ContactEmailAttachment } from "@/lib/contact-email-attachments";
 
 const fields = [

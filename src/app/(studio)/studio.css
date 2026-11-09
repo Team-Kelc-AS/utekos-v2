@@ -1,0 +1,15 @@
+@import "tailwindcss" source(none);
+@import "../brand-tokens.css";
+@source "../../assets/components/studio";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--color-vargnatt-100);
+  color: var(--foreground);
+  font-family: var(--font-google-sans-flex), sans-serif;
+  font-weight: 500;
+}

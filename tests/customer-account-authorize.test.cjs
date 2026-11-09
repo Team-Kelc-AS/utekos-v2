@@ -5,7 +5,7 @@ const { NextRequest, NextResponse } = require('next/server');
 const { loadTypeScript } = require('./load-typescript.cjs');
 
 function subject(env = {}) {
-  return loadTypeScript('app/(account)/customer/account/authorize/route.ts', {
+  return loadTypeScript('app/(site)/(account)/customer/account/authorize/route.ts', {
     env,
     mocks: { 'next/dist/server/web/spec-extension/response': { NextResponse } },
   });

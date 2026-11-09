@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const directory = path.join(root, 'src/app/(blog)/uteguiden');
+const directory = path.join(root, 'src/app/(site)/(blog)/uteguiden');
 const processor = createProcessor();
 const omitted = new Set([
   'mdxjsEsm', 'code', 'html', 'image', 'definition',

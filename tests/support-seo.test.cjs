@@ -130,7 +130,7 @@ test('shipping policy page links to shared policies and uses its visible revisio
 test('replacement slots contain valid 1200 × 630 JPEGs with alt text', async () => {
   const sharp = createRequire(require.resolve('next/package.json'))('sharp');
   for (const page of Object.values(supportPages)) {
-    const dir = path.join(root, 'src/app/(storefront)', page.path);
+    const dir = path.join(root, 'src/app/(site)/(storefront)', page.path);
     const file = path.join(dir, 'opengraph-image.jpg');
     const metadata = await sharp(file).metadata();
     assert.equal(metadata.format, 'jpeg');
@@ -147,7 +147,7 @@ test('replacement slots contain valid 1200 × 630 JPEGs with alt text', async ()
 
 test('installed Next metadata loader changes the image URL when image bytes change', async () => {
   const loader = require('next/dist/build/webpack/loaders/next-metadata-image-loader').default;
-  const resourcePath = path.join(root, 'src/app/(storefront)/om-oss/opengraph-image.jpg');
+  const resourcePath = path.join(root, 'src/app/(site)/(storefront)/om-oss/opengraph-image.jpg');
   const bytes = fs.readFileSync(resourcePath);
   const context = {
     resourcePath, rootContext: root,

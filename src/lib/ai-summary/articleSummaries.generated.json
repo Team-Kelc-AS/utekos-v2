@@ -29,23 +29,23 @@
   "julegaven-til-den-som-har-alt": {
     "sourceKey": "a94046f5ce742af5b1bcdff123223ff534fb82aa54df8f2a5faef4ee4fe25f7b",
     "content": {
-      "scope": "Artikkelen analyserer psykologiske mekanismer bak julegavekjøp, økonomisk dødvektstap og overgangen til praktiske nyttegaver.",
-      "learning": "Du lærer hvorfor givere og mottakere vurderer gaver ulikt, hva som bidrar til feilkjøp, og hvordan praktisk anvendelighet kan gi verdi over tid.",
+      "scope": "Artikkelen undersøker psykologien bak julegavekjøp, økonomisk dødvektstap og hvordan praktiske gaver kan passe mottakerens hverdag.",
+      "learning": "Du lærer hvorfor givere og mottakere kan vurdere samme gave ulikt, hvordan overraskelser kan gi feilkjøp, og hvorfor ønsker og anvendelighet er relevante for gavevalget.",
       "points": [
         {
-          "text": "Forskning viser en markant gaveasymmetri der giveren søker dramaturgi ved overrekkelsen, mens mottakeren vektlegger nytteverdi over tid.",
+          "text": "Gaveasymmetri beskriver forskjellen mellom giverens fokus på overrekkelsen og mottakerens vurdering av nytte over tid.",
           "details": [
-            "Joel Waldfogel har beregnet at omtrent 20 prosent av gavens verdi forsvinner i økonomisk dødvektstap."
+            "Artikkelen omtaler Waldfogels anslag om økonomisk tap når mottakeren verdsetter gaven lavere enn kjøpsprisen."
           ]
         },
         {
-          "text": "Givere prioriterer ofte abstrakt ønskelighet, overraskelser og luksus fremfor konkrete ønsker, fleksibilitet og praktisk gjennomførbarhet.",
+          "text": "Givere kan prioritere luksus, originalitet og overraskelser, mens mottakere kan foretrekke konkrete ønsker, fleksibilitet og enkel bruk.",
           "details": []
         },
         {
-          "text": "Artikkelen fremhever praktiske problemløsere som reduserer hverdagsfriksjon for voksne med etablert livsstil, fremfor nye statusgjenstander.",
+          "text": "Praktiske gaver knyttes til mottakerens rutiner og komfortbehov. Friluftsliv, hytteliv og camping brukes som eksempler på slike brukssituasjoner.",
           "details": [
-            "Utekos TechDown™ brukes som eksempel på en nyttegave, med hydrofobisk CloudWeave™ og Luméa™ nylon som ytterstoff."
+            "Utekos TechDown™ er artikkelens produkteksempel, med CloudWeave™-isolasjon, Luméa™ nylon og mulighet for å tilpasse plaggets lengde."
           ]
         }
       ]
@@ -81,27 +81,27 @@
   "glamping-i-norge": {
     "sourceKey": "b44784ea67c21541d4cdc55df8966a8e5f401d8eae43ff23b20183ca9098698a",
     "content": {
-      "scope": "Artikkelen redegjør for forberedelser til glamping i Norge, med vekt på vurdering av fasiliteter, adkomst og behov for riktig utstyr.",
-      "learning": "Leseren lærer å kartlegge oppvarming, sanitærforhold og matmuligheter, samt hvordan skiftende vær krever lagvis bekledning, gode sko og ryggsekk.",
+      "scope": "Artikkelen tar for seg forberedelser til glamping i Norge, med vekt på fasiliteter, adkomst, værforhold og utstyr før bestilling.",
+      "learning": "Du lærer å sammenligne oppvarming, toalett, dusj og mattilbud med egne komfortbehov, og å tilpasse bagasje, klær og fottøy til terrenget og forholdene på stedet.",
       "points": [
         {
-          "text": "Oppvarmingsløsninger avgjør komforten utenfor sommeren, og enkelte steder krever at gjesten selv fyrer kontinuerlig med ved.",
+          "text": "Undersøk oppvarmingen før turer utenfor sommeren. Enkelte steder krever at gjesten selv holder vedovnen i gang.",
           "details": [
-            "Gulv kan forbli kalde selv med ovn, og enkelte aktører kombinerer vedovn med dieselvarmer eller gass."
+            "Gulvet kan være kaldt selv med ovn, og flere aktører kombinerer ulike varmekilder."
           ]
         },
         {
-          "text": "Sanitær- og matfasiliteter spenner fra luksus med restaurant og innendørs bad til utedo, pumpedusj og enkel primus.",
+          "text": "Bad og mattilbud varierer fra innendørs fasiliteter og restaurant til utedo, pumpedusj og enkel selvhusholdning.",
           "details": [
-            "Uten innlagt vann eller strøm må mat forberedes hjemme og vannforbruk rasjoneres nøye."
+            "Avklar kjøkkenutstyr, drikkevann og strøm, og planlegg maten etter det som faktisk finnes."
           ]
         },
         {
-          "text": "Adkomst i ulendt terreng gjør rullekoffert uegnet, og bagasjen bør fraktes i ryggsekk.",
+          "text": "Adkomst via stier og bratte veier kan gjøre ryggsekk mer egnet enn rullekoffert. Undersøk eventuell bagasjetransport.",
           "details": []
         },
         {
-          "text": "Uforutsigbart norsk vær krever trelagspåkledning, vanntett fottøy og hodelykt for trygg ferdsel i mørket.",
+          "text": "Pakk lagvis bekledning, vind- og regnbeskyttelse, vanntett fottøy og hodelykt. Sjekk værvarselet og muligheten for å tørke vått utstyr.",
           "details": []
         }
       ]
@@ -318,23 +318,25 @@
   "hydroguard": {
     "sourceKey": "daf002a15ac7fc23ae28a469238cb8864ae51c3bf5eb9acea46e234ea17dccf2",
     "content": {
-      "scope": "Artikkelen redegjør for HydroGuard™, ytterstoffet i Comfyrobe™ fra Utekos, dets tekniske oppbygning, målebegreper og vedlikehold.",
-      "learning": "Du lærer hvordan polyestervev, peach skin-finish og PU-belegg fungerer, hva ISO-teststandarder betyr, samt samspillet med innerfôret SherpaCore™.",
+      "scope": "Artikkelen forklarer HydroGuard™, ytterstoffet i Comfyrobe™, med vekt på materialoppbygning, tekstiltester, samspill med fôret og vedlikehold.",
+      "learning": "Du lærer å skille mellom polyester, peach skin-finish og PU-belegg, forstå forskjellen på vannavvisning og vanntetthet, og tolke pusteevne og stoffvekt uten å overføre tallene til hele plagget.",
       "points": [
         {
-          "text": "HydroGuard™ kombinerer en matt peach skin-polyesterbase på 130 g/m² med et pustende PU-belegg bak.",
+          "text": "HydroGuard™ har en matt, myk polyesterflate og et pustende PU-belegg på baksiden. PU-underkategori er ikke angitt.",
           "details": [
-            "Mekanisk bearbeiding fjerner plastpreget i overflaten, mens det beskyttede polyuretanbelegget hindrer vanninntrenging og slipper ut vanndamp."
+            "130 g/m² er ytterstoffets masse per areal, ikke vekten eller isolasjonsevnen til hele Comfyrobe™."
           ]
         },
         {
-          "text": "Internasjonale tekstilstandarder skiller prinsipielt mellom overflateavvisning, reell vanntetthet, luftgjennomgang og vanndamptransport.",
-          "details": [
-            "Vannavvisning måler kun avprelling på overflaten, mens vanntetthet krever hydrostatisk trykktest; sømmer påvirker helheten."
-          ]
+          "text": "ISO 811 måler motstand mot vanntrykk, mens ISO 4920 gjelder overflatefukting. Sømmer og åpninger påvirker plaggets samlede regnbeskyttelse.",
+          "details": []
         },
         {
-          "text": "I Comfyrobe™ danner stoffet en værsperre foran fôret SherpaCore™, og vask av plagget må følge innsydd anvisning selv om ytterstoffet tåler 40 °C.",
+          "text": "Pusteevne gjelder transport av vanndamp og må skilles fra luftgjennomgang. SherpaCore™-fôret står for isolasjon og fukthåndtering.",
+          "details": []
+        },
+        {
+          "text": "Ytterstoffet er spesifisert for vask ved 40 °C. Følg likevel alltid plaggets innsydde vaskeanvisning ved vask og tørking.",
           "details": []
         }
       ]

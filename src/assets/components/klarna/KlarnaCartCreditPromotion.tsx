@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { KlarnaOnSiteMessagingScript } from "@/app/(storefront)/handlehjelp/klarna/components/KlarnaOnSiteMessagingScript";
+import { KlarnaOnSiteMessagingScript } from "@/app/(site)/(storefront)/handlehjelp/klarna/components/KlarnaOnSiteMessagingScript";
 import type { Money } from "@/lib/shopify/product-types";
 
 function refreshPlacement() {

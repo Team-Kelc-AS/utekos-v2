@@ -1,0 +1,23 @@
+/* Brand tokens shared by the site's and studio's independent documents. */
+@theme inline {
+  --font-sans: var(--font-google-sans-flex);
+  --color-foreground: var(--foreground);
+  --color-ink: #010b0a;
+  --color-cloud-dancer: var(--cloud-dancer);
+  --color-vargnatt-100: oklch(0.161 0.0084 285.42);
+  --color-vargnatt-300: oklch(0.2286 0.0096 285.62);
+  --color-vargnatt-500: oklch(0.2789 0.0091 285.79);
+  --color-maritime-blue-100: oklch(0.2884 0.0366 279.42);
+  --color-maritime-blue-500: oklch(0.2484 0.0366 279.42);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --foreground: #f0eee9;
+  --primary: oklch(0.545648 0.161164 43.1534);
+  --primary-foreground: #f0eee9;
+  --cloud-dancer: oklch(0.9493 0.007 88.64);
+  --color-vargnatt-100: oklch(0.161 0.0084 285.42);
+  --color-vargnatt-300: oklch(0.2286 0.0096 285.62);
+}
