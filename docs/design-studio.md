@@ -7,7 +7,8 @@ Studioet kjører på `/design` i samme Next.js-app og Vercel-prosjekt som nettbu
 - `src/app/(studio)/layout.tsx` har et eget HTML-dokument med delt font og et avgrenset stilark. Ruten ligger i `(studio)/design/page.tsx`.
 - `src/app/brand-tokens.css` gir de to layoutene et felles sett med fargetokens. Studioets Tailwind-kilde er begrenset til studio-komponentene.
 - `/design` og underliggende stier er ekskludert fra butikkens proxy-matchere. Øvrige proxy-regler beholdes.
-- `FreeformStudio` ligger i `src/assets/components/studio/`. `modern-screenshot` lastes dynamisk ved eksport.
+- `FreeformStudio` ligger i `src/assets/components/studio/`. Konva-tegneflaten lastes i en egen klientbunt. `modern-screenshot` er erstattet av ren canvas-eksport.
+- Versjonert designformat, lokale utkast og plattformporter er beskrevet i [designformat og overgang til app](design-studio-format.md).
 
 Navigasjon mellom root layouts starter et nytt dokument. Tilbake-lenken bruker derfor en vanlig lenke. Global 404 og felles API-er ligger fortsatt utenfor sidegruppene. Ingen PWA eller native app er opprettet.
 
@@ -31,9 +32,9 @@ pnpm exec next start --port 3100
 node scripts/performance/check-studio.mjs http://localhost:3100
 ```
 
-Skriptet lagrer rapport, PNG-eksport og skjermbilder i `outputs/design-studio-qa/`. Det kontrollerer tekstredigering, temavalg, tastaturflytting, eksport, mobilbredde og overganger mellom butikk og studio. Det måler faktiske lastede filer og kontrollerer at butikkens klientbunter ikke lastes. Nexts klientmanifest inneholder også tilgjengelige referanser fra global 404; en slik referanse er ikke i seg selv en nedlastet fil. Gzip-størrelser i rapporten er estimater fra dekodede responser, ikke målt trafikk i produksjon.
+Skriptet lagrer nå rapport, PNG-eksport, designfil og skjermbilder i `outputs/design-studio-konva-qa/`. Det kontrollerer Konva-editoren, blant annet touch, tastatur, angre/gjør om, bildefidelitet, lokal lagring, portable designfiler og eksport uten redigeringshåndtak. Det kontrollerer også at butikkens klientbunter ikke lastes når et produksjonsmanifest er tilgjengelig. Nexts klientmanifest inneholder også tilgjengelige referanser fra global 404; en slik referanse er ikke i seg selv en nedlastet fil. Gzip-størrelser i rapporten er estimater fra dekodede responser, ikke målt trafikk i produksjon.
 
-Måling fra testbygget 8. november 2026 (desimal kB):
+Historisk måling fra DOM-prototypen 8. november 2026 (desimal kB). Dette er ikke en måling av Konva-editoren:
 
 | Del | Størrelse |
 | --- | --- |

@@ -9,6 +9,12 @@ Utekos v2 er en omskriving av `../utekos-headless` for en ryddigere, raskere og 
 - Bevar klikk-ID og hendelsestid; ikke forkort, endre tegnstørrelse eller bytt identitet. Respekter samtykke og bruk samme hendelses-ID for Pixel/CAPI-deduplisering. Les gjeldende leverandørdokumentasjon og verifiser faktisk payload, naturlig mottak og leveringstid; organisk trafikk eller grønne tester alene forklarer ikke lav ClickID-dekning.
 - Følg gjeldende brukerautorisasjon ved publisering. Reparer manglende miljøvariabler i riktig Preview/Production-miljø og bygg på nytt; la ikke ferdig arbeid bli liggende som utkast. Publiser avhengig backend før storefront, kontroller Vercel `Ready` på riktig domene og aktiv Shopify-appversjon, og mål deretter naturlige hendelser hos Meta.
 
+## Preview som standard
+
+- **Preview som standard:** Avtalte implementasjonsoppgaver fullføres med avgrenset publisering til `preview.utekos.no` etter lokale kontroller; ikke stopp ved localhost. Dette er stående brukerautorisasjon for preview med mindre brukeren ber om kun lokalt arbeid. Produksjon krever fortsatt eget klarsignal for den konkrete endringen.
+
+Se [felles deployflyt](docs/deployment.md). Bevar andre lokale endringer og bruk oppdatert `origin/preview` i en isolert checkout ved behov. Verifiser eksakt SHA, Vercel `READY`, alias og berørte flyter på preview.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know
