@@ -169,7 +169,7 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
         <Transformer ref={transformer} flipEnabled={false} rotateEnabled
           keepRatio={selected?.kind === "image"} enabledAnchors={selected?.kind === "image"
             ? ["top-left", "top-right", "bottom-left", "bottom-right"] : undefined}
-          anchorSize={28} rotateAnchorOffset={36} borderStroke="#f0eee9"
+          anchorSize={12} rotateAnchorOffset={36} borderStroke="#f0eee9"
           anchorStyleFunc={styleTransformerHandle}
           boundBoxFunc={(oldBox, newBox) => Math.abs(newBox.width) < 24 * scale || Math.abs(newBox.height) < 24 * scale ? oldBox : newBox} />
       </Layer>
