@@ -10,6 +10,7 @@ import {
   serializeDocument, studioReducer, type StudioDocument, type StudioElement,
 } from "@/lib/studio/document";
 import type { StudioFileDelivery, StudioPersistence } from "@/lib/studio/platform";
+import { centerElement, duplicateElement, orderElement, removeElement, type StudioLayerAction } from "@/lib/studio/selection";
 import { browserFileDelivery, browserPersistence, readImage } from "./browserPlatform";
 import type { StudioCanvasHandle } from "./StudioCanvas";
 import styles from "./studio.module.css";
@@ -36,6 +37,7 @@ export function FreeformStudio({ persistence = browserPersistence, fileDelivery 
   const canvas = useRef<StudioCanvasHandle>(null);
   const imageInput = useRef<HTMLInputElement>(null);
   const designInput = useRef<HTMLInputElement>(null);
+  const workspace = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -130,12 +132,17 @@ export function FreeformStudio({ persistence = browserPersistence, fileDelivery 
   }
 
   function remove() {
-    commit(document => {
-      const elements = document.elements.filter(element => element.id !== selectedId);
-      const assetIds = new Set(elements.flatMap(element => element.kind === "image" ? [element.assetId] : []));
-      return { ...document, elements, assets: Object.fromEntries(Object.entries(document.assets).filter(([id]) => assetIds.has(id))) };
-    });
+    if (!selected) return;
+    commit(document => removeElement(document, selected.id));
     setSelectedId(null);
+    requestAnimationFrame(() => workspace.current?.focus({ preventScroll: true }));
+  }
+  function duplicate() {
+    if (!selected || !canAdd) return;
+    const id = crypto.randomUUID();
+    commit(document => duplicateElement(document, selected.id, id));
+    setSelectedId(id);
+    requestAnimationFrame(() => workspace.current?.focus({ preventScroll: true }));
   }
   function fitText() {
     if (selected?.kind !== "text" || !canvas.current) return;
@@ -146,19 +153,16 @@ export function FreeformStudio({ persistence = browserPersistence, fileDelivery 
     }
   }
   function move(dx: number, dy: number) { if (selected) change({ ...selected, x: selected.x + dx, y: selected.y + dy }); }
-  function reorder(direction: number) {
-    commit(document => {
-      const elements = [...document.elements];
-      const index = elements.findIndex(element => element.id === selectedId);
-      const next = index + direction;
-      if (index < 0 || next < 0 || next >= elements.length) return document;
-      [elements[index], elements[next]] = [elements[next], elements[index]];
-      return { ...document, elements };
-    });
+  function reorder(action: StudioLayerAction) {
+    if (selected) commit(document => orderElement(document, selected.id, action));
+  }
+  function center(axis: "horizontal" | "vertical") {
+    if (selected) commit(document => centerElement(document, selected.id, axis));
   }
   function keys(event: KeyboardEvent<HTMLDivElement>) {
     const target = event.target;
-    if (target instanceof HTMLElement && (target.closest("input, textarea, select, button, a") || target.isContentEditable)) return;
+    if (event.defaultPrevented || (target instanceof HTMLElement &&
+      (target.closest('input, textarea, select, button, a, [role="menu"], [role="menuitem"]') || target.isContentEditable))) return;
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
       event.preventDefault(); dispatch({ type: event.shiftKey ? "redo" : "undo" }); return;
     }
@@ -203,9 +207,12 @@ export function FreeformStudio({ persistence = browserPersistence, fileDelivery 
           <button type="button" className={styles.button} disabled={!canAdd} onClick={() => insert("rect")}><Square aria-hidden="true" size={18} />Figur</button>
           <button type="button" className={styles.button} disabled={!canAdd} onClick={() => imageInput.current?.click()}><ImagePlus aria-hidden="true" size={18} />Bilde</button>
         </div>
-        <div className={styles.freeformCanvas} role="group" aria-label="Forhåndsvisning av kort" tabIndex={0}
+        <div ref={workspace} className={styles.freeformCanvas} role="group" aria-label="Forhåndsvisning av kort" tabIndex={0}
           aria-describedby="studio-canvas-help" onKeyDown={keys}>
-          <StudioCanvas document={design} selectedId={selected?.id ?? null} onSelect={setSelectedId} onChange={change} onReady={setCanvasReady} canvasRef={canvas} />
+          <StudioCanvas document={design} selectedId={selected?.id ?? null} onSelect={setSelectedId} onChange={change} onReady={setCanvasReady} canvasRef={canvas}
+            actions={{ duplicate, remove, order: reorder, center, fitText, disabled: busy, canDuplicate: canAdd,
+              canForward: !!selected && design.elements.at(-1)?.id !== selected.id,
+              canBackward: !!selected && design.elements[0]?.id !== selected.id }} />
         </div>
         <p id="studio-canvas-help" className={styles.help}>Flytt elementer på hele arbeidsflaten. Bare innholdet innenfor kortets kant blir med i PNG-eksporten. Bruk piltaster eller feltene for nøyaktig plassering.</p>
         <p className={styles.help} role="status">{saved.error ? "Utkastet kunne ikke lagres på denne enheten. Last ned designfilen for å ta vare på arbeidet."
@@ -268,8 +275,8 @@ export function FreeformStudio({ persistence = browserPersistence, fileDelivery 
             <button type="button" className={styles.button} aria-label="Flytt til høyre" onClick={() => move(4, 0)}>→</button>
           </div>
           <div className={styles.actions}>
-            <button type="button" className={styles.button} onClick={() => reorder(1)} disabled={design.elements.at(-1)?.id === selectedId}><ArrowUp aria-hidden="true" size={16} />Fremover</button>
-            <button type="button" className={styles.button} onClick={() => reorder(-1)} disabled={design.elements[0]?.id === selectedId}><ArrowDown aria-hidden="true" size={16} />Bakover</button>
+            <button type="button" className={styles.button} onClick={() => reorder("forward")} disabled={design.elements.at(-1)?.id === selectedId}><ArrowUp aria-hidden="true" size={16} />Fremover</button>
+            <button type="button" className={styles.button} onClick={() => reorder("backward")} disabled={design.elements[0]?.id === selectedId}><ArrowDown aria-hidden="true" size={16} />Bakover</button>
             <button type="button" className={styles.button} onClick={remove}>Slett element</button>
           </div>
         </fieldset>}

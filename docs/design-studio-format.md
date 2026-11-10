@@ -45,7 +45,15 @@ Under rotasjon vises grader ved pekeren. Ved størrelsesendring vises bredde × 
 
 Canva-dokumentasjonen og Context7 ble kontrollert 10. november 2026. App UI Kit består av enkeltimporterbare React-komponenter, men `@canva/app-ui-kit@5.15.0` har en lisens som begrenser bruk til Canva-plattformen og apper som tilbys der. Kit-et er derfor ikke installert i denne selvstendige editoren. Bunnlinjen bruker native, merkede HTML-kontroller med prosjektets eksisterende stil og ikoner. [Canva UI Kit](https://www.canva.dev/docs/apps/app-ui-kit/quickstart/), [lisensen til den publiserte pakken](https://unpkg.com/@canva/app-ui-kit@5.15.0/LICENSE.md), [Canva REST API](https://www.canva.dev/docs/apps/rest-apis/).
 
-## Lagring og filhåndtering
+## Flytende objektmeny
+
+Et markert objekt får en flytende meny med duplisering, sletting og flere valg. Knapper har 44 × 44 px treffområde. Plasseringen beregnes i skjermpiksler ut fra objektets roterte ramme, håndtak og visningens zoom/forskyvning. Menyen legges over, under eller ved siden av objektet og holdes innenfor arbeidsflaten. Under selve dra-/transformbevegelsen skjules den slik at målebokser og håndtak har fri plass.
+
+Flere valg bruker prosjektets eksisterende Base UI Menu med fokusstyring, piltastnavigering, Escape og lukking ved klikk utenfor. Menyen tilbyr lagrekkefølge og vannrett/loddrett midtstilling på kortet. Tekstobjekter får også tekstredigering og tilpasning av boksen til teksten. Ingen valg uten implementert funksjon vises.
+
+Duplisering gir ny element-ID og en forskyvning på 24 designpiksler. Tekst, formatering, bildeproporsjoner og originale bildebytes beholdes. Bildekopier deler asset-referansen; ressursen slettes først når ingen elementer bruker den. Alle dokumenthandlingene går gjennom eksisterende angre/gjør om og lagring. Designformatet forblir versjon 2.
+
+## Plattformporter og lagring
 
 `src/lib/studio/platform.ts` definerer to porter:
 
@@ -67,13 +75,14 @@ Denne avgrensningen gjør at kundens design og originalbilder kan følge med vid
 ## Verifisering
 
 ```sh
-node --test tests/studio-document.test.cjs tests/studio-viewport.test.cjs
+node --test tests/studio-document.test.cjs tests/studio-viewport.test.cjs tests/studio-selection.test.cjs
 pnpm typecheck
 pnpm build
 pnpm exec next start --port 3100
 node scripts/performance/check-studio.mjs http://localhost:3100
 node scripts/performance/check-studio-workspace.mjs http://localhost:3100
 node scripts/performance/check-studio-view.mjs http://localhost:3100
+node scripts/performance/check-studio-selection.mjs http://localhost:3100
 ```
 
 Nettleserkontrollen dekker desktop og 390 px mobilbredde, touch-flytting og håndtak, tekst, figurer, bilder, angre/gjør om, IndexedDB-gjenåpning, ugyldige filer, bevaring av ugyldige utkast og import i en ny nettleserkontekst. Den sammenligner eksporterte PNG-er med og uten markering og på tvers av skjermbredder. Filer og rapport lagres i `outputs/design-studio-konva-qa/`.

@@ -69,7 +69,7 @@
   background-image: radial-gradient(circle, #44514e 1px, transparent 1px);
   background-size: 24px 24px;
 }
-.canvasWorkspace { display: flex; flex-direction: column; height: 100%; min-width: 0; }
+.canvasWorkspace { position: relative; display: flex; flex-direction: column; height: 100%; min-width: 0; }
 .canvasHost { position: relative; flex: 1; min-height: 0; line-height: 0; touch-action: none; }
 .canvasHost p { line-height: 1.5; }
 .canvasHost canvas { touch-action: none; }
@@ -85,6 +85,26 @@
 .measurement { position: absolute; z-index: 2; display: grid; place-items: center; height: 32px; padding: 0.25rem 0.5rem;
   box-sizing: border-box; border: 1px solid #758581; border-radius: 0.5rem; background: #f0eee9; color: #010b0a;
   font-size: 0.75rem; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1; white-space: nowrap; pointer-events: none; user-select: none; }
+.objectToolbar { position: absolute; z-index: 3; display: flex; align-items: center; gap: 4px; padding: 4px;
+  box-sizing: border-box; border: 1px solid #758581; border-radius: 9999px; background: #f0eee9; color: #010b0a;
+  box-shadow: 0 2px 8px #010b0a33; }
+.objectToolButton { display: inline-grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+.objectToolButton:hover, .objectToolButton[data-popup-open] { background: #001a18; color: #f0eee9; }
+.objectToolButton:disabled { opacity: 0.4; cursor: default; background: transparent; color: #010b0a; }
+.objectToolbar .objectToolButton:focus-visible { outline: 2px solid #b44701; outline-offset: -2px; }
+.objectMenuPositioner { z-index: 100; }
+.objectMenu { width: 260px; max-width: calc(100vw - 16px); max-height: var(--available-height); overflow-y: auto; overscroll-behavior: contain;
+  box-sizing: border-box; padding: 6px; border: 1px solid #758581; border-radius: 0.875rem; outline: none;
+  background: #f0eee9; color: #010b0a; font-family: var(--font-google-sans-flex), sans-serif; font-weight: 500;
+  box-shadow: 0 4px 16px #010b0a33; }
+.objectMenuItem { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 10px;
+  box-sizing: border-box; border-radius: 0.5rem; font-size: 0.8125rem; line-height: 1.3; cursor: pointer; user-select: none; outline: none; }
+.objectMenuItem[data-highlighted] { background: #001a18; color: #f0eee9; }
+.objectMenuItem[data-disabled] { opacity: 0.4; cursor: default; }
+.objectMenuItem svg { flex-shrink: 0; }
+.objectMenuLabel { padding: 8px 10px 4px; font-size: 0.75rem; font-weight: 800; line-height: 1.4; }
+.objectMenuSeparator { height: 1px; margin: 6px 4px; background: #758581; }
 .help { margin-top: 0.75rem; font-size: 0.8125rem; color: var(--studio-muted); max-width: 65ch; }
 .inspector { display: grid; gap: 1rem; }
 .inspector h2, .properties legend { font-weight: 800; font-size: 1rem; }

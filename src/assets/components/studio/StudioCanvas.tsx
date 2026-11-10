@@ -5,11 +5,12 @@ import Konva from "konva";
 import { Image as CanvasImage, Layer, Rect, Stage, Text, Transformer } from "react-konva";
 import type { KonvaNodeEvents } from "react-konva";
 import { normalizeElement, type StudioDocument, type StudioElement } from "@/lib/studio/document";
-import { measurementPosition } from "@/lib/studio/viewport";
+import { measurementPosition, selectionToolbarPosition } from "@/lib/studio/viewport";
 import styles from "./studio.module.css";
 import { styleTransformerHandle } from "./transformerHandles";
 import { StudioZoomControls } from "./StudioZoomControls";
 import { useStudioViewport } from "./useStudioViewport";
+import { StudioObjectToolbar, type StudioSelectionActions } from "./StudioObjectToolbar";
 
 export interface StudioCanvasHandle {
   exportPng(): Promise<Uint8Array>;
@@ -22,6 +23,7 @@ type Props = {
   onChange(element: StudioElement): void;
   onReady(ready: boolean): void;
   canvasRef: Ref<StudioCanvasHandle>;
+  actions: StudioSelectionActions;
 };
 
 function ImageNode({ element, image, register, events }: {
@@ -41,17 +43,18 @@ function ImageNode({ element, image, register, events }: {
     filters={[Konva.Filters.Brightness]} brightness={1 + element.brightness} />;
 }
 
-export default function StudioCanvas({ document: design, selectedId, onSelect, onChange, onReady, canvasRef }: Props) {
+export default function StudioCanvas({ document: design, selectedId, onSelect, onChange, onReady, canvasRef, actions }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const content = useRef<Konva.Layer>(null);
   const transformer = useRef<Konva.Transformer>(null);
   const nodes = useRef(new Map<string, Konva.Node>());
   const [measurement, setMeasurement] = useState<{ x: number; y: number; label: string; rotating: boolean } | null>(null);
+  const [interacting, setInteracting] = useState(false);
   const transformKind = useRef<"rotate" | "resize" | null>(null);
   function interrupt() {
     transformer.current?.stopTransform();
     nodes.current.forEach(node => node.stopDrag());
-    transformKind.current = null; setMeasurement(null);
+    transformKind.current = null; setMeasurement(null); setInteracting(false);
   }
   const navigation = useStudioViewport(host, design.width, design.height, interrupt);
   const { width, height } = navigation.viewport;
@@ -189,11 +192,12 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
           const register = (node: Konva.Node | null) => { if (node) nodes.current.set(element.id, node); else nodes.current.delete(element.id); };
           const events: KonvaNodeEvents = {
             onClick: () => onSelect(element.id), onTap: () => onSelect(element.id),
-            onDragStart: () => onSelect(element.id),
+            onDragStart: () => { onSelect(element.id); setInteracting(true); },
             onDblClick: () => editText(element),
             onDblTap: () => editText(element),
-            onDragEnd: event => finish(element, event.target),
+            onDragEnd: event => { finish(element, event.target); setInteracting(false); },
             onTransformStart: event => {
+              setInteracting(true);
               transformKind.current = transformer.current?.getActiveAnchor() === "rotater" ? "rotate" : "resize";
               showMeasurement(event);
             },
@@ -204,7 +208,7 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
                 height: Math.max(element.fontSize * 1.35, node.height() * node.scaleY()), scaleX: 1, scaleY: 1 });
               showMeasurement(event);
             },
-            onTransformEnd: event => { finish(element, event.target); transformKind.current = null; setMeasurement(null); },
+            onTransformEnd: event => { finish(element, event.target); transformKind.current = null; setMeasurement(null); setInteracting(false); },
           };
           const props = { id: element.id, x: element.x, y: element.y, width: element.width, height: element.height,
             rotation: element.rotation, draggable: !navigation.panEnabled, ref: register, ...events };
@@ -232,6 +236,9 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
       {measurement.label}
     </div>}
     </div>
+    {selected && ready && !interacting && !navigation.panning && <StudioObjectToolbar key={selected.id}
+      position={selectionToolbarPosition(selected, navigation.view, width, height)} text={selected.kind === "text"}
+      actions={actions} onEditText={() => editText(selected)} />}
     <StudioZoomControls scale={scale} disabled={!ready} pan={navigation.handMode} onPan={navigation.togglePan}
       onZoom={value => navigation.zoom(value)} onFit={navigation.fit} />
   </div>;
