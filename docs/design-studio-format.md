@@ -35,7 +35,17 @@ Konva-flaten dekker hele den prikkede arbeidsflaten, også området utenfor kort
 
 Grensene i første format er 40 elementer, 24 MB designfil, 4 MB per bilde ved opplasting, maksimalt 24 megapiksler og 12 000 piksler per bildeside. Elementreferanser, ID-er, geometri og bildeproporsjoner valideres.
 
-## Plattformgrenser
+## Visning, zoom og målebokser
+
+Visningen har egen tilstand for skala og forskyvning. 100 % tilsvarer én designpiksel per CSS-piksel. Bunnlinjen har zoomskyver, prosentfelt, pluss/minus og «Tilpass». Manuell zoom går fra 5 til 400 %. «Tilpass» sentrerer kortet med plass til håndtak og arbeidsflate; vindusendringer tilpasses automatisk i denne modusen.
+
+Ctrl/Cmd + hjul zoomer rundt pekerens dokumentpunkt. Vanlig hjul/trackpad flytter visningen, og håndverktøyet, mellomrom + dra og tofingerbevegelser lar brukeren navigere uten å flytte dokumentobjekter. Tofingerzoom beholder markeringen. Zoom og forskyvning inngår ikke i designfil, utkast eller angrehistorikk, og endrer ikke PNG-eksportens oppløsning eller utsnitt.
+
+Under rotasjon vises grader ved pekeren. Ved størrelsesendring vises bredde × høyde i dokumentpiksler, uavhengig av zoom. Boksene følger peker/touch med fast skjermstørrelse, holdes innenfor arbeidsflaten og forsvinner ved slipp. De er DOM-grafikk utenfor eksportlaget.
+
+Canva-dokumentasjonen og Context7 ble kontrollert 10. november 2026. App UI Kit består av enkeltimporterbare React-komponenter, men `@canva/app-ui-kit@5.15.0` har en lisens som begrenser bruk til Canva-plattformen og apper som tilbys der. Kit-et er derfor ikke installert i denne selvstendige editoren. Bunnlinjen bruker native, merkede HTML-kontroller med prosjektets eksisterende stil og ikoner. [Canva UI Kit](https://www.canva.dev/docs/apps/app-ui-kit/quickstart/), [lisensen til den publiserte pakken](https://unpkg.com/@canva/app-ui-kit@5.15.0/LICENSE.md), [Canva REST API](https://www.canva.dev/docs/apps/rest-apis/).
+
+## Lagring og filhåndtering
 
 `src/lib/studio/platform.ts` definerer to porter:
 
@@ -57,12 +67,13 @@ Denne avgrensningen gjør at kundens design og originalbilder kan følge med vid
 ## Verifisering
 
 ```sh
-node --test tests/studio-document.test.cjs
+node --test tests/studio-document.test.cjs tests/studio-viewport.test.cjs
 pnpm typecheck
 pnpm build
 pnpm exec next start --port 3100
 node scripts/performance/check-studio.mjs http://localhost:3100
 node scripts/performance/check-studio-workspace.mjs http://localhost:3100
+node scripts/performance/check-studio-view.mjs http://localhost:3100
 ```
 
 Nettleserkontrollen dekker desktop og 390 px mobilbredde, touch-flytting og håndtak, tekst, figurer, bilder, angre/gjør om, IndexedDB-gjenåpning, ugyldige filer, bevaring av ugyldige utkast og import i en ny nettleserkontekst. Den sammenligner eksporterte PNG-er med og uten markering og på tvers av skjermbredder. Filer og rapport lagres i `outputs/design-studio-konva-qa/`.

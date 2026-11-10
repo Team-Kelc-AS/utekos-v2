@@ -5,8 +5,11 @@ import Konva from "konva";
 import { Image as CanvasImage, Layer, Rect, Stage, Text, Transformer } from "react-konva";
 import type { KonvaNodeEvents } from "react-konva";
 import { normalizeElement, type StudioDocument, type StudioElement } from "@/lib/studio/document";
+import { measurementPosition } from "@/lib/studio/viewport";
 import styles from "./studio.module.css";
 import { styleTransformerHandle } from "./transformerHandles";
+import { StudioZoomControls } from "./StudioZoomControls";
+import { useStudioViewport } from "./useStudioViewport";
 
 export interface StudioCanvasHandle {
   exportPng(): Promise<Uint8Array>;
@@ -43,32 +46,25 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
   const content = useRef<Konva.Layer>(null);
   const transformer = useRef<Konva.Transformer>(null);
   const nodes = useRef(new Map<string, Konva.Node>());
-  const [viewport, setViewport] = useState({ width: 0, height: 0 });
-  const { width, height } = viewport;
+  const [measurement, setMeasurement] = useState<{ x: number; y: number; label: string; rotating: boolean } | null>(null);
+  const transformKind = useRef<"rotate" | "resize" | null>(null);
+  function interrupt() {
+    transformer.current?.stopTransform();
+    nodes.current.forEach(node => node.stopDrag());
+    transformKind.current = null; setMeasurement(null);
+  }
+  const navigation = useStudioViewport(host, design.width, design.height, interrupt);
+  const { width, height } = navigation.viewport;
+  const { scale, x: cardX, y: cardY } = navigation.view;
   const [font, setFont] = useState<string | null>(null);
   const [loadedText, setLoadedText] = useState<string | null>(null);
   const [fontError, setFontError] = useState<string | null>(null);
   const [loadedImages, setLoadedImages] = useState<{ assets: StudioDocument["assets"] | null; images: Record<string, HTMLImageElement> }>({ assets: null, images: {} });
   const images = loadedImages.images;
   const [imageError, setImageError] = useState<string | null>(null);
-  const margin = width < 500 ? 40 : 80;
-  const scale = Math.max(0.01, Math.min((width - margin * 2) / design.width, (height - margin * 2) / design.height));
   const cardWidth = design.width * scale;
   const cardHeight = design.height * scale;
-  const cardX = (width - cardWidth) / 2;
-  const cardY = (height - cardHeight) / 2;
   const text = design.elements.flatMap(element => element.kind === "text" ? [element.text] : []).join(" ");
-
-  useEffect(() => {
-    const element = host.current;
-    if (!element) return;
-    const observer = new ResizeObserver(entries => {
-      const { width, height } = entries[0].contentRect;
-      setViewport({ width, height });
-    });
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     let active = true;
@@ -105,7 +101,7 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
     const node = selectedId ? nodes.current.get(selectedId) : undefined;
     transformer.current?.nodes(node ? [node] : []);
     transformer.current?.getLayer()?.batchDraw();
-  }, [selectedId, design, images, font, width, height]);
+  }, [selectedId, design, images, font, width, height, scale, cardX, cardY]);
 
   useImperativeHandle(canvasRef, () => ({
     fitText(id) {
@@ -150,8 +146,25 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
     if (element.kind === "text") window.requestAnimationFrame(() => window.document.getElementById("studio-text")?.focus());
   }
 
+  function showMeasurement(event: Konva.KonvaEventObject<Event>) {
+    const stage = event.target.getStage();
+    if (!stage || !event.evt || !transformKind.current) return;
+    stage.setPointersPositions(event.evt);
+    const pointer = stage.getPointerPosition();
+    if (!pointer) return;
+    const node = event.target;
+    const rotating = transformKind.current === "rotate";
+    const angle = ((node.rotation() + 180) % 360 + 360) % 360 - 180;
+    const label = rotating ? `${Math.round(angle * 10) / 10}°`
+      : `${Math.round(node.width() * node.scaleX())} × ${Math.round(node.height() * node.scaleY())} px`;
+    const position = measurementPosition(pointer, width, height, rotating, "touches" in event.evt);
+    setMeasurement({ ...position, label, rotating });
+  }
+
   const selected = design.elements.find(element => element.id === selectedId);
-  return <div ref={host} className={styles.canvasHost}>
+  return <div className={styles.canvasWorkspace}>
+    <div ref={host} className={styles.canvasHost} {...navigation.hostEvents}
+      style={{ cursor: navigation.panning ? "grabbing" : navigation.panEnabled ? "grab" : undefined }}>
     {fontError && <p role="alert">{fontError}</p>}
     {imageError && <p role="alert">{imageError}</p>}
     {(!width || !font) && <p role="status">Laster tegneflaten…</p>}
@@ -159,11 +172,19 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
       position: "absolute", pointerEvents: "none", left: cardX, top: cardY,
       width: cardWidth, height: cardHeight,
     }} /><Stage width={width} height={height} scaleX={scale} scaleY={scale}
-      onMouseDown={event => { if (event.target === event.target.getStage()) onSelect(null); }}
-      onTouchStart={event => { if (event.target === event.target.getStage()) onSelect(null); }}>
-      <Layer ref={content} x={cardX / scale} y={cardY / scale}>
+      onWheel={event => {
+        event.evt.preventDefault();
+        if (transformer.current?.isTransforming() || [...nodes.current.values()].some(node => node.isDragging())) return;
+        const stage = event.target.getStage();
+        stage?.setPointersPositions(event.evt);
+        const point = stage?.getPointerPosition();
+        if (point) navigation.wheel(event.evt, point);
+      }}
+      onClick={event => { if (event.target === event.target.getStage()) onSelect(null); }}
+      onTap={event => { if (event.target === event.target.getStage()) onSelect(null); }}>
+      <Layer ref={content} x={cardX / scale} y={cardY / scale} listening={!navigation.panEnabled}>
         <Rect width={design.width} height={design.height} fill={design.background}
-          onMouseDown={() => onSelect(null)} onTouchStart={() => onSelect(null)} />
+          onClick={() => onSelect(null)} onTap={() => onSelect(null)} />
         {design.elements.map(element => {
           const register = (node: Konva.Node | null) => { if (node) nodes.current.set(element.id, node); else nodes.current.delete(element.id); };
           const events: KonvaNodeEvents = {
@@ -172,16 +193,21 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
             onDblClick: () => editText(element),
             onDblTap: () => editText(element),
             onDragEnd: event => finish(element, event.target),
-            onTransform: element.kind === "text" ? event => {
+            onTransformStart: event => {
+              transformKind.current = transformer.current?.getActiveAnchor() === "rotater" ? "rotate" : "resize";
+              showMeasurement(event);
+            },
+            onTransform: event => {
               const node = event.target;
               // Resize the text frame on every pointer move. Glyphs never scale.
-              node.setAttrs({ width: Math.max(24, node.width() * node.scaleX()),
+              if (element.kind === "text") node.setAttrs({ width: Math.max(24, node.width() * node.scaleX()),
                 height: Math.max(element.fontSize * 1.35, node.height() * node.scaleY()), scaleX: 1, scaleY: 1 });
-            } : undefined,
-            onTransformEnd: event => finish(element, event.target),
+              showMeasurement(event);
+            },
+            onTransformEnd: event => { finish(element, event.target); transformKind.current = null; setMeasurement(null); },
           };
           const props = { id: element.id, x: element.x, y: element.y, width: element.width, height: element.height,
-            rotation: element.rotation, draggable: true, ref: register, ...events };
+            rotation: element.rotation, draggable: !navigation.panEnabled, ref: register, ...events };
           if (element.kind === "text") return <Text key={element.id} {...props} text={element.text}
             fill={element.fill} fontFamily={font} fontStyle={String(element.weight)} fontSize={element.fontSize}
             lineHeight={1.35} padding={0} align={element.align} verticalAlign={element.verticalAlign} wrap="word" />;
@@ -190,7 +216,7 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
           return image ? <ImageNode key={element.id} element={element} image={image} register={register} events={events} /> : null;
         })}
       </Layer>
-      <Layer>
+      <Layer listening={!navigation.panEnabled}>
         <Rect x={cardX / scale} y={cardY / scale} width={design.width} height={design.height}
           stroke="#758581" strokeWidth={1 / scale} listening={false} />
         <Transformer ref={transformer} flipEnabled={false} rotateEnabled
@@ -201,5 +227,12 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
           boundBoxFunc={(oldBox, newBox) => Math.abs(newBox.width) < 24 * scale || Math.abs(newBox.height) < 24 * scale ? oldBox : newBox} />
       </Layer>
     </Stage></>}
+    {measurement && <div className={styles.measurement} data-studio-measurement={measurement.rotating ? "rotation" : "size"}
+      role="status" aria-live="off" style={{ left: measurement.x, top: measurement.y, width: measurement.rotating ? 72 : 156 }}>
+      {measurement.label}
+    </div>}
+    </div>
+    <StudioZoomControls scale={scale} disabled={!ready} pan={navigation.handMode} onPan={navigation.togglePan}
+      onZoom={value => navigation.zoom(value)} onFit={navigation.fit} />
   </div>;
 }
