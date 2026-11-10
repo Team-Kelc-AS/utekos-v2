@@ -71,7 +71,7 @@
   background-image: radial-gradient(circle, #44514e 1px, transparent 1px);
   background-size: 24px 24px;
 }
-.canvasHost { max-width: 800px; line-height: 0; box-shadow: 0 12px 40px #010b0a80; }
+.canvasHost { position: relative; max-width: 848px; line-height: 0; }
 .canvasHost p { line-height: 1.5; }
 .canvasHost canvas { touch-action: none; }
 .help { margin-top: 0.75rem; font-size: 0.8125rem; color: var(--studio-muted); max-width: 65ch; }

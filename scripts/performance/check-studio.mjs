@@ -31,7 +31,7 @@ const routeRequest = route => {
 };
 await context.route('**/*', routeRequest);
 const saved = () => page.getByRole('status').filter({ hasText: 'Utkast lagret på denne enheten.' }).waitFor();
-const canvas = page.locator('.konvajs-content');
+const canvas = page.locator('[data-studio-card]');
 async function exportBytes(button) {
   const event = page.waitForEvent('download');
   await page.getByRole('button', { name: button, exact: true }).click();

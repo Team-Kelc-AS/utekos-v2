@@ -6,6 +6,11 @@ import { Image as CanvasImage, Layer, Rect, Stage, Text, Transformer } from "rea
 import type { KonvaNodeEvents } from "react-konva";
 import { constrainElement, type StudioDocument, type StudioElement } from "@/lib/studio/document";
 import styles from "./studio.module.css";
+import { styleTransformerHandle } from "./transformerHandles";
+
+const HANDLE_GUTTER_X = 24;
+const HANDLE_GUTTER_TOP = 52;
+const HANDLE_GUTTER_BOTTOM = 24;
 
 export interface StudioCanvasHandle { exportPng(): Promise<Uint8Array> }
 type Props = {
@@ -46,13 +51,14 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
   const [loadedImages, setLoadedImages] = useState<{ assets: StudioDocument["assets"] | null; images: Record<string, HTMLImageElement> }>({ assets: null, images: {} });
   const images = loadedImages.images;
   const [imageError, setImageError] = useState<string | null>(null);
-  const scale = width / design.width;
+  const cardWidth = Math.max(1, width - HANDLE_GUTTER_X * 2);
+  const scale = cardWidth / design.width;
   const text = design.elements.flatMap(element => element.kind === "text" ? [element.text] : []).join(" ");
 
   useEffect(() => {
     const element = host.current;
     if (!element) return;
-    const observer = new ResizeObserver(entries => setWidth(Math.min(800, entries[0].contentRect.width)));
+    const observer = new ResizeObserver(entries => setWidth(Math.min(848, entries[0].contentRect.width)));
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
@@ -104,7 +110,7 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
       // detached stage contains only content, never selection handles.
       const stage = new Konva.Stage({ container: window.document.createElement("div"), width: design.width, height: design.height });
       try {
-        const layer = content.current.clone({ listening: false });
+        const layer = content.current.clone({ listening: false, x: 0, y: 0 });
         stage.add(layer);
         layer.find("Image").forEach(node => node.cache({ pixelRatio: 2 }));
         const canvas = layer.toCanvas({ x: 0, y: 0, width: design.width, height: design.height, pixelRatio: 2 });
@@ -132,8 +138,11 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
     {fontError && <p role="alert">{fontError}</p>}
     {imageError && <p role="alert">{imageError}</p>}
     {(!width || !font) && <p role="status">Laster tegneflaten…</p>}
-    {!!width && !!font && <Stage width={width} height={design.height * scale} scaleX={scale} scaleY={scale}>
-      <Layer ref={content}>
+    {!!width && !!font && <><div data-studio-card aria-hidden="true" style={{
+      position: "absolute", pointerEvents: "none", left: HANDLE_GUTTER_X, top: HANDLE_GUTTER_TOP,
+      width: cardWidth, height: design.height * scale,
+    }} /><Stage width={width} height={design.height * scale + HANDLE_GUTTER_TOP + HANDLE_GUTTER_BOTTOM} scaleX={scale} scaleY={scale}>
+      <Layer ref={content} x={HANDLE_GUTTER_X / scale} y={HANDLE_GUTTER_TOP / scale}>
         <Rect width={design.width} height={design.height} fill={design.background}
           onMouseDown={() => onSelect(null)} onTouchStart={() => onSelect(null)} />
         {design.elements.map(element => {
@@ -160,10 +169,10 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
         <Transformer ref={transformer} flipEnabled={false} rotateEnabled
           keepRatio={selected?.kind === "image"} enabledAnchors={selected?.kind === "image"
             ? ["top-left", "top-right", "bottom-left", "bottom-right"] : undefined}
-          anchorSize={18} rotateAnchorOffset={32} borderStroke="#f0eee9"
-          anchorStroke="#010b0a" anchorFill="#f0eee9"
+          anchorSize={28} rotateAnchorOffset={36} borderStroke="#f0eee9"
+          anchorStyleFunc={styleTransformerHandle}
           boundBoxFunc={(oldBox, newBox) => Math.abs(newBox.width) < 24 * scale || Math.abs(newBox.height) < 24 * scale ? oldBox : newBox} />
       </Layer>
-    </Stage>}
+    </Stage></>}
   </div>;
 }
