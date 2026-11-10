@@ -14,7 +14,7 @@ export function styleTransformerHandle(anchor: Konva.Shape) {
     .filter(node => node !== anchor && node.hasName("_anchor") && node.visible())
     .map(node => { const other = node.getAbsolutePosition(); return Math.hypot(other.x - position.x, other.y - position.y); }) ?? [];
   const hitRadius = Math.max(14, Math.min(22, Math.min(...distances) / 2 - 1));
-  anchor.setAttrs({ fill: "#b44701", stroke: "#f0eee9", strokeWidth: 1.5 });
+  anchor.setAttrs({ fill: rotating ? "#f0eee9" : "#b44701", stroke: rotating ? "#758581" : "#f0eee9", strokeWidth: 1.5 });
   anchor.sceneFunc((context, shape) => {
     const center = shape.width() / 2;
     context.beginPath();
@@ -26,21 +26,27 @@ export function styleTransformerHandle(anchor: Konva.Shape) {
     context.translate(center, center);
     context.setAttr("fillStyle", "#f0eee9");
     if (rotating) {
-      const end = Math.PI * 2.2;
-      context.setAttr("strokeStyle", "#f0eee9");
-      context.setAttr("lineWidth", 1.8);
+      const end = Math.PI / 3;
+      const radius = 5.75;
+      context.setAttr("strokeStyle", "#010b0a");
+      context.setAttr("lineWidth", 1.7);
       context.setAttr("lineCap", "round");
       context.setAttr("lineJoin", "round");
-      context.beginPath();
-      context.arc(0, 0, 5.5, Math.PI * 0.75, end);
-      context.stroke();
-      context.translate(Math.cos(end) * 5.5, Math.sin(end) * 5.5);
-      context.rotate(end + Math.PI / 2);
-      context.beginPath();
-      context.moveTo(-3, -3);
-      context.lineTo(0, 0);
-      context.lineTo(-3, 3);
-      context.stroke();
+      for (const rotation of [0, Math.PI]) {
+        context.save();
+        context.rotate(rotation);
+        context.beginPath();
+        context.arc(0, 0, radius, -Math.PI / 2, end);
+        context.stroke();
+        context.translate(Math.cos(end) * radius, Math.sin(end) * radius);
+        context.rotate(end + Math.PI / 2);
+        context.beginPath();
+        context.moveTo(-2.75, -2.75);
+        context.lineTo(0, 0);
+        context.lineTo(-2.75, 2.75);
+        context.stroke();
+        context.restore();
+      }
     } else {
       // Anchor-local directions rotate with the selected object.
       context.rotate(direction);
