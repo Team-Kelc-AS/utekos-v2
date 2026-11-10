@@ -4,15 +4,14 @@ import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "reac
 import Konva from "konva";
 import { Image as CanvasImage, Layer, Rect, Stage, Text, Transformer } from "react-konva";
 import type { KonvaNodeEvents } from "react-konva";
-import { constrainElement, type StudioDocument, type StudioElement } from "@/lib/studio/document";
+import { normalizeElement, type StudioDocument, type StudioElement } from "@/lib/studio/document";
 import styles from "./studio.module.css";
 import { styleTransformerHandle } from "./transformerHandles";
 
-const HANDLE_GUTTER_X = 24;
-const HANDLE_GUTTER_TOP = 52;
-const HANDLE_GUTTER_BOTTOM = 24;
-
-export interface StudioCanvasHandle { exportPng(): Promise<Uint8Array> }
+export interface StudioCanvasHandle {
+  exportPng(): Promise<Uint8Array>;
+  fitText(id: string): { width: number; height: number };
+}
 type Props = {
   document: StudioDocument;
   selectedId: string | null;
@@ -44,21 +43,29 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
   const content = useRef<Konva.Layer>(null);
   const transformer = useRef<Konva.Transformer>(null);
   const nodes = useRef(new Map<string, Konva.Node>());
-  const [width, setWidth] = useState(0);
+  const [viewport, setViewport] = useState({ width: 0, height: 0 });
+  const { width, height } = viewport;
   const [font, setFont] = useState<string | null>(null);
   const [loadedText, setLoadedText] = useState<string | null>(null);
   const [fontError, setFontError] = useState<string | null>(null);
   const [loadedImages, setLoadedImages] = useState<{ assets: StudioDocument["assets"] | null; images: Record<string, HTMLImageElement> }>({ assets: null, images: {} });
   const images = loadedImages.images;
   const [imageError, setImageError] = useState<string | null>(null);
-  const cardWidth = Math.max(1, width - HANDLE_GUTTER_X * 2);
-  const scale = cardWidth / design.width;
+  const margin = width < 500 ? 40 : 80;
+  const scale = Math.max(0.01, Math.min((width - margin * 2) / design.width, (height - margin * 2) / design.height));
+  const cardWidth = design.width * scale;
+  const cardHeight = design.height * scale;
+  const cardX = (width - cardWidth) / 2;
+  const cardY = (height - cardHeight) / 2;
   const text = design.elements.flatMap(element => element.kind === "text" ? [element.text] : []).join(" ");
 
   useEffect(() => {
     const element = host.current;
     if (!element) return;
-    const observer = new ResizeObserver(entries => setWidth(Math.min(848, entries[0].contentRect.width)));
+    const observer = new ResizeObserver(entries => {
+      const { width, height } = entries[0].contentRect;
+      setViewport({ width, height });
+    });
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
@@ -91,16 +98,26 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
     return () => { active = false; };
   }, [design.assets]);
 
-  const ready = !!width && !!font && loadedText === text && !fontError && !imageError && loadedImages.assets === design.assets;
+  const ready = !!width && !!height && !!font && loadedText === text && !fontError && !imageError && loadedImages.assets === design.assets;
   useEffect(() => { onReady(ready); }, [onReady, ready]);
 
   useEffect(() => {
     const node = selectedId ? nodes.current.get(selectedId) : undefined;
     transformer.current?.nodes(node ? [node] : []);
     transformer.current?.getLayer()?.batchDraw();
-  }, [selectedId, design, images, font, width]);
+  }, [selectedId, design, images, font, width, height]);
 
   useImperativeHandle(canvasRef, () => ({
+    fitText(id) {
+      const node = nodes.current.get(id);
+      if (!ready || !(node instanceof Konva.Text)) throw new Error("Vent til teksten er ferdig lastet.");
+      const measurement = node.clone({ width: "auto", height: "auto", scaleX: 1, scaleY: 1, rotation: 0 });
+      try {
+        const width = Math.max(24, Math.min(4096, Math.ceil(measurement.width())));
+        measurement.width(width);
+        return { width, height: Math.max(24, Math.min(4096, Math.ceil(measurement.height()))) };
+      } finally { measurement.destroy(); }
+    },
     async exportPng() {
       if (!ready || !content.current || !scale) {
         throw new Error("Vent til skrift og bilder er ferdig lastet før du eksporterer.");
@@ -121,8 +138,8 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
   }));
 
   function finish(element: StudioElement, node: Konva.Node) {
-    const next = constrainElement(design, { ...element, x: node.x(), y: node.y(),
-      width: element.width * node.scaleX(), height: element.height * (element.kind === "image" ? node.scaleX() : node.scaleY()), rotation: node.rotation() });
+    const next = normalizeElement({ ...element, x: node.x(), y: node.y(),
+      width: node.width() * node.scaleX(), height: node.height() * (element.kind === "image" ? node.scaleX() : node.scaleY()), rotation: node.rotation() });
     node.scale({ x: 1, y: 1 });
     node.position({ x: next.x, y: next.y });
     onChange(next);
@@ -138,11 +155,13 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
     {fontError && <p role="alert">{fontError}</p>}
     {imageError && <p role="alert">{imageError}</p>}
     {(!width || !font) && <p role="status">Laster tegneflaten…</p>}
-    {!!width && !!font && <><div data-studio-card aria-hidden="true" style={{
-      position: "absolute", pointerEvents: "none", left: HANDLE_GUTTER_X, top: HANDLE_GUTTER_TOP,
-      width: cardWidth, height: design.height * scale,
-    }} /><Stage width={width} height={design.height * scale + HANDLE_GUTTER_TOP + HANDLE_GUTTER_BOTTOM} scaleX={scale} scaleY={scale}>
-      <Layer ref={content} x={HANDLE_GUTTER_X / scale} y={HANDLE_GUTTER_TOP / scale}>
+    {!!width && !!height && !!font && <><div data-studio-card aria-hidden="true" style={{
+      position: "absolute", pointerEvents: "none", left: cardX, top: cardY,
+      width: cardWidth, height: cardHeight,
+    }} /><Stage width={width} height={height} scaleX={scale} scaleY={scale}
+      onMouseDown={event => { if (event.target === event.target.getStage()) onSelect(null); }}
+      onTouchStart={event => { if (event.target === event.target.getStage()) onSelect(null); }}>
+      <Layer ref={content} x={cardX / scale} y={cardY / scale}>
         <Rect width={design.width} height={design.height} fill={design.background}
           onMouseDown={() => onSelect(null)} onTouchStart={() => onSelect(null)} />
         {design.elements.map(element => {
@@ -153,19 +172,27 @@ export default function StudioCanvas({ document: design, selectedId, onSelect, o
             onDblClick: () => editText(element),
             onDblTap: () => editText(element),
             onDragEnd: event => finish(element, event.target),
+            onTransform: element.kind === "text" ? event => {
+              const node = event.target;
+              // Resize the text frame on every pointer move. Glyphs never scale.
+              node.setAttrs({ width: Math.max(24, node.width() * node.scaleX()),
+                height: Math.max(element.fontSize * 1.35, node.height() * node.scaleY()), scaleX: 1, scaleY: 1 });
+            } : undefined,
             onTransformEnd: event => finish(element, event.target),
           };
           const props = { id: element.id, x: element.x, y: element.y, width: element.width, height: element.height,
             rotation: element.rotation, draggable: true, ref: register, ...events };
           if (element.kind === "text") return <Text key={element.id} {...props} text={element.text}
             fill={element.fill} fontFamily={font} fontStyle={String(element.weight)} fontSize={element.fontSize}
-            lineHeight={1.35} wrap="word" />;
+            lineHeight={1.35} padding={0} align={element.align} verticalAlign={element.verticalAlign} wrap="word" />;
           if (element.kind === "rect") return <Rect key={element.id} {...props} fill={element.fill} cornerRadius={element.cornerRadius} />;
           const image = images[element.assetId];
           return image ? <ImageNode key={element.id} element={element} image={image} register={register} events={events} /> : null;
         })}
       </Layer>
       <Layer>
+        <Rect x={cardX / scale} y={cardY / scale} width={design.width} height={design.height}
+          stroke="#758581" strokeWidth={1 / scale} listening={false} />
         <Transformer ref={transformer} flipEnabled={false} rotateEnabled
           keepRatio={selected?.kind === "image"} enabledAnchors={selected?.kind === "image"
             ? ["top-left", "top-right", "bottom-left", "bottom-right"] : undefined}

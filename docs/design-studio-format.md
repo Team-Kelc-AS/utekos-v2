@@ -8,9 +8,9 @@ Studioet bruker `konva@10.9.1` og `react-konva@19.2.7`. React-bindingen er låst
 
 `StudioCanvas.tsx` oversetter modellen til Konva. Visningsbredden påvirker bare forhåndsvisningen. Kortet lagres i faste designenheter, og PNG eksporteres ved to piksler per designenhet, uavhengig av skjermbredde. Et standardkort på 1200 × 900 gir PNG på 2400 × 1800. Redigeringshåndtak ligger på et eget lag og inngår aldri i eksporten.
 
-## Versjon 1
+## Versjon 2 og migrering fra versjon 1
 
-Designfiler identifiseres av `format: "utekos-design"` og `version: 1`. Hele filen valideres før den åpnes. Ukjente versjoner og felt avvises; de blir ikke fjernet eller tolket som den gjeldende versjonen. Fremtidige formatendringer må få en eksplisitt migrering med tester mot eksisterende filer.
+Nye designfiler identifiseres av `format: "utekos-design"` og `version: 2`. Versjon 1 åpnes gjennom en eksplisitt migrering: tekst får `align: "left"` og `verticalAlign: "top"`, mens innhold, bilder, plassering og dimensjoner beholdes. Det samme gjelder gamle IndexedDB-utkast. Ukjente versjoner og felt avvises; de blir ikke fjernet eller tolket som den gjeldende versjonen.
 
 | Felt | Betydning |
 | --- | --- |
@@ -19,15 +19,19 @@ Designfiler identifiseres av `format: "utekos-design"` og `version: 1`. Hele fil
 | `elements` | Tegnerekkefølge, bakerst først. Hvert element har stabil ID, navn, type og geometri |
 | `assets` | Originale PNG-, JPEG- eller WebP-bilder, inkludert i filen som MIME-type, base64 og dekodede dimensjoner |
 
-Elementer har `x`, `y`, `width`, `height` og `rotation`. Origo er øverst til venstre, positiv Y går nedover og positiv rotasjon følger klokken rundt elementets øvre venstre hjørne. Hele den roterte rammen holdes innenfor kortet.
+Elementer har `x`, `y`, `width`, `height` og `rotation`. Origo er kortets øvre venstre hjørne, positiv Y går nedover og positiv rotasjon følger klokken rundt elementets øvre venstre hjørne. Elementer kan plasseres utenfor kortet og beholdes der i utkast og designfiler. Posisjoner er begrenset til ±8192 designenheter og dimensjoner til 4096; ingen automatisk tilpasning til kortets kant utføres.
 
-- `text`: tekst, semantisk font-ID `utekos-sans`, vekt 500 eller 800, skriftstørrelse og farge. Versjon 1 bruker venstrejustering, ordombryting og linjehøyde 1,35. Tekst tegnes innenfor elementets ramme.
+- `text`: tekst, semantisk font-ID `utekos-sans`, vekt 500 eller 800, skriftstørrelse og farge. `align` er `left`, `center` eller `right`; `verticalAlign` er `top`, `middle` eller `bottom`. Teksten har ordombryting, linjehøyde 1,35 og null innvendig polstring. Ved størrelsesendring oppdateres boksens dimensjoner på hvert pekersteg, mens skriftstørrelse og tekstskalering beholdes. «Tilpass boksen til teksten» måler teksten med den lastede fonten og reduserer overflødig plass rundt innholdet.
 - `rect`: farge og hjørneradius.
 - `image`: referanse til originalbildet og relativ lysstyrke fra −1 til 1; 0 er uendret, og rendererens lysstyrkefaktor er `1 + brightness`. Sideforholdet følger originalbildet, også ved størrelsesendring. Ingen automatisk beskjæring eller strekk utføres. Bildedekoderen må respektere eventuell innebygd orientering.
 
 `utekos-sans` tilsvarer prosjektets originale Google Sans Flex 120pt-variant, med Medium og ExtraBold. En annen renderer må laste de samme fontfilene og følge samme tekstregler. Det er ikke en instruksjon om tekststørrelse på 120 pt.
 
 Ingen Konva-JSON, HTML, hendelsesfunksjoner, `blob:`-adresser eller midlertidige filstier lagres. Bilder er med i designfilen, så den kan åpnes uten opprinnelig nettleserlagring eller ekstern bildevert.
+
+## Arbeidsflate og eksport
+
+Konva-flaten dekker hele den prikkede arbeidsflaten, også området utenfor kortet. Kortet vises sentrert med en kant. Objekter tegnes og kan velges og flyttes på begge sider av kanten. PNG eksporteres fortsatt i kortets faste utsnitt: delene utenfor kortet blir ikke med i PNG, men beholdes i designfilen. Kortkant og håndtak er bare redigeringsgrafikk og eksporteres ikke.
 
 Grensene i første format er 40 elementer, 24 MB designfil, 4 MB per bilde ved opplasting, maksimalt 24 megapiksler og 12 000 piksler per bildeside. Elementreferanser, ID-er, geometri og bildeproporsjoner valideres.
 
@@ -58,6 +62,7 @@ pnpm typecheck
 pnpm build
 pnpm exec next start --port 3100
 node scripts/performance/check-studio.mjs http://localhost:3100
+node scripts/performance/check-studio-workspace.mjs http://localhost:3100
 ```
 
 Nettleserkontrollen dekker desktop og 390 px mobilbredde, touch-flytting og håndtak, tekst, figurer, bilder, angre/gjør om, IndexedDB-gjenåpning, ugyldige filer, bevaring av ugyldige utkast og import i en ny nettleserkontekst. Den sammenligner eksporterte PNG-er med og uten markering og på tvers av skjermbredder. Filer og rapport lagres i `outputs/design-studio-konva-qa/`.
@@ -65,5 +70,7 @@ Nettleserkontrollen dekker desktop og 390 px mobilbredde, touch-flytting og hån
 Kontroll 9. november 2026: de fire modelltestene, ESLint, typekontroll, peer-avhengigheter, ordinær `pnpm build` (117 genereringstrinn og 28 interne MDX-lenker) og nettleserkontrollen mot det lokale produksjonsbygget besto. Ingen butikkbunter eller tredjepartsforespørsler ble lastet av studioet i kontrollen. PNG var identisk med og uten markering og på tvers av 1440 og 390 px visningsbredde. Rapporten ligger i `outputs/design-studio-konva-qa/report.json`.
 
 Fysisk iPhone-/Android-testing, systemdeling, native appbro og distribusjon i appbutikk er fortsatt egne kontroller. Etter lokal kontroll publiseres det avtalte scopet til preview og kontrolleres der etter [felles deployflyt](deployment.md). Produksjon er et separat steg.
+
+Arbeidsflatekontrollen lagt til 10. november 2026 dekker faktiske muse- og touchbevegelser. Den måler tekstskalering på hvert pekersteg og dimensjoner før og etter slipp, også ved rotert tekst. Den undersøker eksporterte bokstavpiksler for horisontal og vertikal justering, tilpasning av tekstboksen, flytting utenfor alle fire kortkanter, valg og gjenåpning av disse objektene, eksportens utsnitt samt migrering av versjon 1-filer og IndexedDB-utkast. Rapport og skjermbilder lagres i angitt output-mappe, som andre CLI-argument.
 
 Kilder: [Konva React](https://konvajs.org/docs/react/index.html), [lagring av applikasjonstilstand](https://konvajs.org/docs/data_and_serialization/Best_Practices.html), [transformasjon](https://konvajs.org/docs/react/Transformer.html), [canvas-eksport](https://konvajs.org/docs/react/Canvas_Export.html).

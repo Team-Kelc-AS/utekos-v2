@@ -21,7 +21,7 @@ test('portable design round trip retains text, transforms and original embedded 
 
 test('invalid or future files cannot silently lose fields or change image proportions', () => {
   const base = core.createDocument();
-  for (const patch of [{ version: 2 }, { unknown: true }, { width: 0 }, { background: 'url(https://example.com)' }]) {
+  for (const patch of [{ version: 3 }, { unknown: true }, { width: 0 }, { background: 'url(https://example.com)' }]) {
     assert.throws(() => core.parseDocument(JSON.stringify({ ...base, ...patch })));
   }
   assert.throws(() => core.parseDocument(JSON.stringify({ ...base, elements: [base.elements[0], base.elements[0]] })));
@@ -30,20 +30,50 @@ test('invalid or future files cannot silently lose fields or change image propor
   assert.throws(() => core.parseDocument(JSON.stringify({ ...base, elements: [photo], assets: { photo: { mime: 'image/png', base64: 'YWJjZA==', width: 300, height: 200 } } })));
 });
 
-test('rotated elements remain fully within the design with aspect ratio unchanged', () => {
+test('objects keep their position and proportions outside the card at every rotation', () => {
   const doc = core.createDocument();
   for (const rotation of [-180, -135, -90, -45, 0, 45, 90, 135, 180]) {
     for (const position of [-400, 800, 1500]) {
       const input = { ...doc.elements[0], width: 1500, height: 1100, x: position, y: position, rotation };
-      const output = core.constrainElement(doc, input);
+      const output = core.normalizeElement(input);
       assert.ok(Math.abs(output.width / output.height - input.width / input.height) < 1e-9);
-      const bounds = core.rotatedBounds(output);
-      assert.ok(output.x + bounds.left >= -1e-8);
-      assert.ok(output.y + bounds.top >= -1e-8);
-      assert.ok(output.x + bounds.right <= doc.width + 1e-8);
-      assert.ok(output.y + bounds.bottom <= doc.height + 1e-8);
+      assert.equal(output.x, position);
+      assert.equal(output.y, position);
+      assert.equal(output.width, input.width);
+      assert.equal(output.height, input.height);
       core.parseDocument(JSON.stringify({ ...doc, elements: [output] }));
     }
+  }
+});
+
+test('version 1 migrates explicitly without moving, resizing or losing existing content', () => {
+  const legacy = { ...core.createDocument(), version: 1 };
+  legacy.elements = legacy.elements.map(element => {
+    const copy = { ...element }; delete copy.align; delete copy.verticalAlign; return copy;
+  });
+  const migrated = core.parseDocument(JSON.stringify(legacy));
+  assert.equal(migrated.version, 2);
+  migrated.elements.forEach((element, index) => {
+    const { align, verticalAlign, ...rest } = element;
+    assert.equal(align, 'left'); assert.equal(verticalAlign, 'top');
+    assert.deepEqual(JSON.parse(JSON.stringify(rest)), legacy.elements[index]);
+  });
+  assert.throws(() => core.parseDocument(JSON.stringify({ ...legacy, elements: [{ ...legacy.elements[0], unknown: true }] })));
+});
+
+test('text alignment and off-card objects survive files, history and validation', () => {
+  const doc = core.createDocument();
+  const text = { ...doc.elements[1], x: -600, y: 1100, align: 'right', verticalAlign: 'bottom' };
+  const edited = core.replaceElement(doc, text);
+  assert.deepEqual(JSON.parse(JSON.stringify(core.parseDocument(core.serializeDocument(edited)))), JSON.parse(JSON.stringify(edited)));
+  let history = core.studioReducer(core.createHistory(doc), { type: 'commit', document: edited });
+  history = core.studioReducer(history, { type: 'undo' });
+  assert.equal(history.present.elements[1].align, 'left');
+  history = core.studioReducer(history, { type: 'redo' });
+  assert.equal(history.present.elements[1].x, -600);
+  assert.equal(history.present.elements[1].verticalAlign, 'bottom');
+  for (const patch of [{ align: 'invalid' }, { verticalAlign: 'invalid' }, { x: 9000 }]) {
+    assert.throws(() => core.parseDocument(JSON.stringify({ ...edited, elements: [{ ...text, ...patch }] })));
   }
 });
 

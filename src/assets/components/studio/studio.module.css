@@ -59,19 +59,17 @@
 .insert { margin-bottom: 0.75rem; }
 .freeformCanvas {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: clamp(30rem, 72dvh, 56rem);
   min-width: 0;
   min-height: 20rem;
-  padding: clamp(0.75rem, 2vw, 2rem);
+  overflow: hidden;
   border-radius: 1rem;
   border: 1px solid var(--studio-border);
   background-color: var(--studio-surface);
   background-image: radial-gradient(circle, #44514e 1px, transparent 1px);
   background-size: 24px 24px;
 }
-.canvasHost { position: relative; max-width: 848px; line-height: 0; }
+.canvasHost { position: relative; height: 100%; line-height: 0; }
 .canvasHost p { line-height: 1.5; }
 .canvasHost canvas { touch-action: none; }
 .help { margin-top: 0.75rem; font-size: 0.8125rem; color: var(--studio-muted); max-width: 65ch; }

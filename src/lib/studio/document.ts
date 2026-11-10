@@ -19,6 +19,8 @@ const textSchema = z.strictObject({
   ...geometry, kind: z.literal("text"), text: z.string().max(2000),
   font: z.literal("utekos-sans"), weight: z.union([z.literal(500), z.literal(800)]),
   fontSize: z.number().finite().min(12).max(240), fill: color,
+  align: z.enum(["left", "center", "right"]),
+  verticalAlign: z.enum(["top", "middle", "bottom"]),
 });
 const rectSchema = z.strictObject({
   ...geometry, kind: z.literal("rect"), fill: color,
@@ -39,25 +41,29 @@ const assetSchema = z.strictObject({
 });
 export type StudioAsset = z.infer<typeof assetSchema>;
 const documentSchema = z.strictObject({
-  format: z.literal(STUDIO_FORMAT), version: z.literal(1),
+  format: z.literal(STUDIO_FORMAT), version: z.literal(2),
   width: dimension, height: dimension, background: color,
   elements: z.array(elementSchema).max(MAX_ELEMENTS),
   assets: z.record(z.string().min(1).max(80), assetSchema),
 });
 export type StudioDocument = z.infer<typeof documentSchema>;
+const legacyDocumentSchema = documentSchema.extend({
+  version: z.literal(1),
+  elements: z.array(z.discriminatedUnion("kind", [textSchema.omit({ align: true, verticalAlign: true }), rectSchema, imageSchema])).max(MAX_ELEMENTS),
+});
 
 export function createDocument(): StudioDocument {
   return {
-    format: STUDIO_FORMAT, version: 1, width: 1200, height: 900,
+    format: STUDIO_FORMAT, version: 2, width: 1200, height: 900,
     background: "#001a18", assets: {},
     elements: [
-      { id: "label", kind: "text", name: "Merkelapp", x: 80, y: 90, width: 700, height: 50, rotation: 0,
-        text: "Gavekort · Utekos®", font: "utekos-sans", weight: 800, fontSize: 28, fill: "#f0eee9" },
-      { id: "heading", kind: "text", name: "Hovedoverskrift", x: 80, y: 180, width: 1000, height: 160, rotation: 0,
-        text: "Skreddersy varmen.", font: "utekos-sans", weight: 800, fontSize: 72, fill: "#f0eee9" },
-      { id: "message", kind: "text", name: "Korttekst", x: 80, y: 380, width: 940, height: 260, rotation: 0,
+      { id: "label", kind: "text", name: "Merkelapp", x: 80, y: 90, width: 247, height: 38, rotation: 0,
+        text: "Gavekort · Utekos®", font: "utekos-sans", weight: 800, fontSize: 28, fill: "#f0eee9", align: "left", verticalAlign: "top" },
+      { id: "heading", kind: "text", name: "Hovedoverskrift", x: 80, y: 180, width: 682, height: 98, rotation: 0,
+        text: "Skreddersy varmen.", font: "utekos-sans", weight: 800, fontSize: 72, fill: "#f0eee9", align: "left", verticalAlign: "top" },
+      { id: "message", kind: "text", name: "Korttekst", x: 80, y: 380, width: 940, height: 98, rotation: 0,
         text: "Klikk rett på teksten for å skrive din egen hilsen, og dra boksen dit du vil ha den.",
-        font: "utekos-sans", weight: 500, fontSize: 36, fill: "#f0eee9" },
+        font: "utekos-sans", weight: 500, fontSize: 36, fill: "#f0eee9", align: "left", verticalAlign: "top" },
     ],
   };
 }
@@ -71,22 +77,20 @@ export function rotatedBounds(element: StudioElement) {
   return { left: Math.min(...xs), right: Math.max(...xs), top: Math.min(...ys), bottom: Math.max(...ys) };
 }
 
-export function constrainElement(doc: Pick<StudioDocument, "width" | "height">, element: StudioElement): StudioElement {
+export function normalizeElement(element: StudioElement): StudioElement {
   const rotation = ((element.rotation + 180) % 360 + 360) % 360 - 180;
   const candidate = { ...element, rotation, width: Math.max(0.01, element.width), height: Math.max(0.01, element.height) };
-  let bounds = rotatedBounds(candidate);
-  const factor = Math.min(1, doc.width / (bounds.right - bounds.left), doc.height / (bounds.bottom - bounds.top));
+  const factor = Math.min(1, 4096 / candidate.width, 4096 / candidate.height);
   candidate.width *= factor;
   candidate.height *= factor;
-  bounds = rotatedBounds(candidate);
   return { ...candidate,
-    x: Math.max(-bounds.left, Math.min(element.x, doc.width - bounds.right)),
-    y: Math.max(-bounds.top, Math.min(element.y, doc.height - bounds.bottom)),
+    x: Math.max(-8192, Math.min(element.x, 8192)),
+    y: Math.max(-8192, Math.min(element.y, 8192)),
   };
 }
 
 export function replaceElement(doc: StudioDocument, element: StudioElement): StudioDocument {
-  return { ...doc, elements: doc.elements.map(item => item.id === element.id ? constrainElement(doc, element) : item) };
+  return { ...doc, elements: doc.elements.map(item => item.id === element.id ? normalizeElement(element) : item) };
 }
 
 export function parseDocument(serialized: string): StudioDocument {
@@ -96,7 +100,12 @@ export function parseDocument(serialized: string): StudioDocument {
     bytes += code <= 0x7f ? 1 : code <= 0x7ff ? 2 : code <= 0xffff ? 3 : 4;
     if (bytes > MAX_DOCUMENT_BYTES) throw new Error("Designfilen er for stor.");
   }
-  const doc = documentSchema.parse(JSON.parse(serialized));
+  const input: unknown = JSON.parse(serialized);
+  const legacy = typeof input === "object" && input !== null && "version" in input && input.version === 1
+    ? legacyDocumentSchema.parse(input) : null;
+  const doc = documentSchema.parse(legacy ? { ...legacy, version: 2,
+    elements: legacy.elements.map(element => element.kind === "text" ? { ...element, align: "left", verticalAlign: "top" } : element),
+  } : input);
   if (doc.width * doc.height > 16_000_000 || Object.keys(doc.assets).length > MAX_ELEMENTS) throw new Error("Designet er for stort.");
   const ids = new Set<string>();
   for (const asset of Object.values(doc.assets)) {
@@ -105,11 +114,6 @@ export function parseDocument(serialized: string): StudioDocument {
   for (const element of doc.elements) {
     if (ids.has(element.id)) throw new Error("Flere elementer har samme ID.");
     ids.add(element.id);
-    const bounds = rotatedBounds(element);
-    if (element.x + bounds.left < -0.01 || element.y + bounds.top < -0.01 ||
-        element.x + bounds.right > doc.width + 0.01 || element.y + bounds.bottom > doc.height + 0.01) {
-      throw new Error("Et element ligger utenfor kortet.");
-    }
     if (element.kind === "image") {
       const asset = doc.assets[element.assetId];
       if (!asset || Math.abs(element.width / element.height - asset.width / asset.height) > 0.001) {
