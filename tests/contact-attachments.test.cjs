@@ -35,7 +35,7 @@ test('native multipart images arrive as unchanged base64 email attachments', asy
 
 test('text-only messages and the browser empty-file placeholder remain supported', async () => {
   const { submit, calls } = setup();
-  for (const files of [[], [new File([], '', { type: 'application/octet-stream' })]]) {
+  for (const files of [[], [''], [new File([], '', { type: 'application/octet-stream' })]]) {
     assert.equal((await submit(submission(files))).status, 'success');
   }
   assert.ok(calls.every(({ payload }) => !Object.hasOwn(payload, 'attachments')));

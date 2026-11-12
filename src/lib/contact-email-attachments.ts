@@ -21,9 +21,11 @@ function imageType(bytes: Buffer) {
 export async function prepareContactAttachments(entries: FormDataEntryValue[]): Promise<
   { attachments: ContactEmailAttachment[]; error?: never } | { error: string; attachments?: never }
 > {
-  if (entries.some((entry) => typeof entry === "string")) return { error: "Velg gyldige bildefiler som vedlegg." };
-  // Browsers include an empty, unnamed File when no attachment is selected.
-  const files = (entries as File[]).filter((file) => file.name || file.size);
+  // An unselected file input can arrive as an empty string or unnamed File.
+  const selected = entries.filter((entry) => entry !== "");
+  if (selected.some((entry) => typeof entry === "string")) return { error: "Velg gyldige bildefiler som vedlegg." };
+  const files = selected.filter((entry): entry is File => typeof entry !== "string")
+    .filter((file) => file.name || file.size);
   const error = validateContactAttachmentSelection(files);
   if (error) return { error };
 
