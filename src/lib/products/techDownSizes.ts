@@ -5,14 +5,16 @@ export const TECH_DOWN_SIZES = [
     size: 'Liten',
     id: 'liten',
     sizeCode: 'S',
-    public: false,
-    aliases: ['small', 's']
+    aliases: ['small', 's'],
+    heightGuide: '155–165 cm (evt. opptil 165 cm)',
+    fitGuidance: [
+      'Du ligger i øvre sjiktet (mot 165 cm) og ønsker en mer kroppsnær passform.'
+    ]
   },
   {
     size: 'Middels',
     id: 'middels',
     sizeCode: 'M',
-    public: true,
     aliases: ['medium', 'm'],
     heightGuide: '165–175 cm',
     fitGuidance: [
@@ -29,7 +31,6 @@ export const TECH_DOWN_SIZES = [
     size: 'Stor',
     id: 'stor',
     sizeCode: 'L',
-    public: true,
     aliases: ['large', 'l'],
     heightGuide: '175–185 cm',
     fitGuidance: [
@@ -46,7 +47,6 @@ export const TECH_DOWN_SIZES = [
     size: 'Større',
     id: 'storre',
     sizeCode: 'XL',
-    public: true,
     aliases: ['ekstra stor', 'extra large', 'xl'],
     heightGuide: '185 cm og høyere',
     fitGuidance: [
@@ -64,18 +64,7 @@ export const TECH_DOWN_SIZES = [
 export type TechDownSize =
   (typeof TECH_DOWN_SIZES)[number]['size']
 
-export const TECH_DOWN_PUBLIC_SIZE_DEFINITIONS =
-  TECH_DOWN_SIZES.filter(size => size.public)
-export type PublicTechDownSizeDefinition =
-  (typeof TECH_DOWN_PUBLIC_SIZE_DEFINITIONS)[number]
-export type PublicTechDownSize =
-  PublicTechDownSizeDefinition['size']
-
-export const TECH_DOWN_PUBLIC_SIZES =
-  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(size => size.size)
-export const TECH_DOWN_HIDDEN_SIZES = TECH_DOWN_SIZES.filter(
-  size => !size.public
-).map(size => size.size)
+const measuredSizes = TECH_DOWN_SIZES.filter(size => 'measurements' in size)
 
 export const TECH_DOWN_SIZE_VALUE_MAP: Readonly<
   Record<string, TechDownSize>
@@ -100,7 +89,7 @@ const measurementLabels = {
   chest: 'Bryst',
   armCenter: 'Ermlengde'
 } as const satisfies Record<
-  keyof PublicTechDownSizeDefinition['measurements'],
+  keyof (typeof measuredSizes)[number]['measurements'],
   string
 >
 
@@ -116,7 +105,7 @@ export const TECH_DOWN_MEASUREMENT_ROWS = Object.entries(
   measurementLabels
 ).map(([key, measurement]) => ({
   measurement,
-  values: TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(
+  values: measuredSizes.map(
     size =>
       size.measurements[key as keyof typeof measurementLabels]
   )
@@ -124,7 +113,7 @@ export const TECH_DOWN_MEASUREMENT_ROWS = Object.entries(
 
 /** One row per size — used by visible size charts. */
 export const TECH_DOWN_SIZE_ROWS =
-  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(size => ({
+  measuredSizes.map(size => ({
     size: size.size,
     values: TECH_DOWN_MEASUREMENT_COLUMNS.map(
       column => size.measurements[column.key]

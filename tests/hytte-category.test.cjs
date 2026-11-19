@@ -94,12 +94,12 @@ test('empty lists invent no products, and pagination retains its own identity', 
   assert.equal(breadcrumb.itemListElement.at(-1).item, page.url);
 });
 
-test('variant cards exclude sold-out, backorder and unknown stock including Dun', () => {
+test('variant cards keep every TechDown size and omit sold-out Dun', () => {
   const { hytteVariantCards } = loadTypeScript('lib/catalog/hytteProducts.ts');
   const nodes = [variant('in-stock', 'Havdyp', 'Middels', true, false), variant('sold-out', 'Havdyp', 'Liten', false, false), variant('backorder', 'Havdyp', 'Stor', true, true), variant('unknown', 'Havdyp', 'Større', true, undefined)];
   const product = { handle: 'utekos-techdown', variants: { nodes } };
   const cards = hytteVariantCards([product, { handle: 'utekos-dun', variants: { nodes: [nodes[1]] } }]);
-  assert.deepEqual(plain(cards.map(card => card.variant.id)), ['in-stock']);
+  assert.deepEqual(plain(cards.map(card => card.variant.id)), ['in-stock', 'sold-out', 'backorder', 'unknown']);
   assert.equal(cards[0].variant, nodes[0]);
   assert.equal(cards[0].product, product);
   assert.equal(nodes.length, 4);

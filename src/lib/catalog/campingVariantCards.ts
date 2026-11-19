@@ -8,19 +8,11 @@ export function campingVariantCards(products: readonly ShopifyProduct[]) {
     `gid://shopify/ProductVariant/${variant.id}`, index,
   ]));
   const cards = products.flatMap(product => publicVariants(product)
-    .filter(variant => variant.availableForSale && variant.currentlyNotInStock === false)
+    .filter(variant => product.handle === 'utekos-techdown' || (variant.availableForSale && variant.currentlyNotInStock === false))
     .map(variant => ({ product, variant })))
-    .sort((a, b) => (rank.get(a.variant.id) ?? Number.MAX_SAFE_INTEGER) -
-      (rank.get(b.variant.id) ?? Number.MAX_SAFE_INTEGER));
-
-  // Lead with each model's best-selling available variant so sizes of one model
-  // do not fill the first view. Remaining variants retain their sales order.
-  const seen = new Set<string>();
-  const first = cards.filter(card => {
-    if (seen.has(card.product.handle)) return false;
-    seen.add(card.product.handle);
-    return true;
-  });
-  const leadingIds = new Set(first.map(card => card.variant.id));
-  return [...first, ...cards.filter(card => !leadingIds.has(card.variant.id))];
+    .sort((a, b) => {
+      const priority = Number(b.product.handle === 'utekos-techdown') - Number(a.product.handle === 'utekos-techdown');
+      return priority || (rank.get(a.variant.id) ?? Number.MAX_SAFE_INTEGER) - (rank.get(b.variant.id) ?? Number.MAX_SAFE_INTEGER);
+    });
+  return cards;
 }

@@ -43,9 +43,9 @@ export function prepareHytteProduct(
   return product;
 }
 
-/** One card per confirmed in-stock SKU; unknown stock must not become purchasable. */
+/** Show every TechDown size alongside the other in-stock variants. */
 export function hytteVariantCards(products: readonly ShopifyProduct[]) {
   return products.flatMap(product => product.variants.nodes
-    .filter(variant => variant.availableForSale && variant.currentlyNotInStock === false)
+    .filter(variant => product.handle === 'utekos-techdown' || (variant.availableForSale && variant.currentlyNotInStock === false))
     .map(variant => ({ product, variant })));
 }

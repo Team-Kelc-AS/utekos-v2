@@ -37,13 +37,13 @@ export const nbccFaqItems = [
 // Comfyrobe's former AI fallback called XS/XL S/L; do not propagate that mismatch.
 export const nbccSizeGuides = [
   {
-    title: "Utekos TechDown™", columns: ["Middels", "Stor", "Større"],
+    title: "Utekos TechDown™", columns: ["Liten", "Middels", "Stor", "Større"],
     intro: "Normal passform over skuldre, bryst og ermer, med plass til lette lag. Høyderådene er veiledende; se også på målene og ønsket romslighet.",
     rows: [
-      { label: "Veiledende kroppshøyde", values: ["165–175 cm", "175–185 cm", "185 cm og høyere"] },
-      { label: "Lengde", values: ["162 cm", "166 cm", "170 cm"] },
-      { label: "Bryst (flatmål)", values: ["56 cm", "58 cm", "61 cm"] },
-      { label: "Ermlengde fra senter", values: ["82 cm", "87 cm", "92 cm"] },
+      { label: "Veiledende kroppshøyde", values: ["155–165 cm", "165–175 cm", "175–185 cm", "185 cm og høyere"] },
+      { label: "Lengde", values: ["—", "162 cm", "166 cm", "170 cm"] },
+      { label: "Bryst (flatmål)", values: ["—", "56 cm", "58 cm", "61 cm"] },
+      { label: "Ermlengde fra senter", values: ["—", "82 cm", "87 cm", "92 cm"] },
     ],
   },
   {

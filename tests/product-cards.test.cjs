@@ -38,7 +38,7 @@ test('one card per stocked variant preserves the exact price, options and image'
   assert.equal(api.calls.length, 1);
 });
 
-test('stocked TechDown Liten is included while sold-out, backorder and unknown stock stay excluded', async () => {
+test('all TechDown variants remain visible irrespective of inventory', async () => {
   const api = harness([{ products: connection([product(connection([
     variant(1, { availableForSale: false }),
     variant(2, { currentlyNotInStock: true }),
@@ -47,7 +47,7 @@ test('stocked TechDown Liten is included while sold-out, backorder and unknown s
     variant(5),
     variant(6, { availableForSale: false, selectedOptions: [{ name: 'Størrelse', value: 'Liten' }] }),
   ]), 'utekos-techdown')]) }]);
-  assert.deepEqual(Array.from(await api.getProductCards(), card => card.variant.id), [4, 5].map(id => `gid://shopify/ProductVariant/${id}`));
+  assert.deepEqual(Array.from(await api.getProductCards(), card => card.variant.id), [1, 2, 3, 4, 5, 6].map(id => `gid://shopify/ProductVariant/${id}`));
 });
 
 test('both product and variant pagination include stock beyond the first page', async () => {
@@ -74,13 +74,13 @@ test('homepage excludes retired Svale and orders TechDown, Mikrofiber and Comfyr
   const { homeProducts } = loadTypeScript('lib/catalog/homeProducts.ts');
   const card = (handle, size) => ({ product: { handle }, variant: variant(1, { selectedOptions: [{ name: 'Størrelse', value: size }] }) });
   const cards = [
-    card('comfyrobe', 'XL'), card('utekos-svale', 'Større'), card('utekos-mikrofiber', 'Medium'),
+    card('comfyrobe', 'XL'), card('utekos-techdown', 'Liten'), card('utekos-svale', 'Større'), card('utekos-mikrofiber', 'Medium'),
     card('utekos-techdown', 'Stor'), card('utekos-svale', 'Middels'), card('utekos-stapper', 'One size'),
     card('utekos-techdown', 'Større'), card('utekos-svale', 'Stor'), card('utekos-techdown', 'Middels'),
   ];
   const before = cards.slice();
   assert.deepEqual(Array.from(homeProducts(cards), card => `${card.product.handle}/${card.variant.selectedOptions[0].value}`), [
-    'utekos-techdown/Middels', 'utekos-techdown/Stor', 'utekos-techdown/Større',
+    'utekos-techdown/Liten', 'utekos-techdown/Middels', 'utekos-techdown/Stor', 'utekos-techdown/Større',
     'utekos-mikrofiber/Medium', 'comfyrobe/XL',
   ]);
   assert.deepEqual(cards, before);

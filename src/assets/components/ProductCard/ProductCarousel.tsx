@@ -3,11 +3,10 @@
 import { Children, useId, type ReactNode } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import styles from './ProductCarousel.module.css';
-import { useMobileFirstItems } from './useMobileFirstItems';
 
-export function ProductCarousel({ children, label = "Produktvarianter på lager", mobileFirstIndex }: { children: ReactNode; label?: string; mobileFirstIndex?: number }) {
+export function ProductCarousel({ children, label = "Produktvarianter" }: { children: ReactNode; label?: string }) {
   const id = useId();
-  const items = useMobileFirstItems(Children.toArray(children), mobileFirstIndex);
+  const items = Children.toArray(children);
   const count = items.length;
 
   return <Carousel

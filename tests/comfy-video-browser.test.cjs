@@ -6,13 +6,13 @@ const baseURL = process.env.COMFY_VIDEO_BASE_URL;
 const src = '/assets/videos/comfy-video-1.mp4';
 const videoSelector = `video[src="${src}"]`;
 
-async function waitForXLPosition(page, rootSelector, attribute, xlId, atStart) {
-  await page.waitForFunction(({ rootSelector, attribute, xlId, atStart }) => {
+async function waitForCardPosition(page, rootSelector, attribute, firstId, atStart) {
+  await page.waitForFunction(({ rootSelector, attribute, firstId, atStart }) => {
     const root = document.querySelector(rootSelector);
-    const card = Array.from(root.querySelectorAll(`[${attribute}]`)).find(card => card.getAttribute(attribute) === xlId);
+    const card = Array.from(root.querySelectorAll(`[${attribute}]`)).find(card => card.getAttribute(attribute) === firstId);
     const offset = card.getBoundingClientRect().left - root.querySelector('[data-slot="carousel-content"]').getBoundingClientRect().left;
     return atStart ? offset >= -1 : offset < -2;
-  }, { rootSelector, attribute, xlId, atStart });
+  }, { rootSelector, attribute, firstId, atStart });
 }
 
 async function openPage(browser, pathname, width) {
@@ -56,7 +56,7 @@ async function play(page, container, requests) {
 }
 
 for (const [name, engine] of Object.entries({ chromium, webkit })) {
-  test(`Comfyrobe XL comes first on mobile with the desktop order preserved (${name})`, {
+  test(`Carousel order stays consistent on mobile and desktop (${name})`, {
     skip: !baseURL, timeout: 90_000,
   }, async () => {
     const browser = await engine.launch();
@@ -69,39 +69,34 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
         const attribute = pathname === '/' ? 'data-product-card' : 'data-variant-card';
         const cardSelector = `${rootSelector} [${attribute}]`;
         const root = page.locator(rootSelector);
-        const xl = root.locator(`[${attribute}]:has(${videoSelector})`);
-        const xlId = await xl.getAttribute(attribute);
-        assert.equal(await page.locator(cardSelector).first().getAttribute(attribute), xlId);
+        const first = page.locator(cardSelector).first();
+        const firstId = await first.getAttribute(attribute);
+        const label = await first.getAttribute('aria-label');
+        assert.match(label, pathname === '/' ? /TechDown/ : /Comfyrobe™ S\/XS/);
         await root.scrollIntoViewIfNeeded();
         await root.locator('[data-slot="carousel"]').waitFor({ state: 'visible' });
-        assert.equal(await page.locator(cardSelector).first().getAttribute(attribute), xlId);
+        const order = () => page.locator(cardSelector).evaluateAll((cards, attr) => cards.map(card => card.getAttribute(attr)), attribute);
+        const mobileOrder = await order();
         await page.setViewportSize({ width: 1440, height: 1000 });
-        await page.waitForFunction(({ selector, attribute, xlId }) => document.querySelector(selector)?.getAttribute(attribute) !== xlId,
-          { selector: cardSelector, attribute, xlId });
-        const desktopOrder = await page.locator(cardSelector).evaluateAll((cards, attribute) => cards.map(card => card.getAttribute(attribute)), attribute);
-        if (pathname === '/produkter') assert.equal(await page.locator(cardSelector).first().getAttribute('aria-label'), 'Comfyrobe™ S/XS');
+        assert.deepEqual(await order(), mobileOrder);
         await page.setViewportSize({ width: 390, height: 1000 });
-        await page.waitForFunction(({ selector, attribute, xlId }) => document.querySelector(selector)?.getAttribute(attribute) === xlId,
-          { selector: cardSelector, attribute, xlId });
-        const mobileOrder = await page.locator(cardSelector).evaluateAll((cards, attribute) => cards.map(card => card.getAttribute(attribute)), attribute);
-        assert.deepEqual(mobileOrder, [xlId, ...desktopOrder.filter(id => id !== xlId)]);
         await root.locator('[data-slot="carousel-next"]').click();
-        await waitForXLPosition(page, rootSelector, attribute, xlId, false);
+        await waitForCardPosition(page, rootSelector, attribute, firstId, false);
         await root.locator('[data-slot="carousel-previous"]').click();
-        await waitForXLPosition(page, rootSelector, attribute, xlId, true);
+        await waitForCardPosition(page, rootSelector, attribute, firstId, true);
         await root.locator('[data-slot="carousel-next"]').press('ArrowRight');
-        await waitForXLPosition(page, rootSelector, attribute, xlId, false);
+        await waitForCardPosition(page, rootSelector, attribute, firstId, false);
         await root.locator('[data-slot="carousel-next"]').press('ArrowLeft');
-        await waitForXLPosition(page, rootSelector, attribute, xlId, true);
-        const imageBox = await xl.locator('img').first().boundingBox();
+        await waitForCardPosition(page, rootSelector, attribute, firstId, true);
+        const imageBox = await first.locator('img').first().boundingBox();
         const dragY = imageBox.y + imageBox.height * 0.25;
         await page.mouse.move(imageBox.x + imageBox.width * 0.85, dragY);
         await page.mouse.down();
         await page.mouse.move(imageBox.x + imageBox.width * 0.1, dragY, { steps: 12 });
         await page.mouse.up();
-        await waitForXLPosition(page, rootSelector, attribute, xlId, false);
+        await waitForCardPosition(page, rootSelector, attribute, firstId, false);
         await root.locator('[data-slot="carousel-previous"]').click();
-        await waitForXLPosition(page, rootSelector, attribute, xlId, true);
+        await waitForCardPosition(page, rootSelector, attribute, firstId, true);
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
         await root.screenshot({ path: `/tmp/utekos-comfy-xl-first-${name}-${pathname === '/' ? 'home' : 'catalog'}.png` });
         await page.close();

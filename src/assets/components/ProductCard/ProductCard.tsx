@@ -96,7 +96,7 @@ export function ProductCard({
         )}
       </CardContent>
       <ProductCardHeader title={title} href={href} variant={variant} />
-      <ProductCardFooter handle={product.handle} variantId={variant.id} available={variant.availableForSale} showKlarnaExpress={showKlarnaExpress}
+      <ProductCardFooter handle={product.handle} variantId={variant.id} available={variant.availableForSale && variant.currentlyNotInStock === false} showKlarnaExpress={showKlarnaExpress}
         reservationSelection={product.handle === "utekos-dun" ? dunSelection(variant) : undefined} />
     </Card>
   );

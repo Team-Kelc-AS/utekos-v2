@@ -3,7 +3,7 @@ import {
   utekosData
 } from './sizeGuideData'
 import {
-  TECH_DOWN_PUBLIC_SIZE_DEFINITIONS,
+  TECH_DOWN_SIZES,
   TECH_DOWN_MEASUREMENT_COLUMNS,
   TECH_DOWN_SIZE_ROWS
 } from './techDownSizes'
@@ -125,7 +125,7 @@ export function getProductSizeGuideContent(
         measurement: row.size,
         values: row.values
       })),
-      sizeTips: TECH_DOWN_PUBLIC_SIZE_DEFINITIONS.map(card => ({
+      sizeTips: TECH_DOWN_SIZES.map(card => ({
         size: card.size,
         heading: `Velg ${card.size} hvis...`,
         heightGuide: card.heightGuide,
@@ -170,17 +170,6 @@ export function getProductSizeGuideDialogContent(product: {
     title: 'Størrelsesguide',
     ...(family === 'techdown' ? {
       description: 'Velg mellom Liten, Middels, Stor og Større. Start med høyderådet, og sammenlign gjerne målene med et plagg du allerede har. Alle mål er i centimeter.',
-      sizeTips: [
-        {
-          size: 'Liten',
-          heading: 'Velg Liten hvis...',
-          heightGuide: '155–165 cm (evt. opptil 165 cm)',
-          fitGuidance: [
-            'Du ligger i øvre sjiktet (mot 165 cm) og ønsker en mer kroppsnær passform.'
-          ]
-        },
-        ...content.sizeTips
-      ],
       tableAriaLabel: 'Måletabell for TechDown-størrelser',
       tableCaption: `Mål for ${name} i Middels, Stor og Større`
     } : {})

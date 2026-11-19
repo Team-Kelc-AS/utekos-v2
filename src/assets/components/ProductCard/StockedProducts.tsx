@@ -138,11 +138,7 @@ export async function StockedProducts({
       <h2 id={headingId}>{title}</h2>
       {introduction}
       {cards.length ? (
-        <ProductCarousel mobileFirstIndex={route === "/" ? cards.findIndex(card =>
-          card.product.handle === "comfyrobe" && card.variant.selectedOptions.some(
-            option => ["Størrelse", "Size", "Str"].includes(option.name) && option.value === "XL",
-          ),
-        ) : undefined}>
+        <ProductCarousel>
           {cards.map((card) => (
             <ProductCard
               key={card.variant.id}

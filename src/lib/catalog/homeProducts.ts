@@ -1,7 +1,9 @@
 import type { ProductCardData } from '@/lib/shopify/getProductCards';
 
+import { TECH_DOWN_SIZES } from '@/lib/products/techDownSizes';
+
 const handles = ['utekos-techdown', 'utekos-mikrofiber', 'comfyrobe'];
-const sizes = ['Middels', 'Stor', 'Større'];
+const sizes: readonly string[] = TECH_DOWN_SIZES.map(size => size.size);
 
 export function homeProducts(cards: ProductCardData[], excludeProductHandle?: string, includeStapper = false): ProductCardData[] {
   const productHandles = includeStapper ? [...handles, 'utekos-stapper'] : handles;

@@ -3,12 +3,11 @@
 import { Children, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './ProductCarousel.module.css';
-import { useMobileFirstItems } from './useMobileFirstItems';
 
 type CarouselComponent = typeof import('./ProductCarousel').ProductCarousel;
 
-export function DeferredProductCarousel({ children, mobileFirstIndex }: { children: ReactNode; mobileFirstIndex?: number }) {
-  const items = useMobileFirstItems(Children.toArray(children), mobileFirstIndex);
+export function DeferredProductCarousel({ children }: { children: ReactNode }) {
+  const items = Children.toArray(children);
   const host = useRef<HTMLDivElement>(null);
   const rail = useRef<HTMLDivElement>(null);
   const interacted = useRef(false);
@@ -48,7 +47,7 @@ export function DeferredProductCarousel({ children, mobileFirstIndex }: { childr
   return <div ref={host} onPointerDownCapture={() => { if (!active) interacted.current = true; }} onWheelCapture={() => { if (!active) interacted.current = true; }} onBlurCapture={event => {
     if (Carousel && !interacted.current && !event.currentTarget.contains(event.relatedTarget)) setActive(true);
   }}>
-    {Carousel && active ? <Carousel mobileFirstIndex={mobileFirstIndex}>{children}</Carousel> : <div className={styles.carousel} role="region" aria-roledescription="carousel" aria-label="Produktvarianter på lager" tabIndex={0}
+    {Carousel && active ? <Carousel>{children}</Carousel> : <div className={styles.carousel} role="region" aria-roledescription="carousel" aria-label="Produktvarianter" tabIndex={0}
       onKeyDown={event => {
         if (event.target instanceof Element && event.target.closest('video')) return;
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {

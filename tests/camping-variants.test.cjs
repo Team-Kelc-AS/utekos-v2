@@ -8,26 +8,27 @@ const variant = (id, availableForSale = true, currentlyNotInStock = false) => ({
 });
 const product = (handle, nodes) => ({ handle, variants: { nodes } });
 
-test('camping shows only confirmed stock and leads with popular variants from different models', () => {
+test('camping leads with all TechDown variants and keeps other models stock-filtered', () => {
   const stor = variant('46944403915000');
   const storre = variant('48249962135800');
   const large = variant('42903231103224');
   const medium = variant('42903231037688');
   const unknown = variant('unknown-stock');
   delete unknown.currentlyNotInStock;
+  const middels = variant('46944403882232', false);
+  const backorder = variant('backorder', true, true);
   const cards = campingVariantCards([
-    product('utekos-techdown', [variant('46944403882232', false), storre, stor,
-      unknown, variant('backorder', true, true)]),
+    product('utekos-techdown', [middels, storre, stor, unknown, backorder]),
     product('utekos-mikrofiber', [medium, large]),
     product('utekos-dun', [variant('dun', false)]),
   ]);
-  assert.deepEqual(Array.from(cards, card => card.variant.id), [stor, large, storre, medium].map(item => item.id));
+  assert.deepEqual(Array.from(cards, card => card.variant.id), [stor, middels, storre, unknown, backorder, large, medium].map(item => item.id));
   assert.equal(cards[0].variant, stor, 'preserve the exact purchase variant');
-  assert.equal(cards[1].variant, large);
+  assert.equal(cards[1].variant, middels);
 });
 
-test('camping has no purchase cards when all stock is unavailable or unknown', () => {
+test('other models are omitted when stock is unavailable or unknown', () => {
   const unknown = variant('unknown');
   delete unknown.currentlyNotInStock;
-  assert.equal(campingVariantCards([product('utekos-techdown', [variant('sold-out', false), unknown])]).length, 0);
+  assert.equal(campingVariantCards([product('utekos-mikrofiber', [variant('sold-out', false), unknown])]).length, 0);
 });

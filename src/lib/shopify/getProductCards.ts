@@ -63,7 +63,7 @@ export async function getProductCards(): Promise<ProductCardData[]> {
       : product.variants.nodes;
 
     return publicVariants({ handle: product.handle, variants: { nodes: variants } })
-      .filter(variant => variant.availableForSale && variant.currentlyNotInStock === false)
+      .filter(variant => product.handle === 'utekos-techdown' || (variant.availableForSale && variant.currentlyNotInStock === false))
       .map(variant => ({ product: { id: product.id, handle: product.handle, title: product.title, vendor: product.vendor, productType: product.productType, collections, variants: { nodes: variants } }, variant }));
   }));
   return cards.flat();
