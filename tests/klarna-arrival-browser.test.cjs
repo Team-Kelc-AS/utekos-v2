@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { chromium, webkit } = require('playwright');
 const baseURL = process.env.KLARNA_ARRIVAL_TEST_BASE_URL;
-const title = 'Få beskjed først om unike lanseringer og spennende fordeler.';
+const title = 'Få beskjed først om lanseringer og spennende fordeler.';
 const sdk = `export async function KlarnaSDK(){const events={};return {Identity:{on(name,fn){events[name]=fn},button(config){window.__klarnaButtons??=[];window.__klarnaButtons.push(config);const callbacks={};let host;return {on(name,fn){callbacks[name]=fn},mount(container){host=document.createElement('klarna-identity-button');const button=document.createElement('button');button.textContent='Fortsett med Klarna';button.style.cssText='width:100%;height:100%;border:0;border-radius:999px;font:500 20px sans-serif;background:'+(config.theme==='light'?'#f9f8f5':'#0b051d')+';color:'+(config.theme==='light'?'#0b051d':'#fff');button.onclick=async()=>{callbacks.click?.();await events.signin?.({idToken:'fixture-token-'.repeat(10)})};host.append(button);container.replaceChildren(host);callbacks.ready?.()},unmount(){host?.remove()}}}}}}`;
 
 async function fixture(engine, width, overrides = {}) {
@@ -40,6 +40,9 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
         if (seenAt < 1700) assert.equal(await dialog.count(), 0);
         await dialog.waitFor();
         await dialog.getByRole('button', { name: 'Fortsett med Klarna', exact: true }).waitFor();
+        const earliest = width <= 760 ? 2000 : 5000;
+        assert.ok(await f.page.evaluate(() => performance.now()) >= earliest);
+        await dialog.evaluate(el => Promise.all(el.getAnimations().map(animation => animation.finished)));
         const metrics = await dialog.evaluate(el => {
           const r = el.getBoundingClientRect(), s = getComputedStyle(el);
           const image = el.querySelector('img');
@@ -49,7 +52,6 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
             closeColor: getComputedStyle(el.querySelector('button[aria-label="Lukk vinduet"] svg')).color,
             theme: window.__klarnaButtons.at(-1).theme, now: performance.now(), viewport: innerHeight };
         });
-        assert.ok(metrics.now >= 2000);
         assert.ok(metrics.loaded);
         if (width <= 760) assert.ok(metrics.height >= 252);
         else assert.equal(metrics.height, 329);
@@ -74,7 +76,7 @@ for (const [name, engine] of Object.entries({ chromium, webkit })) {
         } else {
           await f.page.keyboard.press('Escape'); await dialog.waitFor({ state: 'detached' });
           await f.page.reload({ waitUntil: 'domcontentloaded' });
-          await f.page.waitForTimeout(2300);
+          await f.page.waitForTimeout(earliest + 300);
           assert.equal(await dialog.count(), 0);
         }
         assert.deepEqual(f.errors, []);

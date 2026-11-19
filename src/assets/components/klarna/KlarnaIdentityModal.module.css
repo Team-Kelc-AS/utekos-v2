@@ -104,6 +104,26 @@
 
 .close svg { color: inherit; }
 
+@media (width > 760px) and (prefers-reduced-motion: no-preference) {
+  .backdrop[data-arrival] {
+    animation: arrivalFade 480ms ease-out;
+  }
+
+  .popup[data-arrival] {
+    animation: arrivalReveal 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes arrivalFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes arrivalReveal {
+  from { opacity: 0; translate: 0 6px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
 @media (max-width: 760px) {
   .popup {
     top: auto;

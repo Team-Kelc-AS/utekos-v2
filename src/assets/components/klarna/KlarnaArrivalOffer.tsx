@@ -16,7 +16,8 @@ export function KlarnaArrivalOffer() {
     const controller = new AbortController();
     let active = true;
     let timer: number;
-    const delay = new Promise<void>(resolve => { timer = window.setTimeout(resolve, 2000); });
+    const delayMs = window.matchMedia('(max-width: 760px)').matches ? 2000 : 5000;
+    const delay = new Promise<void>(resolve => { timer = window.setTimeout(resolve, delayMs); });
     const status = fetch('/api/identity/klarna/status', {
       credentials: 'same-origin', cache: 'no-store',
       signal: AbortSignal.any([controller.signal, AbortSignal.timeout(12000)]),
@@ -33,7 +34,7 @@ export function KlarnaArrivalOffer() {
     return () => { active = false; controller.abort(); window.clearTimeout(timer); };
   }, []);
 
-  return offer && <KlarnaIdentityModal open preview={offer.preview} onOpenChange={open => {
+  return offer && <KlarnaIdentityModal open arrival preview={offer.preview} onOpenChange={open => {
     if (open) return;
     setOffer(null);
     try { sessionStorage.setItem(dismissedKey, '1'); } catch { /* Dismissal remains effective for this mounted visit. */ }
