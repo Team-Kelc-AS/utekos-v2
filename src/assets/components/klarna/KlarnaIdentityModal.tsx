@@ -16,7 +16,8 @@ function subscribe(listener: () => void) {
 const isMobile = () => window.matchMedia(mobileQuery).matches;
 const serverSnapshot = () => false;
 
-export function KlarnaIdentityModal({ open, onOpenChange, preview }: {
+export function KlarnaIdentityModal({ open, onOpenChange, preview, arrival = false }: {
+  arrival?: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   preview: boolean;
@@ -25,8 +26,8 @@ export function KlarnaIdentityModal({ open, onOpenChange, preview }: {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Backdrop className={styles.backdrop} />
-        <Dialog.Popup className={styles.popup} data-klarna-identity-modal>
+        <Dialog.Backdrop data-arrival={arrival || undefined} className={styles.backdrop} />
+        <Dialog.Popup data-arrival={arrival || undefined} className={styles.popup} data-klarna-identity-modal>
           <Image
             src={`/images/kunnskap/utekos-klarna-${mobile ? 'black' : 'white'}-plus.svg`}
             alt="Utekos + Klarna"
