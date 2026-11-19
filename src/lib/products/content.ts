@@ -52,7 +52,7 @@ export const PRODUCT_PAGE_CONTENT = {
       blocks: [
         {
           paragraphs: [
-            "Utekos TechDown™ er et innovativt og modulært komfortplagg designet for å gi deg skreddersydd varme og uforstyrret utendørs velvære. Med sitt beskyttende Luméa™-skall og den fukttolerante CloudWeave™-isolasjonen, fasiliterer den overlegen allsidighet og kompromissløs komfort enten du er på hytten, i på bobiltur eller hjemme på terrassen.",
+            "Utekos TechDown™ er et innovativt og modulært komfortplagg designet for å gi deg skreddersydd varme og uforstyrret utendørs velvære. Med sitt beskyttende Luméa™-skall og den fukttolerante CloudWeave™-isolasjonen, fasiliterer den overlegen allsidighet og kompromissløs komfort enten du er på hytten, på bobiltur eller hjemme på terrassen.",
           ],
         },
         {
