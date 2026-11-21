@@ -40,6 +40,8 @@ Dun-reservasjon registreres som uvaluert Lead etter akseptert e-post og varig ba
 
 Broen bruker Vercel OIDC med fast audience og eksplisitt operasjonsliste. V2 bygger besøkskontekst på serveren; backend kontrollerer issuer/team/prosjekt/miljø/origin. Shopify-kompatibilitetsruter bevarer rå bytes, HMAC/OIDC, cookies og CORS. Klarna beholder betalingslåsing og ingen automatisk betalingsretry. Gatewayen strømmer svar, bevarer separate cookies og filtrerer private/interne headere. Cookie Keeper-masteren `user_id` videreføres.
 
+Meta `getIpFn` spør først den dual-stack sGTM-klienten på `edge.utekos.no`, og deretter same-origin `/api/meta/client-ip` som IPv4-fallback. Oppslaget må aldri rutes gjennom `utekos.no` eller `/__sgtm`, fordi Vercel er IPv4-only. Se [Meta client IP (IPv6)](meta-client-ip-ipv6.md).
+
 ## Konfigurasjon før trafikkovertakelse
 
 | Hvor | Navn / verdi | Kontroll |

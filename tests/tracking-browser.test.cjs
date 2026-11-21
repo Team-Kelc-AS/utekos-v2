@@ -174,7 +174,7 @@ function content(url, { longJourney = false } = {}) {
   }
   return `<main data-tracking-route="${parsed.pathname}" data-tracking-page="${Number(parsed.searchParams.get('page') ?? '1')}"><h1>Fixture list</h1><section data-tracking-list="fixture-list" data-tracking-list-name="Fixture list"><div id="card" data-tracking-commerce="${attr(commerce())}" style="height:200px;width:300px;margin-top:1000px"><a href="/produkter/test-product?variant=1">Fixture product</a></div></section></main>`;
 }
-async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, deferObservers = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, metaFirstIpDelay = 0, storedClicks, storedDurableClicks, metaCookie, metaHostFbcCookie, metaFbpCookie, metaCookiesBlocked = false, metaContextFbc, metaContextFbp = 'fb.1.1700000000000.123456789', pixelConfigLockMs = 0, pixelReadinessSignal = true, customerMatching = null, matchingDelay = 0, matchingPreloaded = false } = {}) {
+async function fixture(t, initial = 'https://utekos.no/produkter/test-product?variant=1', { deferCommerce = false, deferObservers = false, preview = false, longJourney = false, gaDelay = 0, gaBlocked = false, safariMode = false, userAgent, metaBackupDelay = 0, metaBackupBlocked = false, metaBackupRejected = false, metaAndroidResponse, metaIpDelay = 0, metaFirstIpDelay = 0, storedClicks, storedDurableClicks, metaCookie, metaHostFbcCookie, metaFbpCookie, metaCookiesBlocked = false, metaContextFbc, metaContextFbp = 'fb.1.1700000000000.123456789', pixelConfigLockMs = 0, pixelReadinessSignal = true, customerMatching = null, matchingDelay = 0, matchingPreloaded = false, metaEdgeIp } = {}) {
   const context = await (safariMode ? safari : browser).newContext({ viewport: { width: 1000, height: 700 }, serviceWorkers: 'block', userAgent });
   t.after(() => context.close());
   if (matchingPreloaded) await context.addInitScript(value => { window.__utekosCustomerMatchingSnapshot = value; }, customerMatching);
@@ -209,6 +209,7 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
   if (metaCookiesBlocked) await context.addInitScript(() => Object.defineProperty(document, 'cookie', { get: () => '', set: () => {} }));
   const requests = [], forbidden = [], errors = [];
   let metaIpCalls = 0;
+  const edgeRequests = [];
   t.after(() => { assert.deepEqual(forbidden, [], 'every external request must have an explicit offline fixture'); assert.deepEqual(errors, [], 'no uncaught browser errors'); });
   await context.route('**/*', async route => {
     const request = route.request(); const url = new URL(request.url());
@@ -252,6 +253,13 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
       return route.fulfill({ status: 202, json: { status: 'accepted' } });
     }
     if (url.origin === 'https://utekos.no' && url.pathname === '/favicon.ico') return route.fulfill({ status: 204 });
+    // Dual-stack sGTM edge echo for getIpFn. Blocked by default so the same-origin
+    // IPv4 fallback stays the path under test unless a test opts in.
+    if (url.origin === 'https://edge.utekos.no') {
+      edgeRequests.push({ method: request.method(), path: url.pathname, headers: request.headers(), body: request.postData() });
+      if (!metaEdgeIp) return route.abort('blockedbyclient');
+      return route.fulfill({ headers: { 'Access-Control-Allow-Origin': 'https://utekos.no', 'Vary': 'Origin', 'Cache-Control': 'no-store, private' }, json: { client_ip_address: metaEdgeIp } });
+    }
     forbidden.push(url.origin + url.pathname);
     return route.abort('blockedbyclient');
   });
@@ -270,7 +278,7 @@ async function fixture(t, initial = 'https://utekos.no/produkter/test-product?va
     while (journey(name).length < count && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 20));
     assert.ok(journey(name).length >= count, `expected ${count} ${name} journey events`);
   }
-  return { page, requests, events, journey, waitFor, waitForJourney };
+  return { page, requests, events, journey, waitFor, waitForJourney, edgeRequests };
 }
 
 for (const crawlerName of ['Googlebot', 'AdsBot-Google', 'Storebot-Google', 'Google-Agent', 'GoogleOther', 'GoogleMessages', 'meta-externalads', 'meta-externalagent', 'meta-webindexer', 'facebookexternalhit', 'meta-externalfetcher'])
@@ -646,6 +654,10 @@ test('Pixel observes a second tab cookie change before releasing the first tab e
   assert.equal(await api.page.evaluate(() => fbq.instance.locks.isLocked()), true);
   const second = await api.page.context().newPage();
   await second.goto('https://utekos.no/produkter/test-product?variant=2');
+  // Let the second tab finish its own Meta collection first. Its completion
+  // rewrites the identifiers it started from, which is not the new-click case.
+  await second.waitForFunction(() => window.dataLayer.some(entry => entry?.event === 'page_view'));
+  await second.waitForTimeout(50);
   await second.evaluate(() => {
     const clickTime = Date.now();
     document.cookie = `_fbc=fb.1.${clickTime}.SecondTabClick; Path=/`;
@@ -900,6 +912,23 @@ test('Meta first dispatch keeps URL click and collected IP when IP takes longer 
   assert.equal(state.backupCalls, 0);
   assert.ok(state.calls.find(call => call.name === 'PageView').cookie.includes('_fbi='));
   assert.equal(api.requests.filter(r => r.path === '/api/meta/client-ip').length, 1);
+});
+
+test('Meta getIpFn stores the dual-stack edge IPv6 without cookies, preflight or same-origin fallback', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product?fbclid=OfflineUrlClick', { metaEdgeIp: '2606:4700:4700::1111' });
+  await api.waitFor('page_view'); await api.waitFor('view_item');
+  const first = api.events('page_view')[0];
+  assert.match(first.browser_id.fbc, /\.OfflineUrlClick\./);
+  const cookie = await api.page.evaluate(() => decodeURIComponent(document.cookie));
+  assert.match(cookie, /_fbi=2606:4700:4700::1111\./);
+  assert.equal(api.edgeRequests.length, 1);
+  const [edge] = api.edgeRequests;
+  assert.equal(edge.method, 'POST');
+  assert.equal(edge.body, null);
+  assert.equal(edge.headers.cookie, undefined);
+  assert.equal(edge.headers['content-type'], undefined);
+  assert.equal(edge.headers.referer, undefined);
+  assert.equal(api.requests.filter(r => r.path === '/api/meta/client-ip').length, 0);
 });
 
 for (const safariMode of [false, true]) {

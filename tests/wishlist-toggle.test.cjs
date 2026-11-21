@@ -77,6 +77,8 @@ async function fixture(t, trackingEnabled = true) {
       return route.fulfill({ status: 202, json: { status: 'accepted' } });
     }
     if (url.pathname === '/favicon.ico') return route.fulfill({ status: 204 });
+    // Dual-stack getIpFn echo: blocked so the same-origin fallback is used.
+    if (url.origin === 'https://edge.utekos.no') return route.abort('blockedbyclient');
     forbidden.push(url.origin + url.pathname);
     return route.abort();
   });
