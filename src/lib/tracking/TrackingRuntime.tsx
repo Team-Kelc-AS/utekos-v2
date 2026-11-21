@@ -11,6 +11,7 @@ import { enrichCanonicalBrowserJourneyContext } from '@/lib/analytics/internalJo
 import { deliverCanonicalEvent } from './delivery';
 import { summarizeVitalEntries, vitalDocumentPath } from './web-vital-diagnostics';
 import { primeCustomerMatching } from '@/lib/analytics/customerMatching';
+import { syncShopifyTrackingConsent } from './shopifyConsentSync';
 
 const metricVersions = new Set<string>();
 const reportVital: Parameters<typeof useReportWebVitals>[0] = metric => {
@@ -40,6 +41,7 @@ export default function TrackingRuntime() {
   useReportWebVitals(reportVital);
   useEffect(() => {
     if (!browserTrackingEnabled()) return;
+    void syncShopifyTrackingConsent();
     primeCustomerMatching();
     reportNavigation();
     const stopCommerce = attachCommerceTracking();
