@@ -3,7 +3,7 @@
 import type { ClientParamBuilder } from 'meta-capi-param-builder-clientjs'
 import type { ConsentSnapshot } from './canonicalEventEnvelope'
 import { mapMetaClientParameterContext } from './mapMetaClientParameterContext'
-import { metaClientIpResponseSchema } from './metaClientIpContract'
+import { fetchMetaClientIp } from './fetchMetaClientIp'
 import { shouldCollectMetaClientIp } from './shouldCollectMetaClientIp'
 import { extractFbclidFromFbc } from './extractFbclidFromFbc'
 import { readObservedMetaFbclid } from './metaFbclid'
@@ -14,7 +14,6 @@ import { previewTrackingEnabled } from '@/lib/tracking/environment'
 function marketingAllowed() {
   return typeof window !== 'undefined'
 }
-const META_CLIENT_IP_TIMEOUT_MS = 2500
 // Application liveness bound, not a Meta latency guarantee. The native in-app
 // bridge has no SDK timeout. Keep one collection alive after this boundary so
 // later events can use its result without starting overlapping collections.
@@ -51,31 +50,8 @@ async function loadClientParamBuilder(): Promise<ClientParamBuilder> {
 async function getConsentedClientIpAddress(
   consent: ConsentSnapshot
 ) {
-  if (!marketingAllowed()) return ''
-
-  try {
-    const response = await fetch('/api/meta/client-ip', {
-      body: JSON.stringify({ consent }),
-      cache: 'no-store',
-      credentials: 'same-origin',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      keepalive: true,
-      method: 'POST',
-      signal: AbortSignal.timeout(META_CLIENT_IP_TIMEOUT_MS)
-    })
-
-    if (!response.ok) return ''
-
-    const parsed = metaClientIpResponseSchema.safeParse(
-      await response.json()
-    )
-    return parsed.success ? parsed.data.client_ip_address : ''
-  } catch {
-    return ''
-  }
+  if (!marketingAllowed() || consent.marketing !== 'granted') return ''
+  return fetchMetaClientIp(consent)
 }
 
 function readPersistedIdentifiers(): MetaClientParameterContext {
