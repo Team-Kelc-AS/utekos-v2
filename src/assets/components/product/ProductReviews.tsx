@@ -53,7 +53,7 @@ export async function ProductReviewList({ productId }: { productId: string }) {
   const data = await getJudgeMeReviews(productId);
   if (!data || data.reviews.length === 0) return null;
   return (
-    <section className={`${styles.panel} ${styles.reviewPanel}`} aria-label="Kundeomtaler fra Judge.me" data-journey-section="reviews">
+    <section id="produktomtaler" className={`${styles.panel} ${styles.reviewPanel}`} aria-label="Kundeomtaler fra Judge.me" data-journey-section="reviews">
           <h2 className={styles.heading}>Kundeomtaler</h2>
           {data.reviews.length < data.count && <p className={styles.partial}>Viser {data.reviews.length} av {data.count} omtaler.</p>}
           <ul className={styles.list} tabIndex={0} aria-label="Les kundeomtalene">

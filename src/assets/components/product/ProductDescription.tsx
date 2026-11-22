@@ -31,7 +31,7 @@ export function ProductDescription({ handle, descriptionHtml, maxCharacters = 30
   </> : <div dangerouslySetInnerHTML={{ __html: descriptionHtml }} />;
 
   return (
-    <section className={styles.description} aria-label="Produktbeskrivelse">
+    <section id="produktbeskrivelse" className={styles.description} aria-label="Produktbeskrivelse">
       <h2 className={styles.heading}>{content?.title ?? 'Produktbeskrivelse'}</h2>
       {preview.truncated ? <>
         <p className={styles.preview}>{preview.text}</p>
