@@ -10,7 +10,7 @@ const subscribe = () => () => {};
 const browserSnapshot = () => true;
 const serverSnapshot = () => false;
 
-// Load the AI client and validation library only after activation.
+// Load the presentation (and its animation library) only after activation.
 const SummaryContent = dynamic(
   () =>
     import("./PageAiSummaryContent").then(
@@ -24,7 +24,12 @@ const SummaryContent = dynamic(
       >
         <Brain size={20} className="shrink-0 text-primary" aria-hidden="true" />
         <span>Kortversjonen</span>
-        <span className="shimmer ml-auto text-sm font-medium motion-reduce:shimmer-none" role="status">Laster…</span>
+        <span
+          className="shimmer ml-auto text-sm font-medium motion-reduce:shimmer-none"
+          role="status"
+        >
+          Laster…
+        </span>
       </div>
     ),
   },
@@ -51,7 +56,7 @@ export function ProductAiSummary({
       data-ai-summary={target.slug}
     >
       {active ? (
-        <SummaryContent target={target} fallback={fallback} />
+        <SummaryContent slug={target.slug} text={fallback} />
       ) : (
         <button
           type="button"
@@ -60,7 +65,11 @@ export function ProductAiSummary({
           aria-expanded={false}
           onClick={() => setActive(true)}
         >
-          <Brain size={20} className="shrink-0 text-primary" aria-hidden="true" />
+          <Brain
+            size={20}
+            className="shrink-0 text-primary"
+            aria-hidden="true"
+          />
           <span>Kortversjonen</span>
           <ChevronDown
             size={20}
