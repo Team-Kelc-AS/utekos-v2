@@ -306,13 +306,13 @@ test('accepted server form never invents identity from missing or malformed cook
 
 test('accepted server form filters identity using resolved analytics and marketing authorization', async () => {
   for (const [analytics, marketing, ga, fbp] of [
-    ['denied', 'granted', undefined, 'fb.1.fixture'],
+    ['denied', 'granted', undefined, 'fb.1.1700000000000.1234567890'],
     ['granted', 'denied', 'GA1.1.123.456', undefined],
     ['denied', 'denied', undefined, undefined],
   ]) {
     const api = harness({ entry: 'lib/tracking/server-forms.ts',
       authorization: { analytics, marketing, preferences: 'granted', source: 'operator_policy', version: '1' },
-      incoming: { origin: ORIGIN, referer: `${ORIGIN}/produkter/utekos-dun`, cookie: '_ga=GA1.1.123.456; _fbp=fb.1.fixture' },
+      incoming: { origin: ORIGIN, referer: `${ORIGIN}/produkter/utekos-dun`, cookie: '_ga=GA1.1.123.456; _fbp=fb.1.1700000000000.1234567890' },
     });
     await api.recordAcceptedForm(form(), 'product_waitlist_utekos_dun', pageViewId);
     assert.equal(api.sends.length, 1);
