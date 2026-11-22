@@ -8,7 +8,13 @@ import {
   type SummaryTarget,
 } from "@/lib/ai-summary/schema";
 
-export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
+export function PageAiSummaryContent({
+  target,
+  fallback,
+}: {
+  target: SummaryTarget;
+  fallback?: string;
+}) {
   const [open, setOpen] = useState(true);
   const [started, setStarted] = useState(true);
   const [invalid, setInvalid] = useState(false);
@@ -40,6 +46,34 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
   const noteClassName = `${paragraphClassName} text-[.8125rem]!`;
   const actionClassName =
     "min-h-11 cursor-pointer rounded-[.5rem] border border-(--summary-border) px-3 py-2 [font:inherit] focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-offset-4 hover:bg-[color-mix(in_srgb,var(--summary-ink)_5%,transparent)]";
+  // The server streams Judge.me ratings before the model text, so they can
+  // survive a failed generation and complete the fallback summary.
+  const reviews = object?.reviews;
+  const reviewRating = target.kind === "product" &&
+    reviews?.count !== undefined &&
+    reviews.average !== undefined && (
+      <p
+        className={`${paragraphClassName} flex items-center gap-1.5 text-base! font-extrabold!`}
+      >
+        {reviews.count > 0 ? (
+          <>
+            {reviews.average.toLocaleString("nb-NO", {
+              maximumFractionDigits: 2,
+            })}
+            /5 · {reviews.count} {reviews.count === 1 ? "omtale" : "omtaler"}{" "}
+            på Judge.me
+          </>
+        ) : (
+          "Ingen produktomtaler ennå."
+        )}
+      </p>
+    );
+  const shippingNote = (
+    <p className={`${paragraphClassName} text-base!`}>
+      Gratis frakt fra 999 kr. Gratis størrelsesbytte.
+      {" "}90 % levert innen to virkedager.
+    </p>
+  );
 
   function activate() {
     setInvalid(false);
@@ -84,32 +118,10 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
                 {object.content.summary}
               </p>
             )}
-            {target.kind === "product" && object.content?.summary && (
-              <p className={`${paragraphClassName} text-base!`}>
-                Gratis frakt fra 999 kr. Gratis størrelsesbytte.
-                {" "}90 % levert innen to virkedager.
-              </p>
-            )}
             {target.kind === "product" &&
-              object.reviews?.count !== undefined &&
-              object.reviews.average !== undefined && (
-                <p
-                  className={`${paragraphClassName} flex items-center gap-1.5 text-base! font-extrabold!`}
-                >
-                  {object.reviews.count > 0 ? (
-                    <>
-                      {object.reviews.average.toLocaleString("nb-NO", {
-                        maximumFractionDigits: 2,
-                      })}
-                      /5 · {object.reviews.count}{" "}
-                      {object.reviews.count === 1 ? "omtale" : "omtaler"} på
-                      Judge.me
-                    </>
-                  ) : (
-                    "Ingen produktomtaler ennå."
-                  )}
-                </p>
-              )}
+              object.content?.summary &&
+              shippingNote}
+            {reviewRating}
             {object.content?.reviewSummary && (
               <p className={`${paragraphClassName} text-base!`}>
                 <span className="font-extrabold">Et kundehøydepunkt: </span>
@@ -133,7 +145,17 @@ export function PageAiSummaryContent({ target }: { target: SummaryTarget }) {
               )}
           </div>
         ) : null}
-        {failed && (
+        {failed && fallback && (
+          <div className="animate-in fade-in duration-500">
+            <p className={`${paragraphClassName} text-lg!`}>{fallback}</p>
+            {target.kind === "product" && shippingNote}
+            {reviewRating}
+            <p className={`${noteClassName} opacity-70`}>
+              Les produktdetaljene og omtalene for alle nyanser.
+            </p>
+          </div>
+        )}
+        {failed && !fallback && (
           <div className="animate-in fade-in">
             <p className={`${paragraphClassName} text-base!`} role="status">
               Oppsummeringen kunne ikke lastes.
