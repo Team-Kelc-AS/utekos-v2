@@ -392,3 +392,15 @@ test('MDX extraction preserves caveats and never evaluates imports, expressions 
   assert.match(text, /Ikke målt på hele plagget/);
   assert.doesNotMatch(text, /Secret|privat|process.env|PageAiSummary/);
 });
+
+test('every product page has a hand-written fallback that fits the summary contract', () => {
+  const { getProductSummaryFallback } = loadTypeScript('lib/ai-summary/productFallback.ts');
+  const { pageSummarySchema } = loadTypeScript('lib/ai-summary/schema.ts');
+  const handles = ['utekos-techdown', 'utekos-mikrofiber', 'utekos-dun', 'comfyrobe', 'utekos-stapper'];
+  const texts = handles.map(getProductSummaryFallback);
+  assert.equal(new Set(texts).size, handles.length);
+  for (const text of [...texts, getProductSummaryFallback('ukjent-produkt')]) {
+    assert.ok(pageSummarySchema.safeParse({ summary: text, reviewSummary: '' }).success, text);
+  }
+});
+

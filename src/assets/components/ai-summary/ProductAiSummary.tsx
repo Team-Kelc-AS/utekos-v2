@@ -30,7 +30,13 @@ const SummaryContent = dynamic(
   },
 );
 
-export function ProductAiSummary({ target }: { target: SummaryTarget }) {
+export function ProductAiSummary({
+  target,
+  fallback,
+}: {
+  target: SummaryTarget;
+  fallback: string;
+}) {
   const [active, setActive] = useState(false);
   const hydrated = useSyncExternalStore(
     subscribe,
@@ -45,7 +51,7 @@ export function ProductAiSummary({ target }: { target: SummaryTarget }) {
       data-ai-summary={target.slug}
     >
       {active ? (
-        <SummaryContent target={target} />
+        <SummaryContent target={target} fallback={fallback} />
       ) : (
         <button
           type="button"

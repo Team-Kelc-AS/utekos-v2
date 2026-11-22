@@ -10,6 +10,13 @@ import { getPreparedArticleSummary } from '@/lib/ai-summary/preparedArticles';
 export const maxDuration = 30;
 const headers = { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
 
+// Provider errors carry the upstream HTTP status (for example 402 when credits
+// run out); log it without the message, which can echo provider payloads.
+function gatewayStatus(error: unknown) {
+  const status = (error as { statusCode?: unknown } | null)?.statusCode;
+  return typeof status === 'number' ? status : undefined;
+}
+
 export async function POST(request: Request) {
   if (process.env.NEXT_PUBLIC_AI_SUMMARY_ENABLED !== 'true') {
     return new Response('Ikke tilgjengelig.', { status: 404, headers });
@@ -156,7 +163,7 @@ export async function POST(request: Request) {
         } catch (error) {
           cancellation.abort();
           console.error(JSON.stringify({ event: 'ai_summary_failed', ...logContext,
-            durationMs: Date.now() - started, error: error instanceof Error ? error.name : 'UnknownError' }));
+            durationMs: Date.now() - started, error: error instanceof Error ? error.name : 'UnknownError', status: gatewayStatus(error) }));
           controller.error(new Error('Oppsummeringen kunne ikke fullføres.'));
         }
       },
@@ -167,7 +174,7 @@ export async function POST(request: Request) {
     return createTextStreamResponse({ stream, headers: { ...headers, 'X-AI-Summary-Cache': 'MISS' } });
   } catch (error) {
     console.error(JSON.stringify({ event: 'ai_summary_failed', ...logContext,
-      durationMs: Date.now() - started, error: error instanceof Error ? error.name : 'UnknownError' }));
+      durationMs: Date.now() - started, error: error instanceof Error ? error.name : 'UnknownError', status: gatewayStatus(error) }));
     return new Response('Oppsummeringen er midlertidig utilgjengelig.', { status: 503, headers });
   }
 }
