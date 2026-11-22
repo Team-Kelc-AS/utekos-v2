@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
   // return HTTP 404 instead of a streamed 200 containing a not-found screen.
   htmlLimitedBots: /.*/,
   experimental: {
+    agentUpgrade: "security",
     // Unmatched URLs must use one complete 404 document, rather than replaying
     // the partially prerendered app shell against Next's fallback route tree.
     globalNotFound: true,
