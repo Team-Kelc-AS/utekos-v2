@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { applyCookieKeeperUserIdCookie } from "@/lib/analytics/server/stapeCookieKeeperUserId";
 import { captureProxyMetaCookies } from "@/lib/analytics/server/captureProxyMetaCookies";
 import { applyProxyMetaCookies } from "@/lib/analytics/server/applyProxyMetaCookies";
+import { applyMetaIdentityBackupCookie } from "@/lib/analytics/server/metaIdentityBackupCookie";
 import { isDocumentNavigation } from "@/lib/tracking/documentRequest";
 import {
   isTrackingOrigin,
@@ -58,7 +59,10 @@ export function proxy(request: NextRequest) {
 
   // The master ID is available before the loader executes. Preserve valid IDs
   // and refresh the pinned 400-day lifetime on document responses only.
-  const withMetaCookies = applyProxyMetaCookies(response, request, metaCookies);
+  const withMetaCookies = applyMetaIdentityBackupCookie(
+    applyProxyMetaCookies(response, request, metaCookies),
+    request,
+  );
   // Preview never writes the production-wide Stape master cookie.
   return noStore(previewTrackingEnabled() ? withMetaCookies :
     applyCookieKeeperUserIdCookie(withMetaCookies, request));
