@@ -41,6 +41,13 @@ export function createPageViewSession(
       return toPublicContext(activePageView)
     }
 
+    // A variant choice rewrites ?farge=/?storrelse= on the same product page.
+    // It is not a new page view: keep the identity and only follow the URL.
+    if (activePageView && isVariantOnlyChange(activePageView.pageUrl, pageUrl)) {
+      activePageView = { ...activePageView, pageUrl }
+      return remember(activePageView)
+    }
+
     const referrerUrl =
       activePageView?.pageUrl ??
       normalizeOptionalHttpUrl(input.documentReferrer)
@@ -184,4 +191,40 @@ function normalizeOptionalHttpUrl(
   } catch {
     return undefined
   }
+}
+
+const VARIANT_QUERY_KEYS = new Set(['variant', 'farge', 'storrelse', 'kjonn'])
+const PRODUCT_PATH = /^\/produkter\/[^/]+\/?$/
+
+/**
+ * True when two URLs are the same product page and differ only in variant
+ * selection parameters. Campaign or click parameters still start a new view.
+ */
+export function isVariantOnlyChange(previousUrl: string, nextUrl: string): boolean {
+  let previous: URL
+  let next: URL
+  try {
+    previous = new URL(previousUrl)
+    next = new URL(nextUrl)
+  } catch {
+    return false
+  }
+  if (
+    previous.origin !== next.origin ||
+    previous.pathname !== next.pathname ||
+    !PRODUCT_PATH.test(next.pathname) ||
+    previous.hash !== next.hash
+  ) {
+    return false
+  }
+  const keys = new Set([...previous.searchParams.keys(), ...next.searchParams.keys()])
+  let changed = false
+  for (const key of keys) {
+    const before = previous.searchParams.getAll(key).join('\u0000')
+    const after = next.searchParams.getAll(key).join('\u0000')
+    if (before === after) continue
+    if (!VARIANT_QUERY_KEYS.has(key)) return false
+    changed = true
+  }
+  return changed
 }

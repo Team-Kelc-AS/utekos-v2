@@ -6,6 +6,12 @@ import { ensureCanonicalMetaBrowserIds } from './ensureCanonicalMetaBrowserIds'
 import { readObservedMetaFbclid } from '../metaFbclid'
 import { extractFbclidFromFbc } from '../extractFbclidFromFbc'
 import { selectMetaFbcCookie } from '../selectMetaFbcCookie'
+import {
+  META_IDENTITY_BACKUP_COOKIE,
+  META_IDENTITY_BACKUP_MAX_AGE_SECONDS,
+  decodeMetaIdentityBackup,
+  remainingFbcSeconds
+} from './metaIdentityBackupCookie'
 
 const observedFbclidSchema = z.string().check(z.minLength(1), z.maxLength(500))
 const observedCookieSchema = z.string().check(z.minLength(1), z.maxLength(3800))
@@ -77,8 +83,23 @@ export function captureProxyMetaCookies(
     }
     return selected
   }
-  const fbp = selectCookie('_fbp')
-  const fbc = selectCookie('_fbc')
+  const backup = decodeMetaIdentityBackup(
+    request.cookies.get(META_IDENTITY_BACKUP_COOKIE)?.value
+  )
+  const restored: Array<{ name: '_fbp' | '_fbc'; value: string }> = []
+  let fbp = selectCookie('_fbp')
+  let fbc = selectCookie('_fbc')
+  // Safari may have expired the script-written cookies. Restore the exact
+  // earlier values; a new URL click still mints a new fbc below.
+  if (!fbp && backup.fbp) {
+    fbp = backup.fbp
+    restored.push({ name: '_fbp', value: fbp })
+  }
+  if (!fbc && backup.fbc &&
+    (!observedFbclid || extractFbclidFromFbc(backup.fbc) === observedFbclid)) {
+    fbc = backup.fbc
+    restored.push({ name: '_fbc', value: fbc })
+  }
 
   try {
     const captured = ensureCanonicalMetaBrowserIds({
@@ -101,6 +122,17 @@ export function captureProxyMetaCookies(
         continue
       }
       cookies.push({ ...cookie, ...parsed.data })
+    }
+    for (const item of restored) {
+      if (cookies.some(cookie => cookie.name === item.name)) continue
+      cookies.push({
+        name: item.name,
+        value: item.value,
+        maxAge: item.name === '_fbc' ?
+          remainingFbcSeconds(item.value)
+        : META_IDENTITY_BACKUP_MAX_AGE_SECONDS,
+        domain: ''
+      })
     }
 
     for (const cookie of cookies) {

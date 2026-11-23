@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { applyCookieKeeperUserIdCookie } from "@/lib/analytics/server/stapeCookieKeeperUserId";
 import { captureProxyMetaCookies } from "@/lib/analytics/server/captureProxyMetaCookies";
 import { applyProxyMetaCookies } from "@/lib/analytics/server/applyProxyMetaCookies";
+import { applyMetaIdentityBackupCookie } from "@/lib/analytics/server/metaIdentityBackupCookie";
 import { isDocumentNavigation } from "@/lib/tracking/documentRequest";
 import {
   isTrackingOrigin,
@@ -59,7 +60,10 @@ export function proxy(request: NextRequest) {
   // and refresh the pinned 400-day lifetime on document responses only.
   return noStore(
     applyCookieKeeperUserIdCookie(
-      applyProxyMetaCookies(response, request, metaCookies),
+      applyMetaIdentityBackupCookie(
+        applyProxyMetaCookies(response, request, metaCookies),
+        request,
+      ),
       request,
     ),
   );

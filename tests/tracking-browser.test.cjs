@@ -553,13 +553,33 @@ test('a live old _fbc cookie survives PageView and commerce without becoming a d
 
   await api.page.context().clearCookies({ name: '_fbc' });
   await api.page.evaluate(() => {
-    history.pushState({}, '', '/produkter/test-product?variant=1');
+    history.pushState({}, '', '/produkter');
     dispatchEvent(new PopStateEvent('popstate'));
   });
   await api.waitFor('page_view', 2);
   const later = api.events('page_view')[1];
   assert.equal(later.browser_id?.fbc, undefined);
   assert.equal(later.click_id?.fbclid, undefined);
+});
+
+test('a variant switch on a product page keeps the page view and sends no new PageView', async t => {
+  const api = await fixture(t, 'https://utekos.no/produkter/test-product');
+  await api.waitFor('page_view');
+  const first = api.events('page_view')[0];
+  await api.page.evaluate(() => {
+    history.pushState({}, '', '/produkter/test-product?storrelse=middels');
+    dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await api.page.waitForTimeout(1500);
+  assert.equal(api.events('page_view').length, 1, 'variant parameters are not a new page');
+  await api.page.evaluate(() => {
+    history.pushState({}, '', '/produkter');
+    dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await api.waitFor('page_view', 2);
+  const second = api.events('page_view')[1];
+  assert.notEqual(second.page_view_id, first.page_view_id);
+  assert.equal(second.previous_page_view_id, first.page_view_id);
 });
 
 test('Pixel sends a held event when its exact missing click cookie returns', async t => {
@@ -1529,7 +1549,7 @@ test('Meta unavailable native bridge releases checkout once and does not queue r
   assert.equal(result.event.browser_id.fbc, undefined);
   assert.ok(result.event.browser_id.fbp);
   await api.waitFor('page_view'); await api.waitFor('begin_checkout');
-  await api.page.evaluate(() => { history.pushState({}, '', '/produkter/test-product?variant=2'); dispatchEvent(new PopStateEvent('popstate')); });
+  await api.page.evaluate(() => { history.pushState({}, '', '/produkter'); dispatchEvent(new PopStateEvent('popstate')); });
   await api.waitFor('page_view', 2);
   assert.equal(await api.page.evaluate(() => __metaBackupCalls), 1);
   assert.equal(api.events('begin_checkout').length, 1);
@@ -1568,7 +1588,7 @@ test(`Meta pagehide releases pending identity once and a late result cannot repl
   assert.equal(api.events('page_view').length, 1);
   assert.equal(await api.page.evaluate(() => __pixelCalls.filter(call => call[2] === 'PageView').length), 1);
   // A subsequent route can use the late result without replaying the old ID.
-  await api.page.evaluate(() => { history.pushState({}, '', '/produkter/test-product?variant=2'); dispatchEvent(new PopStateEvent('popstate')); });
+  await api.page.evaluate(() => { history.pushState({}, '', '/produkter'); dispatchEvent(new PopStateEvent('popstate')); });
   await api.waitFor('page_view', 2);
   assert.match(api.events('page_view')[1].browser_id.fbc, /\.OfflineBackupClick\./);
   assert.notEqual(api.events('page_view')[1].event_id, first.event_id);

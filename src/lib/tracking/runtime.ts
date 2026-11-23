@@ -292,6 +292,8 @@ export function attachCommerceTracking() {
       acceptedActions.delete(acceptedActions.values().next().value!);
     return true;
   };
+  // Ordinal per runtime, part of the view_cart idempotency key with page_view_id.
+  let cartViewSequence = 0;
   const stop = subscribeStorefrontActions(({ name, detail, context }) => {
     if (name === "utekos:cart-mutation-confirmed") {
       const mutation = detail as CartMutation;
@@ -317,7 +319,7 @@ export function attachCommerceTracking() {
       if (cart?.id && cart.commerce)
         reportInteraction(
           "view_cart",
-          { ...cart.commerce, cart_id: cart.id, view_sequence: Date.now() },
+          { ...cart.commerce, cart_id: cart.id, view_sequence: ++cartViewSequence },
           { context },
         );
     } else if (name === "utekos:accepted-lead") {
