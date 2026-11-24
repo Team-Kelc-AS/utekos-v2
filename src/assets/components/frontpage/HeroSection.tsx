@@ -1,7 +1,7 @@
 import "server-only";
 
 import frontPageImage from "../../../../public/images/frontpage/juster-hero-desktop.webp";
-import comfyrobeMobileImage from "../../../../public/images/products/comfyrobe/comfyrobe_mobile_hero.webp";
+import tabletHeroImage from "../../../../public/images/frontpage/techdown-jul-hero-4x5.webp";
 import { getImageProps } from "next/image";
 import Link from "next/link";
 import { googleSansFlex } from "@/lib/fonts";
@@ -11,7 +11,7 @@ import styles from "./HeroSection.module.css";
 const tabletMedia = "(min-width: 640px) and (pointer: coarse), (min-width: 640px) and (max-width: 1023px)";
 const desktopMedia = "(min-width: 1024px) and (pointer: fine), (min-width: 1024px) and (pointer: none)";
 const heroAlt = "Varmeplagg fra Utekos, vist på modell.";
-const portraitAlt = "Comfyrobe™ i Fjellnatt, vist forfra i et vinterlandskap.";
+const portraitAlt = "Utekos TechDown™ i Maritime Blue henger i et snødekt grantre, omgitt av kompresjonsposer pakket inn som julegaver.";
 
 function HeroImage() {
   const { props } = getImageProps({
@@ -22,7 +22,7 @@ function HeroImage() {
     fetchPriority: "high",
   });
   const { props: portrait } = getImageProps({
-    src: comfyrobeMobileImage,
+    src: tabletHeroImage,
     alt: portraitAlt,
     sizes: "100vw",
     loading: "eager",
@@ -69,9 +69,9 @@ export function HeroSection() {
       <div className={cn("relative", styles.desktopFrame)}>
         <div className={cn("absolute inset-x-0 top-[58%] z-10 flex flex-col items-center px-4 sm:top-[55%] sm:px-6", styles.desktopContent)}>
           <h1 id="hero-h1" className={cn("m-0 max-w-3xl text-center text-[clamp(1.25rem,4vw,3.5rem)] leading-[1.08] font-extrabold text-white uppercase lg:pointer-fine:text-[clamp(1.75rem,2.5vw,3.5rem)] lg:pointer-none:text-[clamp(1.75rem,2.5vw,3.5rem)]", styles.desktopHeading)}>
-            <span className={styles.mobileOnly}>
-              <span className="block">Uanstrengt eleganse</span>{" "}
-              <span className="block">for kjølige dager.</span>
+            <span className={cn("normal-case", styles.mobileOnly)}>
+              <span className="block">Gi bort litt mer</span>{" "}
+              <span className="block">utekos i jul.</span>
             </span>
             <span className={cn("hidden", styles.desktopCopy)}>
               <span className="block">JUSTER.</span>{" "}
@@ -80,24 +80,26 @@ export function HeroSection() {
             </span>
           </h1>
           <p className={cn("mt-2 max-w-xl text-center font-sans text-sm font-extralight text-[#dacec2] sm:mt-3 sm:text-lg lg:pointer-fine:mt-4 lg:pointer-fine:text-[clamp(1rem,1.25vw,1.5rem)] lg:pointer-none:mt-4 lg:pointer-none:text-[clamp(1rem,1.25vw,1.5rem)]", styles.desktopLead)}>
-            <span className={styles.mobileOnly}>Omfavn høstsesongen med omsluttende luksus.</span>
+            <span className={styles.mobileOnly}>Utekos TechDown™ kommer pakket i egen kompresjonspose, klar til å legges under treet.</span>
             <span className={cn("hidden", styles.desktopCopy)}>
               Opplev kompromissløs komfort<br />og overlegen allsidighet
             </span>
           </p>
           <div className={cn("mt-4 flex w-full justify-center gap-3 sm:mt-5 lg:pointer-fine:gap-6 lg:pointer-none:gap-6", styles.mobileOnly)}>
-            <a
-              href="/comfy-xs"
-              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-primary px-5 font-sans text-base font-semibold text-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
+            <Link
+              href="/produkter/utekos-techdown"
+              prefetch={false}
+              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-primary px-5 font-sans text-base font-semibold text-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-48 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
             >
-              Kjøp XS
-            </a>
-            <a
-              href="/comfy-xl"
-              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-(image:--background-gradient) px-5 font-sans text-base font-semibold text-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-40 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
+              Kjøp TechDown™
+            </Link>
+            <Link
+              href="/gaveguide"
+              prefetch={false}
+              className="flex h-12 min-w-0 flex-1 items-center justify-center rounded-lg border border-primary bg-(image:--background-gradient) px-5 font-sans text-base font-semibold text-foreground shadow-lg shadow-black/30 transition-[filter] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-14 sm:w-48 sm:flex-none lg:pointer-fine:h-16 lg:pointer-fine:w-52 lg:pointer-fine:text-lg lg:pointer-none:h-16 lg:pointer-none:w-52 lg:pointer-none:text-lg"
             >
-              Kjøp XL
-            </a>
+              Se gaveguiden
+            </Link>
           </div>
           <div className={cn("hidden", styles.desktopActions)}>
             <Link href="/produkter" prefetch={false} className={styles.desktopPrimary}>Se utvalg</Link>
