@@ -352,3 +352,30 @@
   .desktopActions a:hover { filter: brightness(1.1); }
   .desktopActions a:focus-visible { outline: 2px solid #010b0a; outline-offset: 4px; }
 }
+
+/* Portrait tablets (same media as the tablet <source>): fill the screen below the header. */
+@media (orientation: portrait) and (min-width: 640px) and (pointer: coarse),
+  (orientation: portrait) and (min-width: 640px) and (max-width: 1023px) {
+  .desktopHero { --hero-header-height: 72px; }
+
+  .desktopFrame {
+    height: calc(100svh - var(--hero-header-height));
+    min-height: 32rem;
+    overflow: hidden;
+  }
+
+  .desktopPicture,
+  .desktopPicture picture { height: 100%; }
+
+  .desktopPicture img {
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 35%;
+  }
+}
+
+/* Header.module.css raises the header to 112px from 768px. */
+@media (orientation: portrait) and (min-width: 768px) and (pointer: coarse),
+  (orientation: portrait) and (min-width: 768px) and (max-width: 1023px) {
+  .desktopHero { --hero-header-height: 112px; }
+}
