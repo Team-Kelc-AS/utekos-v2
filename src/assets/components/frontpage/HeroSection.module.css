@@ -352,3 +352,34 @@
   .desktopActions a:hover { filter: brightness(1.1); }
   .desktopActions a:focus-visible { outline: 2px solid #010b0a; outline-offset: 4px; }
 }
+
+/* Tablet (incl. iPad landscape): 4:5 Christmas image with copy over the gifts. */
+@media (min-width: 640px) and (max-width: 1023px),
+  (min-width: 640px) and (pointer: coarse) {
+  .desktopFrame::after {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 1;
+    height: 52%;
+    background: linear-gradient(180deg, rgb(1 11 10 / 0%), rgb(1 11 10 / 58%) 38%, rgb(1 11 10 / 84%));
+    content: "";
+    pointer-events: none;
+  }
+
+  .desktopContent {
+    top: auto;
+    bottom: 7%;
+  }
+
+  .desktopHeading .mobileOnly {
+    text-wrap: balance;
+  }
+
+  .desktopLead .mobileOnly {
+    display: block;
+    max-width: 34rem;
+    color: #f0eee9;
+    font-weight: 300;
+    text-wrap: balance;
+  }
+}

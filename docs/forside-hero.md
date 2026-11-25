@@ -44,6 +44,31 @@ Bygget har en eksisterende fontfallback-advarsel fra rotlayoutens separate
 Google Sans Flex-oppsett. Nettleseren har en eksisterende dimensjonsadvarsel
 for headerens `IconWhite.svg`, men ingen runtime-feil. Ikke publisert.
 
+## Nettbrett: julekampanje (oppdatert 2026-11-25)
+
+Nettbrett-kilden (`tabletMedia`: 640–1023 px, og berøringsskjermer fra 640 px,
+dvs. iPad stående og liggende) viser
+`public/images/frontpage/techdown-jul-hero-4x5.webp` (2048×2560, 4:5): Utekos
+TechDown™ i Maritime Blue som henger i et snødekt grantre, omgitt av
+kompresjonsposer pakket som julegaver. Den erstatter
+`comfyrobe_mobile_hero.webp`, som fortsatt ligger i repoet.
+
+- Kun `mobileOnly`-blokken vises på nettbrett. H1: «Gi bort litt mer utekos i
+  jul.» (setningskasus via `normal-case`). Ingress om at TechDown™ kommer i egen
+  kompresjonspose. Knapper: «Kjøp TechDown™» → `/produkter/utekos-techdown`,
+  «Se gaveguiden» → `/gaveguide`.
+- `HeroSection.module.css` legger en mørk gradient over nederste 52 % av bildet
+  og plasserer teksten 7 % fra bunnen, så hvit tekst er lesbar over gavene og
+  plagget vises helt. Mobil (<640 px) og desktop (≥1024 px, fin peker) er uendret.
+- Sporingsattributtene på seksjonen (`home-hero`, «Skreddersy varmen») er
+  uendret for alle bruddpunkt.
+- Liggende iPad viser hele 4:5-bildet i full bredde, så teksten havner under
+  folden der (som før).
+
+Kontrollert lokalt med `next dev` ved 768×1024: riktig bildekilde, lesbar tekst
+og knapper. `pnpm typecheck`, ESLint for frontpage og `node --test tests/*.test.cjs`
+(655 bestått, 0 feilet) passerte.
+
 ## Film under Hero
 
 `HomeVideo.tsx` rendrer begge videoelementene på serveren. CSS velger desktop
