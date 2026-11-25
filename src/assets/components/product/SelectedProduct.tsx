@@ -197,7 +197,6 @@ export async function SelectedProduct({
                 handle={product.handle}
                 variantId={variant.id}
                 available={variant.availableForSale}
-                showKlarnaModal={process.env.KLARNA_IDENTITY_ENABLED === 'true'}
               />
             )}
             {variant.availableForSale && (isComfyrobe || variant.currentlyNotInStock === false) && <KlarnaProductExpressCheckout key={variant.id} handle={product.handle} variantId={variant.id} />}
@@ -252,7 +251,6 @@ export async function SelectedProduct({
               variantId={variant.id}
               available={variant.availableForSale}
               compact
-              showKlarnaModal={process.env.KLARNA_IDENTITY_ENABLED === 'true'}
             />
           )}
         </div>

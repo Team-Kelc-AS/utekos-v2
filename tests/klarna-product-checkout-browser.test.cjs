@@ -25,13 +25,12 @@ async function fixture(engine, { width = 390, fallback = false, prepareError = f
   const state = { preparations: [], checkouts: [], adds: [], orders: 0, authorizations: 0, release: null, onPrepare: null, onAdd: null };
   await context.exposeBinding('__recordAuthorize', () => { state.authorizations++; });
   const currentCart = fallback ? { ...cart, requiresStandardCheckout: true, discountCodes: [{ code: 'FIXTURE', applicable: true }] } : cart;
-  await context.addInitScript(() => sessionStorage.setItem('utekos:klarna-arrival-dismissed:v1', '1'));
   await context.route('**/*', async route => {
     const request = route.request(), url = new URL(request.url());
     if (request.url().startsWith('https://x.klarnacdn.net/kp/lib/v1/api.js')) return route.fulfill({ contentType: 'application/javascript', body: sdk });
     if (url.origin === 'https://checkout.example.test') return route.fulfill({ contentType: 'text/html', body: '<h1>Fixture checkout</h1>' });
     if (url.origin !== new URL(base).origin) return route.fulfill({ status: 204 });
-    if (url.pathname === '/api/identity/klarna/status') return route.fulfill({ json: { available: true, connected: true, originSupported: false } });
+    if (url.pathname === '/api/identity/klarna/status') return route.fulfill({ json: { available: true, connected: false, originSupported: true } });
     if (url.pathname === '/api/klarna/client-config') return route.fulfill({ json: { client_id: 'klarna_live_client_fixture', environment: 'production' } });
     if (url.pathname === '/api/klarna/prepare') {
       state.preparations.push({ body: request.postDataJSON(), capability: request.headers()['x-utekos-checkout-fallback'] });
@@ -148,7 +147,7 @@ for (const [name, engine] of [['chromium', chromium], ['webkit', webkit]]) {
     } finally { await f.close(); }
   });
 
-  test(`only the clicked add-to-cart button shows its progress (${name})`, { skip: !base, timeout: 60000 }, async () => {
+  test(`add to cart shows progress on the clicked button and opens the cart directly (${name})`, { skip: !base, timeout: 60000 }, async () => {
     const f = await fixture(engine);
     try {
       const started = new Promise(resolve => { f.state.onAdd = resolve; });
@@ -157,6 +156,8 @@ for (const [name, engine] of [['chromium', chromium], ['webkit', webkit]]) {
       assert.equal(await f.add.innerText(), 'Legger til …');
       assert.equal(await f.sticky.getAttribute('aria-busy'), 'false');
       f.state.release();
+      await f.page.getByRole('dialog', { name: 'Handlekurven din' }).waitFor();
+      assert.equal(await f.page.locator('[data-klarna-identity-modal]').count(), 0);
       await f.page.waitForFunction(() => document.querySelector('[class*="purchaseActions"] > button').getAttribute('aria-busy') === 'false');
       assert.equal(f.state.adds.length, 1); assert.equal(f.state.preparations.length, 0);
       assert.deepEqual(f.errors, []);
